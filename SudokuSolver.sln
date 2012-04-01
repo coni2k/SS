@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.WebApp", "Sudo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.WebApp.Tester", "SudokuSolver.WebApp.Tester\SudokuSolver.WebApp.Tester.csproj", "{2FF7C8D4-7B8A-4A53-8B23-11E5EDEF455C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8350110D-B4FE-456F-871C-F167CC4560B4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2C665B6C-75DF-48C9-94BC-D4EEBB6AF8B0}"
 	ProjectSection(SolutionItems) = preProject
-		Notes.txt = Notes.txt
+		README = README
 	EndProjectSection
 EndProject
 Global

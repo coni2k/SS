@@ -1,4 +1,3 @@
-
 Sudoku Solver
 
 ---
@@ -21,9 +20,9 @@ But if removing the potentials will work as it should be, probably there will be
 
 . fatih's sample?
 
-. web
+. web application!
 
-. source control
+. test application?!
 
 . others;
 .. FILL + AUTOSOLVE is now using POST!
