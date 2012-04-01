@@ -1,0 +1,11 @@
+*.lib
+obj/
+[Bb]in
+[Dd]ebug*/
+[Rr]elease*/
+
+#Project files
+[Bb]uild/
+
+#NuGet
+packages/
