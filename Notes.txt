@@ -1,8 +1,5 @@
 
-Sudoku Solver
-
----
-Possible Improvements;
+POSSIBLE IMPROVEMENTS;
 . All squares can hold the groups which can affect them (SecondGradeGroups) ?
 .. Maybe this can be done in SquareGroup level?
 
