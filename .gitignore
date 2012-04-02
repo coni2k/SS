@@ -1,4 +1,5 @@
-*.lib
+*.suo
+*.user
 obj/
 [Bb]in
 [Dd]ebug*/
