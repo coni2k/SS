@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="OSP.SudokuSolver.WebApp.WebApiApplication" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="OSP.SudokuSolver.WebApp.MvcApplication" Language="C#" %>

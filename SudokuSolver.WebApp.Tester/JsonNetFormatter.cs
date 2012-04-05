@@ -1,5 +1,5 @@
 ﻿// Code From: http://blogs.msdn.com/b/henrikn/archive/2012/02/18/using-json-net-with-asp-net-web-api.aspx
-namespace SudokuSolver.WebApp.Tester
+namespace OSP.SudokuSolver.WebApp.Tester
 {
     ﻿using System;
     using System.IO;

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Open Source Pioneers")]
 [assembly: AssemblyProduct("Sudoku Solver Web Application")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5db6c9cc-a6f7-4c90-922c-555679a83780")]
+[assembly: Guid("edf62b5b-dd37-457d-8a8d-fa1e50e8eeff")]
 
 // Version information for an assembly consists of the following four values:
 //

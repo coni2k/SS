@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using OSP.SudokuSolver.Engine;
 using OSP.SudokuSolver.WebApp.Models;
 
-namespace SudokuSolver.WebApp.Tester
+namespace OSP.SudokuSolver.WebApp.Tester
 {
     //class Program
     //{

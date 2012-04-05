@@ -8,8 +8,8 @@
     <ProjectGuid>{3ACDFA32-1459-4D33-A1B7-129F27A80F45}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SudokuSolver.ConsoleApp</RootNamespace>
-    <AssemblyName>SudokuSolver.ConsoleApp</AssemblyName>
+    <RootNamespace>OSP.SudokuSolver.ConsoleApp</RootNamespace>
+    <AssemblyName>OSP.SudokuSolver.ConsoleApp</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
