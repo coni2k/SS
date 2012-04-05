@@ -1,7 +1,7 @@
 # Sudoku Solver
 
 ---
-                
+
 ## Environment ##
 - .NET Framework 4.0
 - Visual Studio 11 Express Beta
@@ -39,3 +39,5 @@ there is a problem about serialization but is it possible to make them compatibl
 - try to send more data in one request. ie. availability sends a request for each square?
 
 - try to clean!
+
+- change the name
