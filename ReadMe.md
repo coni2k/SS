@@ -1,7 +1,7 @@
 # Sudoku Solver
 
 ---
-
+                
 ## Environment ##
 - .NET Framework 4.0
 - Visual Studio 11 Express Beta
