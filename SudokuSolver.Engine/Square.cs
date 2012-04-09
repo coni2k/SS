@@ -38,9 +38,9 @@ namespace OSP.SudokuSolver.Engine
         public Number Number { get; private set; }
 
         /// <summary>
-        /// Get the fill type of the square
+        /// Get the assign type of the square
         /// </summary>
-        public FillTypes FillType { get; private set; }
+        public AssignTypes AssignType { get; private set; }
 
         /// <summary>
         /// Gets the parent sudoku class
@@ -87,7 +87,7 @@ namespace OSP.SudokuSolver.Engine
         internal Square(int id, Number number, Sudoku sudoku, Group horizantolGroup, Group verticalGroup, Group squareGroup)
         {
             this.Id = id;
-            this.Fill(number, FillTypes.None);
+            this.Update(number, AssignTypes.Initial);
             this.Sudoku = sudoku;
 
             //Groups
@@ -100,7 +100,7 @@ namespace OSP.SudokuSolver.Engine
 
             //Available numbers; assign all number, except zero
             _AvailableNumbers = new List<Number>(this.Sudoku.Size);
-            foreach (var availableNumber in this.Sudoku.AllNumbersExceptZero)
+            foreach (var availableNumber in this.Sudoku.NumbersExceptZero)
                 _AvailableNumbers.Add(availableNumber);
         }
 
@@ -108,7 +108,7 @@ namespace OSP.SudokuSolver.Engine
 
         #region Methods
 
-        internal void Fill(Number number, FillTypes type)
+        internal void Update(Number number, AssignTypes type)
         {
             //It can be null only for the first time
             if (Number != null)
@@ -122,7 +122,7 @@ namespace OSP.SudokuSolver.Engine
             }
 
             //Set the type
-            FillType = type;
+            AssignType = type;
 
             //Assign the new number to this square & let the number know it (there is a cross reference)
             Number = number;

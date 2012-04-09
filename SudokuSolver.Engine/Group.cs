@@ -44,9 +44,9 @@ namespace OSP.SudokuSolver.Engine
         public IEnumerable<Square> Squares { get { return _Squares; } }
 
         /// <summary>
-        /// Gets the list of filled squares
+        /// Gets the list of used squares
         /// </summary>
-        public IEnumerable<Square> FilledSquares
+        public IEnumerable<Square> UsedSquares
         {
             get { return _Squares.Where(s => !s.IsAvailable); }
         }
@@ -62,7 +62,7 @@ namespace OSP.SudokuSolver.Engine
                 {
                     foreach (var sg in s.SquareGroups)
                     {
-                        foreach (var fs in sg.FilledSquares)
+                        foreach (var fs in sg.UsedSquares)
                         {
                             if (!list.Contains(fs.Number))
                                 list.Add(fs.Number);

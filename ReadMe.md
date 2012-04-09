@@ -32,7 +32,7 @@ But if removing the potentials will work as it should be, probably there will be
 - test application?!
 
 - others;
-FILL & AUTOSOLVE is now using POST! - [more info] (http://jcalcote.wordpress.com/2008/10/16/put-or-post-the-rest-of-the-story/)
+UPDATE & AUTOSOLVE is now using POST! - [more info] (http://jcalcote.wordpress.com/2008/10/16/put-or-post-the-rest-of-the-story/)
 
 - do we need containers? is it possible to use the original classes?
 there is a problem about serialization but is it possible to make them compatible?

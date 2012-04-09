@@ -25,37 +25,45 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             return container;
         }
 
+        [ActionName("squares")]
+        public IEnumerable<SquareContainer> GetSquares(int id)
+        {
+            var container = ValidateAndGetSudokuContainer(id);
+
+            return container.GetSquares();
+        }
+
         [ActionName("horizontaltypegroups")]
         public IEnumerable<GroupContainer> GetHorizontalTypeGroups(int id)
         {
-            return GetSquareGroup(id, GroupTypes.Horizontal);
+            return GetSquareGroups(id, GroupTypes.Horizontal);
         }
 
         [ActionName("verticaltypegroups")]
         public IEnumerable<GroupContainer> GetVerticalTypeGroups(int id)
         {
-            return GetSquareGroup(id, GroupTypes.Vertical);
+            return GetSquareGroups(id, GroupTypes.Vertical);
         }
 
         [ActionName("squaretypegroups")]
         public IEnumerable<GroupContainer> GetSquareTypeGroups(int id)
         {
-            return GetSquareGroup(id, GroupTypes.Square);
+            return GetSquareGroups(id, GroupTypes.Square);
         }
 
-        private IEnumerable<GroupContainer> GetSquareGroup(int id, GroupTypes type)
+        private IEnumerable<GroupContainer> GetSquareGroups(int id, GroupTypes type)
         {
             var container = ValidateAndGetSudokuContainer(id);
 
-            return container.GetSquareGroup(type);
+            return container.GetSquareGroups(type);
         }
 
-        [ActionName("filledsquares")]
-        public IEnumerable<SquareContainer> GetFilledSquares(int id)
+        [ActionName("usedsquares")]
+        public IEnumerable<SquareContainer> GetUsedSquares(int id)
         {
             var container = ValidateAndGetSudokuContainer(id);
 
-            return container.GetFilledSquares();
+            return container.GetUsedSquares();
         }
 
         [ActionName("squareavailability")]
@@ -63,7 +71,8 @@ namespace OSP.SudokuSolver.WebApp.Controllers
         {
             var container = ValidateAndGetSudokuContainer(id);
 
-            return container.SquareList.Find(s => s.SquareId.Equals(squareid)).GetAvailableNumbers();
+            //TODO Container classes are expensive in general, but this method is much more worse than the rest!
+            return container.GetSquares().Find(s => s.SquareId.Equals(squareid)).GetAvailableNumbers();
         }
 
         [ActionName("numbers")]
@@ -96,7 +105,7 @@ namespace OSP.SudokuSolver.WebApp.Controllers
         }
 
         [HttpPost]
-        [ActionName("create")]
+        [ActionName("newsudoku")]
         public HttpResponseMessage<SudokuContainer> Post()
         {
             //Id of the container
@@ -117,8 +126,6 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             container.SudokuId = nextId;
             container.SetSudoku(sudoku);
 
-            container.Prepare();
-
             CacheManager.SudokuList.Add(container);
 
             var response = new HttpResponseMessage<SudokuContainer>(container, HttpStatusCode.Created);
@@ -129,14 +136,14 @@ namespace OSP.SudokuSolver.WebApp.Controllers
         }
 
         [HttpPost]
-        [ActionName("fillsquare")]
-        public void FillSquare(int id, SquareContainer square)
+        [ActionName("updatesquare")]
+        public void UpdateSquare(int id, SquareContainer square)
         {
             var container = ValidateAndGetSudokuContainer(id);
 
             try
             {
-                container.FillSquare(square.SquareId, square.Number);
+                container.UpdateSquare(square.SquareId, square.Number);
             }
             catch (Exception)
             {
@@ -146,7 +153,7 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             }
         }
 
-        //We have to put action; fill square and toggleautosolve
+        //We have to put action; update square and toggleautosolve
         //In this case, a GET request for “api/products/details/1” would map to the Details method. This style of routing is similar to ASP.NET MVC, and may be appropriate for an RPC-style API. For a RESTful API, you should avoid using verbs in the URIs, because a URI should identify a resource, not an action.
 
         [HttpPost]
@@ -174,6 +181,20 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             container.Solve();
 
             var response = new HttpResponseMessage<SudokuContainer>(container, HttpStatusCode.OK);
+            //TODO Necessary to return the location?
+            //string uri = Url.Route(null, new { id = container.Id });
+            //response.Headers.Location = new Uri(Request.RequestUri, uri);
+
+            return response;
+        }
+
+        [HttpPost]
+        [ActionName("resetsamples")]
+        public HttpResponseMessage ResetSamples()
+        {
+            CacheManager.LoadSamples();
+
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
             //TODO Necessary to return the location?
             //string uri = Url.Route(null, new { id = container.Id });
             //response.Headers.Location = new Uri(Request.RequestUri, uri);

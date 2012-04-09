@@ -13,7 +13,7 @@ namespace OSP.SudokuSolver.WebApp.Models
         private Square Square { get; set; }
         public int SquareId { get; set; }
         public int Number { get; set; }
-        public int FillType { get; set; }
+        public AssignTypes AssignType { get; set; }
 
         public SquareContainer() { }
 

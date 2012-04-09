@@ -106,6 +106,7 @@ h5, h6 {
 .contentRight {
     width: 50%;
     float: right;
+    font-weight: bold;
 }
 
 .content-wrapper {
@@ -120,25 +121,53 @@ h5, h6 {
 }
 
 .groupList {
+    width: 474px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
+    border: 1px solid gray;
+    overflow: auto;
 }
 
-.squareList {
-    clear: both;
+.groupItem {
+    float: left;
+    width: 156px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
+    border: 1px solid gray;
 }
 
 .square {
     float:  left;
-    text-align: center;
+    font-size: 1.5em;
     font-weight: bold;
-    width: 35px;
-    height: 35px;    
+    text-align: center;
+    width: 50px;
+    height: 50px;
     border: 1px solid #efefef;
     padding: 0;
     margin: 0;
+    cursor: pointer;
+    background-color: #ffff99; /* Even color */
 }
 
-.square.selected {
-    background-color: #FFFF66;
+.square.odd {
+    background-color: #fff;
+}
+
+.selectedSquare {
+    background-color: #69f !important;
+}
+
+.squareAssignTypeInitial {
+    color: 	#000000;
+}
+
+.squareAssignTypeUser {
+    color: Green;
+}
+
+.squareAssignTypeSolver {
+    color: Red;
+}
+
+div.solve {
+    display: inline;
 }
 
 #body {

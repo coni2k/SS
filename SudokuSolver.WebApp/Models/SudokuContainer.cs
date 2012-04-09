@@ -11,39 +11,34 @@ namespace OSP.SudokuSolver.WebApp.Models
         public int SudokuId { get; set; }
         private Sudoku Sudoku { get; set; }
         public bool AutoSolve { get; set; }
-        public List<SquareContainer> SquareList { get; set; }
-        public IEnumerable<GroupContainer> HorizontalTypeGroups { get; set; }
-        public IEnumerable<GroupContainer> VerticalTypeGroups { get; set; }
-        public IEnumerable<GroupContainer> SquareTypeGroups { get; set; }
-        public IEnumerable<PotentialContainer> Potentials { get; set; }
 
         public void SetSudoku(Sudoku sudoku)
         {
             Sudoku = sudoku;
         }
 
-        public void Prepare()
+        public List<SquareContainer> GetSquares()
         {
-            SquareList = new List<SquareContainer>();
-            foreach (var square in Sudoku.AllSquares)
-                SquareList.Add(new SquareContainer(square) { SquareId = square.Id, Number = square.Number.Value });
+            var list = new List<SquareContainer>();
+            foreach (var square in Sudoku.Squares)
+                list.Add(new SquareContainer(square) { SquareId = square.Id, Number = square.Number.Value, AssignType = square.AssignType });
 
-            AutoSolve = this.Sudoku.AutoSolve;
+            return list;
         }
 
-        public IEnumerable<GroupContainer> GetSquareGroup(GroupTypes type)
+        public IEnumerable<GroupContainer> GetSquareGroups(GroupTypes type)
         {
             List<GroupContainer> containers = new List<GroupContainer>();
             switch (type)
             {
                 case GroupTypes.Horizontal:
                     {
-                        foreach (var group in Sudoku.AllHorizontalTypeGroups)
+                        foreach (var group in Sudoku.HorizontalTypeGroups)
                         {
                             var container = new GroupContainer() { GroupId = group.Id, Type = (int)group.GroupType };
 
                             foreach (var s in group.Squares)
-                                container.Squares.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value });
+                                container.Squares.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value, AssignType = s.AssignType });
 
                             containers.Add(container);
                         }
@@ -52,12 +47,12 @@ namespace OSP.SudokuSolver.WebApp.Models
                     }
                 case GroupTypes.Vertical:
                     {
-                        foreach (var group in Sudoku.AllVerticalTypeGroups)
+                        foreach (var group in Sudoku.VerticalTypeGroups)
                         {
                             var container = new GroupContainer() { GroupId = group.Id, Type = (int)group.GroupType };
 
                             foreach (var s in group.Squares)
-                                container.Squares.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value });
+                                container.Squares.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value, AssignType = s.AssignType });
 
                             containers.Add(container);
                         }
@@ -66,12 +61,12 @@ namespace OSP.SudokuSolver.WebApp.Models
                     }
                 case GroupTypes.Square:
                     {
-                        foreach (var group in Sudoku.AllSquareTypeGroups)
+                        foreach (var group in Sudoku.SquareTypeGroups)
                         {
                             var container = new GroupContainer() { GroupId = group.Id, Type = (int)group.GroupType };
 
                             foreach (var s in group.Squares)
-                                container.Squares.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value });
+                                container.Squares.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value, AssignType = s.AssignType });
 
                             containers.Add(container);
                         }
@@ -83,12 +78,12 @@ namespace OSP.SudokuSolver.WebApp.Models
             return containers;
         }
 
-        public IEnumerable<SquareContainer> GetFilledSquares()
+        public IEnumerable<SquareContainer> GetUsedSquares()
         {
             var list = new List<SquareContainer>();
 
-            foreach (var s in Sudoku.AllFilledSquares)
-                list.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value, FillType = (int)s.FillType });
+            foreach (var s in Sudoku.UsedSquares)
+                list.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value, AssignType = s.AssignType });
             
             return list;
         }
@@ -97,7 +92,7 @@ namespace OSP.SudokuSolver.WebApp.Models
         {
             var list = new List<NumberContainer>();
 
-            foreach (var n in Sudoku.AllNumbers)
+            foreach (var n in Sudoku.Numbers)
                 list.Add(new NumberContainer() { Value = n.Value, Count = n.Count });
 
             return list;
@@ -113,12 +108,9 @@ namespace OSP.SudokuSolver.WebApp.Models
             return list;
         }
 
-        public void FillSquare(int squareId, int number)
+        public void UpdateSquare(int squareId, int number)
         {
-            Sudoku.FillSquare(squareId, number);
-
-            //TODO ?
-            Prepare();
+            Sudoku.UpdateSquare(squareId, number);
         }
 
         public void ToggleAutoSolve()

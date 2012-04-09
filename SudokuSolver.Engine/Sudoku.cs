@@ -9,11 +9,11 @@ namespace OSP.SudokuSolver.Engine
         #region Members
 
         private int _Size = 0;
-        private IList<Square> _AllSquares = null;
-        private IList<Number> _AllNumbers = null;
-        private IList<Group> _AllHorizontalTypeGroups = null;
-        private IList<Group> _AllVerticalTypeGroups = null;
-        private IList<Group> _AllSquareTypeGroups = null;
+        private IList<Square> _Squares = null;
+        private IList<Number> _Numbers = null;
+        private IList<Group> _HorizontalTypeGroups = null;
+        private IList<Group> _VerticalTypeGroups = null;
+        private IList<Group> _SquareTypeGroups = null;
         private List<Potential> _PotentialSquares = null;
         private bool _AutoSolve = false;
 
@@ -89,55 +89,55 @@ namespace OSP.SudokuSolver.Engine
         /// Gets all the squares of the sudoku
         /// Count of the list equals to the TotalSize property
         /// </summary>
-        public IEnumerable<Square> AllSquares { get { return _AllSquares; } }
+        public IEnumerable<Square> Squares { get { return _Squares; } }
 
         /// <summary>
-        /// Gets all the filled squares of the sudoku
+        /// Gets all the used squares of the sudoku
         /// </summary>
-        public IEnumerable<Square> AllFilledSquares
+        public IEnumerable<Square> UsedSquares
         {
-            get { return AllSquares.Where(s => !s.IsAvailable); }
+            get { return Squares.Where(s => !s.IsAvailable); }
         }
 
         /// <summary>
-        /// Gets all usable numbers, including zero.
+        /// Gets all numbers which can be used in sudoku, including zero.
         /// Count of the list equals to Size property of the sudoku + 1 (for size 9, it's 10)
         /// </summary>
-        public IEnumerable<Number> AllNumbers { get { return _AllNumbers; } }
+        public IEnumerable<Number> Numbers { get { return _Numbers; } }
 
         /// <summary>
         /// Gets all usable numbers, except zero.
         /// Count of the list equals to Size property of the sudoku
         /// </summary>
-        public IEnumerable<Number> AllNumbersExceptZero
+        public IEnumerable<Number> NumbersExceptZero
         {
-            get { return AllNumbers.Where(n => !n.IsZero); }
+            get { return Numbers.Where(n => !n.IsZero); }
         }
 
-        public IEnumerable<Number> AllAvailableNumbers
+        public IEnumerable<Number> AvailableNumbers
         {
-            get { return AllNumbersExceptZero.Where(n => n.IsAvailable); }
+            get { return NumbersExceptZero.Where(n => n.IsAvailable); }
         }
 
         /// <summary>
         /// Gets horizontal type square groups
         /// </summary>
-        public IEnumerable<Group> AllHorizontalTypeGroups { get { return _AllHorizontalTypeGroups; } }
+        public IEnumerable<Group> HorizontalTypeGroups { get { return _HorizontalTypeGroups; } }
 
         /// <summary>
         /// Gets vertical type square groups
         /// </summary>
-        public IEnumerable<Group> AllVerticalTypeGroups { get { return _AllVerticalTypeGroups; } }
+        public IEnumerable<Group> VerticalTypeGroups { get { return _VerticalTypeGroups; } }
 
         /// <summary>
         /// Gets square type square groups
         /// </summary>
-        public IEnumerable<Group> AllSquareTypeGroups { get { return _AllSquareTypeGroups; } }
+        public IEnumerable<Group> SquareTypeGroups { get { return _SquareTypeGroups; } }
 
         /// <summary>
         /// Gets the potential squares
-        /// During FillSquare() method, when the solver finds a potential square, it puts them to this list.
-        /// When Solve() method called, this list will be checked and if the potential square has still the same conditions, then the square will be filled the value.
+        /// During UpdateSquare() method, when the solver finds a potential square, it puts them to this list.
+        /// When Solve() method called, this list will be checked and if the potential square has still the same conditions, then the square will be update with the value.
         /// </summary>
         public IEnumerable<Potential> PotentialSquares { get { return _PotentialSquares; } }
 
@@ -184,23 +184,23 @@ namespace OSP.SudokuSolver.Engine
             this.Size = size;
 
             //All numbers; numbers will be created as the size of the sudoku (default 9 + zero value = 10)
-            _AllNumbers = new List<Number>(Size + 1);
+            _Numbers = new List<Number>(Size + 1);
 
             //Zero first
             var zeroNumber = new Number(this, 0);
-            _AllNumbers.Add(zeroNumber);
+            _Numbers.Add(zeroNumber);
 
             //Other numbers
             for (int i = 1; i <= Size; i++)
             {
                 var number = new Number(this, i);
-                _AllNumbers.Add(number);
+                _Numbers.Add(number);
             }
 
             //All square groups
-            _AllHorizontalTypeGroups = new List<Group>(Size);
-            _AllVerticalTypeGroups = new List<Group>(Size);
-            _AllSquareTypeGroups = new List<Group>(Size);
+            _HorizontalTypeGroups = new List<Group>(Size);
+            _VerticalTypeGroups = new List<Group>(Size);
+            _SquareTypeGroups = new List<Group>(Size);
 
             for (int i = 1; i <= Size; i++)
             {
@@ -215,13 +215,13 @@ namespace OSP.SudokuSolver.Engine
                 squareGroup.PotentialFound += new Potential.FoundEventHandler(PotentialSquare_Found);
 
                 //Add to the "all" lists
-                _AllHorizontalTypeGroups.Add(horizontalGroup);
-                _AllVerticalTypeGroups.Add(verticalGroup);
-                _AllSquareTypeGroups.Add(squareGroup);
+                _HorizontalTypeGroups.Add(horizontalGroup);
+                _VerticalTypeGroups.Add(verticalGroup);
+                _SquareTypeGroups.Add(squareGroup);
             }
 
             //All squares
-            _AllSquares = new List<Square>(TotalSize);
+            _Squares = new List<Square>(TotalSize);
             for (int i = 0; i < TotalSize; i++)
             {
                 //Find the indexes of the current square's groups
@@ -230,15 +230,15 @@ namespace OSP.SudokuSolver.Engine
                 int squareGroupIndex = (verticalGroupIndex / SquareRootOfSize) + ((horizontalGroupIndex / SquareRootOfSize) * SquareRootOfSize);
 
                 //Get the groups
-                var currentSquareHorizontalGroup = _AllHorizontalTypeGroups[horizontalGroupIndex];
-                var currentSquareVerticalGroup = _AllVerticalTypeGroups[verticalGroupIndex];
-                var currentSquareSquareGroup = _AllSquareTypeGroups[squareGroupIndex];
+                var currentSquareHorizontalGroup = _HorizontalTypeGroups[horizontalGroupIndex];
+                var currentSquareVerticalGroup = _VerticalTypeGroups[verticalGroupIndex];
+                var currentSquareSquareGroup = _SquareTypeGroups[squareGroupIndex];
 
                 //Generate the squares
                 Square square = new Square(i + 1, zeroNumber, this, currentSquareHorizontalGroup, currentSquareVerticalGroup, currentSquareSquareGroup);
                 square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
                 square.PotentialSquareFound += new Potential.FoundEventHandler(PotentialSquare_Found);
-                _AllSquares.Add(square);
+                _Squares.Add(square);
 
                 //Add the squares to their own groups
                 currentSquareHorizontalGroup.AddSquare(square);
@@ -250,19 +250,19 @@ namespace OSP.SudokuSolver.Engine
             _PotentialSquares = new List<Potential>();
         }
 
-        public void FillSquare(int squareId, int value)
+        public void UpdateSquare(int squareId, int value)
         {
             //Get the square
-            var square = this.AllSquares.Where(s => s.Id.Equals(squareId)).FirstOrDefault();
+            var square = this.Squares.Where(s => s.Id.Equals(squareId)).FirstOrDefault();
 
             //Get the number
-            var number = this.AllNumbers.Where(n => n.Value.Equals(value)).FirstOrDefault();
+            var number = this.Numbers.Where(n => n.Value.Equals(value)).FirstOrDefault();
 
-            //Fill
-            FillSquare(square, number, FillTypes.User);
+            //Update
+            UpdateSquare(square, number, AssignTypes.User);
         }
 
-        void FillSquare(Square square, Number number, FillTypes type)
+        void UpdateSquare(Square square, Number number, AssignTypes type)
         {
             //Validate first
             if (square == null)
@@ -272,7 +272,7 @@ namespace OSP.SudokuSolver.Engine
                 throw new Exception("Not a valid number");
 
             //Set the number and type
-            square.Fill(number, type);
+            square.Update(number, type);
 
             //Solve?
             if (AutoSolve)
@@ -307,7 +307,7 @@ namespace OSP.SudokuSolver.Engine
 
         /// <summary>
         /// To solve the sudoku, this logic checks the spotted squares.
-        /// These are the squares which found during FillSquare() operation.
+        /// These are the squares which found during UpdateSquare() operation.
         /// </summary>
         public void Solve()
         {
@@ -324,7 +324,7 @@ namespace OSP.SudokuSolver.Engine
                 {
                     //If it's still valid..
                     if (Square.ValidatePotential(potential.Square))
-                        FillSquare(potential.Square, potential.Number, FillTypes.Solver);
+                        UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
                 }
                 else if (potential.PotentialType == PotentialTypes.Group)
                 {
@@ -334,7 +334,7 @@ namespace OSP.SudokuSolver.Engine
                     //If there is one square and if it's the same square from the potential class, then it's valid
                     //TODO Maybe we can found a way to be sure that the square from potential is always correct! Then these can be avoided?!
                     if (potentialFromGroup != null && potential.Square.Equals(potentialFromGroup))
-                        FillSquare(potential.Square, potential.Number, FillTypes.Solver);
+                        UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
                 }
 
                 potential.PotentialType = PotentialTypes.None;

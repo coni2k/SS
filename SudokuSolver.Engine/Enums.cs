@@ -13,11 +13,11 @@
     }
 
     /// <summary>
-    /// These flags determine whether the value of the square filled by the user or the sudoku solver
+    /// These flags determine whether the value of the square assigned by the user or the sudoku solver
     /// </summary>
-    public enum FillTypes
+    public enum AssignTypes
     {
-        None,
+        Initial,
         User,
         Solver
     }

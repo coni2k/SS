@@ -41,10 +41,10 @@ namespace OSP.SudokuSolver.WebApp.Tester
                     args = new string[0] { };
                 }
 
-                //TODO Invalid parameter is only for fill + case?
+                //TODO Invalid parameter is only for update + case?
                 //Try to apple to the other commands?
-                //Also fill [x,x] pattern is not checked, "fill 0" fails for instance
-                if ((commandLine.StartsWith("fill") && !commandLine.StartsWith("filled")) || commandLine.StartsWith("load"))
+                //Also update [x,x] pattern is not checked, "update 0" fails for instance
+                if (commandLine.StartsWith("update") || commandLine.StartsWith("load"))
                 {
                     if (commandLine.IndexOf(" ") > 0)
                     {
@@ -63,13 +63,13 @@ namespace OSP.SudokuSolver.WebApp.Tester
                     case "list": ShowList(); break;
                     case "new": NewSudoku(); break;
                     case "autosolve": ToggleAutoSolve(); break;
-                    case "fill": FillSquare(parameters); break;
+                    case "update": UpdateSquare(parameters); break;
                     case "solve": Solve(); break;
                     case "load": LoadCase(int.Parse(parameters)); break;
                     case "quit": return;
 
                     case "sudoku": ShowSudoku(); break;
-                    case "filled": ShowFilled(); break;
+                    case "used": ShowUsed(); break;
                     case "availability": ShowAvailability(); break;
                     case "numbers": ShowNumbers(); break;
                     case "potentials": ShowPotentialSquares(); break;
@@ -94,7 +94,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
         static void NewSudoku()
         {
             //Create a sudoku
-            GetWebApiClient("create").Post<SudokuContainer>(null);
+            GetWebApiClient("newsudoku").Post<SudokuContainer>(null);
         }
 
         static void ToggleAutoSolve()
@@ -109,7 +109,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
             Console.WriteLine("autosolve - Currently: " + (container.AutoSolve ? "on" : "off"));
         }
 
-        static void FillSquare(string parameters)
+        static void UpdateSquare(string parameters)
         {
             //Get square id & number
             int id = int.Parse(parameters.Split(',')[0]);
@@ -119,8 +119,8 @@ namespace OSP.SudokuSolver.WebApp.Tester
             squareContainer.SquareId = id;
             squareContainer.Number = number;
 
-            //Fill
-            GetWebApiClient("fillsquare").Post<SquareContainer>(currentSudokuId, squareContainer);
+            //Update
+            GetWebApiClient("updatesquare").Post<SquareContainer>(currentSudokuId, squareContainer);
         }
 
         static void Solve()
@@ -182,13 +182,13 @@ namespace OSP.SudokuSolver.WebApp.Tester
             }
         }
 
-        static void ShowFilled()
+        static void ShowUsed()
         {
             //Get
-            var squares = GetWebApiClient("filled").GetItem<IEnumerable<SquareContainer>>(currentSudokuId);
+            var squares = GetWebApiClient("used").GetItem<IEnumerable<SquareContainer>>(currentSudokuId);
 
-            foreach (var filled in squares)
-                Console.WriteLine(string.Format("  Id {0}: {1} - {2}", filled.SquareId.ToString("D2"), filled.Number.ToString(), filled.FillType.ToString()));
+            foreach (var usedSquare in squares)
+                Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.SquareId.ToString("D2"), usedSquare.Number.ToString(), usedSquare.AssignType.ToString()));
         }
 
         /// <summary>
@@ -211,9 +211,9 @@ namespace OSP.SudokuSolver.WebApp.Tester
             //Details
 
             //Get the item
-            var container = GetWebApiClient("item").GetItem<SudokuContainer>(currentSudokuId);
+            var squares = GetWebApiClient("squares").GetItem<IEnumerable<SquareContainer>>(currentSudokuId);
 
-            foreach (var square in container.SquareList)
+            foreach (var square in squares)
             {
                 //Square text: Square id + value
                 var output = string.Format("Id {0}: {1}", square.SquareId.ToString("D2"), square.Number.ToString());
@@ -225,7 +225,6 @@ namespace OSP.SudokuSolver.WebApp.Tester
                     var availableNumbersOfSquare = GetWebApiClient("squareavailability").GetItem<IEnumerable<NumberContainer>>(currentSudokuId, square.SquareId);
 
                     var availableText = string.Format(" | {0}", availableNumbersOfSquare.Any(availableNumber => availableNumber.Value.Equals(number.Value)) ? "X" : ".");
-                    //var availableText = string.Format(" | {0}", true ? "X" : ".");
                     Console.Write(availableText);
                 }
 
@@ -270,14 +269,14 @@ namespace OSP.SudokuSolver.WebApp.Tester
             sbOutput.AppendLine(". list");
             sbOutput.AppendLine(". new");
             sbOutput.AppendLine(". autosolve - Currently: " + (container.AutoSolve ? "on" : "off"));
-            sbOutput.AppendLine(". fill [square], [number]");
+            sbOutput.AppendLine(". update [square], [number]");
             sbOutput.AppendLine(". solve");
             sbOutput.AppendLine(". load [case no] - 1, 2, 3, 4, 5, 6, 7, 8, 9");
             sbOutput.AppendLine(". quit");
 
             sbOutput.AppendLine().AppendLine("Display Commands");
             sbOutput.AppendLine(". sudoku");
-            sbOutput.AppendLine(". filled");
+            sbOutput.AppendLine(". used");
             sbOutput.AppendLine(". availability");
             sbOutput.AppendLine(". numbers");
             sbOutput.AppendLine(". potentials");
@@ -288,7 +287,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
 
         //static void Sudoku_SquareNumberChanged(Square square)
         //{
-        //    Console.WriteLine(string.Format("  Id {0}: {1} - {2}", square.Id.ToString("D2"), square.Number.ToString(), square.FillType.ToString()));
+        //    Console.WriteLine(string.Format("  Id {0}: {1} - {2}", square.Id.ToString("D2"), square.Number.ToString(), square.AssignType.ToString()));
         //}
 
         //static void Sudoku_PotentialSquareFound(Potential potential)
