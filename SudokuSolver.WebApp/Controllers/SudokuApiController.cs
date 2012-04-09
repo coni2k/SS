@@ -85,7 +85,7 @@ namespace OSP.SudokuSolver.WebApp.Controllers
         private SudokuContainer ValidateAndGetSudokuContainer(int id)
         {
             //Search the container in CacheManager
-            var container = CacheManager.SudokuList.Find(s => s.Id.Equals(id));
+            var container = CacheManager.SudokuList.Find(s => s.SudokuId.Equals(id));
 
             //If there is no, throw an exception
             if (container == null)
@@ -105,7 +105,7 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             lock (this)
             {
                 if (CacheManager.SudokuList.Count > 0)
-                    nextId = (CacheManager.SudokuList.Max(s => s.Id) + 1);
+                    nextId = (CacheManager.SudokuList.Max(s => s.SudokuId) + 1);
             }
 
             //Sudoku
@@ -114,7 +114,7 @@ namespace OSP.SudokuSolver.WebApp.Controllers
 
             //New container
             var container = new SudokuContainer();
-            container.Id = nextId;
+            container.SudokuId = nextId;
             container.SetSudoku(sudoku);
 
             container.Prepare();
@@ -122,7 +122,7 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             CacheManager.SudokuList.Add(container);
 
             var response = new HttpResponseMessage<SudokuContainer>(container, HttpStatusCode.Created);
-            string uri = Url.Route(null, new { id = container.Id });
+            string uri = Url.Route(null, new { id = container.SudokuId });
             response.Headers.Location = new Uri(Request.RequestUri, uri);
 
             return response;

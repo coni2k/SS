@@ -188,15 +188,15 @@ namespace OSP.SudokuSolver.WebApp.Models
                     sample9.FillSquare(78, 7);
                     sample9.FillSquare(79, 5);
 
-                    var cont1 = new SudokuContainer() { Id = 1 };
-                    var cont2 = new SudokuContainer() { Id = 2 };
-                    var cont3 = new SudokuContainer() { Id = 3 };
-                    var cont4 = new SudokuContainer() { Id = 4 };
-                    var cont5 = new SudokuContainer() { Id = 5 };
-                    var cont6 = new SudokuContainer() { Id = 6 };
-                    var cont7 = new SudokuContainer() { Id = 7 };
-                    var cont8 = new SudokuContainer() { Id = 8 };
-                    var cont9 = new SudokuContainer() { Id = 9 };
+                    var cont1 = new SudokuContainer() { SudokuId = 1 };
+                    var cont2 = new SudokuContainer() { SudokuId = 2 };
+                    var cont3 = new SudokuContainer() { SudokuId = 3 };
+                    var cont4 = new SudokuContainer() { SudokuId = 4 };
+                    var cont5 = new SudokuContainer() { SudokuId = 5 };
+                    var cont6 = new SudokuContainer() { SudokuId = 6 };
+                    var cont7 = new SudokuContainer() { SudokuId = 7 };
+                    var cont8 = new SudokuContainer() { SudokuId = 8 };
+                    var cont9 = new SudokuContainer() { SudokuId = 9 };
 
                     cont1.SetSudoku(sample1);
                     cont2.SetSudoku(sample2);

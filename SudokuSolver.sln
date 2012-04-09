@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.Engine", "Sudo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2C665B6C-75DF-48C9-94BC-D4EEBB6AF8B0}"
 	ProjectSection(SolutionItems) = preProject
-		README = README
+		ReadMe.md = ReadMe.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7BFB50BD-D823-423C-876C-2BFCF45A4E94}"

@@ -6,6 +6,7 @@
 - .NET Framework 4.0
 - Visual Studio 11 Express Beta
 - C#
+- IIS Express 7.5
 
 ## Possible Improvements ##
 - All squares can hold the groups which can affect them (SecondGradeGroups) ?
@@ -40,4 +41,18 @@ there is a problem about serialization but is it possible to make them compatibl
 
 - try to clean!
 
-- change the name
+- change the repository name
+
+---
+CONTINUE WITH WEB APPLICATION;
+. get list is okay
+. continue with get item!
+or learn knockout first;
+http://learn.knockoutjs.com/#/?tutorial=collections
+
+what is model
+what to bind?
+what is observable
+try to use two viewModel (list + item) on the same page
+
+sample projects; Comments + SPA_Sample

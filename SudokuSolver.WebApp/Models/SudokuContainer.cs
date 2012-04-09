@@ -8,7 +8,7 @@ namespace OSP.SudokuSolver.WebApp.Models
 {
     public class SudokuContainer
     {
-        public int Id { get; set; }
+        public int SudokuId { get; set; }
         private Sudoku Sudoku { get; set; }
         public bool AutoSolve { get; set; }
         public List<SquareContainer> SquareList { get; set; }
@@ -40,7 +40,7 @@ namespace OSP.SudokuSolver.WebApp.Models
                     {
                         foreach (var group in Sudoku.AllHorizontalTypeGroups)
                         {
-                            var container = new GroupContainer() { Id = group.Id, Type = (int)group.GroupType };
+                            var container = new GroupContainer() { GroupId = group.Id, Type = (int)group.GroupType };
 
                             foreach (var s in group.Squares)
                                 container.Squares.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value });
@@ -54,7 +54,7 @@ namespace OSP.SudokuSolver.WebApp.Models
                     {
                         foreach (var group in Sudoku.AllVerticalTypeGroups)
                         {
-                            var container = new GroupContainer() { Id = group.Id, Type = (int)group.GroupType };
+                            var container = new GroupContainer() { GroupId = group.Id, Type = (int)group.GroupType };
 
                             foreach (var s in group.Squares)
                                 container.Squares.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value });
@@ -68,7 +68,7 @@ namespace OSP.SudokuSolver.WebApp.Models
                     {
                         foreach (var group in Sudoku.AllSquareTypeGroups)
                         {
-                            var container = new GroupContainer() { Id = group.Id, Type = (int)group.GroupType };
+                            var container = new GroupContainer() { GroupId = group.Id, Type = (int)group.GroupType };
 
                             foreach (var s in group.Squares)
                                 container.Squares.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value });

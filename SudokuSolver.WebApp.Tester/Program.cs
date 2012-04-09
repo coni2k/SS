@@ -7,58 +7,6 @@ using OSP.SudokuSolver.WebApp.Models;
 
 namespace OSP.SudokuSolver.WebApp.Tester
 {
-    //class Program
-    //{
-    //static void Main(string[] args)
-    //{
-    //    var endpoint = "http://localhost:56105/api/sudokuapi/";
-
-    //    var webApiClient = new WebApiClient(endpoint);
-
-    //    //Create a sudoku
-    //    var postResult = webApiClient.Post<SudokuContainer>(null);
-
-    //    //Get the list
-    //    var getListResult = webApiClient.GetList<List<SudokuContainer>>();
-
-    //    foreach (var s in getListResult)
-    //    {
-    //        Console.WriteLine("Sudoku - Id: {0}", s.Id.ToString());
-
-    //        //foreach (var square in s.SquareList)
-    //        //    Console.WriteLine("Square - Id: {0} - Number: {1}", square.SquareNo.ToString(), square.Number.ToString());
-
-    //        Console.WriteLine();
-    //    }
-
-    //    //Update a square
-    //    webApiClient.Put<SquareContainer>(10, new SquareContainer { SquareNo = 1, Number = 1 });
-    //    webApiClient.Put<SquareContainer>(10, new SquareContainer { SquareNo = 2, Number = 2 });
-    //    webApiClient.Put<SquareContainer>(10, new SquareContainer { SquareNo = 3, Number = 3 });
-    //    webApiClient.Put<SquareContainer>(10, new SquareContainer { SquareNo = 4, Number = 4 });
-    //    webApiClient.Put<SquareContainer>(10, new SquareContainer { SquareNo = 5, Number = 5 });
-    //    webApiClient.Put<SquareContainer>(10, new SquareContainer { SquareNo = 6, Number = 6 });
-    //    webApiClient.Put<SquareContainer>(10, new SquareContainer { SquareNo = 7, Number = 7 });
-    //    webApiClient.Put<SquareContainer>(10, new SquareContainer { SquareNo = 8, Number = 8 });
-
-    //    //Get the list again
-    //    getListResult = webApiClient.GetList<List<SudokuContainer>>();
-
-    //    foreach (var s in getListResult)
-    //    {
-    //        Console.WriteLine("Sudoku - Id: {0}", s.Id.ToString());
-
-    //        //foreach (var square in s.SquareList)
-    //        //    Console.WriteLine("Square - Id: {0} - Number: {1}", square.SquareNo.ToString(), square.Number.ToString());
-
-    //        Console.WriteLine();
-    //    }
-
-    //    Console.ReadKey();
-
-    //}
-    //}
-
     class Program
     {
         static string endPointBase = "http://localhost:56105/api/sudokuapi/";
@@ -140,7 +88,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
 
             Console.WriteLine("Sudoku list;");
             foreach (var container in list)
-                Console.WriteLine("Id: {0}", container.Id.ToString());
+                Console.WriteLine("Id: {0}", container.SudokuId.ToString());
         }
 
         static void NewSudoku()
@@ -194,10 +142,10 @@ namespace OSP.SudokuSolver.WebApp.Tester
             var container = GetWebApiClient("item").GetItem<SudokuContainer>(id);
 
             //Set current sudoku id
-            currentSudokuId = container.Id;
+            currentSudokuId = container.SudokuId;
 
             //Message
-            Console.WriteLine("Sudoku loaded; Id: {0}", container.Id.ToString());
+            Console.WriteLine("Sudoku loaded; Id: {0}", container.SudokuId.ToString());
 
             //foreach (var square in container.SquareList)
             //    Console.WriteLine("Square - Id: {0} - Number: {1}", square.Id.ToString(), square.Number.ToString());
@@ -229,7 +177,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
                 Console.WriteLine();
 
                 //Extra line break after every 3. horizontal group (27th, 54th squares)
-                if ((group.Id % sqrtSize) == 0)
+                if ((group.GroupId % sqrtSize) == 0)
                     Console.WriteLine();
             }
         }
@@ -313,11 +261,15 @@ namespace OSP.SudokuSolver.WebApp.Tester
 
         static void Help()
         {
+            //Get current item
+
+            var container = GetWebApiClient("item").GetItem<SudokuContainer>(currentSudokuId);
+
             var sbOutput = new System.Text.StringBuilder();
             sbOutput.AppendLine("General Commands");
             sbOutput.AppendLine(". list");
             sbOutput.AppendLine(". new");
-            sbOutput.AppendLine(". autosolve - Currently: " + (true ? "on" : "off"));
+            sbOutput.AppendLine(". autosolve - Currently: " + (container.AutoSolve ? "on" : "off"));
             sbOutput.AppendLine(". fill [square], [number]");
             sbOutput.AppendLine(". solve");
             sbOutput.AppendLine(". load [case no] - 1, 2, 3, 4, 5, 6, 7, 8, 9");

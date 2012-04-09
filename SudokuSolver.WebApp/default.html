@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Sudoku Solver</title>
+    <link href="/Content/main.css" rel="stylesheet" type="text/css" />
+    <script src="/Scripts/jquery-1.6.2.js" type="text/javascript"></script>
+    <script src="/Scripts/knockout-2.0.0.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/Scripts/SudokuSolver/main.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Sudoku Solver</h1>
+    </div>
+    <div class="contentContainer">
+        <div class="contentLeft">
+            To Do;
+            <br />
+            . "new" - "solve" - "availability" - "numbers" - "potentials"<br />
+            . should we use squareGroup method instead of horizontal one? so we can color the
+            groups easily?
+            <br />
+            . try to store the work on github but without creating a mess - check amend last
+            commit function!
+            <br />
+            . try to get rid of "0"s!
+            <br />
+            . try to merge "get item" & "get horizontal" + is it possible to pass only the squares that have value? (not zero)
+            <br />
+            . validation + error cases!
+            <br />
+            . improve styling!
+            <br />
+            <br />
+            <strong>Sudoku List</strong>
+            <ul data-bind="template: {name: 'sudokuListItemTemplate', foreach: SudokuList}">
+            </ul>
+            <a class="newSudoku" href="#">Create new sudoku</a>
+            <a class="resetSolver" href="#">Reset to factory settings</a>
+        </div>
+        <div class="contentRight">
+            <div data-bind="visible: CurrentSudoku() != null">
+                <strong>Sudoku Id: <span data-bind="text: CurrentSudoku().SudokuId"></span>
+                <br />
+                Autosolve: 
+                <a class="toggleAutoSolve" data-bind="attr: { 'data-sudoku-id': CurrentSudoku().SudokuId }"
+                    href="#"><span data-bind="text: CurrentSudoku().AutoSolve.toString().toUpperCase()"></span></a>
+                </strong>
+                <br />
+                <div data-bind="template: {name: 'groupListItemTemplate', foreach: CurrentHorizontalGroupList}"
+                    class="groupList">
+                </div>
+            </div>
+        </div>
+        <script id="sudokuListItemTemplate" type="text/html">
+            <li class="sudokuItem"><a class="load" data-bind="attr: { 'data-sudoku-id': SudokuId }"
+                href="#">Id: <span data-bind="text: SudokuId"></span></a></li>
+        </script>
+        <script id="groupListItemTemplate" type="text/html">
+            <div data-bind="template: {name: 'squareListItemTemplate', foreach: Squares}" class="squareList">
+            </div>
+        </script>
+        <script id="squareListItemTemplate" type="text/html">
+            <input data-bind="attr: { 'data-square-id': SquareId}, value: Number" class="square" />
+        </script>
+        <script type="text/javascript">
+
+            viewModel = {
+                SudokuList: ko.observableArray([]),
+                CurrentSudoku: ko.observable(null),
+                CurrentHorizontalGroupList: ko.observableArray([])
+            };
+
+            ko.applyBindings(viewModel);
+
+        </script>
+    </div>
+</body>
+</html>
