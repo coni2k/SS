@@ -11,6 +11,13 @@ namespace OSP.SudokuSolver.WebApp.Models
         public int SudokuId { get; set; }
         private Sudoku Sudoku { get; set; }
         public bool AutoSolve { get; set; }
+        public bool Ready { get; set; }
+
+        public SudokuContainer()
+        {
+            this.AutoSolve = false;
+            this.Ready = false;
+        }
 
         public void SetSudoku(Sudoku sudoku)
         {
@@ -111,6 +118,12 @@ namespace OSP.SudokuSolver.WebApp.Models
         public void UpdateSquare(int squareId, int number)
         {
             Sudoku.UpdateSquare(squareId, number);
+        }
+
+        public void ToggleReady()
+        {
+            Sudoku.Ready = !Sudoku.Ready;
+            this.Ready = Sudoku.Ready;
         }
 
         public void ToggleAutoSolve()

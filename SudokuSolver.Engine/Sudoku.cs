@@ -9,12 +9,13 @@ namespace OSP.SudokuSolver.Engine
         #region Members
 
         private int _Size = 0;
-        private IList<Square> _Squares = null;
+        private List<Square> _Squares = null;
         private IList<Number> _Numbers = null;
         private IList<Group> _HorizontalTypeGroups = null;
         private IList<Group> _VerticalTypeGroups = null;
         private IList<Group> _SquareTypeGroups = null;
         private List<Potential> _PotentialSquares = null;
+        private bool _Ready = false;
         private bool _AutoSolve = false;
 
         #endregion
@@ -142,6 +143,28 @@ namespace OSP.SudokuSolver.Engine
         public IEnumerable<Potential> PotentialSquares { get { return _PotentialSquares; } }
 
         /// <summary>
+        /// Determines the whether sudoku is ready to solve or not.
+        /// On application level, there can (will) be different colors, according to the square has the initial value or set by user/solver.
+        /// If the sudoku is not ready, on any square update, Assign Type will be set to Initial value and will be set to User/Solver if otherwise.
+        /// </summary>
+        public bool Ready
+        {
+            get { return _Ready; }
+            set
+            {
+                //Validate: Cannot set to false, if there are any Square with User/Solver assign type
+                if (value == false)
+                {
+                    var hasInvalidAssignType = _Squares.Exists(s => s.AssignType == AssignTypes.User || s.AssignType == AssignTypes.Solver);
+                    if (hasInvalidAssignType)
+                        throw new Exception("Ready cannot set to false again if there are any squares with User or Solver Assign Type");
+                }
+
+                _Ready = value;
+            }
+        }
+
+        /// <summary>
         /// Gets whether the solver will try to solve the sudoku automatically or not
         /// </summary>
         public bool AutoSolve
@@ -149,6 +172,9 @@ namespace OSP.SudokuSolver.Engine
             get { return _AutoSolve; }
             set
             {
+                if (!this.Ready)
+                    throw new Exception("AutoSolve cannot be set to true if it's not in Ready state");
+
                 _AutoSolve = value;
 
                 if (_AutoSolve)
@@ -258,8 +284,11 @@ namespace OSP.SudokuSolver.Engine
             //Get the number
             var number = this.Numbers.Where(n => n.Value.Equals(value)).FirstOrDefault();
 
+            //Assign type
+            var type = !this.Ready ? AssignTypes.Initial : AssignTypes.User;
+
             //Update
-            UpdateSquare(square, number, AssignTypes.User);
+            UpdateSquare(square, number, type);
         }
 
         void UpdateSquare(Square square, Number number, AssignTypes type)
@@ -311,6 +340,9 @@ namespace OSP.SudokuSolver.Engine
         /// </summary>
         public void Solve()
         {
+            if (!this.Ready)
+                throw new Exception("Sudoku cannot be Solved if it's not in Ready state");
+
             //Is there anything to do?
             if (PotentialSquares.Count().Equals(0))
                 return;

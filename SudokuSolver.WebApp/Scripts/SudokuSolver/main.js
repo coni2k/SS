@@ -10,7 +10,7 @@
         //Get the current id from UI
         var sudokuId = $(this).data('sudokuId');
 
-        loadSudoku(sudokuId);
+        loadSudokuById(sudokuId);
     });
 
     //New sudoku
@@ -29,7 +29,7 @@
                     loadSudokuList();
 
                     //Load sudoku?
-                    loadSudokuByData(data);
+                    loadSudoku(data);
                 },
                 400 /* BadRequest */: function (jqxhr) {
 
@@ -55,15 +55,42 @@
 
                     //Load list again
                     //Is it the correct way of doing it, how about bindings?
-                    loadSudokuList();
+                    //loadSudokuList();
 
                     //Load default (first) sudoku
-                    loadSudoku(1);
+                    //loadSudokuById(1);
+
+                    loadInitialData();
                 },
                 400 /* BadRequest */: function (jqxhr) {
 
                     /* TODO ?! */
 
+                    //var validationResult = $.parseJSON(jqxhr.responseText);
+                    //$.validator.unobtrusive.revalidate(form, validationResult);
+                }
+            }
+        });
+    });
+
+    //Toggle ready
+    $("a.toggleReady").live('click', function () {
+
+        $.ajax({
+            url: '/api/SudokuApi/toggleready/' + viewModel.CurrentSudoku().SudokuId,
+            cache: false, //?
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            statusCode: {
+                200 /*OK*/: function (data) {
+
+                    //Update UI
+                    viewModel.CurrentSudoku().Ready = !viewModel.CurrentSudoku().Ready;
+                    ko.applyBindings(viewModel);
+                },
+                400 /* BadRequest */: function (jqxhr) {
+
+                    /* TODO ?! */
                     //var validationResult = $.parseJSON(jqxhr.responseText);
                     //$.validator.unobtrusive.revalidate(form, validationResult);
                 }
@@ -83,14 +110,10 @@
                 200 /*OK*/: function (data) {
 
                     //Update UI
-                    viewModel.CurrentSudoku().AutoSolve = !viewModel.CurrentSudoku().AutoSolve;
+                    //viewModel.CurrentSudoku().AutoSolve = !viewModel.CurrentSudoku().AutoSolve;
 
                     //Load sudoku?
-                    loadSudoku(viewModel.CurrentSudoku().SudokuId);
-
-                    //Apply bindings again?
-                    //ko.applyBindings(viewModel);
-
+                    loadSudokuById(viewModel.CurrentSudoku().SudokuId);
                 },
                 400 /* BadRequest */: function (jqxhr) {
 
@@ -115,7 +138,7 @@
 
                     //Load it again
                     //Is it necessary? how about bindings?
-                    loadSudoku(viewModel.CurrentSudoku().SudokuId);
+                    loadSudokuById(viewModel.CurrentSudoku().SudokuId);
 
                 },
                 400 /* BadRequest */: function (jqxhr) {
@@ -131,14 +154,17 @@
 
     //Square input focus + hover
     $("input.square").live('focus', function () { $(this).select(); } );
-    $("input.square").live({ mouseenter: function () { $(this).addClass('selectedSquare'); }, mouseleave: function () { $(this).removeClass('selectedSquare'); } });
+    $("input.square").live({ mouseenter: function () { $(this).addClass('selected'); }, mouseleave: function () { $(this).removeClass('selected'); } });
 
     //Square input change
     $("input.square").live('change', function () {
 
-        var squareId = $(this).data('squareId');
-        var number = $(this).val();
+        //Get the values
+        var square = $(this);
+        var squareId = square.data('squareId');
+        var number = square.val();
 
+        //Prepare post data
         var squareContainer = { SquareId: squareId, Number: number };
         var json = JSON.stringify(squareContainer);
 
@@ -151,11 +177,18 @@
             statusCode: {
                 200 /*OK*/: function (data) {
 
-                    //Apply?
-                    //ko.applyBindings(viewModel);
+                    //If it it's "Ready", then it must use "user" class, instead of "initial"
+                    //TODO Can we use more general approach - when it's "Ready", then all squares defualt class will be "user"?
+                    if (viewModel.CurrentSudoku().Ready) {
+                        square.attr('class', square.attr('class').replace('initial', 'user'));
+                    }
 
-                    //TODO How to update UI, in case of AutoSolve?
-
+                    //If it's "AutoSolve", load it from the server
+                    if (viewModel.CurrentSudoku().AutoSolve) {
+                        //Load it again
+                        //Is it necessary? how about bindings?
+                        loadSudokuById(viewModel.CurrentSudoku().SudokuId);
+                    }
                 },
                 400 /* BadRequest */: function (jqxhr) {
 
@@ -169,10 +202,13 @@
     });
 
     //Load sudoku list
-    loadSudokuList();
+    //loadSudokuList();
 
     //Load default (first) sudoku
-    loadSudoku(1);
+    //loadSudokuById(1);
+
+    //TODO !!!!
+    loadInitialData();
 });
 
 function initModel()
@@ -189,68 +225,74 @@ function loadSudokuList()
 {
     viewModel.SudokuList = ko.observableArray([]);
 
-    $.get('/api/SudokuApi/list', function (data) {
-        viewModel.SudokuList(data);
+    $.get('/api/SudokuApi/list', function (sudokuList) {
+        viewModel.SudokuList(sudokuList);
 
         ko.applyBindings(viewModel);
     });
 }
 
-function loadSudoku(sudokuId)
+function loadSudokuById(sudokuId)
 {
-    viewModel.CurrentSudoku = ko.observable(null);
-    viewModel.CurrentHorizontalGroupList = ko.observableArray([]);
-
     //Get sudoku
-    $.get('/api/SudokuApi/item/' + sudokuId, function (data) {
-        viewModel.CurrentSudoku(data);
-
-        ko.applyBindings(viewModel);
-    });
-
-    //Get the squares!
-    //TODO Item and the squares can be retrieved together? Or remove the list from the first one!
-    $.get('/api/SudokuApi/squaretypegroups/' + sudokuId, function (data) {
-        viewModel.CurrentHorizontalGroupList(data);
-
-        ko.applyBindings(viewModel);
-
-        //Square group styling
-        //TODO Is it possible to do it just once?
-        $("div.groupItem:odd > .square").addClass('odd');
-
+    $.get('/api/SudokuApi/item/' + sudokuId, function (sudoku) {
+        loadSudoku(sudoku);
     });
 }
 
-//TODO This is almost the same with the above ?!
-function loadSudokuByData(sudoku)
+function loadSudoku(sudoku)
 {
     viewModel.CurrentSudoku = ko.observable(null);
     viewModel.CurrentHorizontalGroupList = ko.observableArray([]);
 
     //Load sudoku
     viewModel.CurrentSudoku(sudoku);
-    ko.applyBindings(viewModel);
+    //ko.applyBindings(viewModel);
 
     //Get the squares!
-    //TODO Item and the squares can be retrieved together? Or remove the list from the first one!
     $.get('/api/SudokuApi/squaretypegroups/' + sudoku.SudokuId, function (list) {
         viewModel.CurrentHorizontalGroupList(list);
+        //viewModel.CurrentSudoku.Groups(list);
 
         ko.applyBindings(viewModel);
 
         //Square group styling
         //TODO Is it possible to do it just once?
         $("div.groupItem:odd > .square").addClass('odd');
-
-
-        //$("div.groupItem:odd > .square").addClass('odd');
-
-
     });
 }
 
-function determineClassByAssignType(type)
-{
-    alert('type: ' + type);
+//TODO !!!
+function loadInitialData() {
+
+    //Initial values
+    viewModel.SudokuList = ko.observableArray([]);
+    viewModel.CurrentSudoku = ko.observable(null);
+    viewModel.CurrentHorizontalGroupList = ko.observableArray([]);
+
+    //Get list
+    $.get('/api/SudokuApi/list', function (sudokuList) {
+        viewModel.SudokuList(sudokuList);
+
+        //Get sudoku
+        $.get('/api/SudokuApi/item/' + 1, function (sudoku) {
+
+            viewModel.CurrentSudoku(sudoku);
+
+            //Get squares
+            $.get('/api/SudokuApi/squaretypegroups/' + 1, function (list) {
+
+                viewModel.CurrentHorizontalGroupList(list);
+
+                ko.applyBindings(viewModel);
+
+                //Square group styling
+                //TODO Is it possible to do it just once?
+                $("div.groupItem:odd > .square").addClass('odd');
+            });
+
+        });
+
+    });
+
 }

@@ -14,58 +14,83 @@
     </div>
     <div class="contentContainer">
         <div class="contentLeft">
-            To Do;
+            <strong>To Do</strong>
             <br />
-            . "availability" - "numbers" - "potentials"<br />
+            . "availability" - "numbers" - "potentials"
+            <br />
             . is it possible to not to retrieve, if the value is 0?
-            <br />
-            . try to merge "get item" & "get horizontal" + is it possible to pass only the squares
-            that have value? (not zero)
             <br />
             . validation + error cases!
             <br />
-            . improve styling! - general content + assign type colors!<br />
-            initial assign type is not used, it's always user type! - try to use it, but we need a flag like "Sudoku Ready" kind of..<br />
+            . improve styling! - general content + use jQuery animations ?!<br />
             in general styling of assign type is bit ugly, try to improve
-            <br />
-            . clean up!
             <br />
             . add samples for different sizes - 4 + 9 (OK) + 16 + 25?
             <br />
+            . clean up!
+            <br />
+            now there is loadInitialData() function, which merges loadSudokuList + loadSudokuId(1) functions..<br />
+            islemleri birbirlerinin ardindan yapiliyor olmalari pek muhim, obur turlu sorun cikiyor.
+            bir sekilde bunun duzgun bir yolunu bul.. su anda newSudoku buna uymuyor vs.<br />
+            bir de applyBindings() bir kere cagirilmasi gerekiyor gibi? - toggleAutoSolve'da tekrar cagiriyoruz misal, cagirmadan halletmek mumkun mu? <br />
+            currentgroups, currentsudoku'nun memberi olabilir mi? <br />
+            en son template kullanmaya basladik, onu da kontrol et, gelistir vs.<br />
+            sonra "numbers" ve "potentials" ile devam et!
+            <br />
             <br />
             <strong>Sudoku List</strong>
-            <ul data-bind="template: {name: 'sudokuListItemTemplate', foreach: SudokuList}">
+            <ul data-bind="template: {name: 'sudokulist-item-template', foreach: SudokuList}">
             </ul>
             <a class="newSudoku" href="#">Create new sudoku</a><a class="resetSamples" href="#">Reset samples</a>
         </div>
         <div class="contentRight">
-            <div data-bind="visible: CurrentSudoku() != null">
-                Sudoku Id: <span data-bind="text: CurrentSudoku() != null ? CurrentSudoku().SudokuId : 0 "></span>
+            <div data-bind="visible: CurrentSudoku, template: {name: 'sudoku-details-template', data: CurrentSudoku }" />
+        </div>
+
+        <script id="sudoku-details-template" type="text/html">
+
+                <strong>Details</strong><br />
+                Sudoku Id: <span data-bind=" text: SudokuId"></span>
+            
                 <br />
-                Autosolve: <a class="toggleAutoSolve" data-bind="attr: { 'data-sudoku-id': CurrentSudoku() != null ? CurrentSudoku().SudokuId : 0 }"
-                    href="#"><span data-bind="text: CurrentSudoku() != null ? CurrentSudoku().AutoSolve.toString().toUpperCase() : 'false' "></span>
+                Ready: <a class="toggleReady" data-bind="attr: { 'data-sudoku-id': 0 }" href="#">
+                    <span data-bind="text: this ? Ready ? 'True' : 'False' : '' "></span>
                     </a>
-                <div class="solve" data-bind="visible: CurrentSudoku() != null && !CurrentSudoku().AutoSolve">
-                    <span> - </span>
-                    <a class="solve" data-bind="attr: { 'data-sudoku-id': CurrentSudoku() != null ? CurrentSudoku().SudokuId : 0 }" href="#">Solve Now</a>
+                <br />
+                <div class="solvePanel" data-bind="visible: Ready">
+                    Autosolve: <a class="toggleAutoSolve" data-bind="attr: { 'data-sudoku-id': SudokuId }"
+                        href="#"><span data-bind="text: AutoSolve ? 'True' : 'False'" />
+                        </a>
+                    <div class="solve" data-bind="visible: !AutoSolve">
+                        <span> - </span>
+                        <a class="solve" data-bind="attr: { 'data-sudoku-id': SudokuId }" href="#">Solve Now</a>
+                    </div>
                 </div>
                 <br />
-                <div data-bind="template: {name: 'groupListItemTemplate', foreach: CurrentHorizontalGroupList}"
+                <strong>Legend</strong><br />
+                <span class="initial">Initial</span><br />
+                <span class="user">User</span><br />
+                <span class="solver">Solver </span>
+                <br />
+                <br />
+                <div data-bind="template: {name: 'grouplist-item-template', foreach: viewModel.CurrentHorizontalGroupList}"
                     class="groupList" />
-            </div>
-        </div>
-        <script id="sudokuListItemTemplate" type="text/html">
-            <li class="sudokuItem"><a class="load" data-bind="attr: { 'data-sudoku-id': SudokuId }"
-                href="#">Id: <span data-bind="text: SudokuId"></span></a></li>
+
         </script>
-        <script id="groupListItemTemplate" type="text/html">
-            <div data-bind="template: {name: 'squareItemTemplate', foreach: Squares}" class="groupItem" />
+
+        <script id="sudokulist-item-template" type="text/html">
+            <li class="sudokuitem">
+                <a class="load" data-bind="attr: { 'data-sudoku-id': SudokuId }" href="#">
+                    Id: <span data-bind="text: SudokuId"></span>
+                </a>
+            </li>
         </script>
-        <script id="squareItemTemplate" type="text/html">
-            
-            <input data-bind="attr: { 'data-square-id': SquareId },value: Number != 0 ? Number : '', attr: { 'class': (AssignType == 0) ? 'square squareAssignTypeInitial' :  (AssignType == 1) ? 'square squareAssignTypeInitial' : 'square squareAssignTypeSolver' } " />
-            
-            <!-- <input data-bind="attr: { 'data-square-id': SquareId}, value: Number != 0 ? Number : '', AssignType == 0 ? class='square.squareAssignTypeInitial : AssignType == 1 ? 'square.squareAssignTypeUser' : 'square.squareAssignTypeSolver' " /> -->
+        <script id="grouplist-item-template" type="text/html">
+            <div data-bind="template: {name: 'squareitem-template', foreach: Squares}" class="groupItem" />
+        </script>
+        <script id="squareitem-template" type="text/html">
+
+            <input data-bind="attr: { 'data-square-id': SquareId, 'class': (AssignType == 0) ? 'square initial' :  (AssignType == 1) ? 'square user' : 'square solver' },value: Number != 0 ? Number : ''" />
 
         </script>
     </div>

@@ -215,6 +215,16 @@ namespace OSP.SudokuSolver.WebApp.Models
             cont8.SetSudoku(sample8);
             cont9.SetSudoku(sample9);
 
+            cont1.ToggleReady();
+            cont2.ToggleReady();
+            cont3.ToggleReady();
+            cont4.ToggleReady();
+            cont5.ToggleReady();
+            cont6.ToggleReady();
+            cont7.ToggleReady();
+            cont8.ToggleReady();
+            cont9.ToggleReady();
+
             ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont1);
             ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont2);
             ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont3);

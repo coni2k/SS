@@ -119,7 +119,6 @@ namespace OSP.SudokuSolver.WebApp.Controllers
 
             //Sudoku
             var sudoku = new Sudoku(9);
-            sudoku.AutoSolve = true;
 
             //New container
             var container = new SudokuContainer();
@@ -151,6 +150,18 @@ namespace OSP.SudokuSolver.WebApp.Controllers
                 //Return a message !!!!!
                 throw new HttpResponseException(HttpStatusCode.InternalServerError);
             }
+        }
+
+        [HttpPost]
+        [ActionName("toggleready")]
+        public HttpResponseMessage ToggleReady(int id)
+        {
+            var container = ValidateAndGetSudokuContainer(id);
+
+            container.ToggleReady();
+
+            var response = new HttpResponseMessage<SudokuContainer>(container, HttpStatusCode.OK);
+            return response;
         }
 
         //We have to put action; update square and toggleautosolve
