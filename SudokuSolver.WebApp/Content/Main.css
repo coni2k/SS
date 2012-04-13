@@ -94,17 +94,17 @@ h5, h6 {
 ----------------------------------------------------------*/
 .contentContainer {
     width: 100%;
-    margin: auto;
+    margin: 0 auto;
     overflow: auto;
 }
 
 .contentLeft {
-    width: 50%;
+    width: 30%;
     float: left;
 }
 
 .contentRight {
-    width: 50%;
+    width: 70%;
     float: right;
 }
 
@@ -119,10 +119,20 @@ h5, h6 {
     margin-bottom: 5px;
 }
 
-.groupList {
+div.solve {
+    display: inline;
+}
+
+#legendPanel {
+    margin: 20px 0 0 0;
+}
+
+#groupsPanel {
     width: 474px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
     border: 1px solid gray;
     overflow: auto;
+    float: left;
+    margin: 20px 20px 0 0;
 }
 
 .groupItem {
@@ -166,8 +176,12 @@ h5, h6 {
         color: Red;
     }
 
-div.solve {
-    display: inline;
+#numbersPanel {
+    margin: 20px 20px 0 0;
+}
+
+#potentialsPanel {
+    margin: 20px 20px 0 0;
 }
 
 #body {

@@ -200,8 +200,8 @@ namespace OSP.SudokuSolver.WebApp.Controllers
         }
 
         [HttpPost]
-        [ActionName("resetsamples")]
-        public HttpResponseMessage ResetSamples()
+        [ActionName("reset")]
+        public HttpResponseMessage Reset()
         {
             CacheManager.LoadSamples();
 

@@ -1,12 +1,12 @@
 ﻿$(function () {
 
     //Init model
-    initModel();
+    initModels();
 
     /* Event handlers */
 
     //Load sudoku
-    $("a.load").live('click', function () {
+    $("a.loadSudoku").live('click', function () {
         //Get the current id from UI
         var sudokuId = $(this).data('sudokuId');
 
@@ -14,7 +14,7 @@
     });
 
     //New sudoku
-    $("a.newSudoku").live('click', function () {
+    $("a#newSudoku").live('click', function () {
 
         $.ajax({
             url: '/api/SudokuApi/newsudoku',
@@ -22,14 +22,14 @@
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             statusCode: {
-                201 /*Created*/: function (data) {
+                201 /*Created*/: function (newSudoku) {
 
-                    //Load list again
-                    //Is it the correct way of doing it, how about bindings?
-                    loadSudokuList();
+                    //Add the item to the list
+                    listModel.SudokuList.push(newSudoku);
 
-                    //Load sudoku?
-                    loadSudoku(data);
+                    //Load the sudoku
+                    loadSudoku(newSudoku);
+
                 },
                 400 /* BadRequest */: function (jqxhr) {
 
@@ -42,25 +42,20 @@
         });
     });
 
-    //Reset samples
-    $("a.resetSamples").live('click', function () {
+    //Reset list
+    $("a#resetList").live('click', function () {
 
         $.ajax({
-            url: '/api/SudokuApi/resetsamples',
+            url: '/api/SudokuApi/reset',
             cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             statusCode: {
                 200 /*OK*/: function (data) {
 
-                    //Load list again
-                    //Is it the correct way of doing it, how about bindings?
-                    //loadSudokuList();
+                    //Load the app again
+                    loadApplication();
 
-                    //Load default (first) sudoku
-                    //loadSudokuById(1);
-
-                    loadInitialData();
                 },
                 400 /* BadRequest */: function (jqxhr) {
 
@@ -74,10 +69,10 @@
     });
 
     //Toggle ready
-    $("a.toggleReady").live('click', function () {
+    $("a#toggleReady").live('click', function () {
 
         $.ajax({
-            url: '/api/SudokuApi/toggleready/' + viewModel.CurrentSudoku().SudokuId,
+            url: '/api/SudokuApi/toggleready/' + detailsModel.Sudoku().SudokuId,
             cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -85,8 +80,12 @@
                 200 /*OK*/: function (data) {
 
                     //Update UI
-                    viewModel.CurrentSudoku().Ready = !viewModel.CurrentSudoku().Ready;
-                    ko.applyBindings(viewModel);
+                    detailsModel.Sudoku().Ready = !detailsModel.Sudoku().Ready;
+
+                    //Bind
+                    //TODO This is necessary? Why existing bindings doesn't work, like in List.push()?
+                    ko.applyBindings(detailsModel.Sudoku, document.getElementById("detailsPanel"));
+
                 },
                 400 /* BadRequest */: function (jqxhr) {
 
@@ -99,10 +98,10 @@
     });
 
     //Toggle auto solve
-    $("a.toggleAutoSolve").live('click', function () {
+    $("a#toggleAutoSolve").live('click', function () {
 
         $.ajax({
-            url: '/api/SudokuApi/toggleautosolve/' + viewModel.CurrentSudoku().SudokuId,
+            url: '/api/SudokuApi/toggleautosolve/' + detailsModel.Sudoku().SudokuId,
             cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -110,10 +109,14 @@
                 200 /*OK*/: function (data) {
 
                     //Update UI
-                    //viewModel.CurrentSudoku().AutoSolve = !viewModel.CurrentSudoku().AutoSolve;
+                    detailsModel.Sudoku().AutoSolve = !detailsModel.Sudoku().AutoSolve;
 
-                    //Load sudoku?
-                    loadSudokuById(viewModel.CurrentSudoku().SudokuId);
+                    if (detailsModel.Sudoku().AutoSolve) {
+                        //Load it from server to get the updates
+                        loadSudokuById(detailsModel.Sudoku().SudokuId);
+                    } else {
+                        ko.applyBindings(detailsModel.Sudoku, document.getElementById("detailsPanel"));
+                    }
                 },
                 400 /* BadRequest */: function (jqxhr) {
 
@@ -126,19 +129,18 @@
     });
 
     //Solve sudoku
-    $("a.solve").live('click', function () {
+    $("a#solve").live('click', function () {
 
         $.ajax({
-            url: '/api/SudokuApi/solve/' + viewModel.CurrentSudoku().SudokuId,
+            url: '/api/SudokuApi/solve/' + detailsModel.Sudoku().SudokuId,
             cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             statusCode: {
                 200 /*OK*/: function (data) {
 
-                    //Load it again
-                    //Is it necessary? how about bindings?
-                    loadSudokuById(viewModel.CurrentSudoku().SudokuId);
+                    //Load it from the server
+                    loadSudokuById(detailsModel.Sudoku().SudokuId);
 
                 },
                 400 /* BadRequest */: function (jqxhr) {
@@ -153,7 +155,7 @@
     });
 
     //Square input focus + hover
-    $("input.square").live('focus', function () { $(this).select(); } );
+    $("input.square").live('focus', function () { $(this).select(); });
     $("input.square").live({ mouseenter: function () { $(this).addClass('selected'); }, mouseleave: function () { $(this).removeClass('selected'); } });
 
     //Square input change
@@ -169,7 +171,7 @@
         var json = JSON.stringify(squareContainer);
 
         $.ajax({
-            url: '/api/SudokuApi/updatesquare/' + viewModel.CurrentSudoku().SudokuId,
+            url: '/api/SudokuApi/updatesquare/' + detailsModel.Sudoku().SudokuId,
             cache: false, //?
             type: 'POST',
             data: json,
@@ -179,15 +181,13 @@
 
                     //If it it's "Ready", then it must use "user" class, instead of "initial"
                     //TODO Can we use more general approach - when it's "Ready", then all squares defualt class will be "user"?
-                    if (viewModel.CurrentSudoku().Ready) {
+                    if (detailsModel.Sudoku().Ready) {
                         square.attr('class', square.attr('class').replace('initial', 'user'));
                     }
 
                     //If it's "AutoSolve", load it from the server
-                    if (viewModel.CurrentSudoku().AutoSolve) {
-                        //Load it again
-                        //Is it necessary? how about bindings?
-                        loadSudokuById(viewModel.CurrentSudoku().SudokuId);
+                    if (detailsModel.Sudoku().AutoSolve) {
+                        loadSudokuById(detailsModel.Sudoku().SudokuId);
                     }
                 },
                 400 /* BadRequest */: function (jqxhr) {
@@ -201,98 +201,95 @@
         });
     });
 
-    //Load sudoku list
-    //loadSudokuList();
-
-    //Load default (first) sudoku
-    //loadSudokuById(1);
-
-    //TODO !!!!
-    loadInitialData();
+    //Load the app
+    loadApplication();
 });
 
-function initModel()
-{
-    //Init model
-    viewModel = {
-        SudokuList: ko.observableArray([]),
-        CurrentSudoku: ko.observable(null),
-        CurrentHorizontalGroupList: ko.observableArray([])
-    };
+function initModels() {
+    listModel = { SudokuList: ko.observableArray([]) };
+
+    detailsModel = { Sudoku: ko.observable(null) };
+
+    groupsModel = { Groups: ko.observableArray([]) };
+
+    numbersModel = { Numbers: ko.observableArray([]) };
+
+    potentialsModel = { Potentials: ko.observableArray([]) };
 }
 
-function loadSudokuList()
-{
-    viewModel.SudokuList = ko.observableArray([]);
+function loadApplication() {
+    //Load sudoku list
+    loadSudokuList();
 
+    //Load default (first) sudoku
+    loadSudokuById(1);
+}
+
+function loadSudokuList() {
     $.get('/api/SudokuApi/list', function (sudokuList) {
-        viewModel.SudokuList(sudokuList);
-
-        ko.applyBindings(viewModel);
+        listModel.SudokuList = ko.observableArray([]);
+        listModel.SudokuList(sudokuList);
+        ko.applyBindings(listModel, document.getElementById("listPanel"));
     });
 }
 
-function loadSudokuById(sudokuId)
-{
+function loadSudokuById(sudokuId) {
     //Get sudoku
     $.get('/api/SudokuApi/item/' + sudokuId, function (sudoku) {
         loadSudoku(sudoku);
     });
 }
 
-function loadSudoku(sudoku)
-{
-    viewModel.CurrentSudoku = ko.observable(null);
-    viewModel.CurrentHorizontalGroupList = ko.observableArray([]);
+function loadSudoku(sudoku) {
 
     //Load sudoku
-    viewModel.CurrentSudoku(sudoku);
-    //ko.applyBindings(viewModel);
+    detailsModel.Sudoku = ko.observable(null);
+    detailsModel.Sudoku(sudoku);
+    ko.applyBindings(detailsModel.Sudoku, document.getElementById("detailsPanel"));
 
-    //Get the squares!
-    $.get('/api/SudokuApi/squaretypegroups/' + sudoku.SudokuId, function (list) {
-        viewModel.CurrentHorizontalGroupList(list);
-        //viewModel.CurrentSudoku.Groups(list);
+    //Load groups
+    loadGroups(sudoku.SudokuId);
 
-        ko.applyBindings(viewModel);
+    //Load numbers
+    loadNumbers(sudoku.SudokuId);
+
+    //Load potentials
+    loadPotentials(sudoku.SudokuId);
+}
+
+function loadGroups(sudokuId) {
+
+    $.get('/api/SudokuApi/squaretypegroups/' + sudokuId, function (groupList) {
+
+        groupsModel.Groups = ko.observableArray([]);
+        groupsModel.Groups(groupList);
+        ko.applyBindings(groupsModel, document.getElementById("groupsPanel"));
 
         //Square group styling
         //TODO Is it possible to do it just once?
         $("div.groupItem:odd > .square").addClass('odd');
+
     });
 }
 
-//TODO !!!
-function loadInitialData() {
+function loadNumbers(sudokuId) {
 
-    //Initial values
-    viewModel.SudokuList = ko.observableArray([]);
-    viewModel.CurrentSudoku = ko.observable(null);
-    viewModel.CurrentHorizontalGroupList = ko.observableArray([]);
+    $.get('/api/SudokuApi/numbers/' + sudokuId, function (numberList) {
 
-    //Get list
-    $.get('/api/SudokuApi/list', function (sudokuList) {
-        viewModel.SudokuList(sudokuList);
-
-        //Get sudoku
-        $.get('/api/SudokuApi/item/' + 1, function (sudoku) {
-
-            viewModel.CurrentSudoku(sudoku);
-
-            //Get squares
-            $.get('/api/SudokuApi/squaretypegroups/' + 1, function (list) {
-
-                viewModel.CurrentHorizontalGroupList(list);
-
-                ko.applyBindings(viewModel);
-
-                //Square group styling
-                //TODO Is it possible to do it just once?
-                $("div.groupItem:odd > .square").addClass('odd');
-            });
-
-        });
+        numbersModel.Numbers = ko.observableArray([]);
+        numbersModel.Numbers(numberList);
+        ko.applyBindings(numbersModel, document.getElementById("numbersPanel"));
 
     });
+}
 
+function loadPotentials(sudokuId) {
+
+    $.get('/api/SudokuApi/potentials/' + sudokuId, function (potentialList) {
+
+        potentialsModel.Potentials = ko.observableArray([]);
+        potentialsModel.Potentials(potentialList);
+        ko.applyBindings(potentialsModel, document.getElementById("potentialsPanel"));
+
+    });
 }

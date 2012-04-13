@@ -16,82 +16,97 @@
         <div class="contentLeft">
             <strong>To Do</strong>
             <br />
-            . "availability" - "numbers" - "potentials"
+            . "availability"
             <br />
             . is it possible to not to retrieve, if the value is 0?
+            sudoku + availability can be generated without data from server. then the data can be put on top of it.
             <br />
             . validation + error cases!
             <br />
-            . improve styling! - general content + use jQuery animations ?!<br />
+            . improve styling! - general content + use jQuery animations ?!
+            <br />
+            there can be nice "List" template with header, odd + even seperation etc.
+            <br />
             in general styling of assign type is bit ugly, try to improve
+            <br />
+            . replace "0" with "Empty" text in Number list
             <br />
             . add samples for different sizes - 4 + 9 (OK) + 16 + 25?
             <br />
-            . clean up!
+            . clean up; css etc.!
             <br />
-            now there is loadInitialData() function, which merges loadSudokuList + loadSudokuId(1) functions..<br />
-            islemleri birbirlerinin ardindan yapiliyor olmalari pek muhim, obur turlu sorun cikiyor.
-            bir sekilde bunun duzgun bir yolunu bul.. su anda newSudoku buna uymuyor vs.<br />
-            bir de applyBindings() bir kere cagirilmasi gerekiyor gibi? - toggleAutoSolve'da tekrar cagiriyoruz misal, cagirmadan halletmek mumkun mu? <br />
-            currentgroups, currentsudoku'nun memberi olabilir mi? <br />
-            en son template kullanmaya basladik, onu da kontrol et, gelistir vs.<br />
-            sonra "numbers" ve "potentials" ile devam et!
+            . unit test projects!
             <br />
             <br />
-            <strong>Sudoku List</strong>
-            <ul data-bind="template: {name: 'sudokulist-item-template', foreach: SudokuList}">
-            </ul>
-            <a class="newSudoku" href="#">Create new sudoku</a><a class="resetSamples" href="#">Reset samples</a>
+            <div id="listPanel">
+                <strong>Sudoku List</strong>
+                <ul data-bind="template: {name: 'sudokulist-template', foreach: listModel.SudokuList}">
+                </ul>
+                <a id="newSudoku" href="#">New sudoku</a><a id="resetList" href="#">Reset list</a>
+            </div>
         </div>
-        <div class="contentRight">
-            <div data-bind="visible: CurrentSudoku, template: {name: 'sudoku-details-template', data: CurrentSudoku }" />
-        </div>
-
-        <script id="sudoku-details-template" type="text/html">
-
-                <strong>Details</strong><br />
+        <div id="contentRight" class="contentRight">
+            <div id="detailsPanel">
+                <strong>Details</strong>
+                <br />
                 Sudoku Id: <span data-bind=" text: SudokuId"></span>
-            
                 <br />
-                Ready: <a class="toggleReady" data-bind="attr: { 'data-sudoku-id': 0 }" href="#">
-                    <span data-bind="text: this ? Ready ? 'True' : 'False' : '' "></span>
-                    </a>
+                Ready: <a id="toggleReady" data-bind="attr: { 'data-sudoku-id': SudokuId }" href="#">
+                    <span data-bind="text: this ? Ready ? 'True' : 'False' : '' "></span></a>
                 <br />
-                <div class="solvePanel" data-bind="visible: Ready">
-                    Autosolve: <a class="toggleAutoSolve" data-bind="attr: { 'data-sudoku-id': SudokuId }"
-                        href="#"><span data-bind="text: AutoSolve ? 'True' : 'False'" />
-                        </a>
+                <div id="solvePanel" data-bind="visible: Ready">
+                    Autosolve: <a id="toggleAutoSolve" data-bind="attr: { 'data-sudoku-id': SudokuId }"
+                        href="#"><span data-bind="text: AutoSolve ? 'True' : 'False'"></span></a>
                     <div class="solve" data-bind="visible: !AutoSolve">
-                        <span> - </span>
-                        <a class="solve" data-bind="attr: { 'data-sudoku-id': SudokuId }" href="#">Solve Now</a>
+                        &nbsp;-&nbsp; <a id="solve" data-bind="attr: { 'data-sudoku-id': SudokuId }" href="#">
+                            Solve now</a>
                     </div>
                 </div>
+            </div>
+            <div id="legendPanel">
+                <strong>Legend</strong>
                 <br />
-                <strong>Legend</strong><br />
-                <span class="initial">Initial</span><br />
-                <span class="user">User</span><br />
-                <span class="solver">Solver </span>
+                <span class="initial">Initial</span>
                 <br />
+                <span class="user">User</span>
                 <br />
-                <div data-bind="template: {name: 'grouplist-item-template', foreach: viewModel.CurrentHorizontalGroupList}"
-                    class="groupList" />
-
+                <span class="solver">Solver</span>
+            </div>
+            <div id="groupsPanel" data-bind="template: {name: 'groups-template', foreach: groupsModel.Groups}">
+            </div>
+            <div id="numbersPanel">
+                <strong>Numbers</strong>
+                <br />
+                <div data-bind="template: {name: 'numbers-template', foreach: numbersModel.Numbers}">
+                </div>
+            </div>
+            <div id="potentialsPanel">
+                <strong>Potentials</strong>
+                <br />
+                <div data-bind="template: {name: 'potentials-template', foreach: potentialsModel.Potentials}">
+                </div>
+            </div>
+        </div>
+        <script id="sudokulist-template" type="text/html">
+            <li class="sudokuItem"><a class="loadSudoku" data-bind="attr: { 'data-sudoku-id': SudokuId }"
+                href="#">Id: <span data-bind="text: SudokuId"></span></a></li>
         </script>
-
-        <script id="sudokulist-item-template" type="text/html">
-            <li class="sudokuitem">
-                <a class="load" data-bind="attr: { 'data-sudoku-id': SudokuId }" href="#">
-                    Id: <span data-bind="text: SudokuId"></span>
-                </a>
-            </li>
-        </script>
-        <script id="grouplist-item-template" type="text/html">
-            <div data-bind="template: {name: 'squareitem-template', foreach: Squares}" class="groupItem" />
+        <script id="groups-template" type="text/html">
+            <div class="groupItem" data-bind="template: {name: 'squareitem-template', foreach: Squares}">
+            </div>
         </script>
         <script id="squareitem-template" type="text/html">
-
             <input data-bind="attr: { 'data-square-id': SquareId, 'class': (AssignType == 0) ? 'square initial' :  (AssignType == 1) ? 'square user' : 'square solver' },value: Number != 0 ? Number : ''" />
-
+        </script>
+        <script id="numbers-template" type="text/html">
+            <div class="numberItem">
+                <span data-bind="text: 'Number: ' + Value + ' - Count: ' + Count"></span>
+            </div>
+        </script>
+        <script id="potentials-template" type="text/html">
+            <div class="potentialItem">
+                <span data-bind="text: 'SquareId: ' + SquareId + ' - PotentialValue: ' + PotentialValue + ' - PotentialType: ' + PotentialType"></span>
+            </div>
         </script>
     </div>
 </body>

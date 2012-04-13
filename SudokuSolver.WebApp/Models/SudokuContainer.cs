@@ -110,7 +110,7 @@ namespace OSP.SudokuSolver.WebApp.Models
             var list = new List<PotentialContainer>();
 
             foreach (var p in Sudoku.PotentialSquares.OrderBy(p => p.Square.Id))
-                list.Add(new PotentialContainer() { SquareId = p.Square.Id, SquareValue = p.Number.Value, PotentialValue = p.Number.Value, PotentialType = p.PotentialType } );
+                list.Add(new PotentialContainer() { SquareId = p.Square.Id, PotentialValue = p.Number.Value, PotentialType = p.PotentialType } );
 
             return list;
         }

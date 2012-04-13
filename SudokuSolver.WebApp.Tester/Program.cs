@@ -250,7 +250,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
                 Console.WriteLine("There are no potential squares");
 
             foreach (var potential in potentials)
-                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", potential.SquareId.ToString("D2"), potential.SquareValue.ToString(), potential.PotentialValue.ToString(), potential.PotentialType.ToString()));
+                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", potential.SquareId.ToString("D2"), potential.SquareGroupId.ToString(), potential.PotentialValue.ToString(), potential.PotentialType.ToString()));
         }
 
         static void ClearScreen()
