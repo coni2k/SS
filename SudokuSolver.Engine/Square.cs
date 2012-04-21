@@ -9,7 +9,7 @@ namespace OSP.SudokuSolver.Engine
         #region Members
 
         private IList<Number> _AvailableNumbers = null;
-        private IList<Group> _SquareGroups = new List<Group>(3);
+        private List<Group> _SquareGroups = new List<Group>(3);
 
         #endregion
 

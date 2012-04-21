@@ -300,6 +300,9 @@ namespace OSP.SudokuSolver.Engine
             if (number == null)
                 throw new Exception("Not a valid number");
 
+            if (square.SquareGroups.Any(sg => sg.Squares.Any(s => s.Number.Equals(number))))
+                throw new Exception("Not a valid assignment, the number is already in use in one of the related groups");
+
             //Set the number and type
             square.Update(number, type);
 
@@ -314,6 +317,15 @@ namespace OSP.SudokuSolver.Engine
         /// <param name="square"></param>
         void Square_NumberChanged(Square square)
         {
+            //Update potentials!
+            //Is it correct place to do this?
+            //And how about zero case?
+            if (!square.IsAvailable)
+            {
+                if (_PotentialSquares.Exists(p => p.Square.Id.Equals(square.Id)))
+                    _PotentialSquares.RemoveAll(p => p.Square.Id.Equals(square.Id));
+            }
+
             if (SquareNumberChanged != null)
                 SquareNumberChanged(square);
         }
@@ -322,15 +334,15 @@ namespace OSP.SudokuSolver.Engine
         /// When the PotentialSquare_Found event raises from a square or squareGroup, this method adds the potential square to the list.
         /// These squares will be checked in Solve method
         /// </summary>
-        /// <param name="square"></param>
-        void PotentialSquare_Found(Potential square)
+        /// <param name="potential"></param>
+        void PotentialSquare_Found(Potential potential)
         {
-            if (!_PotentialSquares.Exists(p => p.Square.Id.Equals(square.Square.Id)))
+            if (!_PotentialSquares.Exists(p => p.Square.Id.Equals(potential.Square.Id)))
             {
-                _PotentialSquares.Add(square);
+                _PotentialSquares.Add(potential);
 
                 if (PotentialSquareFound != null)
-                    PotentialSquareFound(square);
+                    PotentialSquareFound(potential);
             }
         }
 

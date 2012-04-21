@@ -1,20 +1,21 @@
 ﻿$(function () {
 
-    //Init model
+    //Initialize models
     initModels();
 
     /* Event handlers */
 
     //Load sudoku
-    $("a.loadSudoku").live('click', function () {
+    $(".loadSudoku").live('click', function () {
         //Get the current id from UI
         var sudokuId = $(this).data('sudokuId');
 
+        //Load
         loadSudokuById(sudokuId);
     });
 
     //New sudoku
-    $("a#newSudoku").live('click', function () {
+    $("#newSudoku").live('click', function () {
 
         $.ajax({
             url: '/api/SudokuApi/newsudoku',
@@ -26,6 +27,8 @@
 
                     //Add the item to the list
                     listModel.SudokuList.push(newSudoku);
+
+                    loadGrid(newSudoku.Size);
 
                     //Load the sudoku
                     loadSudoku(newSudoku);
@@ -43,7 +46,7 @@
     });
 
     //Reset list
-    $("a#resetList").live('click', function () {
+    $("#resetList").live('click', function () {
 
         $.ajax({
             url: '/api/SudokuApi/reset',
@@ -69,7 +72,7 @@
     });
 
     //Toggle ready
-    $("a#toggleReady").live('click', function () {
+    $("#toggleReady").live('click', function () {
 
         $.ajax({
             url: '/api/SudokuApi/toggleready/' + detailsModel.Sudoku().SudokuId,
@@ -98,7 +101,7 @@
     });
 
     //Toggle auto solve
-    $("a#toggleAutoSolve").live('click', function () {
+    $("#toggleAutoSolve").live('click', function () {
 
         $.ajax({
             url: '/api/SudokuApi/toggleautosolve/' + detailsModel.Sudoku().SudokuId,
@@ -113,7 +116,7 @@
 
                     if (detailsModel.Sudoku().AutoSolve) {
                         //Load it from server to get the updates
-                        loadSudokuById(detailsModel.Sudoku().SudokuId);
+                        loadSudoku(detailsModel.Sudoku());
                     } else {
                         ko.applyBindings(detailsModel.Sudoku, document.getElementById("detailsPanel"));
                     }
@@ -129,7 +132,7 @@
     });
 
     //Solve sudoku
-    $("a#solve").live('click', function () {
+    $("#solve").live('click', function () {
 
         $.ajax({
             url: '/api/SudokuApi/solve/' + detailsModel.Sudoku().SudokuId,
@@ -140,7 +143,7 @@
                 200 /*OK*/: function (data) {
 
                     //Load it from the server
-                    loadSudokuById(detailsModel.Sudoku().SudokuId);
+                    loadSudoku(detailsModel.Sudoku());
 
                 },
                 400 /* BadRequest */: function (jqxhr) {
@@ -154,17 +157,62 @@
         });
     });
 
+    //Toggle display options
+    $("#toggleDisplayOptions").live('click', function () {
+
+        //Toggle
+        detailsModel.Sudoku().DisplayOptions = !detailsModel.Sudoku().DisplayOptions;
+
+        //Update UI
+        //How about bindings?
+        $('#selectedDisplayOption').text(detailsModel.Sudoku().DisplayOptions ? 'Values' : 'IDs');
+
+        $('.squareId').toggle();
+        $('.squareValue').toggle();
+    });
+
     //Square input focus + hover
-    $("input.square").live('focus', function () { $(this).select(); });
-    $("input.square").live({ mouseenter: function () { $(this).addClass('selected'); }, mouseleave: function () { $(this).removeClass('selected'); } });
+    $(".squareItem").live({ mouseenter: function () { $(this).addClass('selected'); }, mouseleave: function () { $(this).removeClass('selected'); } });
+
+    //$(".squareValue").live('focus', function () { $(this).select(); });
+
+    //Keydown
+    $(".squareValue").live('keydown', function (event) {
+
+        // Allow only backspace and delete
+        if (event.keyCode == 9 || event.keyCode == 46 || event.keyCode == 8) {
+            // let it happen, don't do anything
+        }
+        else {
+            // Ensure that it is a number and stop the keypress
+            //TODO This is only for Size 9, for Size 4 it wouldn't work?!
+            //if (event.keyCode < 49 || (event.keyCode > 57 && event.keyCode < 97) || event.keyCode > 105) {
+            if (event.keyCode < 49 || event.keyCode > 57) {
+                    event.preventDefault();
+            }
+            else {
+
+                // Ensure that the value is smaller than sudoku size
+                var currentValue = $(this).val();
+                var newValue = currentValue + String.fromCharCode(event.keyCode);
+
+                if (newValue > detailsModel.Sudoku().Size)
+                    event.preventDefault();
+            }
+        }
+
+    });
 
     //Square input change
-    $("input.square").live('change', function () {
+    $(".squareValue").live('change', function () {
+
+        //Get the elements
+        var squareValue = $(this);
+        var squareItem = squareValue.closest('div');
 
         //Get the values
-        var square = $(this);
-        var squareId = square.data('squareId');
-        var number = square.val();
+        var squareId = squareValue.data('squareId');
+        var number = squareValue.val();
 
         //Prepare post data
         var squareContainer = { SquareId: squareId, Number: number };
@@ -182,12 +230,16 @@
                     //If it it's "Ready", then it must use "user" class, instead of "initial"
                     //TODO Can we use more general approach - when it's "Ready", then all squares defualt class will be "user"?
                     if (detailsModel.Sudoku().Ready) {
-                        square.attr('class', square.attr('class').replace('initial', 'user'));
+                        squareItem.attr('class', squareItem.attr('class').replace('initial', 'user'));
                     }
 
                     //If it's "AutoSolve", load it from the server
                     if (detailsModel.Sudoku().AutoSolve) {
-                        loadSudokuById(detailsModel.Sudoku().SudokuId);
+                        loadSudoku(detailsModel.Sudoku());
+                    }
+                    else {
+                        loadNumbers(detailsModel.Sudoku().SudokuId);
+                        loadPotentials(detailsModel.Sudoku().SudokuId);
                     }
                 },
                 400 /* BadRequest */: function (jqxhr) {
@@ -201,6 +253,66 @@
         });
     });
 
+    //Numbers
+    $(".numberItem").live({
+        mouseenter: function () {
+
+            //Get the value
+            var number = $(this).data('number');
+            number = number == 'Empty' ? number = '' : number;
+
+            //Highlights
+            $(this).addClass('selected');
+            $(".squareValue[value=" + number + "]").closest('div').addClass('selected');
+
+        }, mouseleave: function () {
+
+            //Get the value
+            var number = $(this).data('number');
+            number = number == 'Empty' ? number = '' : number;
+
+            //Remove highlights
+            $(this).removeClass('selected');
+            $(".squareValue[value=" + number + "]").closest('div').removeClass('selected');
+        }
+    });
+
+    //Potentials
+    $(".potentialItem").live({
+        mouseenter: function () {
+
+            var squareId = $(this).data('squareId');
+            var potentialValue = $(this).data('potentialValue');
+
+            //Self highlight
+            $(this).addClass('selected');
+
+            //Get the square and highlight
+            var squareItem = $('#squareItem' + squareId);
+            squareItem.addClass('selected');
+
+            //Get the value element + show the value - EXISTING VALUES WILL BE LOST!
+            var squareValue = $('#squareValue' + squareId);
+            squareValue.val(potentialValue);
+
+        }, mouseleave: function () {
+
+            var squareId = $(this).data('squareId');
+            var potentialValue = $(this).data('potentialValue');
+
+            //Remove self highlight
+            $(this).removeClass('selected');
+
+            //Get the square and remove highlight
+            var squareItem = $('#squareItem' + squareId);
+            squareItem.removeClass('selected');
+
+            //Get the value element + remove the value - EXISTING VALUES WILL BE LOST!
+            var squareValue = $('#squareValue' + squareId);
+            squareValue.val('');
+        }
+    });
+
     //Load the app
     loadApplication();
 });
@@ -210,7 +322,7 @@ function initModels() {
 
     detailsModel = { Sudoku: ko.observable(null) };
 
-    groupsModel = { Groups: ko.observableArray([]) };
+    gridModel = { Groups: ko.observableArray([]) };
 
     numbersModel = { Numbers: ko.observableArray([]) };
 
@@ -218,26 +330,80 @@ function initModels() {
 }
 
 function loadApplication() {
+
     //Load sudoku list
     loadSudokuList();
 
     //Load default (first) sudoku
-    loadSudokuById(1);
+    var sudokuId = 1;
+    $.get('/api/SudokuApi/item/' + sudokuId, function (sudoku) {
+
+        //Load grid
+        loadGrid(sudoku.Size);
+
+        //Load default (first) sudoku
+        loadSudoku(sudoku);
+
+    });
 }
 
 function loadSudokuList() {
+
     $.get('/api/SudokuApi/list', function (sudokuList) {
         listModel.SudokuList = ko.observableArray([]);
         listModel.SudokuList(sudokuList);
         ko.applyBindings(listModel, document.getElementById("listPanel"));
     });
+
+}
+
+function loadGrid(size) {
+
+    gridModel.Groups = ko.observableArray([]);
+
+    //Create an array for square type groups
+    var groups = new Array();
+    for (groupCounter = 1; groupCounter <= size; groupCounter++) {
+
+        //Create group
+        group = new Object();
+        group.GroupId = groupCounter;
+
+        //Squares of the group
+        var squares = new Array();
+        for (var squareCounter = 1; squareCounter <= size; squareCounter++) {
+
+            //Create square
+            var square = new Object();
+            square.SquareId = calculateSquareId(size, groupCounter, squareCounter);;
+            square.Number = 0;
+            squares.push(square);
+        }
+
+        group.Squares = squares;
+        groups.push(group);
+    }
+
+    gridModel.Groups(groups);
+
+    ko.applyBindings(gridModel, document.getElementById("gridPanel"));
+
+    //Styling of the square groups
+    $("div.groupItem:odd > .squareItem").addClass('odd');
+
+    //Debug
+    clearDebugPanel();
 }
 
 function loadSudokuById(sudokuId) {
-    //Get sudoku
+
     $.get('/api/SudokuApi/item/' + sudokuId, function (sudoku) {
+
+        loadGrid(sudoku.Size);
+
         loadSudoku(sudoku);
     });
+
 }
 
 function loadSudoku(sudoku) {
@@ -245,10 +411,11 @@ function loadSudoku(sudoku) {
     //Load sudoku
     detailsModel.Sudoku = ko.observable(null);
     detailsModel.Sudoku(sudoku);
+    detailsModel.Sudoku().DisplayOptions = true;
     ko.applyBindings(detailsModel.Sudoku, document.getElementById("detailsPanel"));
 
-    //Load groups
-    loadGroups(sudoku.SudokuId);
+    //Load used squares
+    loadUsedSquares(sudoku.SudokuId);
 
     //Load numbers
     loadNumbers(sudoku.SudokuId);
@@ -257,18 +424,36 @@ function loadSudoku(sudoku) {
     loadPotentials(sudoku.SudokuId);
 }
 
-function loadGroups(sudokuId) {
+//Is it possible to retrieve only the changes?
+//Is it possible to update gridModel? - learn more about knockout!
+function loadUsedSquares(sudokuId) {
 
-    $.get('/api/SudokuApi/squaretypegroups/' + sudokuId, function (groupList) {
+    $.get('/api/SudokuApi/usedsquares/' + sudokuId, function (usedSquareList) {
 
-        groupsModel.Groups = ko.observableArray([]);
-        groupsModel.Groups(groupList);
-        ko.applyBindings(groupsModel, document.getElementById("groupsPanel"));
+        $.each(usedSquareList, function () {
 
-        //Square group styling
-        //TODO Is it possible to do it just once?
-        $("div.groupItem:odd > .square").addClass('odd');
+            //Square item + square value
+            var squareItemId = '#squareItem' + this.SquareId;
+            var squareValueId = '#squareValue' + this.SquareId;
 
+            //Set the Number
+            $(squareValueId).val(this.Number);
+
+            //Assign type
+            switch (this.AssignType) {
+                case 0:
+                    $(squareItemId).removeClass('user').removeClass('solver').addClass('initial');
+                    break;
+
+                case 1:
+                    $(squareItemId).removeClass('initial').removeClass('solver').addClass('user');
+                    break;
+
+                case 2:
+                    $(squareItemId).removeClass('initial').removeClass('user').addClass('solver');
+                    break;
+            }
+        });
     });
 }
 
@@ -276,6 +461,8 @@ function loadNumbers(sudokuId) {
 
     $.get('/api/SudokuApi/numbers/' + sudokuId, function (numberList) {
 
+        //Zero value
+        numberList[0].Value = 'Empty';
         numbersModel.Numbers = ko.observableArray([]);
         numbersModel.Numbers(numberList);
         ko.applyBindings(numbersModel, document.getElementById("numbersPanel"));
@@ -292,4 +479,84 @@ function loadPotentials(sudokuId) {
         ko.applyBindings(potentialsModel, document.getElementById("potentialsPanel"));
 
     });
+}
+
+//Calculates the square id by using it's group + square position
+//This calculation is necessary just because the normal order of the squares (in Engine) goes horizontally;
+//If the order would be compatible with this UI (square group type based), this calculation wouldn't be necessary at all!
+//Current order of the squares in Engine;
+//1st group: 1-2-3-4-5-6-7-8-9
+//2nd group: 10-11-12-13-14-15-16-17-18
+//Instead of this;
+//1st group: 1-2-3 - 2nd group: 10-11-12
+//           4-5-6              13-14-15
+//           7-8-9              16-17-18
+function calculateSquareId(size, groupCounter, squareCounter) {
+
+    //Square root of the size
+    var sqrtSize = Math.sqrt(size);
+
+    //Small vertical modifier (on it's own group level);
+    //for square counter / modifier: 1 / 1
+    //                               2 / 2
+    //                               3 / 3
+    //                               4 / 1
+    //                               5 / 2
+    //                               6 / 3
+    //                               7 / 1
+    //                               8 / 2
+    //                               9 / 3
+    var smallVerticalModifier = squareCounter % sqrtSize == 0 ? sqrtSize : squareCounter % sqrtSize;
+
+    //Small horizontal modifier (on it's own group level);
+    //for square counter / index / modifier: 1 / 0 / 0
+    //                                       2 / 0 / 0
+    //                                       3 / 0 / 0
+    //                                       4 / 1 / 9
+    //                                       5 / 1 / 9
+    //                                       6 / 1 / 9
+    //                                       7 / 2 / 18
+    //                                       8 / 2 / 18
+    //                                       9 / 2 / 18
+    var smallHorizontalIndex = Math.floor((squareCounter - 1) / sqrtSize);
+    var smallHorizontalModifier = (smallHorizontalIndex * size);
+
+    //Big vertical modifier (on grid level);
+    //for group counter / index / modifier: 1 / 0 / 0
+    //                                      2 / 1 / 3
+    //                                      3 / 2 / 6
+    //                                      4 / 0 / 0
+    //                                      5 / 1 / 3
+    //                                      6 / 2 / 6
+    //                                      7 / 0 / 0
+    //                                      8 / 1 / 3
+    //                                      9 / 2 / 6
+    var bigVerticalIndex = (groupCounter % sqrtSize == 0 ? sqrtSize : groupCounter % sqrtSize) - 1;
+    var bigVerticalModifier = (bigVerticalIndex * sqrtSize);
+
+    //Big horizontal modifier (on grid level);
+    //for group counter / index / modifier: 1 / 0 / 0
+    //                                      2 / 0 / 0
+    //                                      3 / 0 / 0
+    //                                      4 / 1 / 27
+    //                                      5 / 1 / 27
+    //                                      6 / 1 / 27
+    //                                      7 / 2 / 54
+    //                                      8 / 2 / 54
+    //                                      9 / 2 / 54
+    var bigHorizontalIndex = Math.floor((groupCounter - 1) / sqrtSize);
+    var bigHorizontalModifier = (bigHorizontalIndex * size * sqrtSize);
+
+    //Sum all the modifiers and return
+    return (smallVerticalModifier + smallHorizontalModifier + bigVerticalModifier + bigHorizontalModifier);
+}
+
+function addDebugMessage(message) {
+    $('#debugPanel').html($('#debugPanel').html() + '<br>' + message);
+    $('#debugPanel').show();
+}
+
+function clearDebugPanel() {
+    $('#debugPanel').hide();
+    $('#debugPanel').html('');
 }

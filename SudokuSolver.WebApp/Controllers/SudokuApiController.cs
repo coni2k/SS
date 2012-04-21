@@ -98,7 +98,12 @@ namespace OSP.SudokuSolver.WebApp.Controllers
 
             //If there is no, throw an exception
             if (container == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+            {
+                var response = new HttpResponseMessage();
+                response.StatusCode = HttpStatusCode.NotFound;
+                response.Content = new StringContent("Sudoku not found");
+                throw new HttpResponseException(response);
+            }
 
             //Return
             return container;

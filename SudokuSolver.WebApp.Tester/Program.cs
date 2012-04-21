@@ -66,6 +66,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
                     case "update": UpdateSquare(parameters); break;
                     case "solve": Solve(); break;
                     case "load": LoadCase(int.Parse(parameters)); break;
+                    case "reset": Reset(); break;
                     case "quit": return;
 
                     case "sudoku": ShowSudoku(); break;
@@ -126,7 +127,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
         static void Solve()
         {
             //Toggle
-            var result = GetWebApiClient("solve").Post<string>(currentSudokuId, "");
+            var result = GetWebApiClient("solve").Post(currentSudokuId);
 
             Console.WriteLine("OK");
         }
@@ -139,7 +140,16 @@ namespace OSP.SudokuSolver.WebApp.Tester
         static void LoadCase(int id)
         {
             //Get the item
-            var container = GetWebApiClient("item").GetItem<SudokuContainer>(id);
+            SudokuContainer container = null;
+            try
+            {
+                container = GetWebApiClient("item").GetItem<SudokuContainer>(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                return;
+            }
 
             //Set current sudoku id
             currentSudokuId = container.SudokuId;
@@ -149,6 +159,13 @@ namespace OSP.SudokuSolver.WebApp.Tester
 
             //foreach (var square in container.SquareList)
             //    Console.WriteLine("Square - Id: {0} - Number: {1}", square.Id.ToString(), square.Number.ToString());
+        }
+
+        static void Reset()
+        {
+            GetWebApiClient("reset").Post(currentSudokuId);
+
+            Console.WriteLine("OK");
         }
 
         static void ShowSudoku()

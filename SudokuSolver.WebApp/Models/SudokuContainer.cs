@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 using OSP.SudokuSolver.Engine;
 
 namespace OSP.SudokuSolver.WebApp.Models
@@ -10,6 +11,15 @@ namespace OSP.SudokuSolver.WebApp.Models
     {
         public int SudokuId { get; set; }
         private Sudoku Sudoku { get; set; }
+        //How to searialize Read-Only property? Set is there only for this issue.
+        public int Size
+        {
+            get
+            {
+                return this.Sudoku.Size;
+            }
+            set { var i = 1; }
+        }
         public bool AutoSolve { get; set; }
         public bool Ready { get; set; }
 

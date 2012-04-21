@@ -1,5 +1,8 @@
 # Sudoku Solver
 
+A sudoku solving application that developed by the latest .NET technologies.
+It aims to solve any sudoku with the least possible steps.
+
 ---
 
 ## Environment ##
@@ -7,12 +10,16 @@
 - Visual Studio 11 Express Beta
 - C#
 - IIS Express 7.5
+- Libraries;
+.. ASP .NET MVC 4 + WCF Rest
+.. json
+.. knockout
+.. EF?
 
 ## Possible Improvements ##
 - All squares can hold the groups which can affect them (SecondGradeGroups) ?
 Maybe this can be done in SquareGroup level?
-
-- In general, we have to be able to pin-point the squares
+In general, we have to be able to pin-point the squares
 At the moment we are still doing extra checks? It should be less and less
 Try to use GetPotentialSquare() method to see the number of action?
 
@@ -26,8 +33,6 @@ But if removing the potentials will work as it should be, probably there will be
 101, 102, hard etc.?
 
 - fatih's sample? and new samples!
-
-- web application!
 
 - test application?!
 

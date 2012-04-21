@@ -51,7 +51,7 @@ namespace OSP.SudokuSolver.Engine
             get { return _Squares.Where(s => !s.IsAvailable); }
         }
 
-        public IEnumerable<Number> RelatedNumbers
+        internal List<Number> RelatedNumbers
         {
             get
             {

@@ -18,24 +18,25 @@
             <br />
             . "availability"
             <br />
-            . is it possible to not to retrieve, if the value is 0?
-            sudoku + availability can be generated without data from server. then the data can be put on top of it.
+            . validation; in general OK, but numpad values are ignored as well + error cases!
             <br />
-            . validation + error cases!
+            . improve general (content) styling! general list template? + use jQuery animations ?! - IE doesnt support "inherit"
             <br />
-            . improve styling! - general content + use jQuery animations ?!
+            . How to searialize Read-Only properties with Json.Net?
             <br />
-            there can be nice "List" template with header, odd + even seperation etc.
+            . when we update knockout model at the background, why it doesnt update front-end as well? isn't it possible? learn more about knockout?
             <br />
-            in general styling of assign type is bit ugly, try to improve
+            . is it possible to retrieve only the changes from the server? usedSquares method
             <br />
-            . replace "0" with "Empty" text in Number list
-            <br />
-            . add samples for different sizes - 4 + 9 (OK) + 16 + 25?
-            <br />
-            . clean up; css etc.!
+            . add samples for different sizes - 4 + 9 (OK) + 16 + 25? + wrong cases; invalid sudoku, invalid number, invalid square, invalid assignment!
             <br />
             . unit test projects!
+            <br />
+            .test with all browsers + mobile!
+            <br />
+            . clean up; css etc. + check TODO in general!
+            <br />
+            . live default.html + main.js files are different!!!
             <br />
             <br />
             <div id="listPanel">
@@ -62,6 +63,9 @@
                             Solve now</a>
                     </div>
                 </div>
+                <div id="displayOptionsPanel">
+                    Display: <a id="toggleDisplayOptions" data-bind:"attr: { 'data-sudoku-id': SudokuId }" href="#"><span id="selectedDisplayOption" data-bind="text: DisplayOptions ? 'Values' : 'Ids'"></span></a>
+                </div>
             </div>
             <div id="legendPanel">
                 <strong>Legend</strong>
@@ -72,7 +76,7 @@
                 <br />
                 <span class="solver">Solver</span>
             </div>
-            <div id="groupsPanel" data-bind="template: {name: 'groups-template', foreach: groupsModel.Groups}">
+            <div id="gridPanel" data-bind="template: {name: 'grid-group-template', foreach: gridModel.Groups}">
             </div>
             <div id="numbersPanel">
                 <strong>Numbers</strong>
@@ -86,26 +90,28 @@
                 <div data-bind="template: {name: 'potentials-template', foreach: potentialsModel.Potentials}">
                 </div>
             </div>
+            <div id="debugPanel"></div>
         </div>
         <script id="sudokulist-template" type="text/html">
             <li class="sudokuItem"><a class="loadSudoku" data-bind="attr: { 'data-sudoku-id': SudokuId }"
                 href="#">Id: <span data-bind="text: SudokuId"></span></a></li>
         </script>
-        <script id="groups-template" type="text/html">
-            <div class="groupItem" data-bind="template: {name: 'squareitem-template', foreach: Squares}">
+        <script id="grid-group-template" type="text/html">
+            <div class="groupItem" data-bind="template: {name: 'grid-square-template', foreach: Squares}">
             </div>
         </script>
-        <script id="squareitem-template" type="text/html">
-            <input data-bind="attr: { 'data-square-id': SquareId, 'class': (AssignType == 0) ? 'square initial' :  (AssignType == 1) ? 'square user' : 'square solver' },value: Number != 0 ? Number : ''" />
+        <script id="grid-square-template" type="text/html">
+            <div data-bind="attr: { 'id': 'squareItem' + SquareId }" class="squareItem initial">
+                <span data-bind="text: SquareId" class="squareId"></span>
+                <input data-bind="attr: { 'id': 'squareValue' + SquareId, 'data-square-id': SquareId }" class="squareValue" />
+            </div>
         </script>
         <script id="numbers-template" type="text/html">
-            <div class="numberItem">
-                <span data-bind="text: 'Number: ' + Value + ' - Count: ' + Count"></span>
+            <div class="numberItem" data-bind="html: 'Number: ' + Value + ' - Count: ' + Count, attr: { 'data-number': Value }">
             </div>
         </script>
         <script id="potentials-template" type="text/html">
-            <div class="potentialItem">
-                <span data-bind="text: 'SquareId: ' + SquareId + ' - PotentialValue: ' + PotentialValue + ' - PotentialType: ' + PotentialType"></span>
+            <div class="potentialItem" data-bind="html: 'SquareId: ' + SquareId + ' - PotentialValue: ' + PotentialValue + ' - PotentialType: ' + PotentialType, attr: { 'data-square-id': SquareId, 'data-potential-value': PotentialValue }">
             </div>
         </script>
     </div>
