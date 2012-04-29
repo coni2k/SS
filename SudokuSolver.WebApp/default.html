@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <title>Sudoku Solver</title>
-    <link href="/Content/main.css" rel="stylesheet" type="text/css" />
-    <script src="/Scripts/jquery-1.6.2.js" type="text/javascript"></script>
-    <script src="/Scripts/knockout-2.0.0.js" type="text/javascript"></script>
-    <script type="text/javascript" src="/Scripts/SudokuSolver/main.js"></script>
+    <link href="Content/main.css" rel="stylesheet" type="text/css" />
+    <script src="Scripts/jquery-1.6.2.js" type="text/javascript"></script>
+    <script src="Scripts/knockout-2.0.0.js" type="text/javascript"></script>
+    <script src="Scripts/SudokuSolver/main.js" type="text/javascript"></script>
 </head>
 <body>
     <div class="header">
@@ -16,15 +16,27 @@
         <div class="contentLeft">
             <strong>To Do</strong>
             <br />
-            . "availability"
+            . BUG: solver class doesn't work, it still stays initial ?!
             <br />
-            . validation; in general OK, but numpad values are ignored as well + error cases!
+            . there is one more validation case to handle. ID 5, 1st square cannot have any number except 1. ID 8, 3. grid cannot have any number except 1,2,3. it's clear, but how to?
             <br />
-            . improve general (content) styling! general list template? + use jQuery animations ?! - IE doesnt support "inherit"
+            . number counts?!
             <br />
-            . How to searialize Read-Only properties with Json.Net?
+            . try to use splice in other functions?
             <br />
-            . when we update knockout model at the background, why it doesnt update front-end as well? isn't it possible? learn more about knockout?
+            . how about drag&drop the numbers?
+            <br />
+            . checkpotential & getpotentials methods in the engine should be better!
+            <br />
+            . retrieve only unavailable ones.. - try to load availabilities as a separate thingy, its very slow - is it possible to use same grid ?!
+            <br />
+            . validation; in general OK, but numpad values are ignored as well!
+            <br />
+            . improve general (content) styling! general list template? + use jQuery animations ?! - IE doesnt support "inherit" - try to have more generic css items ?!
+            <br />
+            . How to serialize Read-Only properties with Json.Net?
+            <br />
+            . when we update knockout model in js file, why it doesnt update front-end as well? isn't it possible? learn more about knockout?
             <br />
             . is it possible to retrieve only the changes from the server? usedSquares method
             <br />
@@ -32,11 +44,21 @@
             <br />
             . unit test projects!
             <br />
-            .test with all browsers + mobile!
+            . firefox shows an error in case of 400 ?! is it normal
+            <br />
+            . step counter ?!
+            <br />
+            . multiple language support
+            <br />
+            . save to db?
+            <br />
+            . sudoku generator?
+            <br />
+            . test with all browsers + mobile!
             <br />
             . clean up; css etc. + check TODO in general!
             <br />
-            . live default.html + main.js files are different!!!
+            . live default.html + main.js files are different! - urls dont start with "/"
             <br />
             <br />
             <div id="listPanel">
@@ -76,13 +98,19 @@
                 <br />
                 <span class="solver">Solver</span>
             </div>
-            <div id="gridPanel" data-bind="template: {name: 'grid-group-template', foreach: gridModel.Groups}">
+            <div id="messagePanel">
+                <a id="messagePanelClear" href="#">close</a>
+                <span id="messagePanelMessage"></span>
             </div>
             <div id="numbersPanel">
                 <strong>Numbers</strong>
                 <br />
-                <div data-bind="template: {name: 'numbers-template', foreach: numbersModel.Numbers}">
+                <div class="numberGroupContainer" data-bind="template: {name: 'numbers-group-template', foreach: numbersModel.NumberGroups}">
                 </div>
+            </div>
+            <div id="mainGridPanel" data-bind="template: {name: 'maingrid-group-template', foreach: mainGridModel.Groups}">
+            </div>
+            <div id="availabilityGridPanel" data-bind="template: {name: 'availabilitygrid-group-template', foreach: mainGridModel.Groups}">
             </div>
             <div id="potentialsPanel">
                 <strong>Potentials</strong>
@@ -96,18 +124,36 @@
             <li class="sudokuItem"><a class="loadSudoku" data-bind="attr: { 'data-sudoku-id': SudokuId }"
                 href="#">Id: <span data-bind="text: SudokuId"></span></a></li>
         </script>
-        <script id="grid-group-template" type="text/html">
-            <div class="groupItem" data-bind="template: {name: 'grid-square-template', foreach: Squares}">
+        <script id="maingrid-group-template" type="text/html">
+            <div class="groupItem" data-bind="template: {name: 'maingrid-square-template', foreach: Squares}">
             </div>
         </script>
-        <script id="grid-square-template" type="text/html">
-            <div data-bind="attr: { 'id': 'squareItem' + SquareId }" class="squareItem initial">
+        <script id="maingrid-square-template" type="text/html">
+            <div data-bind="attr: { 'id': 'mainGrid_squareItem' + SquareId }" class="squareItem initial">
                 <span data-bind="text: SquareId" class="squareId"></span>
                 <input data-bind="attr: { 'id': 'squareValue' + SquareId, 'data-square-id': SquareId }" class="squareValue" />
             </div>
         </script>
+        <script id="availabilitygrid-group-template" type="text/html">
+            <div class="groupItem" data-bind="template: {name: 'availabilitygrid-square-template', foreach: Squares}">
+            </div>
+        </script>
+        <script id="availabilitygrid-square-template" type="text/html">
+            <div data-bind="attr: { 'id': 'availabilityGrid_squareItem' + SquareId }" class="squareItem initial">
+                <div data-bind="template: {name: 'availabilitygrid-availability-template', foreach: Availabilities}"></div>
+            </div>
+        </script>
+        <script id="availabilitygrid-availability-template" type="text/html">
+            <div data-bind="attr: { 'id': 'availabilityItem' + AvailabilityId }" class="availabilityItem">
+                <span data-bind="text: Value"></span>
+            </div>
+        </script>
+        <script id="numbers-group-template" type="text/html">
+            <div class="numberGroup" data-bind="template: {name: 'numbers-template', foreach: Numbers}">
+            </div>
+        </script>
         <script id="numbers-template" type="text/html">
-            <div class="numberItem" data-bind="html: 'Number: ' + Value + ' - Count: ' + Count, attr: { 'data-number': Value }">
+            <div class="numberItem" data-bind="html: Value, attr: { 'data-number': Value }">
             </div>
         </script>
         <script id="potentials-template" type="text/html">

@@ -18,7 +18,7 @@
     $("#newSudoku").live('click', function () {
 
         $.ajax({
-            url: '/api/SudokuApi/newsudoku',
+            url: 'api/SudokuApi/newsudoku',
             cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -28,7 +28,7 @@
                     //Add the item to the list
                     listModel.SudokuList.push(newSudoku);
 
-                    loadGrid(newSudoku.Size);
+                    loadGrids(newSudoku.Size);
 
                     //Load the sudoku
                     loadSudoku(newSudoku);
@@ -49,7 +49,7 @@
     $("#resetList").live('click', function () {
 
         $.ajax({
-            url: '/api/SudokuApi/reset',
+            url: 'api/SudokuApi/reset',
             cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -75,7 +75,7 @@
     $("#toggleReady").live('click', function () {
 
         $.ajax({
-            url: '/api/SudokuApi/toggleready/' + detailsModel.Sudoku().SudokuId,
+            url: 'api/SudokuApi/toggleready/' + detailsModel.Sudoku().SudokuId,
             cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -104,7 +104,7 @@
     $("#toggleAutoSolve").live('click', function () {
 
         $.ajax({
-            url: '/api/SudokuApi/toggleautosolve/' + detailsModel.Sudoku().SudokuId,
+            url: 'api/SudokuApi/toggleautosolve/' + detailsModel.Sudoku().SudokuId,
             cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -135,7 +135,7 @@
     $("#solve").live('click', function () {
 
         $.ajax({
-            url: '/api/SudokuApi/solve/' + detailsModel.Sudoku().SudokuId,
+            url: 'api/SudokuApi/solve/' + detailsModel.Sudoku().SudokuId,
             cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -172,7 +172,32 @@
     });
 
     //Square input focus + hover
-    $(".squareItem").live({ mouseenter: function () { $(this).addClass('selected'); }, mouseleave: function () { $(this).removeClass('selected'); } });
+    $(".squareItem").live({
+        mouseenter: function ()
+        {
+            //Get the id
+            var id = $(this).attr('id');
+
+            //This is used in both of the grids, so get the pure id
+            id = id.replace('mainGrid_', '').replace('availabilityGrid_', '');
+
+            //Highlight both grids
+            $('#mainGrid_' + id).addClass('selected');
+            $('#availabilityGrid_' + id).addClass('selected');
+        },
+        mouseleave: function () {
+
+            //Get the id
+            var id = $(this).attr('id');
+
+            //This is used in both of the grids, so get the pure id
+            id = id.replace('mainGrid_', '').replace('availabilityGrid_', '');
+
+            //Remove highlight from both grids
+            $('#mainGrid_' + id).removeClass('selected');
+            $('#availabilityGrid_' + id).removeClass('selected');
+        }
+    });
 
     //$(".squareValue").live('focus', function () { $(this).select(); });
 
@@ -213,13 +238,17 @@
         //Get the values
         var squareId = squareValue.data('squareId');
         var number = squareValue.val();
+        if (number == '')
+            number = 0;
+
+        //addDebugMessage('value changed - squareId: ' + squareId + ' - number: ' + number);
 
         //Prepare post data
         var squareContainer = { SquareId: squareId, Number: number };
         var json = JSON.stringify(squareContainer);
 
         $.ajax({
-            url: '/api/SudokuApi/updatesquare/' + detailsModel.Sudoku().SudokuId,
+            url: 'api/SudokuApi/updatesquare/' + detailsModel.Sudoku().SudokuId,
             cache: false, //?
             type: 'POST',
             data: json,
@@ -240,17 +269,29 @@
                     else {
                         loadNumbers(detailsModel.Sudoku().SudokuId);
                         loadPotentials(detailsModel.Sudoku().SudokuId);
+                        loadAvailabilities(detailsModel.Sudoku().SudokuId);
+
+                        //addDebugMessage('value changed - server responded - squareId: ' + squareId + ' - number: ' + number);
                     }
                 },
                 400 /* BadRequest */: function (jqxhr) {
+                    var validationResult = $.parseJSON(jqxhr.responseText);
 
-                    /* TODO ?! */
+                    //Show message
+                    showMessagePanel(validationResult);
 
-                    //var validationResult = $.parseJSON(jqxhr.responseText);
+                    //Clear the square
+                    squareValue.val('');
+
+                    //TODO ?
                     //$.validator.unobtrusive.revalidate(form, validationResult);
                 }
             }
         });
+    });
+
+    $("#messagePanelClear").live('click', function () {
+        hideMessagePanel();
     });
 
     //Numbers
@@ -261,9 +302,23 @@
             var number = $(this).data('number');
             number = number == 'Empty' ? number = '' : number;
 
-            //Highlights
+            //Highlight itself
             $(this).addClass('selected');
-            $(".squareValue[value=" + number + "]").closest('div').addClass('selected');
+
+            $.each($(".squareValue[value=" + number + "]").closest('div'), function () {
+
+                //Get the id of the related numbers
+                id = $(this).attr('id');
+
+                //This is used in both of the grids, so get the pure id
+                id = id.replace('mainGrid_', '').replace('availabilityGrid_', '');
+
+                //Highlight both grids
+                $('#mainGrid_' + id).addClass('selected');
+                $('#availabilityGrid_' + id).addClass('selected');
+
+                //$(".squareValue[value=" + number + "]").closest('div').addClass('selected');
+            });
 
         }, mouseleave: function () {
 
@@ -271,9 +326,23 @@
             var number = $(this).data('number');
             number = number == 'Empty' ? number = '' : number;
 
-            //Remove highlights
+            //Remove highlight from itself
             $(this).removeClass('selected');
-            $(".squareValue[value=" + number + "]").closest('div').removeClass('selected');
+
+            $.each($(".squareValue[value=" + number + "]").closest('div'), function () {
+
+                //This is used in both of the grids, so get the pure id
+                id = $(this).attr('id');
+
+                //This is used in both of the grids, so get the pure id
+                id = id.replace('mainGrid_', '').replace('availabilityGrid_', '');
+
+                //Highlight both grids
+                $('#mainGrid_' + id).removeClass('selected');
+                $('#availabilityGrid_' + id).removeClass('selected');
+
+                //$(".squareValue[value=" + number + "]").closest('div').removeClass('selected');
+            });
         }
     });
 
@@ -288,8 +357,11 @@
             $(this).addClass('selected');
 
             //Get the square and highlight
-            var squareItem = $('#squareItem' + squareId);
-            squareItem.addClass('selected');
+            var squareItem1 = $('#mainGrid_squareItem' + squareId);
+            squareItem1.addClass('selected');
+
+            var squareItem2 = $('#availabilityGrid_squareItem' + squareId);
+            squareItem2.addClass('selected');
 
             //Get the value element + show the value - EXISTING VALUES WILL BE LOST!
             var squareValue = $('#squareValue' + squareId);
@@ -304,8 +376,10 @@
             $(this).removeClass('selected');
 
             //Get the square and remove highlight
-            var squareItem = $('#squareItem' + squareId);
-            squareItem.removeClass('selected');
+            var squareItem1 = $('#mainGrid_squareItem' + squareId);
+            squareItem1.removeClass('selected');
+            var squareItem2 = $('#availabilityGrid_squareItem' + squareId);
+            squareItem2.removeClass('selected');
 
             //Get the value element + remove the value - EXISTING VALUES WILL BE LOST!
             var squareValue = $('#squareValue' + squareId);
@@ -322,7 +396,9 @@ function initModels() {
 
     detailsModel = { Sudoku: ko.observable(null) };
 
-    gridModel = { Groups: ko.observableArray([]) };
+    mainGridModel = { Groups: ko.observableArray([]) };
+
+    availabilityGridModel = { Groups: ko.observableArray([]) };
 
     numbersModel = { Numbers: ko.observableArray([]) };
 
@@ -336,20 +412,36 @@ function loadApplication() {
 
     //Load default (first) sudoku
     var sudokuId = 1;
-    $.get('/api/SudokuApi/item/' + sudokuId, function (sudoku) {
+    $.get('api/SudokuApi/item/' + sudokuId, function (sudoku) {
 
         //Load grid
-        loadGrid(sudoku.Size);
+        loadGrids(sudoku.Size);
 
         //Load default (first) sudoku
         loadSudoku(sudoku);
 
+        //Debug
+        clearDebugPanel();
+
     });
+}
+
+function loadGrids(size) {
+
+    //Main
+    loadMainGrid(size);
+
+    //Availability
+    loadAvailabilityGrid(size);
+
+    //Debug
+    clearDebugPanel();
+
 }
 
 function loadSudokuList() {
 
-    $.get('/api/SudokuApi/list', function (sudokuList) {
+    $.get('api/SudokuApi/list', function (sudokuList) {
         listModel.SudokuList = ko.observableArray([]);
         listModel.SudokuList(sudokuList);
         ko.applyBindings(listModel, document.getElementById("listPanel"));
@@ -357,9 +449,9 @@ function loadSudokuList() {
 
 }
 
-function loadGrid(size) {
+function loadMainGrid(size) {
 
-    gridModel.Groups = ko.observableArray([]);
+    mainGridModel.Groups = ko.observableArray([]);
 
     //Create an array for square type groups
     var groups = new Array();
@@ -384,22 +476,109 @@ function loadGrid(size) {
         groups.push(group);
     }
 
-    gridModel.Groups(groups);
+    mainGridModel.Groups(groups);
 
-    ko.applyBindings(gridModel, document.getElementById("gridPanel"));
+    ko.applyBindings(mainGridModel, document.getElementById("mainGridPanel"));
 
     //Styling of the square groups
     $("div.groupItem:odd > .squareItem").addClass('odd');
 
-    //Debug
-    clearDebugPanel();
+}
+
+//function loadAvailabilityGrid_OLD(size) {
+
+//    availabilityGridModel.Groups = ko.observableArray([]);
+
+//    //Create an array for square type groups
+//    var groups = new Array();
+//    for (groupCounter = 1; groupCounter <= size; groupCounter++) {
+
+//        //Create group
+//        group = new Object();
+//        group.GroupId = groupCounter;
+
+//        //Squares of the group
+//        var squares = new Array();
+//        for (var squareCounter = 1; squareCounter <= size; squareCounter++) {
+
+//            //Create square
+//            var square = new Object();
+//            square.SquareId = calculateSquareId(size, groupCounter, squareCounter);;
+
+//            //Availabilities of the square
+//            var availabilities = new Array();
+//            for (var availabilityCounter = 1; availabilityCounter <= size; availabilityCounter++) {
+
+//                //Create availability item
+//                var availability = new Object();
+//                availability.AvailabilityId = square.SquareId + '_' + availabilityCounter;
+//                availability.Value = availabilityCounter;
+//                availabilities.push(availability);
+//            }
+
+//            square.Availabilities = availabilities;
+//            squares.push(square);
+//        }
+
+//        group.Squares = squares;
+//        groups.push(group);
+//    }
+
+//    availabilityGridModel.Groups(groups);
+
+//    ko.applyBindings(availabilityGridModel, document.getElementById("availabilityGridPanel"));
+
+//    //Styling of the square groups
+//    $("div.groupItem:odd > .squareItem").addClass('odd');
+
+//}
+
+function loadAvailabilityGrid() {
+
+    //Size
+    var size = mainGridModel.Groups().length;
+
+    //Groups loop
+    for (groupCounter = 0; groupCounter < size; groupCounter++) {
+
+        //Get the group
+        var group = mainGridModel.Groups()[groupCounter];
+
+        //Squares loop
+        for (var squareCounter = 0; squareCounter < size; squareCounter++) {
+
+            //Get the square
+            var square = group.Squares[squareCounter];
+
+            //Availabilities of the square
+            var availabilities = new Array();
+            for (var availabilityCounter = 0; availabilityCounter < size; availabilityCounter++) {
+
+                //Create availability item
+                var availability = new Object();
+                availability.AvailabilityId = square.SquareId + '_' + (availabilityCounter + 1);
+                availability.Value = availabilityCounter + 1;
+                availabilities.push(availability);
+            }
+
+            //Assign the availabilities
+            square.Availabilities = availabilities;
+        }
+    }
+
+    //Bindings
+    ko.applyBindings(mainGridModel, document.getElementById("availabilityGridPanel"));
+
+    //Styling of the square groups
+    $("div.groupItem:odd > .squareItem").addClass('odd');
+
 }
 
 function loadSudokuById(sudokuId) {
 
-    $.get('/api/SudokuApi/item/' + sudokuId, function (sudoku) {
+    $.get('api/SudokuApi/item/' + sudokuId, function (sudoku) {
 
-        loadGrid(sudoku.Size);
+        loadGrids(sudoku.Size);
 
         loadSudoku(sudoku);
     });
@@ -422,13 +601,16 @@ function loadSudoku(sudoku) {
 
     //Load potentials
     loadPotentials(sudoku.SudokuId);
+
+    //Load availabilities
+    loadAvailabilities(sudoku.SudokuId);
 }
 
 //Is it possible to retrieve only the changes?
-//Is it possible to update gridModel? - learn more about knockout!
+//Is it possible to update mainGridModel? - learn more about knockout!
 function loadUsedSquares(sudokuId) {
 
-    $.get('/api/SudokuApi/usedsquares/' + sudokuId, function (usedSquareList) {
+    $.get('api/SudokuApi/usedsquares/' + sudokuId, function (usedSquareList) {
 
         $.each(usedSquareList, function () {
 
@@ -459,12 +641,40 @@ function loadUsedSquares(sudokuId) {
 
 function loadNumbers(sudokuId) {
 
-    $.get('/api/SudokuApi/numbers/' + sudokuId, function (numberList) {
+    $.get('api/SudokuApi/numbers/' + sudokuId, function (numberList) {
 
         //Zero value
         numberList[0].Value = 'Empty';
-        numbersModel.Numbers = ko.observableArray([]);
-        numbersModel.Numbers(numberList);
+
+        //Remove "0"
+        //TODO Dont retrieve it!!!
+        numberList.splice(0, 1);
+
+        /* Old */
+
+        //Assign the result
+        //numbersModel.Numbers = ko.observableArray([]);
+        //numbersModel.Numbers(numberList);
+        //ko.applyBindings(numbersModel, document.getElementById("numbersPanel"));
+
+        /* New - TO BE ABLE TO GROUP THE NUMBERS */
+
+        //Square root of the size
+        var sqrtSize = Math.sqrt(numberList.length);
+
+        numbersModel.NumberGroups = ko.observableArray([]);
+
+        var numberGroups = new Array();
+
+        for (groupCounter = 0; groupCounter < sqrtSize; groupCounter++) {
+
+            var group = new Object();
+            group.Numbers = numberList.splice(0, sqrtSize);
+            numberGroups.push(group);
+        };
+
+        numbersModel.NumberGroups(numberGroups);
+
         ko.applyBindings(numbersModel, document.getElementById("numbersPanel"));
 
     });
@@ -472,12 +682,51 @@ function loadNumbers(sudokuId) {
 
 function loadPotentials(sudokuId) {
 
-    $.get('/api/SudokuApi/potentials/' + sudokuId, function (potentialList) {
+    $.get('api/SudokuApi/potentials/' + sudokuId, function (potentialList) {
 
         potentialsModel.Potentials = ko.observableArray([]);
         potentialsModel.Potentials(potentialList);
         ko.applyBindings(potentialsModel, document.getElementById("potentialsPanel"));
 
+    });
+}
+
+function loadAvailabilities(sudokuId) {
+
+    $.get('api/SudokuApi/availabilities/' + sudokuId, function (availabilityList) {
+
+        $.each(availabilityList, function () {
+
+            //Square item + square value
+            var availabilityItemId = '#availabilityItem' + this.SquareId + '_' + this.Number;
+            //var squareValueId = '#squareValue' + this.SquareId;
+
+            //Set the Number
+            if (this.IsAvailable)
+                $(availabilityItemId).removeClass('unavailable');
+            else
+                $(availabilityItemId).addClass('unavailable');
+
+            ////Assign type
+            //switch (this.AssignType) {
+            //    case 0:
+            //        $(squareItemId).removeClass('user').removeClass('solver').addClass('initial');
+            //        break;
+
+            //    case 1:
+            //        $(squareItemId).removeClass('initial').removeClass('solver').addClass('user');
+            //        break;
+
+            //    case 2:
+            //        $(squareItemId).removeClass('initial').removeClass('user').addClass('solver');
+            //        break;
+            //}
+
+            //availabilityGridModel.ava potentialsModel.Potentials = ko.observableArray([]);
+            //potentialsModel.Potentials(potentialList);
+            //ko.applyBindings(potentialsModel, document.getElementById("potentialsPanel"));
+
+        });
     });
 }
 
@@ -549,6 +798,16 @@ function calculateSquareId(size, groupCounter, squareCounter) {
 
     //Sum all the modifiers and return
     return (smallVerticalModifier + smallHorizontalModifier + bigVerticalModifier + bigHorizontalModifier);
+}
+
+function showMessagePanel(message) {
+    $('#messagePanelMessage').html($('#messagePanelMessage').html() + '<br />' + message);
+    $('#messagePanel').show();
+}
+
+function hideMessagePanel() {
+    $('#messagePanel').hide();
+    $('#messagePanelMessage').text('');
 }
 
 function addDebugMessage(message) {

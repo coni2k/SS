@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Json;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -91,6 +92,14 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             return container.GetPotentials();
         }
 
+        [ActionName("availabilities")]
+        public IEnumerable<AvailabilityContainer> GetAvailabilities(int id)
+        {
+            var container = ValidateAndGetSudokuContainer(id);
+
+            return container.GetAvailabilities();
+        }
+
         private SudokuContainer ValidateAndGetSudokuContainer(int id)
         {
             //Search the container in CacheManager
@@ -149,11 +158,10 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             {
                 container.UpdateSquare(square.SquareId, square.Number);
             }
-            catch (Exception)
+            catch (Exception ex) 
             {
-                //TODO Correct code?
-                //Return a message !!!!!
-                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+                var response = new HttpResponseMessage<JsonValue>(ex.Message, HttpStatusCode.BadRequest);
+                throw new HttpResponseException(response);
             }
         }
 

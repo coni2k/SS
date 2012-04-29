@@ -125,6 +125,19 @@ namespace OSP.SudokuSolver.WebApp.Models
             return list;
         }
 
+        public IEnumerable<AvailabilityContainer> GetAvailabilities()
+        {
+            var list = new List<AvailabilityContainer>();
+
+            foreach (var s in Sudoku.Squares)
+            {
+                foreach (var n in Sudoku.NumbersExceptZero)
+                    list.Add(new AvailabilityContainer() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailable(n) });
+            }
+
+            return list;
+        }
+
         public void UpdateSquare(int squareId, int number)
         {
             Sudoku.UpdateSquare(squareId, number);

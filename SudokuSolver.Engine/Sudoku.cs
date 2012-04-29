@@ -293,14 +293,17 @@ namespace OSP.SudokuSolver.Engine
 
         void UpdateSquare(Square square, Number number, AssignTypes type)
         {
-            //Validate first
+            //Validations;
+            //a. Square
             if (square == null)
                 throw new Exception("Not a valid square id");
 
+            //b. Number
             if (number == null)
                 throw new Exception("Not a valid number");
 
-            if (square.SquareGroups.Any(sg => sg.Squares.Any(s => s.Number.Equals(number))))
+            //c. Is it available; Checks the related squares in the related groups
+            if (!number.IsZero && square.SquareGroups.Any(sg => sg.Squares.Any(s => s.Number.Equals(number))))
                 throw new Exception("Not a valid assignment, the number is already in use in one of the related groups");
 
             //Set the number and type

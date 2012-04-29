@@ -99,12 +99,12 @@ h5, h6 {
 }
 
 .contentLeft {
-    width: 30%;
+    width: 25%;
     float: left;
 }
 
 .contentRight {
-    width: 70%;
+    width: 75%;
     float: right;
 }
 
@@ -127,25 +127,84 @@ div.solve {
     margin: 20px 0 0 0;
 }
 
-#gridPanel {
-    width: 474px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
+#messagePanel {
+    margin: 20px 0 0 0;
+    display: none;
+}
+
+#messagePanelClear {
+    font-size: smaller;
+}
+
+#messagePanelMessage {
+    color: red;
+    font-weight: bold;
+}
+
+#numbersPanel {
+    float: left;
+    margin: 20px 20px 0 0;
+}
+
+.numberGroupContainer {
+    width: 429px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
+    border: 1px solid gray;
+    overflow: auto;
+}
+
+/* Same with groupItem ?! */
+.numberGroup {
+    float: left;
+    width: 141px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
+    border: 1px solid gray;
+}
+
+/* Same with squareItem ?! */
+.numberItem {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;    
+    
+    float: left;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    border: 1px solid #efefef;
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    
+    cursor: default;
+}
+
+#mainGridPanel {
+    clear: left;
+    width: 429px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
     border: 1px solid gray;
     overflow: auto;
     float: left;
-    margin: 20px 20px 0 0;    
+    margin: 20px 20px 0 0;
+}
+
+#availabilityGridPanel {
+    width: 429px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
+    border: 1px solid gray;
+    overflow: auto;
+    float: left;
+    margin: 20px 20px 0 0;
 }
 
 .groupItem {
     float: left;
-    width: 156px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
+    width: 141px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
     border: 1px solid gray;
 }
 
 .squareItem {
     float: left;
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
     border: 1px solid #efefef;
     padding: 0;
     margin: 0;
@@ -212,14 +271,26 @@ div.solve {
     display: inline;
 }
 
-#numbersPanel {
+.availabilityItem {
     float: left;
-    margin: 20px 20px 0 0;
+    /*font-weight: bold;*/
+    font-size: xx-small;
+    text-align: center;    
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    color: inherit;
+    background-color: inherit;    
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: default;
 }
 
-.numberItem {
-    
-}
+    .availabilityItem.unavailable {
+        color: red;
+        text-decoration: line-through;
+    }
 
 #potentialsPanel {
     float: left;

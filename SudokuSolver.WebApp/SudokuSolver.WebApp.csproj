@@ -154,6 +154,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CacheManager.cs" />
+    <Compile Include="Models\AvailabilityContainer.cs" />
     <Compile Include="Models\GroupContainer.cs" />
     <Compile Include="Models\NumberContainer.cs" />
     <Compile Include="Models\PotentialContainer.cs" />
