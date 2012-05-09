@@ -94,14 +94,11 @@ namespace OSP.SudokuSolver.Engine
             _SquareGroups.Add(horizantolGroup);
             _SquareGroups.Add(verticalGroup);
             _SquareGroups.Add(squareGroup);
-            //this.HorizontalTypeGroup = horizantolGroup;
-            //this.VerticalTypeGroup = verticalGroup;
-            //this.SquareTypeGroup = squareGroup;
 
             //Available numbers; assign all number, except zero
             _AvailableNumbers = new List<Number>(this.Sudoku.Size);
             foreach (var availableNumber in this.Sudoku.NumbersExceptZero)
-                _AvailableNumbers.Add(availableNumber);
+                MakeNumberAvailable(availableNumber);
         }
 
         #endregion
@@ -114,19 +111,18 @@ namespace OSP.SudokuSolver.Engine
             if (Number != null)
             {
                 //Old number; raise an event to let the sudoku to handle the availability of the other squares
-                if (!this.Number.IsZero)
-                    this.NumberChanging(this);
+                this.NumberChanging(this);
 
                 //Deassign the square from the old number
                 Number.DeassignSquare(this);
             }
 
-            //Set the type
-            AssignType = type;
-
             //Assign the new number to this square & let the number know it (there is a cross reference)
             Number = number;
             Number.AssignSquare(this);
+
+            //Set the type
+            AssignType = type;
 
             //Raise an event to let the sudoku to handle the availability of the other squares (again)
             if (NumberChanged != null)
@@ -149,7 +145,9 @@ namespace OSP.SudokuSolver.Engine
         /// <param name="number"></param>
         internal void MakeNumberAvailable(Number number)
         {
-            //TODO Contains is good enough or should we use Single or somethin?
+            if (number.IsZero)
+                throw new ArgumentException("Zero value cannot be in available numbers", "number");
+
             if (!_AvailableNumbers.Contains(number))
                 _AvailableNumbers.Add(number);
         }
@@ -161,15 +159,14 @@ namespace OSP.SudokuSolver.Engine
         internal void MakeNumberUnavailable(Number number)
         {
             if (_AvailableNumbers.Contains(number))
-            {
                 _AvailableNumbers.Remove(number);
 
-                if (ValidatePotential(this))
-                    PotentialSquareFound(new Potential(this, null, _AvailableNumbers[0], PotentialTypes.Square));
+            if (ValidatePotential(this))
+                PotentialSquareFound(new Potential(this, null, _AvailableNumbers[0], PotentialTypes.Square));
 
-                //Raise an event to let the squaregroup to do "potential" check
+            //Raise an event to let the squaregroup to do "potential" check
+            if (!number.IsZero && NumberBecameUnavailable != null)
                 NumberBecameUnavailable(number);
-            }
         }
 
         /// <summary>

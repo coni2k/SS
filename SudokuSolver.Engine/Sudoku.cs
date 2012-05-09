@@ -155,7 +155,7 @@ namespace OSP.SudokuSolver.Engine
                 //Validate: Cannot set to false, if there are any Square with User/Solver assign type
                 if (value == false)
                 {
-                    var hasInvalidAssignType = _Squares.Exists(s => s.AssignType == AssignTypes.User || s.AssignType == AssignTypes.Solver);
+                    var hasInvalidAssignType = _Squares.Exists(s => (s.AssignType == AssignTypes.User || s.AssignType == AssignTypes.Solver) && !s.IsAvailable);
                     if (hasInvalidAssignType)
                         throw new Exception("Ready cannot set to false again if there are any squares with User or Solver Assign Type");
                 }

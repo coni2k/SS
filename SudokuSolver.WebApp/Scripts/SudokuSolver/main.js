@@ -15,11 +15,11 @@
     });
 
     //New sudoku
-    $("#newSudoku").live('click', function () {
+    $("#newSudokuxx").live('click', function () {
 
         $.ajax({
             url: 'api/SudokuApi/newsudoku',
-            cache: false, //?
+            //cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             statusCode: {
@@ -35,11 +35,10 @@
 
                 },
                 400 /* BadRequest */: function (jqxhr) {
+                    var validationResult = $.parseJSON(jqxhr.responseText);
 
-                    /* TODO ?! */
-
-                    //var validationResult = $.parseJSON(jqxhr.responseText);
-                    //$.validator.unobtrusive.revalidate(form, validationResult);
+                    //Show message
+                    showMessagePanel(validationResult);
                 }
             }
         });
@@ -50,7 +49,7 @@
 
         $.ajax({
             url: 'api/SudokuApi/reset',
-            cache: false, //?
+            //cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             statusCode: {
@@ -61,11 +60,10 @@
 
                 },
                 400 /* BadRequest */: function (jqxhr) {
+                    var validationResult = $.parseJSON(jqxhr.responseText);
 
-                    /* TODO ?! */
-
-                    //var validationResult = $.parseJSON(jqxhr.responseText);
-                    //$.validator.unobtrusive.revalidate(form, validationResult);
+                    //Show message
+                    showMessagePanel(validationResult);
                 }
             }
         });
@@ -76,7 +74,7 @@
 
         $.ajax({
             url: 'api/SudokuApi/toggleready/' + detailsModel.Sudoku().SudokuId,
-            cache: false, //?
+            //cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             statusCode: {
@@ -85,16 +83,26 @@
                     //Update UI
                     detailsModel.Sudoku().Ready = !detailsModel.Sudoku().Ready;
 
+                    //Update class
+                    //$(".squareValue[value='']").closest('div').attr('class', squareItem.attr('class').replace('initial', 'user'));
+                    //if (detailsModel.Sudoku().Ready)
+                    //    $(".squareValue[value=]").closest('div').removeClass('initial').addClass('user');
+                    //else
+                    //    $(".squareValue[value=]").closest('div').removeClass('user').addClass('initial');
+
+                    var ready = detailsModel.Sudoku().Ready;
+                    $(".squareValue[value=]").closest('div').toggleClass('initial', !ready).toggleClass('user', ready);
+
                     //Bind
                     //TODO This is necessary? Why existing bindings doesn't work, like in List.push()?
                     ko.applyBindings(detailsModel.Sudoku, document.getElementById("detailsPanel"));
 
                 },
                 400 /* BadRequest */: function (jqxhr) {
+                    var validationResult = $.parseJSON(jqxhr.responseText);
 
-                    /* TODO ?! */
-                    //var validationResult = $.parseJSON(jqxhr.responseText);
-                    //$.validator.unobtrusive.revalidate(form, validationResult);
+                    //Show message
+                    showMessagePanel(validationResult);
                 }
             }
         });
@@ -105,7 +113,7 @@
 
         $.ajax({
             url: 'api/SudokuApi/toggleautosolve/' + detailsModel.Sudoku().SudokuId,
-            cache: false, //?
+            //cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             statusCode: {
@@ -122,10 +130,10 @@
                     }
                 },
                 400 /* BadRequest */: function (jqxhr) {
+                    var validationResult = $.parseJSON(jqxhr.responseText);
 
-                    /* TODO ?! */
-                    //var validationResult = $.parseJSON(jqxhr.responseText);
-                    //$.validator.unobtrusive.revalidate(form, validationResult);
+                    //Show message
+                    showMessagePanel(validationResult);
                 }
             }
         });
@@ -136,7 +144,7 @@
 
         $.ajax({
             url: 'api/SudokuApi/solve/' + detailsModel.Sudoku().SudokuId,
-            cache: false, //?
+            //cache: false, //?
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             statusCode: {
@@ -147,11 +155,10 @@
 
                 },
                 400 /* BadRequest */: function (jqxhr) {
+                    var validationResult = $.parseJSON(jqxhr.responseText);
 
-                    /* TODO ?! */
-
-                    //var validationResult = $.parseJSON(jqxhr.responseText);
-                    //$.validator.unobtrusive.revalidate(form, validationResult);
+                    //Show message
+                    showMessagePanel(validationResult);
                 }
             }
         });
@@ -173,8 +180,7 @@
 
     //Square input focus + hover
     $(".squareItem").live({
-        mouseenter: function ()
-        {
+        mouseenter: function () {
             //Get the id
             var id = $(this).attr('id');
 
@@ -213,7 +219,7 @@
             //TODO This is only for Size 9, for Size 4 it wouldn't work?!
             //if (event.keyCode < 49 || (event.keyCode > 57 && event.keyCode < 97) || event.keyCode > 105) {
             if (event.keyCode < 49 || event.keyCode > 57) {
-                    event.preventDefault();
+                event.preventDefault();
             }
             else {
 
@@ -241,15 +247,13 @@
         if (number == '')
             number = 0;
 
-        //addDebugMessage('value changed - squareId: ' + squareId + ' - number: ' + number);
-
         //Prepare post data
         var squareContainer = { SquareId: squareId, Number: number };
         var json = JSON.stringify(squareContainer);
 
         $.ajax({
             url: 'api/SudokuApi/updatesquare/' + detailsModel.Sudoku().SudokuId,
-            cache: false, //?
+            //cache: false, //?
             type: 'POST',
             data: json,
             contentType: 'application/json; charset=utf-8',
@@ -259,7 +263,7 @@
                     //If it it's "Ready", then it must use "user" class, instead of "initial"
                     //TODO Can we use more general approach - when it's "Ready", then all squares defualt class will be "user"?
                     if (detailsModel.Sudoku().Ready) {
-                        squareItem.attr('class', squareItem.attr('class').replace('initial', 'user'));
+                        //squareItem.attr('class', squareItem.attr('class').replace('initial', 'user'));
                     }
 
                     //If it's "AutoSolve", load it from the server
@@ -270,8 +274,6 @@
                         loadNumbers(detailsModel.Sudoku().SudokuId);
                         loadPotentials(detailsModel.Sudoku().SudokuId);
                         loadAvailabilities(detailsModel.Sudoku().SudokuId);
-
-                        //addDebugMessage('value changed - server responded - squareId: ' + squareId + ' - number: ' + number);
                     }
                 },
                 400 /* BadRequest */: function (jqxhr) {
@@ -282,9 +284,6 @@
 
                     //Clear the square
                     squareValue.val('');
-
-                    //TODO ?
-                    //$.validator.unobtrusive.revalidate(form, validationResult);
                 }
             }
         });
@@ -389,9 +388,13 @@
 
     //Load the app
     loadApplication();
+
+    //Load app - new
+    loadApplicationNew();
 });
 
 function initModels() {
+
     listModel = { SudokuList: ko.observableArray([]) };
 
     detailsModel = { Sudoku: ko.observable(null) };
@@ -403,6 +406,22 @@ function initModels() {
     numbersModel = { Numbers: ko.observableArray([]) };
 
     potentialsModel = { Potentials: ko.observableArray([]) };
+}
+
+function loadApplicationNew() {
+
+    ko.applyBindings(new mainModel());
+
+}
+
+function mainModel() {
+
+    var self = this;
+
+    self.ReadyNew = ko.observable(false);
+    self.toggleReadyNew = function () {
+        self.ReadyNew(!self.ReadyNew());
+    }
 }
 
 function loadApplication() {
@@ -485,54 +504,6 @@ function loadMainGrid(size) {
 
 }
 
-//function loadAvailabilityGrid_OLD(size) {
-
-//    availabilityGridModel.Groups = ko.observableArray([]);
-
-//    //Create an array for square type groups
-//    var groups = new Array();
-//    for (groupCounter = 1; groupCounter <= size; groupCounter++) {
-
-//        //Create group
-//        group = new Object();
-//        group.GroupId = groupCounter;
-
-//        //Squares of the group
-//        var squares = new Array();
-//        for (var squareCounter = 1; squareCounter <= size; squareCounter++) {
-
-//            //Create square
-//            var square = new Object();
-//            square.SquareId = calculateSquareId(size, groupCounter, squareCounter);;
-
-//            //Availabilities of the square
-//            var availabilities = new Array();
-//            for (var availabilityCounter = 1; availabilityCounter <= size; availabilityCounter++) {
-
-//                //Create availability item
-//                var availability = new Object();
-//                availability.AvailabilityId = square.SquareId + '_' + availabilityCounter;
-//                availability.Value = availabilityCounter;
-//                availabilities.push(availability);
-//            }
-
-//            square.Availabilities = availabilities;
-//            squares.push(square);
-//        }
-
-//        group.Squares = squares;
-//        groups.push(group);
-//    }
-
-//    availabilityGridModel.Groups(groups);
-
-//    ko.applyBindings(availabilityGridModel, document.getElementById("availabilityGridPanel"));
-
-//    //Styling of the square groups
-//    $("div.groupItem:odd > .squareItem").addClass('odd');
-
-//}
-
 function loadAvailabilityGrid() {
 
     //Size
@@ -570,6 +541,7 @@ function loadAvailabilityGrid() {
     ko.applyBindings(mainGridModel, document.getElementById("availabilityGridPanel"));
 
     //Styling of the square groups
+    //TODO This runs twice ?!
     $("div.groupItem:odd > .squareItem").addClass('odd');
 
 }
@@ -582,7 +554,6 @@ function loadSudokuById(sudokuId) {
 
         loadSudoku(sudoku);
     });
-
 }
 
 function loadSudoku(sudoku) {
@@ -591,6 +562,9 @@ function loadSudoku(sudoku) {
     detailsModel.Sudoku = ko.observable(null);
     detailsModel.Sudoku(sudoku);
     detailsModel.Sudoku().DisplayOptions = true;
+    //The first request doesn't contain the value of this prop. and it gets the default value.
+    //It will be updated with Numbers request (see loadNumbers)
+    detailsModel.Sudoku().SquaresLeft = (sudoku.Size * sudoku.Size);
     ko.applyBindings(detailsModel.Sudoku, document.getElementById("detailsPanel"));
 
     //Load used squares
@@ -604,6 +578,12 @@ function loadSudoku(sudoku) {
 
     //Load availabilities
     loadAvailabilities(sudoku.SudokuId);
+
+    //Update classes
+    //TODO This code is double ?! - repeated in toggleReady
+    var ready = detailsModel.Sudoku().Ready;
+    $(".squareValue[value=]").closest('div').toggleClass('initial', !ready).toggleClass('user', ready);
+
 }
 
 //Is it possible to retrieve only the changes?
@@ -615,26 +595,16 @@ function loadUsedSquares(sudokuId) {
         $.each(usedSquareList, function () {
 
             //Square item + square value
-            var squareItemId = '#squareItem' + this.SquareId;
+            var squareItemId = '#mainGrid_squareItem' + this.SquareId;
             var squareValueId = '#squareValue' + this.SquareId;
 
             //Set the Number
             $(squareValueId).val(this.Number);
 
             //Assign type
-            switch (this.AssignType) {
-                case 0:
-                    $(squareItemId).removeClass('user').removeClass('solver').addClass('initial');
-                    break;
+            var type = this.AssignType;
+            $(squareItemId).toggleClass('initial', type == 0).toggleClass('user', type == 1).toggleClass('solver', type == 2);
 
-                case 1:
-                    $(squareItemId).removeClass('initial').removeClass('solver').addClass('user');
-                    break;
-
-                case 2:
-                    $(squareItemId).removeClass('initial').removeClass('user').addClass('solver');
-                    break;
-            }
         });
     });
 }
@@ -643,23 +613,14 @@ function loadNumbers(sudokuId) {
 
     $.get('api/SudokuApi/numbers/' + sudokuId, function (numberList) {
 
-        //Zero value
-        numberList[0].Value = 'Empty';
+        //Zero value (This will update detailsPanel)
+        var zeroNumber = numberList.splice(0, 1);
+        detailsModel.Sudoku().SquaresLeft = zeroNumber[0].Count;
+        ko.applyBindings(detailsModel.Sudoku, document.getElementById("detailsPanel"));
 
-        //Remove "0"
-        //TODO Dont retrieve it!!!
-        numberList.splice(0, 1);
+        // Group the numbers, to be able to display them nicely (see numbersPanel on default.html)
 
-        /* Old */
-
-        //Assign the result
-        //numbersModel.Numbers = ko.observableArray([]);
-        //numbersModel.Numbers(numberList);
-        //ko.applyBindings(numbersModel, document.getElementById("numbersPanel"));
-
-        /* New - TO BE ABLE TO GROUP THE NUMBERS */
-
-        //Square root of the size
+        // Square root of the size
         var sqrtSize = Math.sqrt(numberList.length);
 
         numbersModel.NumberGroups = ko.observableArray([]);
@@ -699,35 +660,64 @@ function loadAvailabilities(sudokuId) {
 
             //Square item + square value
             var availabilityItemId = '#availabilityItem' + this.SquareId + '_' + this.Number;
-            //var squareValueId = '#squareValue' + this.SquareId;
 
             //Set the Number
             if (this.IsAvailable)
                 $(availabilityItemId).removeClass('unavailable');
             else
                 $(availabilityItemId).addClass('unavailable');
-
-            ////Assign type
-            //switch (this.AssignType) {
-            //    case 0:
-            //        $(squareItemId).removeClass('user').removeClass('solver').addClass('initial');
-            //        break;
-
-            //    case 1:
-            //        $(squareItemId).removeClass('initial').removeClass('solver').addClass('user');
-            //        break;
-
-            //    case 2:
-            //        $(squareItemId).removeClass('initial').removeClass('user').addClass('solver');
-            //        break;
-            //}
-
-            //availabilityGridModel.ava potentialsModel.Potentials = ko.observableArray([]);
-            //potentialsModel.Potentials(potentialList);
-            //ko.applyBindings(potentialsModel, document.getElementById("potentialsPanel"));
-
         });
     });
+}
+
+//New sudoku
+function newSudoku() {
+
+    $.ajax({
+        url: 'api/SudokuApi/newsudoku',
+        //cache: false, //?
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        statusCode: {
+            201 /*Created*/: function (newSudoku) {
+
+                //Add the item to the list
+                listModel.SudokuList.push(newSudoku);
+
+                loadGrids(newSudoku.Size);
+
+                //Load the sudoku
+                loadSudoku(newSudoku);
+
+            },
+            400 /* BadRequest */: function (jqxhr) {
+                var validationResult = $.parseJSON(jqxhr.responseText);
+
+                //Show message
+                showMessagePanel(validationResult);
+            }
+        }
+    });
+};
+
+function showMessagePanel(message) {
+    $('#messagePanelMessage').html($('#messagePanelMessage').html() + '<br />' + message);
+    $('#messagePanel').show();
+}
+
+function hideMessagePanel() {
+    $('#messagePanel').hide();
+    $('#messagePanelMessage').text('');
+}
+
+function addDebugMessage(message) {
+    $('#debugPanel').html($('#debugPanel').html() + '<br>' + message);
+    $('#debugPanel').show();
+}
+
+function clearDebugPanel() {
+    $('#debugPanel').hide();
+    $('#debugPanel').html('');
 }
 
 //Calculates the square id by using it's group + square position
@@ -798,24 +788,4 @@ function calculateSquareId(size, groupCounter, squareCounter) {
 
     //Sum all the modifiers and return
     return (smallVerticalModifier + smallHorizontalModifier + bigVerticalModifier + bigHorizontalModifier);
-}
-
-function showMessagePanel(message) {
-    $('#messagePanelMessage').html($('#messagePanelMessage').html() + '<br />' + message);
-    $('#messagePanel').show();
-}
-
-function hideMessagePanel() {
-    $('#messagePanel').hide();
-    $('#messagePanelMessage').text('');
-}
-
-function addDebugMessage(message) {
-    $('#debugPanel').html($('#debugPanel').html() + '<br>' + message);
-    $('#debugPanel').show();
-}
-
-function clearDebugPanel() {
-    $('#debugPanel').hide();
-    $('#debugPanel').html('');
 }

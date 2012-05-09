@@ -100,6 +100,9 @@ namespace OSP.SudokuSolver.Engine
 
         void Square_NumberChanging(Square square)
         {
+            if (square.Number.IsZero)
+                return;
+
             foreach (var relatedSquare in Squares)
                 relatedSquare.MakeNumberAvailable(square.Number);
         }

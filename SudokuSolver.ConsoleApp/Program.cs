@@ -426,6 +426,8 @@ namespace OSP.SudokuSolver.ConsoleApp
                 default:
                     break;
             }
+
+            Sudoku.Ready = true;
         }
 
         static void Help()

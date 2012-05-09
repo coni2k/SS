@@ -163,7 +163,7 @@ div.solve {
 .numberItem {
     font-size: 1.5em;
     font-weight: bold;
-    text-align: center;    
+    text-align: center;
     
     float: left;
     width: 45px;
@@ -174,8 +174,20 @@ div.solve {
     margin: 0;
     background-color: #fff;
     
+    overflow: hidden;
+    
     cursor: default;
 }
+
+    .numberItem .value {
+        
+    }
+
+    .numberItem .count {
+        font-size: 0.6em;
+        font-weight: normal;
+        margin-left: 3px;
+    }
 
 #mainGridPanel {
     clear: left;

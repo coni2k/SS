@@ -167,14 +167,19 @@ namespace OSP.SudokuSolver.WebApp.Controllers
 
         [HttpPost]
         [ActionName("toggleready")]
-        public HttpResponseMessage ToggleReady(int id)
+        public void ToggleReady(int id)
         {
             var container = ValidateAndGetSudokuContainer(id);
 
-            container.ToggleReady();
-
-            var response = new HttpResponseMessage<SudokuContainer>(container, HttpStatusCode.OK);
-            return response;
+            try
+            {
+                container.ToggleReady();
+            }
+            catch (Exception ex)
+            {
+                var response = new HttpResponseMessage<JsonValue>(ex.Message, HttpStatusCode.BadRequest);
+                throw new HttpResponseException(response);            
+            }
         }
 
         //We have to put action; update square and toggleautosolve
