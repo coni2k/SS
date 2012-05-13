@@ -187,48 +187,25 @@ namespace OSP.SudokuSolver.WebApp.Controllers
 
         [HttpPost]
         [ActionName("toggleautosolve")]
-        public HttpResponseMessage<SudokuContainer> ToggleAutoSolve(int id)
+        public void ToggleAutoSolve(int id)
         {
             var container = ValidateAndGetSudokuContainer(id);
-
             container.ToggleAutoSolve();
-
-            var response = new HttpResponseMessage<SudokuContainer>(container, HttpStatusCode.OK);
-            //TODO Necessary to return the location?
-            //string uri = Url.Route(null, new { id = container.Id });
-            //response.Headers.Location = new Uri(Request.RequestUri, uri);
-
-            return response;
         }
 
         [HttpPost]
         [ActionName("solve")]
-        public HttpResponseMessage<SudokuContainer> Solve(int id)
+        public void Solve(int id)
         {
             var container = ValidateAndGetSudokuContainer(id);
-
             container.Solve();
-
-            var response = new HttpResponseMessage<SudokuContainer>(container, HttpStatusCode.OK);
-            //TODO Necessary to return the location?
-            //string uri = Url.Route(null, new { id = container.Id });
-            //response.Headers.Location = new Uri(Request.RequestUri, uri);
-
-            return response;
         }
 
         [HttpPost]
         [ActionName("reset")]
-        public HttpResponseMessage Reset()
+        public void Reset()
         {
             CacheManager.LoadSamples();
-
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            //TODO Necessary to return the location?
-            //string uri = Url.Route(null, new { id = container.Id });
-            //response.Headers.Location = new Uri(Request.RequestUri, uri);
-
-            return response;
         }
     }
 }

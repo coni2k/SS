@@ -5,8 +5,8 @@
     <title>Sudoku Solver</title>
     <link href="Content/main.css" rel="stylesheet" type="text/css" />
     <script src="Scripts/jquery-1.6.2.js" type="text/javascript"></script>
-    <script src="Scripts/knockout-2.1.0.js" type="text/javascript"></script>
-    <script src="Scripts/SudokuSolver/main.js" type="text/javascript"></script>
+    <script src="Scripts/knockout-2.1.0.debug.js" type="text/javascript"></script>
+    <script src="Scripts/knockout.mapping-latest.js" type="text/javascript"></script>
 </head>
 <body>
     <div class="header">
@@ -14,81 +14,85 @@
     </div>
     <div class="contentContainer">
         <div class="contentLeft">
-            <strong>To Do</strong>
-            <br />
-            . CASE 1: ID 5, square 1 cannot have any number except 1.<br />
-            ID 8, 3. grid cannot have any number except 1,2,3.
-            <br />
-            . CASE 2: ID 1, square 36 cannot have number 9.
-            <br />
-            . how about drag&drop the numbers?
-            <br />
-            . squaresLeft (numbersModel.ZeroValue count) can be improved, maybe moved to sudoku
-            details?
-            <br />
-            . checkpotential & getpotentials methods in the engine should be better!
-            <br />
-            . retrieve only unavailable ones.. - try to load availabilities as a separate thingy,
-            its very slow - is it possible to use same grid ?!
-            <br />
-            . on live server, default document doesn't work, default.html needs to be entered
-            specifically ?!
-            <br />
-            . validation; in general OK, but numpad values are ignored as well!
-            <br />
-            . improve general (content) styling! general list template? + use jQuery animations
-            ?! - IE doesnt support "inherit" - try to have more generic css items ?!
-            <br />
-            . How to serialize Read-Only properties with Json.Net?
-            <br />
-            . IEnumerable or list or ..? and any() or exists() or contains()?
-            <br />
-            . when we update knockout model in js file, why it doesnt update front-end as well?
-            isn't it possible? learn more about knockout?
-            <br />
-            . is it possible to retrieve only the changes from the server? usedSquares method
-            <br />
-            . add samples for different sizes - 4 + 9 (OK) + 16 + 25? + wrong cases; invalid
-            sudoku, invalid number, invalid square, invalid assignment!
-            <br />
-            . on first application load, it fails to retrieve the sudoku!
-            <br />
-            . try to remove Container classes!
-            <br />
-            . unit test projects!
-            <br />
-            . firefox shows an error in case of 400 ?! is it normal
-            <br />
-            . step counter ?!
-            <br />
-            . multiple language support
-            <br />
-            . save to db?
-            <br />
-            . sudoku generator?
-            <br />
-            . test with all browsers + mobile!
-            <br />
-            . clean up; css etc. + check TODO in general!
-            <br />
-            . live default.html + main.js files are different! - urls dont start with "/" -
-            THIS IS OKAY ?!
-            <br />
-            <br />
+            <div id="todoPanelContainer">
+                <span id="todoHeader"><strong><a href="#">To Do</a></strong></span>
+                <div id="todoPanel">
+                    <br />
+                    . CASE 1: ID 5, square 1 cannot have any number except 1.<br />
+                    ID 8, 3. grid cannot have any number except 1,2,3.
+                    <br />
+                    . CASE 2: ID 1, square 36 cannot have number 9.
+                    <br />
+                    . how about drag&drop the numbers?
+                    <br />
+                    . squaresLeft (numbersModel.ZeroValue count) can be improved, maybe moved to sudoku
+                    details?
+                    <br />
+                    . checkpotential & getpotentials methods in the engine should be better!
+                    <br />
+                    . retrieve only unavailable ones.. - try to load availabilities as a separate thingy,
+                    its very slow - is it possible to use same grid ?!
+                    <br />
+                    . on live server, default document doesn't work, default.html needs to be entered
+                    specifically ?!
+                    <br />
+                    . validation; in general OK, but numpad values are ignored as well!
+                    <br />
+                    . improve general (content) styling! general list template? + use jQuery animations
+                    ?! - IE doesnt support "inherit" - try to have more generic css items ?!
+                    <br />
+                    . How to serialize Read-Only properties with Json.Net?
+                    <br />
+                    . IEnumerable or list or ..? and any() or exists() or contains()?
+                    <br />
+                    . when we update knockout model in js file, why it doesnt update front-end as well?
+                    isn't it possible? learn more about knockout?
+                    <br />
+                    . is it possible to retrieve only the changes from the server? usedSquares method
+                    <br />
+                    . add samples for different sizes - 4 + 9 (OK) + 16 + 25? + wrong cases; invalid
+                    sudoku, invalid number, invalid square, invalid assignment!
+                    <br />
+                    . on first application load, it fails to retrieve the sudoku!
+                    <br />
+                    . try to remove Container classes!
+                    <br />
+                    . unit test projects!
+                    <br />
+                    . firefox shows an error in case of 400 ?! is it normal
+                    <br />
+                    . step counter ?!
+                    <br />
+                    . multiple language support
+                    <br />
+                    . save to db?
+                    <br />
+                    . sudoku generator?
+                    <br />
+                    . test with all browsers + mobile!
+                    <br />
+                    . clean up; css etc. + check TODO in general!
+                    <br />
+                    . live default.html + main.js files are different! - urls dont start with "/" -
+                    THIS IS OKAY ?!
+                </div>
+                <br />
+                <br />
+            </div>
             <div id="listPanel">
                 <strong>Sudoku List</strong>
-                <ul data-bind="template: {name: 'sudokulist-template', foreach: listModel.SudokuList}">
-                </ul>
-                <a id="newSudoku" data-bind="click: newSudoku" href="#">New sudoku</a><a id="resetList"
-                    href="#">Reset list</a>
+                <div data-bind="foreach: listModel.SudokuList">
+                    <div class="sudokuItem">
+                        <a data-bind="click: $parent.loadSudoku" href="#">
+                            <span data-bind="text: 'Id: ' + SudokuId"></span>
+                        </a>
+                    </div>
+                </div>
+                <a data-bind="click: newSudoku" href="#">New sudoku</a>
+                <a data-bind="click: resetList" href="#">Reset list</a>
             </div>
         </div>
         <div id="contentRight" class="contentRight">
-            <div id="mainModelPanel">
-                Ready new: <a data-bind="click: toggleReadyNew" href="#"><span data-bind="text: ReadyNew() ? 'True' : 'False'">
-                </span></a>
-                <br />
-            </div>
             <div id="detailsPanel">
                 <strong>Details</strong>
                 <br />
@@ -96,21 +100,25 @@
                 <br />
                 Squares left: <span data-bind=" text: SquaresLeft"></span>
                 <br />
-                Ready: <a id="toggleReady" data-bind="attr: { 'data-sudoku-id': SudokuId }" href="#">
-                    <span data-bind="text: this ? Ready ? 'True' : 'False' : '' "></span></a>
+                Ready: <a id="toggleReady" data-bind="click: ToggleReady" href="#">
+                        <span data-bind="text: ReadyFormatted"></span>
+                       </a>
                 <br />
                 <div id="solvePanel" data-bind="visible: Ready">
-                    Autosolve: <a id="toggleAutoSolve" data-bind="attr: { 'data-sudoku-id': SudokuId }"
-                        href="#"><span data-bind="text: AutoSolve ? 'True' : 'False'"></span></a>
-                    <div class="solve" data-bind="visible: !AutoSolve">
-                        &nbsp;-&nbsp; <a id="solve" data-bind="attr: { 'data-sudoku-id': SudokuId }" href="#">
-                            Solve now</a>
+                    Autosolve:
+                    <a id="toggleAutoSolve" data-bind="click: ToggleAutoSolve" href="#">
+                        <span data-bind="text: AutoSolveFormatted"></span>
+                    </a>
+                    <div class="solve" data-bind="visible: !AutoSolve()">
+                        <span>- </span>
+                        <a data-bind="click: Solve" href="#">Solve now</a>
                     </div>
                 </div>
                 <div id="displayOptionsPanel">
-                    Display: <a id="toggleDisplayOptions" data-bind="attr: { 'data-sudoku-id': SudokuId }"
-                        href="#"><span id="selectedDisplayOption" data-bind="text: DisplayOptions ? 'Values' : 'Ids'">
-                        </span></a>
+                    Display:
+                    <a data-bind="click: ToggleDisplayOptions" href="#">
+                        <span data-bind="text: DisplayOptionsFormatted"></span>
+                    </a>
                 </div>
             </div>
             <div id="legendPanel">
@@ -128,65 +136,72 @@
             <div id="numbersPanel">
                 <strong>Numbers (Counts)</strong>
                 <br />
-                <div class="numberGroupContainer" data-bind="template: {name: 'numbers-group-template', foreach: numbersModel.NumberGroups}">
+                <div class="numberGroupContainer" data-bind="foreach: numbersModel.NumberGroups">
+                    <div class="numberGroup" data-bind="foreach: Numbers">
+                        <div class="numberItem">
+                            <span class="value" data-bind="text: Value"></span>
+                            <span class="count" data-bind="text: '(' + Count + ')'"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id="mainGridPanel" data-bind="template: {name: 'maingrid-group-template', foreach: mainGridModel.Groups}">
+            <div id="mainGridPanel" data-bind="foreach: gridModel.Groups">
+                <div class="groupItem" data-bind="foreach: Squares">
+                    <div data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { initial: AssignType() == 0, user: AssignType() == 1, solver: AssignType() == 2, selected: IsSelected() }" class="squareItem">
+                        <span data-bind="text: SquareId" class="squareId"></span>
+                        <input data-bind="value: NumberFormatted" class="squareValue" />
+                    </div>
+                </div>
             </div>
-            <div id="availabilityGridPanel" data-bind="template: {name: 'availabilitygrid-group-template', foreach: mainGridModel.Groups}">
+            <div id="availabilityGridPanel" data-bind="foreach: gridModel.Groups">
+                <div class="groupItem" data-bind="foreach: Squares">
+                    <div data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { initial: AssignType() == 0, user: AssignType() == 1, solver: AssignType() == 2, selected: IsSelected() }" class="squareItem">
+                        <div data-bind="foreach: Availabilities">
+                            <div data-bind="css: { unavailable: !IsAvailable() }" class="availabilityItem">
+                                <span data-bind="text: Value"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="potentialsPanel">
                 <strong>Potentials</strong>
                 <br />
-                <div data-bind="template: {name: 'potentials-template', foreach: potentialsModel.Potentials}">
+                <div data-bind="foreach: potentialsModel.Potentials">
+                    <div class="potentialItem" data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { selected: IsSelected() }">
+                        <span data-bind="text: 'SquareId: ' + SquareId + ' - PotentialValue: ' + PotentialValue + ' - PotentialType: ' + PotentialType">
+                        </span>
+                    </div>
                 </div>
             </div>
             <div id="debugPanel"></div>
         </div>
-        <script id="sudokulist-template" type="text/html">
-            <li class="sudokuItem"><a class="loadSudoku" data-bind="attr: { 'data-sudoku-id': SudokuId }"
-                href="#">Id: <span data-bind="text: SudokuId"></span></a></li>
-        </script>
-        <script id="maingrid-group-template" type="text/html">
-            <div class="groupItem" data-bind="template: {name: 'maingrid-square-template', foreach: Squares}">
-            </div>
-        </script>
-        <script id="maingrid-square-template" type="text/html">
-            <div data-bind="attr: { 'id': 'mainGrid_squareItem' + SquareId }" class="squareItem initial">
-                <span data-bind="text: SquareId" class="squareId"></span>
-                <input data-bind="attr: { 'id': 'squareValue' + SquareId, 'data-square-id': SquareId }"
-                    class="squareValue" />
-            </div>
-        </script>
-        <script id="availabilitygrid-group-template" type="text/html">
-            <div class="groupItem" data-bind="template: {name: 'availabilitygrid-square-template', foreach: Squares}">
-            </div>
-        </script>
-        <script id="availabilitygrid-square-template" type="text/html">
-            <div data-bind="attr: { 'id': 'availabilityGrid_squareItem' + SquareId }" class="squareItem initial">
-                <div data-bind="template: {name: 'availabilitygrid-availability-template', foreach: Availabilities}">
-                </div>
-            </div>
-        </script>
-        <script id="availabilitygrid-availability-template" type="text/html">
-            <div data-bind="attr: { 'id': 'availabilityItem' + AvailabilityId }" class="availabilityItem">
-                <span data-bind="text: Value"></span>
-            </div>
-        </script>
-        <script id="numbers-group-template" type="text/html">
-            <div class="numberGroup" data-bind="template: {name: 'numbers-template', foreach: Numbers}">
-            </div>
-        </script>
-        <script id="numbers-template" type="text/html">
-            <div class="numberItem" data-bind="attr: { 'data-number': Value }">
-                <span class="value" data-bind="html:Value"></span><span class="count" data-bind="html:'(' + Count + ')'">
-                </span>
-            </div>
-        </script>
-        <script id="potentials-template" type="text/html">
-            <div class="potentialItem" data-bind="html: 'SquareId: ' + SquareId + ' - PotentialValue: ' + PotentialValue + ' - PotentialType: ' + PotentialType, attr: { 'data-square-id': SquareId, 'data-potential-value': PotentialValue }">
-            </div>
-        </script>
     </div>
 </body>
 </html>
+<script src="Scripts/SudokuSolver/main.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+    $(function () {
+
+        //TODO "var" keyword can't be used, "var [x]model" doesn't work, why ?!
+
+        listModel = new ListModel();
+        detailsModel = new DetailsModel();
+        gridModel = new GridModel();
+        numbersModel = new NumbersModel();
+        potentialsModel = new PotentialsModel();
+
+        ko.applyBindings(listModel, document.getElementById("listPanel"));
+        ko.applyBindings(detailsModel, document.getElementById("detailsPanel"));
+        ko.applyBindings(numbersModel, document.getElementById("numbersPanel"));
+        ko.applyBindings(gridModel, document.getElementById("mainGridPanel"));
+        ko.applyBindings(gridModel, document.getElementById("availabilityGridPanel"));
+        ko.applyBindings(potentialsModel, document.getElementById("potentialsPanel"));
+
+        //Load the app
+        loadSudokuList();
+
+    });
+
+</script>

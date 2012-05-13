@@ -113,6 +113,14 @@ h5, h6 {
     max-width: 960px;
 }
 
+#todoHeader {
+    
+}
+
+#todoPanel {
+    display: none;
+}
+
 .sudokuItem {
     /*list-style-type: none;*/
     margin-left: 20px;
