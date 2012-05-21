@@ -99,12 +99,12 @@ h5, h6 {
 }
 
 .contentLeft {
-    width: 25%;
+    width: 15%;
     float: left;
 }
 
 .contentRight {
-    width: 75%;
+    width: 85%;
     float: right;
 }
 
@@ -123,8 +123,8 @@ h5, h6 {
 
 .sudokuItem {
     /*list-style-type: none;*/
-    margin-left: 20px;
-    margin-bottom: 5px;
+    /* margin-left: 20px;
+    margin-bottom: 5px; */
 }
 
 div.solve {
@@ -161,7 +161,7 @@ div.solve {
 }
 
 /* Same with groupItem ?! */
-.numberGroup {
+.numberGroupItem {
     float: left;
     width: 141px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
     border: 1px solid gray;
@@ -183,7 +183,6 @@ div.solve {
     background-color: #fff;
     
     overflow: hidden;
-    
     cursor: default;
 }
 
@@ -197,21 +196,22 @@ div.solve {
         margin-left: 3px;
     }
 
-#mainGridPanel {
-    clear: left;
+.gridPanel {
     width: 429px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
     border: 1px solid gray;
     overflow: auto;
     float: left;
-    margin: 20px 20px 0 0;
+    margin: 20px 20px 0 0;    
+}
+
+#valueGridPanel {
+    clear: left;
 }
 
 #availabilityGridPanel {
-    width: 429px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
-    border: 1px solid gray;
-    overflow: auto;
-    float: left;
-    margin: 20px 20px 0 0;
+}
+
+#idGridPanel {
 }
 
 .groupItem {
@@ -222,17 +222,17 @@ div.solve {
 
 .squareItem {
     float: left;
-    width: 45px;
+    border: 1px solid #efefef;
+    background-color: #fff;
+    /* width: 45px;
     height: 45px;
     line-height: 45px;
-    border: 1px solid #efefef;
     padding: 0;
-    margin: 0;
-    background-color: #ffff99; /* Even color */
+    margin: 0; */
 }
 
     .odd {
-        background-color: #fff;
+        background-color: #ffff99;
     }
 
     .selected {
@@ -257,30 +257,30 @@ div.solve {
     }
 
 .squareId {
-    float:  left;
+    display: block;
+    /* float:  left; */
     font-size: 1.5em;
     font-weight: bold;
     text-align: center;
-    width: inherit;
-    height: inherit;
-    line-height: inherit;
+    width: 45px;
+    line-height: 45px;
     color: inherit;
     background-color: inherit;
-    border: 0;
+    /* border: 0;
+    height: 45px;
     padding: 0;
-    margin: 0;
+    margin: 0; */
     cursor: default;
-    display: none;
 }
 
 .squareValue {
-    float:  left;
+    /* float:  left; */
     font-size: 1.5em;
     font-weight: bold;
     text-align: center;
-    width: inherit;
-    height: inherit;
-    line-height: inherit;
+    width: 45px;
+    height: 45px;
+    /* line-height: 45px; */
     color: inherit;
     background-color: inherit;
     border: 0;
@@ -288,13 +288,16 @@ div.solve {
     margin: 0;
     cursor: pointer;
     font-family: "Segoe UI",Verdana,Helvetica,Sans-Serif;
-    display: inline;
+}
+
+.squareAvailabilities {
+    width: 45px;    
 }
 
 .availabilityItem {
     float: left;
     /*font-weight: bold;*/
-    font-size: xx-small;
+    font-size: 1em;
     text-align: center;    
     width: 15px;
     height: 15px;
@@ -354,6 +357,10 @@ footer {
     background-color: #e2e2e2;
     font-size: .8em;
     height: 100px;
+}
+
+.hide {
+    display: none;
 }
 
 
