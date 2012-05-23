@@ -41,11 +41,11 @@ namespace OSP.SudokuSolver.WebApp
                 defaults: new { controller = "sudokuapi", action = "list", id = RouteParameter.Optional, squareId = RouteParameter.Optional }
             );
 
-            routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
-            );
+            //routes.MapRoute(
+            //    name: "Default",
+            //    url: "{controller}/{action}/{id}",
+            //    defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+            //);
         }
 
         protected void Application_Start()

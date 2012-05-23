@@ -77,9 +77,6 @@ details?
 
 . try to remove Container classes!
 
-. on live server, default document doesn't work, default.html needs to be entered
-specifically ?!
-
 . validation; in general OK, but numpad values are ignored as well!
 
 . improve general (content) styling! general list template? + use jQuery animations
@@ -109,9 +106,6 @@ sudoku, invalid number, invalid square, invalid assignment!
 . test with all browsers + mobile!
 
 . clean up; css etc. + check TODO in general!
-
-. live default.html + main.js files are different! - urls dont start with "/" -
-THIS IS OKAY ?!
 
 ---
 knockout filtering instead of functions?
@@ -144,6 +138,3 @@ try to get rid of long ajax codes!!!
 try to mention the components;
 jQuery
 blockUI ?!
-
----
-new windows client of github test !!!
