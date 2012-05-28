@@ -142,6 +142,9 @@ div.solve {
 
 #messagePanelClear {
     font-size: smaller;
+    color: red;
+    font-weight: bold;
+    text-decoration: none;    
 }
 
 #messagePanelMessage {

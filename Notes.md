@@ -20,9 +20,6 @@ WRONG SUDOKU! - try this after fixing CASE 1: ID 5
 14,2
 
 ---
-Notes from Readme.md
-
-## Possible Improvements ##
 - All squares can hold the groups which can affect them (SecondGradeGroups) ?
 Maybe this can be done in SquareGroup level?
 In general, we have to be able to pin-point the squares
@@ -40,21 +37,9 @@ But if removing the potentials will work as it should be, probably there will be
 
 - fatih's sample? and new samples!
 
-- test application?!
-
-- others;
-UPDATE & AUTOSOLVE is now using POST! - [more info] (http://jcalcote.wordpress.com/2008/10/16/put-or-post-the-rest-of-the-story/)
-
-- do we need containers? is it possible to use the original classes?
-there is a problem about serialization but is it possible to make them compatible?
-
-- try to clean!
-
 - change the repository name
 
 ---
-Notes from To do block of default.html
-
 . CASE 1: ID 5, square 1 cannot have any number except 1.
 ID 8, 3. grid cannot have any number except 1,2,3.
 
@@ -62,20 +47,15 @@ ID 8, 3. grid cannot have any number except 1,2,3.
 
 . how about drag&drop the numbers?
 
-. models can be merged ?
-
-. try to initialize objects only once! - reset them only if the size is different!
-
 . squaresLeft (numbersModel.ZeroValue count) can be improved, maybe moved to sudoku
-details?
+details? - STILL NECESSARY?
 
 . checkpotential & getpotentials methods in the engine should be better!
 
 . retrieve only updated values from server - usedSquares + numbers count + availabilities!
 
-. try to load availabilities seperately
-
 . try to remove Container classes!
+there is a problem about serialization but is it possible to make them compatible?
 
 . validation; in general OK, but numpad values are ignored as well!
 
@@ -88,8 +68,6 @@ details?
 
 . add samples for different sizes - 4 + 9 (OK) + 16 + 25? + wrong cases; invalid
 sudoku, invalid number, invalid square, invalid assignment!
-
-. on first application load, it fails to retrieve the sudoku! - This can be OK?
 
 . unit test projects!
 
@@ -107,32 +85,18 @@ sudoku, invalid number, invalid square, invalid assignment!
 
 . clean up; css etc. + check TODO in general!
 
----
-knockout filtering instead of functions?
-
----
-apply nuget updates
+. should IsAvailable = false squares have a different css/value on availabilities grid ?!
 
 ---
 try to have a new (initialized) sudoku on the page - try to decrease the first page load time
 
-							try to merge models?
-
-try to improve initialization of the objects.. only once if possible - THIS IS OK?
-try to load seperately? setTimeout ?
-
-try to use custombindings ? - fade || slidevisible ?!
-
 try to remove calculateId for square!
 would it help?
+sample sudoku ids need to be updated!!! and probably square.Groups calculation ?!
 
 try to load availabilities as a sepearate thingy?
 
-use ff net panel
-
----
-in some functions, there is sudokuViewModel, in some its just sudokuId, in some its model etc. try to have one approach!
-try to get rid of long ajax codes!!!
+use ff net panel to improve the performance
 
 ---
 try to mention the components;

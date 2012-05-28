@@ -1,12 +1,5 @@
-﻿
-function SudokuViewModel() {
+﻿function SudokuViewModel() {
     var self = this;
-
-    //Sudoku list
-    self.SudokuList = ko.observableArray([]);
-    self.LoadSudoku = function (sudoku) { loadSudoku(sudoku); }
-    self.NewSudoku = function () { newSudoku(self); }
-    self.ResetList = function () { resetList(); }
 
     //Id, Size, SquaresLeft
     self.SudokuId = ko.observable(0);
@@ -14,6 +7,11 @@ function SudokuViewModel() {
     self.TotalSize = ko.computed(function () { return self.Size() * self.Size(); });
     self.SquareRootofSize = ko.computed(function () { return Math.sqrt(self.Size()); });
     self.SquaresLeft = ko.observable(0);
+    self.SudokuList = ko.observableArray([]);
+
+    self.LoadSudoku = function (sudoku) { loadSudoku(self, sudoku); }
+    self.NewSudoku = function () { newSudoku(self); }
+    self.ResetList = function () { resetList(self); }
 
     //Ready
     self.Ready = ko.observable(false);
@@ -62,6 +60,50 @@ function SudokuViewModel() {
 
     //Potentials
     self.Potentials = ko.observableArray([]);
+
+    //Square filters
+    //a. by Square Id
+    self.FilteredSquaresById = function (squareId) {
+
+        var matchedSquare = null;
+
+        //Loop through groups
+        ko.utils.arrayFirst(self.Groups(), function (group) {
+
+            //Loop through squares
+            matchedSquare = ko.utils.arrayFirst(group.Squares(), function (square) {
+
+                //Return if you find the square
+                return square.SquareId === squareId;
+            });
+
+            //Stop groups loop as well
+            return matchedSquare !== null && matchedSquare !== undefined;
+        });
+
+        return matchedSquare;
+
+    };
+
+    //b. by Number
+    self.FilteredSquaresByNumber = function (number) {
+
+        var matchedSquares = new Array();
+
+        //Loop through groups
+        ko.utils.arrayForEach(self.Groups(), function (group) {
+
+            //Loop through squares
+            ko.utils.arrayForEach(group.Squares(), function (square) {
+
+                //If it matches, add to the list
+                if (square.Value() === number)
+                    matchedSquares.push(square);
+            });
+        });
+
+        return matchedSquares;
+    };
 }
 
 function ValueGrid(groups) {
@@ -85,8 +127,9 @@ function IDGrid(groups) {
     self.Visible = ko.observable(false);
 }
 
-function Group() {
+function Group(model) {
     var self = this;
+    self.Model = model;
     self.GroupId = ko.observable(0);
     self.Squares = ko.observableArray([]);
     self.IsOdd = ko.computed(function () { return self.GroupId() % 2 === 0; });
@@ -96,7 +139,15 @@ function Square(group, id) {
     var self = this;
     self.Group = group;
     self.SquareId = id;
-    self.Number = ko.observable(''); //Value instead of Number?
+    self.Value = ko.observable(0);
+    self.ValueFormatted = ko.computed({
+        read: function () {
+            return self.Value() === 0 ? '' : self.Value();
+        },
+        write: function (value) {
+            self.Value(value === '' ? 0 : value);
+        }
+    });
     //self.NumberFormatted = ko.computed(function () { return self.Number() === 0 ? '' : self.Number().toString() });
     self.AssignType = ko.observable(0);
     self.Availabilities = ko.observableArray([]);
@@ -105,9 +156,8 @@ function Square(group, id) {
         self.IsSelected(event.type == 'mouseenter');
     }
 
+    //Ensure that it is a valid number
     self.Updating = function (data, event) {
-
-        // Ensure that it is a valid number
 
         //TODO This is only for Size 9, for Size 4 it wouldn't work?!
         if (event.keyCode === 8 || //Backspace
@@ -124,11 +174,11 @@ function Square(group, id) {
         else {
 
             //Reset first?
-            data.Number('');
+            data.Value(0);
 
             //Ensure that the value is smaller than sudoku size
             var newValue = $(event.target).val() + String.fromCharCode(event.keyCode);
-            if (newValue > sudokuViewModel.Size()) {
+            if (newValue > data.Group.Model.Size()) {
                 event.preventDefault();
             }
         }
@@ -138,53 +188,35 @@ function Square(group, id) {
 
     self.Update = function (data, event) {
 
-        var number = data.Number();
-        if (number === '')
-            number = 0;
+        //Get the number
+        //var number = data.Value() === '' ? 0 : Number(data.Value());
 
         //Prepare post data
-        var squareContainer = { SquareId: data.SquareId, Number: number };
-        var json = JSON.stringify(squareContainer);
+        var squareContainer = JSON.stringify({ SquareId: data.SquareId, Number: data.Value() });
 
+        //Post; because contentType needs to be set, $.post() couldn't be used
         $.ajax({
-            url: 'api/SudokuApi/updatesquare/' + sudokuViewModel.SudokuId(),
+            url: serverUrl + 'updatesquare/' + data.Group.Model.SudokuId(),
             type: 'POST',
-            data: json,
-            contentType: 'application/json; charset=utf-8',
-            statusCode: {
-                200 /*OK*/: function (data) {
+            data: squareContainer,
+            contentType: 'application/json; charset=utf-8'
+        }).success(function () {
 
-                    //If it's "AutoSolve", load it from the server
-                    if (sudokuViewModel.AutoSolve()) {
-                        loadUsedSquares(sudokuViewModel.SudokuId());
-                    }
+            //Load details (if it's AutoSolve, load "used squares" as well
+            loadSudokuDetails(data.Group.Model, data.Group.Model.AutoSolve());
 
-                    //Load numbers
-                    loadNumbers(sudokuViewModel.SudokuId());
+        }).error(function (jqXHR) {
+            handleError(jqXHR);
 
-                    //Load potentials
-                    loadPotentials(sudokuViewModel.SudokuId());
-
-                    //Load availabilities
-                    loadAvailabilities(sudokuViewModel.SudokuId());
-
-                },
-                400 /* BadRequest */: function (jqxhr) {
-                    var validationResult = $.parseJSON(jqxhr.responseText);
-
-                    //Show message
-                    showMessagePanel(validationResult);
-
-                    //Clear the square
-                    data.Number('');
-                }
-            }
+            //Clear the square
+            data.Value(0);
         });
     }
 }
 
-function SudokuNumber() {
+function SudokuNumber(model) {
     var self = this;
+    self.Model = model;
     self.Value = 0;
     self.Count = ko.observable(0);
     self.IsSelected = ko.observable(false);
@@ -194,15 +226,16 @@ function SudokuNumber() {
         self.IsSelected(event.type == 'mouseenter');
 
         //Find & toggle select related square as well
-        var relatedSquares = findSquaresByNumber(data.Value);
+        var relatedSquares = data.Model.FilteredSquaresByNumber(data.Value);
         $.each(relatedSquares, function () {
             this.ToggleSelect(null, event);
         });
     }
 }
 
-function Potential() {
+function Potential(model) {
     var self = this;
+    self.Model = model;
     self.SquareId = 0;
     self.PotentialValue = 0;
     self.PotentialType = 0;
@@ -213,68 +246,83 @@ function Potential() {
         self.IsSelected(event.type == 'mouseenter');
 
         //Find & toggle select related square as well
-        var relatedSquare = findSquareBySquareId(data.SquareId);
-        relatedSquare.Number(event.type == 'mouseenter' ? self.PotentialValue : '');
+        var relatedSquare = data.Model.FilteredSquaresById(data.SquareId);
+        relatedSquare.Value(event.type == 'mouseenter' ? self.PotentialValue : 0);
         relatedSquare.ToggleSelect(null, event);
     }
 }
 
 function Availability() {
     var self = this;
-    self.Value = 0; //Number instead of Value?
+    self.Value = 0;
     self.IsAvailable = ko.observable(true);
 }
 
-function loadSudokuList() {
+function loadSudokuList(model) {
 
-    $.get('api/SudokuApi/list', function (sudokuList) {
+    $.getJSON(serverUrl + 'list', function (sudokuList) {
 
-        sudokuViewModel.SudokuList([]);
-        sudokuViewModel.SudokuList(sudokuList);
+        model.SudokuList([]);
+        model.SudokuList(sudokuList);
 
-        loadSudoku(sudokuViewModel.SudokuList()[0]);
-    });
+        loadSudoku(model, model.SudokuList()[0]);
+
+    }).error(function (jqXHR) { handleError(jqXHR); });
 }
 
-function loadSudoku(sudoku) {
+function loadSudoku(model, sudoku) {
 
     //Determines whether the a new grid needs to be initialized or just the existing one will be refreshed
-    var initOrRefreshGrid = sudokuViewModel.Size() !== sudoku.Size;
+    var initOrRefreshGrid = model.Size() !== sudoku.Size;
 
     //Load sudoku
-    sudokuViewModel.SudokuId(sudoku.SudokuId);
-    sudokuViewModel.Size(sudoku.Size);
-    sudokuViewModel.Ready(sudoku.Ready);
-    sudokuViewModel.AutoSolve(sudoku.AutoSolve);
+    model.SudokuId(sudoku.SudokuId);
+    model.Size(sudoku.Size);
+    model.Ready(sudoku.Ready);
+    model.AutoSolve(sudoku.AutoSolve);
 
     //Grid
     if (initOrRefreshGrid)
-        initGrid(sudoku.Size);
+        initGrid(model);
     else
-        refreshGrid();
+        refreshGrid(model);
 
-    //Load used squares
-    loadUsedSquares(sudoku.SudokuId);
+    //Load details
+    loadSudokuDetails(model);
 
-    //Load numbers
-    loadNumbers(sudoku.SudokuId);
-
-    //Load potentials
-    loadPotentials(sudoku.SudokuId);
-
-    //Load availabilities
-    loadAvailabilities(sudoku.SudokuId);
-
+    //Clear messages
+    hideMessagePanel();
 }
 
-function initGrid(size) {
+function loadSudokuDetails(model, refreshSquares)
+{
+    //Optional refresh squares, default value is 'true'
+    refreshSquares = (typeof refreshSquares === "undefined") ? true : refreshSquares
+
+    //If refreshSquares flag is true, load used squares
+    if (refreshSquares) {
+        loadUsedSquares(model);
+    }
+
+    //Load numbers
+    loadNumbers(model);
+
+    //Load potentials
+    loadPotentials(model);
+
+    //Load availabilities
+    loadAvailabilities(model);
+}
+
+function initGrid(model) {
 
     //Create an array for square type groups
-    sudokuViewModel.Groups([]);
+    model.Groups([]);
+    var size = model.Size();
     for (groupCounter = 1; groupCounter <= size; groupCounter++) {
 
         //Create group
-        var group = new Group();
+        var group = new Group(model);
         group.GroupId(groupCounter);
 
         //Squares loop
@@ -283,11 +331,9 @@ function initGrid(size) {
             //Create square
             var squareId = calculateSquareId(size, groupCounter, squareCounter);
             square = new Square(group, squareId);
-            //square.SquareId = calculateSquareId(size, groupCounter, squareCounter);
-            //square.SquareId = squareCounter + ((groupCounter - 1) * size);
 
             //TODO Is it correct way of doing it?
-            if (sudokuViewModel.Ready())
+            if (model.Ready())
                 square.AssignType(1);
 
             //Availability loop
@@ -302,16 +348,16 @@ function initGrid(size) {
             group.Squares.push(square);
         }
 
-        sudokuViewModel.Groups.push(group);
+        model.Groups.push(group);
     }
 }
 
-function refreshGrid() {
+function refreshGrid(model) {
 
-    ko.utils.arrayForEach(sudokuViewModel.Groups(), function (group) {
+    ko.utils.arrayForEach(model.Groups(), function (group) {
         ko.utils.arrayForEach(group.Squares(), function (square) {
-            square.Number('');
-            square.AssignType(sudokuViewModel.Ready() ? 1 : 0);
+            square.Value(0);
+            square.AssignType(model.Ready() ? 1 : 0);
             ko.utils.arrayForEach(square.Availabilities(), function (availability) {
                 availability.IsAvailable(true);
             });
@@ -320,35 +366,36 @@ function refreshGrid() {
 }
 
 //Is it possible to retrieve only the changes?
-function loadUsedSquares(sudokuId) {
+function loadUsedSquares(model) {
 
-    $.get('api/SudokuApi/usedsquares/' + sudokuId, function (usedSquareList) {
+    $.getJSON(serverUrl + 'usedsquares/' + model.SudokuId(), function (usedSquareList) {
 
         $.each(usedSquareList, function () {
 
             //Find the square
-            var matchedSquare = findSquareBySquareId(this.SquareId);
+            var matchedSquare = model.FilteredSquaresById(this.SquareId);
 
             //Update
-            matchedSquare.Number(this.Number === 0 ? '' : this.Number);
+            matchedSquare.Value(this.Number);
             matchedSquare.AssignType(this.AssignType);
         });
-    });
+
+    }).error(function (jqXHR) { handleError(jqXHR); });
 }
 
-function loadNumbers(sudokuId) {
+function loadNumbers(model) {
 
-    $.get('api/SudokuApi/numbers/' + sudokuId, function (numberList) {
+    $.getJSON(serverUrl + 'numbers/' + model.SudokuId(), function (numberList) {
 
         //Zero value (SquaresLeft on detailsPanel)
         var zeroNumber = numberList.splice(0, 1);
-        sudokuViewModel.SquaresLeft(zeroNumber[0].Count);
+        model.SquaresLeft(zeroNumber[0].Count);
 
         //TODO Why cant it be used without assigning to a local?
-        var sqrtSize = sudokuViewModel.SquareRootofSize();
+        var sqrtSize = model.SquareRootofSize();
 
         //Group the numbers, to be able to display them nicely (see numbersPanel on default.html)
-        sudokuViewModel.NumberGroups([]);
+        model.NumberGroups([]);
         for (groupCounter = 0; groupCounter < sqrtSize; groupCounter++) {
 
             var numberGroup = new Object();
@@ -358,38 +405,40 @@ function loadNumbers(sudokuId) {
 
                 var numberData = numberList.splice(0, 1);
 
-                var sudokuNumber = new SudokuNumber();
+                var sudokuNumber = new SudokuNumber(model);
                 sudokuNumber.Value = numberData[0].Value;
                 sudokuNumber.Count(numberData[0].Count);
                 numberGroup.Numbers.push(sudokuNumber);
             }
 
-            sudokuViewModel.NumberGroups.push(numberGroup);
+            model.NumberGroups.push(numberGroup);
         };
-    });
+
+    }).error(function (jqXHR) { handleError(jqXHR); });
 }
 
-function loadPotentials(sudokuId) {
+function loadPotentials(model) {
 
-    $.get('api/SudokuApi/potentials/' + sudokuId, function (potentialList) {
+    $.getJSON(serverUrl + 'potentials/' + model.SudokuId(), function (potentialList) {
 
-        sudokuViewModel.Potentials([]);
+        model.Potentials([]);
 
         $.each(potentialList, function () {
 
             //Create potential
-            var potential = new Potential();
+            var potential = new Potential(model);
             potential.SquareId = this.SquareId;
             potential.PotentialValue = this.PotentialValue;
             potential.PotentialType = this.PotentialType;
-            sudokuViewModel.Potentials.push(potential);
+            model.Potentials.push(potential);
         });
-    });
+    
+    }).error(function (jqXHR) { handleError(jqXHR); });
 }
 
-function loadAvailabilities(sudokuId) {
+function loadAvailabilities(model) {
 
-    $.get('api/SudokuApi/availabilities/' + sudokuId, function (availabilityList) {
+    $.getJSON(serverUrl + 'availabilities/' + model.SudokuId(), function (availabilityList) {
 
         $.each(availabilityList, function () {
 
@@ -397,7 +446,7 @@ function loadAvailabilities(sudokuId) {
             var number = this.Number;
 
             //Find the square
-            var matchedSquare = findSquareBySquareId(this.SquareId);
+            var matchedSquare = model.FilteredSquaresById(this.SquareId);
 
             //Find the availability
             var matchedAvailability = ko.utils.arrayFirst(matchedSquare.Availabilities(), function (availability) {
@@ -408,196 +457,75 @@ function loadAvailabilities(sudokuId) {
             matchedAvailability.IsAvailable(this.IsAvailable);
 
         });
-    });
+
+    }).error(function (jqXHR) { handleError(jqXHR); });
 }
 
 function newSudoku(model) {
 
-    $.ajax({
-        url: 'api/SudokuApi/newsudoku',
-        type: 'POST',
-        contentType: 'application/json; charset=utf-8',
-        statusCode: {
-            201 /*Created*/: function (newSudoku) {
+    $.post(serverUrl + 'newsudoku').success(function (newSudoku)
+    {
+        //Add the item to the list
+        model.SudokuList.push(newSudoku);
 
-                //Add the item to the list
-                model.SudokuList.push(newSudoku);
+        //Load the sudoku
+        loadSudoku(model, newSudoku);
 
-                //Load the sudoku
-                //TODO What to load, just init or refresh the grid?
-                loadSudoku(newSudoku);
-
-            },
-            400 /* BadRequest */: function (jqxhr) {
-                var validationResult = $.parseJSON(jqxhr.responseText);
-
-                //Show message
-                showMessagePanel(validationResult);
-            }
-        }
-    });
+    }).error(function (jqXHR) { handleError(jqXHR); });
 };
 
-function resetList() {
+function resetList(model) {
 
-    $.ajax({
-        url: 'api/SudokuApi/reset',
-        type: 'POST',
-        contentType: 'application/json; charset=utf-8',
-        statusCode: {
-            200 /*OK*/: function () {
+    $.post(serverUrl + 'reset').success(function () {
 
-                //Load app again
-                loadSudokuList();
+        //Load app again
+        loadSudokuList(model);
 
-            },
-            400 /* BadRequest */: function (jqxhr) {
-                var validationResult = $.parseJSON(jqxhr.responseText);
-
-                //Show message
-                showMessagePanel(validationResult);
-            }
-        }
-    });
+    }).error(function (jqXHR) { handleError(jqXHR); });
 }
 
 function toggleReady(model) {
 
-    $.ajax({
-        url: 'api/SudokuApi/toggleready/' + model.SudokuId(),
-        type: 'POST',
-        contentType: 'application/json; charset=utf-8',
-        statusCode: {
-            200 /*OK*/: function () {
+    $.post(serverUrl + 'toggleready/' + model.SudokuId()).success(function () {
 
-                //Toggle
-                self.Ready(!model.Ready());
+        //Toggle
+        model.Ready(!model.Ready());
 
-                //Assign Types
-                ko.utils.arrayForEach(model.Groups(), function (group) {
-                    ko.utils.arrayForEach(group.Squares(), function (square) {
-                        if (square.Number() === '')
-                            square.AssignType(model.Ready() ? 1 : 0);
-                    });
-                });
-            },
-            400 /* BadRequest */: function (jqxhr) {
-                var validationResult = $.parseJSON(jqxhr.responseText);
+        //Assign Types
+        ko.utils.arrayForEach(model.Groups(), function (group) {
+            ko.utils.arrayForEach(group.Squares(), function (square) {
+                if (square.Value() === 0)
+                    square.AssignType(model.Ready() ? 1 : 0);
+            });
+        });
 
-                //Show message
-                showMessagePanel(validationResult);
-            }
-        }
-    });
+    }).error(function (jqXHR) { handleError(jqXHR); });
 }
 
 function toggleAutoSolve(model) {
 
-    $.ajax({
-        url: 'api/SudokuApi/toggleautosolve/' + model.SudokuId(),
-        type: 'POST',
-        contentType: 'application/json; charset=utf-8',
-        statusCode: {
-            200 /*OK*/: function () {
+    $.post(serverUrl + 'toggleautosolve/' + model.SudokuId()).success(function () {
 
-                //Update UI
-                model.AutoSolve(!model.AutoSolve());
+        //Update UI
+        model.AutoSolve(!model.AutoSolve());
 
-                if (model.AutoSolve()) {
+        //If autosolve, load details
+        if (model.AutoSolve()) { loadSudokuDetails(model); }
 
-                    //Load used squares
-                    loadUsedSquares(model.SudokuId());
-
-                    //Load numbers
-                    loadNumbers(model.SudokuId());
-
-                    //Load potentials
-                    loadPotentials(model.SudokuId());
-                }
-            },
-            400 /* BadRequest */: function (jqxhr) {
-                var validationResult = $.parseJSON(jqxhr.responseText);
-
-                //Show message
-                showMessagePanel(validationResult);
-            }
-        }
-    });
+    }).error(function (jqXHR) { handleError(jqXHR); });
 }
 
 function solve(model) {
 
-    $.ajax({
-        url: 'api/SudokuApi/solve/' + model.SudokuId(),
-        type: 'POST',
-        contentType: 'application/json; charset=utf-8',
-        statusCode: {
-            200 /*OK*/: function () {
+    $.post(serverUrl + 'solve/' + model.SudokuId()).success(function () {
 
-                //Load used squares
-                loadUsedSquares(model.SudokuId());
+        //Load details
+        loadSudokuDetails(model);
 
-                //Load numbers
-                loadNumbers(model.SudokuId());
-
-                //Load potentials
-                loadPotentials(model.SudokuId());
-
-            },
-            400 /* BadRequest */: function (jqxhr) {
-                var validationResult = $.parseJSON(jqxhr.responseText);
-
-                //Show message
-                showMessagePanel(validationResult);
-            }
-        }
-    });
+    }).error(function (jqXHR) { handleError(jqXHR); });
 }
 
-//TODO Use ko.utils.arrayFilter instead?
-function findSquareBySquareId(squareId) {
-
-    var matchedSquare = null;
-
-    //Loop through groups
-    ko.utils.arrayFirst(sudokuViewModel.Groups(), function (group) {
-
-        //Loop through squares
-        matchedSquare = ko.utils.arrayFirst(group.Squares(), function (square) {
-
-            //Return if you find the square
-            return square.SquareId === squareId;
-        });
-
-        //Stop groups loop as well
-        return matchedSquare !== null && matchedSquare !== undefined;
-    });
-
-    return matchedSquare;
-}
-
-//TODO Use ko.utils.arrayFilter instead?
-//And also is it bit slow?
-function findSquaresByNumber(number) {
-
-    var matchedSquares = new Array();
-
-    //Loop through groups
-    ko.utils.arrayForEach(sudokuViewModel.Groups(), function (group) {
-
-        //Loop through squares
-        ko.utils.arrayForEach(group.Squares(), function (square) {
-
-            //If it matches, add to the list
-            if (square.Number() === number)
-                matchedSquares.push(square);
-        });
-    });
-
-    return matchedSquares;
-}
-
-//TODO Move to a better place?
+//TODO Should there be generic functions js file?
 function capitaliseFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -617,19 +545,27 @@ $(function () {
         }).ajaxStop($.unblockUI);
 });
 
+//Ajax error handling
+function handleError(jqXHR) {
+
+    //Get the message
+    var validationResult = $.parseJSON(jqXHR.responseText);
+
+    //Show
+    showMessagePanel(validationResult);
+}
+
 $("#messagePanelClear").live('click', function () {
     hideMessagePanel();
 });
 
 function showMessagePanel(message) {
-    //$('#messagePanelMessage').html($('#messagePanelMessage').html() + '<br />' + message);
-    $('#messagePanelMessage').html(message);
-    $('#messagePanel').show();
+    $('#messagePanelMessage').text(message);
+    $('#messagePanel').fadeIn(200);
 }
 
 function hideMessagePanel() {
-    $('#messagePanel').hide();
-    $('#messagePanelMessage').text('');
+    $('#messagePanel').fadeOut(200);
 }
 
 function addDebugMessage(message) {
