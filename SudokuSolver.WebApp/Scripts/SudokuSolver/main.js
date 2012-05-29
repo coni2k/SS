@@ -272,7 +272,7 @@ function loadSudokuList(model) {
 
 function loadSudoku(model, sudoku) {
 
-    //Determines whether the a new grid needs to be initialized or just the existing one will be refreshed
+    //Determines whether the a new grid needs to be initialized or the existing one will be refreshed
     var initOrRefreshGrid = model.Size() !== sudoku.Size;
 
     //Load sudoku
