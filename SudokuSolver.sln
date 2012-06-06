@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Web Developer Express 11
+# Visual Studio Express 2012 for Web
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.ConsoleApp", "SudokuSolver.ConsoleApp\SudokuSolver.ConsoleApp.csproj", "{3ACDFA32-1459-4D33-A1B7-129F27A80F45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.Engine", "SudokuSolver.Engine\SudokuSolver.Engine.csproj", "{E13870F4-FB1D-4F95-8FB9-7D033FD3C96B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2C665B6C-75DF-48C9-94BC-D4EEBB6AF8B0}"
 	ProjectSection(SolutionItems) = preProject
+		Notes.md = Notes.md
 		ReadMe.md = ReadMe.md
 		RunIISExpress.bat = RunIISExpress.bat
 	EndProjectSection

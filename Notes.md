@@ -56,13 +56,12 @@ details? - STILL NECESSARY?
 
 . try to remove Container classes!
 there is a problem about serialization but is it possible to make them compatible?
+How to serialize Read-Only properties with Json.Net?
 
 . validation; in general OK, but numpad values are ignored as well!
 
 . improve general (content) styling! general list template? + use jQuery animations
 ?! - IE doesnt support "inherit" - try to have more generic css items ?!
-
-. How to serialize Read-Only properties with Json.Net?
 
 . IEnumerable or list or ..? and any() or exists() or contains()?
 
@@ -85,8 +84,6 @@ sudoku, invalid number, invalid square, invalid assignment!
 
 . clean up; css etc. + check TODO in general!
 
-. should IsAvailable = false squares have a different css/value on availabilities grid ?!
-
 ---
 try to have a new (initialized) sudoku on the page - try to decrease the first page load time
 
@@ -102,3 +99,35 @@ use ff net panel to improve the performance
 try to mention the components;
 jQuery
 blockUI ?!
+
+---
+OK
+. should IsAvailable = false squares have a different css/value on availabilities grid ?!
+
+---
+bir grupta; 
+atanabýlecek 1 numara kaldýysa, kalan numara dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 2 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 3 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 4 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 5 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 6 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 7 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 8 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+
+---
+en son bunu gruba ekledýk, kontrol et sonuclarý;
+GetAvailableSquaresForNumber
+
+---
+initial square ready modda update edilince assign type degisecek!
+
+---
+CHECK HANDLE ERROR JS FUNC WITH THIS?
+
+    .fail(
+        function (jqXHR, textStatus, err) {
+            $('#product').html('Error: ' + err); 
+        });
+
+---

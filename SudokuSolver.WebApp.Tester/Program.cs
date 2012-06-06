@@ -9,7 +9,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
 {
     class Program
     {
-        static string endPointBase = "http://localhost:56105/api/sudokuapi/";
+        static string endPointBase = "http://localhost:56105/api/sudoku/";
         static int currentSudokuId = 1;
 
         static void Main(string[] args)

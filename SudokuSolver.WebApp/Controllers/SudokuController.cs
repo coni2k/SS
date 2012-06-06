@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Json;
+//using System.Json;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -10,7 +10,7 @@ using OSP.SudokuSolver.WebApp.Models;
 
 namespace OSP.SudokuSolver.WebApp.Controllers
 {
-    public class SudokuApiController : ApiController
+    public class SudokuController : ApiController
     {
         [ActionName("list")]
         public List<SudokuContainer> GetList()
@@ -100,27 +100,9 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             return container.GetAvailabilities();
         }
 
-        private SudokuContainer ValidateAndGetSudokuContainer(int id)
-        {
-            //Search the container in CacheManager
-            var container = CacheManager.SudokuList.Find(s => s.SudokuId.Equals(id));
-
-            //If there is no, throw an exception
-            if (container == null)
-            {
-                var response = new HttpResponseMessage();
-                response.StatusCode = HttpStatusCode.NotFound;
-                response.Content = new StringContent("Sudoku not found");
-                throw new HttpResponseException(response);
-            }
-
-            //Return
-            return container;
-        }
-
         [HttpPost]
-        [ActionName("newsudoku")]
-        public HttpResponseMessage<SudokuContainer> Post()
+        [ActionName("item")]
+        public HttpResponseMessage Post()
         {
             //Id of the container
             //TODO Thread safety?
@@ -141,10 +123,10 @@ namespace OSP.SudokuSolver.WebApp.Controllers
 
             CacheManager.SudokuList.Add(container);
 
-            var response = new HttpResponseMessage<SudokuContainer>(container, HttpStatusCode.Created);
-            string uri = Url.Route(null, new { id = container.SudokuId });
-            response.Headers.Location = new Uri(Request.RequestUri, uri);
-
+            //Response
+            var response = Request.CreateResponse<SudokuContainer>(HttpStatusCode.Created, container);
+            string uri = Url.Link("DefaultApi", new { id = container.SudokuId });
+            response.Headers.Location = new Uri(uri);
             return response;
         }
 
@@ -160,7 +142,7 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             }
             catch (Exception ex) 
             {
-                var response = new HttpResponseMessage<JsonValue>(ex.Message, HttpStatusCode.BadRequest);
+                var response = Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message);
                 throw new HttpResponseException(response);
             }
         }
@@ -177,8 +159,8 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                var response = new HttpResponseMessage<JsonValue>(ex.Message, HttpStatusCode.BadRequest);
-                throw new HttpResponseException(response);            
+                var response = Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message);
+                throw new HttpResponseException(response);
             }
         }
 
@@ -207,5 +189,22 @@ namespace OSP.SudokuSolver.WebApp.Controllers
         {
             CacheManager.LoadSamples();
         }
+
+        private SudokuContainer ValidateAndGetSudokuContainer(int id)
+        {
+            //Search the container in CacheManager
+            var container = CacheManager.SudokuList.Find(s => s.SudokuId.Equals(id));
+
+            //If there is no, throw an exception
+            if (container == null)
+            {
+                var response = Request.CreateResponse(HttpStatusCode.NotFound, "Sudoku not found");
+                throw new HttpResponseException(response);
+            }
+
+            //Return
+            return container;
+        }
+
     }
 }

@@ -48,7 +48,7 @@ namespace OSP.SudokuSolver.Engine
         /// </summary>
         public IEnumerable<Square> UsedSquares
         {
-            get { return _Squares.Where(s => !s.IsAvailable); }
+            get { return Squares.Where(s => !s.IsAvailable); }
         }
 
         internal List<Number> RelatedNumbers
@@ -138,17 +138,22 @@ namespace OSP.SudokuSolver.Engine
         internal Square GetPotentialSquare(Number number)
         {
             //If there is already a square which has this number, ignore this alert
-            if (_Squares.Exists(s => s.Number.Equals(number)))
+            if (Squares.Any(s => s.Number.Equals(number)))
                 return null;
 
             //Get the list of squares which are available
-            var list = _Squares.Where(s => s.IsAvailable && s.AvailableNumbers.Contains(number)).ToList();
+            var list = Squares.Where(s => s.IsAvailable && s.AvailableNumbers.Any(n => n.Equals(number))).ToList();
 
             //If there is only one, set it as potential
             if (list.Count().Equals(1))
                 return list[0];
 
             return null;
+        }
+
+        public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
+        {
+            return this.Squares.Where(s => s.IsAvailable && s.AvailableNumbers.Any(n => n.Equals(number)));
         }
 
         #endregion

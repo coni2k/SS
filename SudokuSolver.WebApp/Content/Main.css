@@ -299,8 +299,6 @@ div.solve {
 
 .availabilityItem {
     float: left;
-    /*font-weight: bold;*/
-    font-size: 1em;
     text-align: center;    
     width: 15px;
     height: 15px;
@@ -313,8 +311,14 @@ div.solve {
     cursor: default;
 }
 
-    .availabilityItem.unavailable {
+    .availabilityItem.unavailable_self {
         color: red;
+        font-size: 0.9em;
+    }
+
+    .availabilityItem.unavailable_group {
+        color: red;
+        font-size: 0.9em;
         text-decoration: line-through;
     }
 

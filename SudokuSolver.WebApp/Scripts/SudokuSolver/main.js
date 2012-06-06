@@ -148,7 +148,7 @@ function Square(group, id) {
             self.Value(value === '' ? 0 : value);
         }
     });
-    //self.NumberFormatted = ko.computed(function () { return self.Number() === 0 ? '' : self.Number().toString() });
+    self.IsAvailable = ko.computed(function () { return self.Value() === 0; });
     self.AssignType = ko.observable(0);
     self.Availabilities = ko.observableArray([]);
     self.IsSelected = ko.observable(false);
@@ -463,7 +463,7 @@ function loadAvailabilities(model) {
 
 function newSudoku(model) {
 
-    $.post(serverUrl + 'newsudoku').success(function (newSudoku)
+    $.post(serverUrl + 'item').success(function (newSudoku)
     {
         //Add the item to the list
         model.SudokuList.push(newSudoku);
