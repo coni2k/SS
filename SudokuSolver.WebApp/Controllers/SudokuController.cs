@@ -100,6 +100,22 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             return container.GetAvailabilities();
         }
 
+        [ActionName("availabilities2")]
+        public IEnumerable<Availability2Container> GetAvailabilities2(int id)
+        {
+            var container = ValidateAndGetSudokuContainer(id);
+
+            return container.GetAvailabilities2();
+        }
+
+        [ActionName("groupnumberavailabilities")]
+        public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities(int id)
+        {
+            var container = ValidateAndGetSudokuContainer(id);
+
+            return container.GetGroupNumberAvailabilities();
+        }
+
         [HttpPost]
         [ActionName("item")]
         public HttpResponseMessage Post()

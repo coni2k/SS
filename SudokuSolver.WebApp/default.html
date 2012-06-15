@@ -19,7 +19,7 @@
     </div>
     <div class="contentContainer">
         <div class="contentLeft">
-            <div id="listPanel" class="">
+            <div id="listPanel">
                 <strong>Sudoku List</strong>
                 <div data-bind="foreach: SudokuList">
                     <div class="sudokuItem">
@@ -79,10 +79,9 @@
             </div>
             <div id="messagePanel">
                 <span id="messagePanelMessage"></span>
-                <span>&nbsp;</span>
                 <a id="messagePanelClear" href="#">[x]</a>
             </div>
-            <div id="numbersPanel" class="">
+            <div id="numbersPanel">
                 <strong>Numbers (Counts)</strong>
                 <br />
                 <div class="numberGroupContainer" data-bind="foreach: NumberGroups">
@@ -96,13 +95,24 @@
             </div>
             <div id="valueGridPanel" data-bind="template: { name: 'grid-template', data: ValueGrid }" class="gridPanel"></div>
             <div id="availabilityGridPanel" data-bind="template: { name: 'grid-template', data: AvailabilityGrid }, css: { hide: !AvailabilityGrid.Visible() }" class="gridPanel hide"></div>
+            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }" class="gridPanel hide"></div>
             <div id="idGridPanel" data-bind="template: { name: 'grid-template', data: IdGrid }, css: { hide: !IdGrid.Visible() }" class="gridPanel"></div>
-            <div id="potentialsPanel" class="">
+            <div id="potentialsPanel">
                 <strong>Potentials</strong>
                 <br />
                 <div data-bind="foreach: Potentials">
                     <div class="potentialItem" data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { selected: IsSelected() }">
                         <span data-bind="text: 'SquareId: ' + SquareId + ' - PotentialValue: ' + PotentialValue + ' - PotentialType: ' + PotentialType">
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div id="groupNumberAvailabilityPanel">
+                <strong>Group Number Availability</strong>
+                <br />
+                <div data-bind="foreach: GroupNumberAvailabilities">
+                    <div class="" data-bind="">
+                        <span data-bind="text: 'GroupId: ' + GroupId + ' - Number: ' + Number + ' - Count: ' + Count">
                         </span>
                     </div>
                 </div>
@@ -116,9 +126,12 @@
 <script type="text/html" id="grid-template">
     <div data-bind=" foreach: Groups">
         <div class="groupItem" data-bind="foreach: Squares">
-            <div data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { initial: AssignType() === 0, user: AssignType() === 1, solver: AssignType() === 2, selected: IsSelected(), odd: $parent.IsOdd() }" class="squareItem">
+            <div data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { initial: AssignType() === 0, user: AssignType() === 1, solver: AssignType() === 2, selected: IsSelected(), related_selected: IsRelatedSelected(), odd: $parent.IsOdd() }" class="squareItem">
                 <input data-bind="value: ValueFormatted, event: { keydown: Updating, change: Update }, css: { hide: $parents[1].DisplayMode !== 'value' }" class="squareValue" />
                 <div data-bind="foreach: Availabilities, css: { hide: $parents[1].DisplayMode !== 'availability' }" class="squareAvailabilities">
+                    <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }" class="availabilityItem"></span>
+                </div>
+                <div data-bind="foreach: Availabilities2, css: { hide: $parents[1].DisplayMode !== 'availability2' }" class="squareAvailabilities">
                     <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }" class="availabilityItem"></span>
                 </div>
                 <span data-bind="text: SquareId, css: { hide: $parents[1].DisplayMode !== 'id' }" class="squareId"></span>

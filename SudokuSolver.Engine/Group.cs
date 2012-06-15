@@ -51,6 +51,11 @@ namespace OSP.SudokuSolver.Engine
             get { return Squares.Where(s => !s.IsAvailable); }
         }
 
+        public IEnumerable<Square> AvailableSquares
+        {
+            get { return Squares.Where(s => s.IsAvailable); }
+        }
+
         internal List<Number> RelatedNumbers
         {
             get
@@ -110,7 +115,9 @@ namespace OSP.SudokuSolver.Engine
         void Square_NumberChanged(Square square)
         {
             foreach (var relatedSquare in Squares)
+            {
                 relatedSquare.MakeNumberUnavailable(square.Number);
+            }
 
             //Check for potential square
             foreach (var number in RelatedNumbers)
@@ -119,6 +126,12 @@ namespace OSP.SudokuSolver.Engine
 
         void Square_NumberBecameUnavailable(Number number)
         {
+            foreach (var square in Squares)
+            {
+                if (square.IsNumberAvailable(number) && !square.AvailableNumbers2.Contains(number))
+                    square.AvailableNumbers2.Add(number);
+            }
+
             CheckPotentialSquare(number);
         }
 
@@ -138,22 +151,24 @@ namespace OSP.SudokuSolver.Engine
         internal Square GetPotentialSquare(Number number)
         {
             //If there is already a square which has this number, ignore this alert
+            //TODO Is this really necessary?
             if (Squares.Any(s => s.Number.Equals(number)))
                 return null;
 
             //Get the list of squares which are available
-            var list = Squares.Where(s => s.IsAvailable && s.AvailableNumbers.Any(n => n.Equals(number))).ToList();
+            //var list = Squares.Where(s => s.IsAvailable && s.AvailableNumbers.Any(n => n.Equals(number))).ToList();
+            var list = GetAvailableSquaresForNumber(number);
 
             //If there is only one, set it as potential
             if (list.Count().Equals(1))
-                return list[0];
+                return list.First();
 
             return null;
         }
 
         public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
         {
-            return this.Squares.Where(s => s.IsAvailable && s.AvailableNumbers.Any(n => n.Equals(number)));
+            return AvailableSquares.Where(s => s.AvailableNumbers.Any(n => n.Equals(number)));
         }
 
         #endregion

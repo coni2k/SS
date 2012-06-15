@@ -46,6 +46,15 @@
         return capitaliseFirstLetter(self.AvailabilityGrid.Visible().toString());
     });
 
+    //Availability2 grid
+    self.Availability2Grid = new Availability2Grid(self.Groups);
+    //self.ToggleDisplayAvailabilities = function () {
+    //    self.AvailabilityGrid.Visible(!self.AvailabilityGrid.Visible());
+    //}
+    //self.DisplayAvailabilitiesFormatted = ko.computed(function () {
+    //    return capitaliseFirstLetter(self.AvailabilityGrid.Visible().toString());
+    //});
+
     //Id grid
     self.IdGrid = new IDGrid(self.Groups);
     self.ToggleDisplayIDs = function () {
@@ -60,6 +69,9 @@
 
     //Potentials
     self.Potentials = ko.observableArray([]);
+
+    //Group number availabilities
+    self.GroupNumberAvailabilities = ko.observableArray([]);
 
     //Square filters
     //a. by Square Id
@@ -120,6 +132,14 @@ function AvailabilityGrid(groups) {
     self.Visible = ko.observable(true);
 }
 
+function Availability2Grid(groups) {
+    var self = this;
+    self.Groups = ko.observableArray(groups);
+    self.DisplayMode = 'availability2';
+    //self.Visible = ko.observable(true);
+    self.Visible = true; //ko.observable(true);
+}
+
 function IDGrid(groups) {
     var self = this;
     self.Groups = ko.observableArray(groups);
@@ -148,16 +168,29 @@ function Square(group, id) {
             self.Value(value === '' ? 0 : value);
         }
     });
+    self.OldValue = 0;
     self.IsAvailable = ko.computed(function () { return self.Value() === 0; });
     self.AssignType = ko.observable(0);
     self.Availabilities = ko.observableArray([]);
+    self.Availabilities2 = ko.observableArray([]);
     self.IsSelected = ko.observable(false);
+    self.IsRelatedSelected = ko.observable(false);
     self.ToggleSelect = function (data, event) {
+        //Self selected
         self.IsSelected(event.type == 'mouseenter');
+
+        //Related square selected
+        ko.utils.arrayForEach(data.Group.Squares(), function (square) {
+            if (square !== data)
+                square.IsRelatedSelected(data.IsSelected());
+        });
     }
 
     //Ensure that it is a valid number
     self.Updating = function (data, event) {
+
+        //Hide previous error messages
+        hideMessagePanel();
 
         //TODO This is only for Size 9, for Size 4 it wouldn't work?!
         if (event.keyCode === 8 || //Backspace
@@ -173,7 +206,10 @@ function Square(group, id) {
         }
         else {
 
-            //Reset first?
+            //Keep the value; this value will be restored in case of a server error
+            data.OldValue = data.Value();
+
+            //To be able to do "new value" validation properly, first reset the current value
             data.Value(0);
 
             //Ensure that the value is smaller than sudoku size
@@ -188,9 +224,6 @@ function Square(group, id) {
 
     self.Update = function (data, event) {
 
-        //Get the number
-        //var number = data.Value() === '' ? 0 : Number(data.Value());
-
         //Prepare post data
         var squareContainer = JSON.stringify({ SquareId: data.SquareId, Number: data.Value() });
 
@@ -200,16 +233,19 @@ function Square(group, id) {
             type: 'POST',
             data: squareContainer,
             contentType: 'application/json; charset=utf-8'
-        }).success(function () {
+        }).done(function () {
+
+            //Assign type
+            data.AssignType(data.Group.Model.Ready() ? 1 : 0);
 
             //Load details (if it's AutoSolve, load "used squares" as well
             loadSudokuDetails(data.Group.Model, data.Group.Model.AutoSolve());
 
-        }).error(function (jqXHR) {
+        }).fail(function (jqXHR) {
             handleError(jqXHR);
 
             //Clear the square
-            data.Value(0);
+            data.Value(data.OldValue);
         });
     }
 }
@@ -228,7 +264,7 @@ function SudokuNumber(model) {
         //Find & toggle select related square as well
         var relatedSquares = data.Model.FilteredSquaresByNumber(data.Value);
         $.each(relatedSquares, function () {
-            this.ToggleSelect(null, event);
+            this.ToggleSelect(this, event);
         });
     }
 }
@@ -248,7 +284,7 @@ function Potential(model) {
         //Find & toggle select related square as well
         var relatedSquare = data.Model.FilteredSquaresById(data.SquareId);
         relatedSquare.Value(event.type == 'mouseenter' ? self.PotentialValue : 0);
-        relatedSquare.ToggleSelect(null, event);
+        relatedSquare.ToggleSelect(relatedSquare, event);
     }
 }
 
@@ -256,6 +292,19 @@ function Availability() {
     var self = this;
     self.Value = 0;
     self.IsAvailable = ko.observable(true);
+}
+
+function Availability2() {
+    var self = this;
+    self.Value = 0;
+    self.IsAvailable = ko.observable(true);
+}
+
+function GroupNumberAvailability() {
+    var self = this;
+    self.GroupId = 0;
+    self.Number = 0;
+    self.Count = 0;
 }
 
 function loadSudokuList(model) {
@@ -267,7 +316,7 @@ function loadSudokuList(model) {
 
         loadSudoku(model, model.SudokuList()[0]);
 
-    }).error(function (jqXHR) { handleError(jqXHR); });
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function loadSudoku(model, sudoku) {
@@ -312,6 +361,13 @@ function loadSudokuDetails(model, refreshSquares)
 
     //Load availabilities
     loadAvailabilities(model);
+
+    //Load availabilities
+    loadAvailabilities2(model);
+
+    //Load group number availabilities
+    loadGroupNumberAvailabilities(model);
+
 }
 
 function initGrid(model) {
@@ -343,6 +399,12 @@ function initGrid(model) {
                 var availability = new Availability();
                 availability.Value = availabilityCounter + 1;
                 square.Availabilities.push(availability);
+
+                //TODO NEW BLOCK!
+                //Create availability2 item
+                var availability2 = new Availability2();
+                availability2.Value = availabilityCounter + 1;
+                square.Availabilities2.push(availability2);
             }
 
             group.Squares.push(square);
@@ -350,6 +412,36 @@ function initGrid(model) {
 
         model.Groups.push(group);
     }
+
+    //UI calculations;
+    var minWidth = 15;
+
+    var squareWidth = minWidth * model.SquareRootofSize();
+
+    var groupWidth = (squareWidth * model.SquareRootofSize()) + (2 * model.SquareRootofSize()); /* Border */;
+
+    var panelWidth = (groupWidth * model.SquareRootofSize()) + (2 * model.SquareRootofSize()); /* Border */;
+    
+    $('.squareValue').css('width', squareWidth);
+    $('.squareValue').css('height', squareWidth);
+
+    $('.squareAvailabilities').css('width', squareWidth);
+
+    $('.squareId').css('width', squareWidth);
+    $('.squareId').css('line-height', squareWidth.toString() + 'px');
+
+    $('.groupItem').css('width', groupWidth);
+
+    $('.gridPanel').css('width', panelWidth);
+
+    $('.numberItem').css('width', squareWidth);
+    $('.numberItem').css('height', squareWidth);
+    $('.numberItem').css('line-height', squareWidth.toString() + 'px');
+
+    $('.numberGroupItem').css('width', groupWidth);
+
+    $('.numberGroupContainer').css('width', panelWidth);
+
 }
 
 function refreshGrid(model) {
@@ -380,7 +472,7 @@ function loadUsedSquares(model) {
             matchedSquare.AssignType(this.AssignType);
         });
 
-    }).error(function (jqXHR) { handleError(jqXHR); });
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function loadNumbers(model) {
@@ -414,7 +506,25 @@ function loadNumbers(model) {
             model.NumberGroups.push(numberGroup);
         };
 
-    }).error(function (jqXHR) { handleError(jqXHR); });
+        //UI calculations;
+        var minWidth = 15;
+
+        var squareWidth = minWidth * model.SquareRootofSize();
+
+        var groupWidth = (squareWidth * model.SquareRootofSize()) + (2 * model.SquareRootofSize()); /* Border */;
+
+        var panelWidth = (groupWidth * model.SquareRootofSize()) + (2 * model.SquareRootofSize()); /* Border */;
+
+        $('.numberItem').css('width', squareWidth);
+        $('.numberItem').css('height', squareWidth);
+        $('.numberItem').css('line-height', squareWidth.toString() + 'px');
+
+        $('.numberGroupItem').css('width', groupWidth);
+
+        $('.numberGroupContainer').css('width', panelWidth);
+
+
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function loadPotentials(model) {
@@ -433,7 +543,7 @@ function loadPotentials(model) {
             model.Potentials.push(potential);
         });
     
-    }).error(function (jqXHR) { handleError(jqXHR); });
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function loadAvailabilities(model) {
@@ -458,12 +568,56 @@ function loadAvailabilities(model) {
 
         });
 
-    }).error(function (jqXHR) { handleError(jqXHR); });
+    }).fail(function (jqXHR) { handleError(jqXHR); });
+}
+
+function loadAvailabilities2(model) {
+
+    $.getJSON(serverUrl + 'availabilities2/' + model.SudokuId(), function (list) {
+
+        $.each(list, function () {
+
+            //Number
+            var number = this.Number;
+
+            //Find the square
+            var matchedSquare = model.FilteredSquaresById(this.SquareId);
+
+            //Find the availability
+            var matched = ko.utils.arrayFirst(matchedSquare.Availabilities2(), function (availability2) {
+                return availability2.Value === number;
+            });
+
+            //Update
+            matched.IsAvailable(this.IsAvailable);
+
+        });
+
+    }).fail(function (jqXHR) { handleError(jqXHR); });
+}
+
+function loadGroupNumberAvailabilities(model) {
+
+    $.getJSON(serverUrl + 'groupnumberavailabilities/' + model.SudokuId(), function (list) {
+
+        model.GroupNumberAvailabilities([]);
+
+        $.each(list, function () {
+
+            //Create potential
+            var groupNumberAvailability = new GroupNumberAvailability();
+            groupNumberAvailability.GroupId = this.GroupId;
+            groupNumberAvailability.Number = this.Number;
+            groupNumberAvailability.Count = this.Count;
+            model.GroupNumberAvailabilities.push(groupNumberAvailability);
+        });
+
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function newSudoku(model) {
 
-    $.post(serverUrl + 'item').success(function (newSudoku)
+    $.post(serverUrl + 'item').done(function (newSudoku)
     {
         //Add the item to the list
         model.SudokuList.push(newSudoku);
@@ -471,22 +625,22 @@ function newSudoku(model) {
         //Load the sudoku
         loadSudoku(model, newSudoku);
 
-    }).error(function (jqXHR) { handleError(jqXHR); });
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 };
 
 function resetList(model) {
 
-    $.post(serverUrl + 'reset').success(function () {
+    $.post(serverUrl + 'reset').done(function () {
 
         //Load app again
         loadSudokuList(model);
 
-    }).error(function (jqXHR) { handleError(jqXHR); });
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function toggleReady(model) {
 
-    $.post(serverUrl + 'toggleready/' + model.SudokuId()).success(function () {
+    $.post(serverUrl + 'toggleready/' + model.SudokuId()).done(function () {
 
         //Toggle
         model.Ready(!model.Ready());
@@ -499,12 +653,12 @@ function toggleReady(model) {
             });
         });
 
-    }).error(function (jqXHR) { handleError(jqXHR); });
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function toggleAutoSolve(model) {
 
-    $.post(serverUrl + 'toggleautosolve/' + model.SudokuId()).success(function () {
+    $.post(serverUrl + 'toggleautosolve/' + model.SudokuId()).done(function () {
 
         //Update UI
         model.AutoSolve(!model.AutoSolve());
@@ -512,17 +666,17 @@ function toggleAutoSolve(model) {
         //If autosolve, load details
         if (model.AutoSolve()) { loadSudokuDetails(model); }
 
-    }).error(function (jqXHR) { handleError(jqXHR); });
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function solve(model) {
 
-    $.post(serverUrl + 'solve/' + model.SudokuId()).success(function () {
+    $.post(serverUrl + 'solve/' + model.SudokuId()).done(function () {
 
         //Load details
         loadSudokuDetails(model);
 
-    }).error(function (jqXHR) { handleError(jqXHR); });
+    }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 //TODO Should there be generic functions js file?
@@ -561,11 +715,11 @@ $("#messagePanelClear").live('click', function () {
 
 function showMessagePanel(message) {
     $('#messagePanelMessage').text(message);
-    $('#messagePanel').fadeIn(200);
+    $('#messagePanel').fadeTo(200, 1);
 }
 
 function hideMessagePanel() {
-    $('#messagePanel').fadeOut(200);
+    $('#messagePanel').fadeTo(200, 0.01); 
 }
 
 function addDebugMessage(message) {

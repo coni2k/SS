@@ -239,7 +239,11 @@ div.solve {
     }
 
     .selected {
-        background-color: #69f !important;
+        background-color: #6699ff;
+    }
+
+    .related_selected {
+        background-color: #ccddff;
     }
     
     .initial {
@@ -329,6 +333,11 @@ div.solve {
 
 .potentialItem {
     
+}
+
+#groupNumberAvailabilityPanel {
+    float: left;
+    margin: 20px 20px 0 0;
 }
 
 #debugPanel {

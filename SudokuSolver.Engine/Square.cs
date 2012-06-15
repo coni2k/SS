@@ -9,6 +9,7 @@ namespace OSP.SudokuSolver.Engine
         #region Members
 
         private IList<Number> _AvailableNumbers = null;
+        private List<Number> _AvailableNumbers2 = new List<Number>();
         private List<Group> _SquareGroups = new List<Group>(3);
 
         #endregion
@@ -47,22 +48,10 @@ namespace OSP.SudokuSolver.Engine
         /// </summary>
         private Sudoku Sudoku { get; set; }
 
-        ///// <summary>
-        ///// Square's parent horizontal type group
-        ///// </summary>
-        //internal SquareGroup HorizontalTypeGroup { get; private set; }
-
-        ///// <summary>
-        ///// Square's parent vertical type group
-        ///// </summary>
-        //internal SquareGroup VerticalTypeGroup { get; private set; }
-
-        ///// <summary>
-        ///// Square's parent square type group
-        ///// </summary>
-        //internal SquareGroup SquareTypeGroup { get; private set; }
-
-        internal IEnumerable<Group> SquareGroups { get { return _SquareGroups; } }
+        /// <summary>
+        /// Gets the groups that this square assigned to
+        /// </summary>
+        public IEnumerable<Group> SquareGroups { get { return _SquareGroups; } }
 
         /// <summary>
         /// Gets whether the square is available or not; if the number of the square is ZERO, it's an available one
@@ -79,6 +68,8 @@ namespace OSP.SudokuSolver.Engine
         /// The availability will only be determined by looking whether the related squares have (are using) that number or not.
         /// </summary>
         public IEnumerable<Number> AvailableNumbers { get { return _AvailableNumbers; } }
+
+        public List<Number> AvailableNumbers2 { get { return _AvailableNumbers2; } }
 
         #endregion
 
@@ -136,7 +127,12 @@ namespace OSP.SudokuSolver.Engine
         /// <returns></returns>
         public bool IsNumberAvailable(Number number)
         {
-            return this.AvailableNumbers.Contains(number);
+            return this.AvailableNumbers.Any(n => n.Equals(number));
+        }
+
+        public bool IsNumberAvailable2(Number number)
+        {
+            return this.AvailableNumbers2.Any(n=> n.Equals(number));
         }
 
         /// <summary>
@@ -148,7 +144,7 @@ namespace OSP.SudokuSolver.Engine
             if (number.IsZero)
                 throw new ArgumentException("Zero value cannot be in available numbers", "number");
 
-            if (!_AvailableNumbers.Contains(number))
+            if (!_AvailableNumbers.Any(n => n.Equals(number)))
                 _AvailableNumbers.Add(number);
         }
 
@@ -158,15 +154,21 @@ namespace OSP.SudokuSolver.Engine
         /// <param name="number"></param>
         internal void MakeNumberUnavailable(Number number)
         {
-            if (_AvailableNumbers.Contains(number))
+            if (_AvailableNumbers.Any(n => n.Equals(number)))
                 _AvailableNumbers.Remove(number);
+
+            if (_AvailableNumbers2.Any(n => n.Equals(number)))
+                _AvailableNumbers2.Remove(number);
 
             if (ValidatePotential(this))
                 PotentialSquareFound(new Potential(this, null, _AvailableNumbers[0], PotentialTypes.Square));
 
             //Raise an event to let the squaregroup to do "potential" check
-            if (!number.IsZero && NumberBecameUnavailable != null)
-                NumberBecameUnavailable(number);
+            if (!number.IsZero)
+            {
+                if (NumberBecameUnavailable != null)
+                    NumberBecameUnavailable(number);
+            }
         }
 
         /// <summary>

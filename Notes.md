@@ -119,15 +119,71 @@ atanabýlecek 8 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
 en son bunu gruba ekledýk, kontrol et sonuclarý;
 GetAvailableSquaresForNumber
 
----
-initial square ready modda update edilince assign type degisecek!
+--
+now its possible to use readonly property by default - check objects!
 
 ---
-CHECK HANDLE ERROR JS FUNC WITH THIS?
-
-    .fail(
-        function (jqXHR, textStatus, err) {
-            $('#product').html('Error: ' + err); 
-        });
+OK;
+. Update assign type in case of successful update
+. Error message panel reserve its space
 
 ---
+bir availability assign edildiginde (false) oldugunda, gruptaki diger squarelerin yeni availabilit listelerine o rakam ekleniyor olabilir..?
+ama sonra nasýl çýkaracaðýz?
+
+---
+try to use a profiler (eaqutec?) to see that how many times functions being called (especially set availability etc.)
+
+---
+sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
+
+---
+size 4 sudoku is okay
+but UI calculations are terrible - it takes too much time to apply them
+try to create some shortcut css block for different size - 2,3,4,5 = 4,9,16,25?
+also in size 4, counts are dissappeared ?! - how to display them?
+
+---
+horizontal + vertical groups for square? and then use them as well with ToggleSelected()
+these calculations can come from the server?
+
+---
+first grade availability - only from its own group?
+and is there any second grade availability?
+
+---
+diger SIKISMA caseleri neler olabilir? onlari arastir
+
+eger bir numaranin konulabilecegi 2 kare varsa ve karedeki diger numara da sadece o 2 kareye konulabiliyorsa, o zaman SIKISMA var ihtimali uzerinde duruyoruz
+
+ancak, 
+
+
+---
+BEAUTY SUDOKU
+
+2, 2
+10, 4
+11, 5
+12, 6
+20, 8
+
+4, 9
+6, 7
+22, 3
+24, 1
+
+28, 3
+30, 1
+46, 9
+48, 7
+
+---
+AVAILABILITY BUG !
+
+22, 1
+30 1
+22, 0
+
+AVAILABILITY OF 21 IS WRONG NOW!
+

@@ -15,7 +15,7 @@ namespace OSP.SudokuSolver.WebApp.Models
                 if (HttpContext.Current.Cache["SudokuList"] == null)
                     LoadSamples();
 
-                return (List<SudokuContainer>) HttpContext.Current.Cache["SudokuList"];
+                return (List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"];
             }
         }
 
@@ -33,6 +33,13 @@ namespace OSP.SudokuSolver.WebApp.Models
             var sample8 = new Sudoku(9);
             var sample9 = new Sudoku(9);
             var sample10 = new Sudoku(9);
+            var sample11 = new Sudoku(9);
+
+            var sample12 = new Sudoku(4); //Size 4
+
+            var sample13 = new Sudoku(9); // Beauty
+
+            var sample14 = new Sudoku(9); // Availability bug
 
             sample1.UpdateSquare(1, 1);
             sample1.UpdateSquare(2, 2);
@@ -42,6 +49,7 @@ namespace OSP.SudokuSolver.WebApp.Models
             sample1.UpdateSquare(6, 6);
             sample1.UpdateSquare(7, 7);
             sample1.UpdateSquare(8, 8);
+
             sample2.UpdateSquare(1, 1);
             sample2.UpdateSquare(10, 2);
             sample2.UpdateSquare(19, 3);
@@ -50,6 +58,7 @@ namespace OSP.SudokuSolver.WebApp.Models
             sample2.UpdateSquare(46, 6);
             sample2.UpdateSquare(55, 7);
             sample2.UpdateSquare(64, 8);
+
             sample3.UpdateSquare(1, 1);
             sample3.UpdateSquare(2, 2);
             sample3.UpdateSquare(3, 3);
@@ -58,6 +67,7 @@ namespace OSP.SudokuSolver.WebApp.Models
             sample3.UpdateSquare(12, 6);
             sample3.UpdateSquare(19, 7);
             sample3.UpdateSquare(20, 8);
+
             sample4.UpdateSquare(1, 1);
             sample4.UpdateSquare(2, 2);
             sample4.UpdateSquare(3, 3);
@@ -66,14 +76,17 @@ namespace OSP.SudokuSolver.WebApp.Models
             sample4.UpdateSquare(36, 4);
             sample4.UpdateSquare(45, 5);
             sample4.UpdateSquare(54, 6);
+
             sample5.UpdateSquare(13, 1);
             sample5.UpdateSquare(25, 1);
             sample5.UpdateSquare(29, 1);
             sample5.UpdateSquare(57, 1);
+
             sample6.UpdateSquare(25, 1);
             sample6.UpdateSquare(57, 1);
             sample6.UpdateSquare(69, 1);
             sample6.UpdateSquare(80, 2);
+
             sample7.UpdateSquare(10, 3);
             sample7.UpdateSquare(13, 1);
             sample7.UpdateSquare(17, 2);
@@ -205,6 +218,31 @@ namespace OSP.SudokuSolver.WebApp.Models
             sample10.UpdateSquare(78, 7);
             sample10.UpdateSquare(79, 5);
 
+            sample11.UpdateSquare(1, 1);
+            sample11.UpdateSquare(13, 1);
+            sample11.UpdateSquare(25, 2);
+            sample11.UpdateSquare(26, 3);
+
+            //Size 4 - doesnt have any assignment
+
+            sample13.UpdateSquare(2, 2);
+            sample13.UpdateSquare(10, 4);
+            sample13.UpdateSquare(11, 5);
+            sample13.UpdateSquare(12, 6);
+            sample13.UpdateSquare(20, 8);
+            sample13.UpdateSquare(4, 9);
+            sample13.UpdateSquare(6, 7);
+            sample13.UpdateSquare(22, 3);
+            sample13.UpdateSquare(24, 1);
+            sample13.UpdateSquare(28, 3);
+            sample13.UpdateSquare(30, 1);
+            sample13.UpdateSquare(46, 9);
+            sample13.UpdateSquare(48, 7);
+
+            sample14.UpdateSquare(22, 1);
+            sample14.UpdateSquare(30, 1);
+            sample14.UpdateSquare(22, 0);
+
             var cont1 = new SudokuContainer() { SudokuId = 1 };
             var cont2 = new SudokuContainer() { SudokuId = 2 };
             var cont3 = new SudokuContainer() { SudokuId = 3 };
@@ -215,6 +253,10 @@ namespace OSP.SudokuSolver.WebApp.Models
             var cont8 = new SudokuContainer() { SudokuId = 8 };
             var cont9 = new SudokuContainer() { SudokuId = 9 };
             var cont10 = new SudokuContainer() { SudokuId = 10 };
+            var cont11 = new SudokuContainer() { SudokuId = 11 };
+            var cont12 = new SudokuContainer() { SudokuId = 12 };
+            var cont13 = new SudokuContainer() { SudokuId = 13 };
+            var cont14 = new SudokuContainer() { SudokuId = 14 };
 
             cont1.SetSudoku(sample1);
             cont2.SetSudoku(sample2);
@@ -226,6 +268,10 @@ namespace OSP.SudokuSolver.WebApp.Models
             cont8.SetSudoku(sample8);
             cont9.SetSudoku(sample9);
             cont10.SetSudoku(sample10);
+            cont11.SetSudoku(sample11);
+            cont12.SetSudoku(sample12);
+            cont13.SetSudoku(sample13);
+            cont14.SetSudoku(sample14);
 
             cont1.ToggleReady();
             cont2.ToggleReady();
@@ -237,6 +283,10 @@ namespace OSP.SudokuSolver.WebApp.Models
             cont8.ToggleReady();
             cont9.ToggleReady();
             cont10.ToggleReady();
+            cont11.ToggleReady();
+            cont12.ToggleReady();
+            cont13.ToggleReady();
+            cont14.ToggleReady();
 
             ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont1);
             ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont2);
@@ -248,6 +298,10 @@ namespace OSP.SudokuSolver.WebApp.Models
             ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont8);
             ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont9);
             ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont10);
+            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont11);
+            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont12);
+            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont13);
+            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont14);
         }
     }
 }

@@ -11,15 +11,7 @@ namespace OSP.SudokuSolver.WebApp.Models
     {
         public int SudokuId { get; set; }
         private Sudoku Sudoku { get; set; }
-        //How to searialize Read-Only property? Set is there only for this issue.
-        public int Size
-        {
-            get
-            {
-                return this.Sudoku.Size;
-            }
-            set { var i = 1; }
-        }
+        public int Size { get { return this.Sudoku.Size; } }
         public bool AutoSolve { get; set; }
         public bool Ready { get; set; }
 
@@ -133,6 +125,68 @@ namespace OSP.SudokuSolver.WebApp.Models
             {
                 foreach (var n in Sudoku.NumbersExceptZero)
                     list.Add(new AvailabilityContainer() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailable(n) });
+            }
+
+            return list;
+        }
+
+        public IEnumerable<Availability2Container> GetAvailabilities2()
+        {
+            var list = new List<Availability2Container>();
+
+            foreach (var s in Sudoku.Squares)
+            {
+                foreach (var n in Sudoku.NumbersExceptZero)
+                    list.Add(new Availability2Container() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailable2(n) });
+            }
+
+            return list;
+        }
+
+        public IEnumerable<Availability2Container> GetAvailabilities3()
+        {
+            var list = new List<Availability2Container>();
+
+            foreach (var s in Sudoku.Squares)
+            {
+                foreach (var n in Sudoku.NumbersExceptZero)
+                    list.Add(new Availability2Container() { SquareId = s.Id, Number = n.Value, IsAvailable = false });
+            }
+
+            foreach (var s in Sudoku.Squares)
+            {
+                if (s.AvailableNumbers.Count() == 1)
+                {
+                    list.First(a => a.SquareId == s.Id && a.Number == (s.AvailableNumbers.First().Value)).IsAvailable = true;
+                }
+                else
+                {
+                    foreach (var n in s.AvailableNumbers)
+                    {
+                        foreach (var g in s.SquareGroups)
+                        {
+                            var count = g.GetAvailableSquaresForNumber(n).Count();
+
+                            if (count == 1)
+                            {
+                                list.First(a => a.SquareId == s.Id && a.Number == n.Value).IsAvailable = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities()
+        {
+            var list = new List<GroupNumberAvailabilityContainer>();
+
+            foreach (var g in Sudoku.SquareTypeGroups)
+            {
+                foreach (var n in Sudoku.NumbersExceptZero)
+                    list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumber(n).Count() });
             }
 
             return list;
