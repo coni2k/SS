@@ -10,7 +10,7 @@ namespace OSP.SudokuSolver.Engine
 
         private int _Size = 0;
         private List<Square> _Squares = null;
-        private IList<Number> _Numbers = null;
+        //private IList<Number> _Numbers = null;
         private IList<Group> _HorizontalTypeGroups = null;
         private IList<Group> _VerticalTypeGroups = null;
         private IList<Group> _SquareTypeGroups = null;
@@ -104,7 +104,7 @@ namespace OSP.SudokuSolver.Engine
         /// Gets all numbers which can be used in sudoku, including zero.
         /// Count of the list equals to Size property of the sudoku + 1 (for size 9, it's 10)
         /// </summary>
-        public IEnumerable<Number> Numbers { get { return _Numbers; } }
+        public IEnumerable<Number> Numbers { get; private set; }
 
         /// <summary>
         /// Gets all usable numbers, except zero.
@@ -155,7 +155,7 @@ namespace OSP.SudokuSolver.Engine
                 //Validate: Cannot set to false, if there are any Square with User/Solver assign type
                 if (value == false)
                 {
-                    var hasInvalidAssignType = _Squares.Exists(s => (s.AssignType == AssignTypes.User || s.AssignType == AssignTypes.Solver) && !s.IsAvailable);
+                    var hasInvalidAssignType = _Squares.Any(s => (s.AssignType == AssignTypes.User || s.AssignType == AssignTypes.Solver) && !s.IsAvailable);
                     if (hasInvalidAssignType)
                         throw new Exception("Ready cannot set to false again if there are any squares with User or Solver Assign Type");
                 }
@@ -210,18 +210,12 @@ namespace OSP.SudokuSolver.Engine
             this.Size = size;
 
             //All numbers; numbers will be created as the size of the sudoku (default 9 + zero value = 10)
-            _Numbers = new List<Number>(Size + 1);
-
-            //Zero first
-            var zeroNumber = new Number(this, 0);
-            _Numbers.Add(zeroNumber);
-
-            //Other numbers
+            var numbers = new List<Number>(this.Size + 1);
+            var zeroNumber = new Number(this, 0); //Zero value
+            numbers.Add(zeroNumber);
             for (int i = 1; i <= Size; i++)
-            {
-                var number = new Number(this, i);
-                _Numbers.Add(number);
-            }
+                numbers.Add(new Number(this, i));
+            this.Numbers = numbers;
 
             //All square groups
             _HorizontalTypeGroups = new List<Group>(Size);
@@ -325,7 +319,7 @@ namespace OSP.SudokuSolver.Engine
             //And how about zero case?
             if (!square.IsAvailable)
             {
-                if (_PotentialSquares.Exists(p => p.Square.Id.Equals(square.Id)))
+                if (_PotentialSquares.Any(p => p.Square.Id.Equals(square.Id)))
                     _PotentialSquares.RemoveAll(p => p.Square.Id.Equals(square.Id));
             }
 
@@ -340,7 +334,7 @@ namespace OSP.SudokuSolver.Engine
         /// <param name="potential"></param>
         void PotentialSquare_Found(Potential potential)
         {
-            if (!_PotentialSquares.Exists(p => p.Square.Id.Equals(potential.Square.Id)))
+            if (!_PotentialSquares.Any(p => p.Square.Id.Equals(potential.Square.Id)))
             {
                 _PotentialSquares.Add(potential);
 
@@ -370,7 +364,8 @@ namespace OSP.SudokuSolver.Engine
                 if (potential.PotentialType == PotentialTypes.Square)
                 {
                     //If it's still valid..
-                    if (Square.ValidatePotential(potential.Square))
+                    //if (Square.ValidatePotential(potential.Square))
+                    if (Square.ValidatePotentialNew(potential.Square))
                         UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
                 }
                 else if (potential.PotentialType == PotentialTypes.Group)

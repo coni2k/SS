@@ -21,14 +21,14 @@ namespace OSP.SudokuSolver.WebApp.Models
             this.Square = square;
         }
 
-        public IEnumerable<NumberContainer> GetAvailableNumbers()
-        {
-            var availableNumbers = new List<NumberContainer>();
+        //public IEnumerable<NumberContainer> GetAvailableNumbers()
+        //{
+        //    var availableNumbers = new List<NumberContainer>();
 
-            foreach (var n in this.Square.AvailableNumbers)
-                availableNumbers.Add(new NumberContainer() { Value = n.Value, Count = n.Count });
+        //    foreach (var n in this.Square.AvailableNumbers)
+        //        availableNumbers.Add(new NumberContainer() { Value = n.Value, Count = n.Count });
 
-            return availableNumbers;
-        }
+        //    return availableNumbers;
+        //}
     }
 }

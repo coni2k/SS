@@ -67,14 +67,14 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             return container.GetUsedSquares();
         }
 
-        [ActionName("squareavailability")]
-        public IEnumerable<NumberContainer> GetSquareAvailability(int id, int squareid)
-        {
-            var container = ValidateAndGetSudokuContainer(id);
+        //[ActionName("squareavailability")]
+        //public IEnumerable<NumberContainer> GetSquareAvailability(int id, int squareid)
+        //{
+        //    var container = ValidateAndGetSudokuContainer(id);
 
-            //TODO Container classes are expensive in general, but this method is much more worse than the rest!
-            return container.GetSquares().Find(s => s.SquareId.Equals(squareid)).GetAvailableNumbers();
-        }
+        //    //TODO Container classes are expensive in general, but this method is much more worse than the rest!
+        //    return container.GetSquares().Find(s => s.SquareId.Equals(squareid)).GetAvailableNumbers();
+        //}
 
         [ActionName("numbers")]
         public IEnumerable<NumberContainer> GetNumbers(int id)

@@ -156,34 +156,34 @@ diger SIKISMA caseleri neler olabilir? onlari arastir
 
 eger bir numaranin konulabilecegi 2 kare varsa ve karedeki diger numara da sadece o 2 kareye konulabiliyorsa, o zaman SIKISMA var ihtimali uzerinde duruyoruz
 
-ancak, 
-
-
----
-BEAUTY SUDOKU
-
-2, 2
-10, 4
-11, 5
-12, 6
-20, 8
-
-4, 9
-6, 7
-22, 3
-24, 1
-
-28, 3
-30, 1
-46, 9
-48, 7
+ancak bu durumda sadece identical karelerde oluyormuþ gibi de gelmiyor.
+bu olayý anlamak için daha fazla case gerekiyor gibi ?!?!?!
 
 ---
-AVAILABILITY BUG !
+potentialfound eventine karþýlýk potentiallost eventi de olmasý gerekmiyor mu?
 
-22, 1
-30 1
-22, 0
+---
+how about;
+public class Square
+{
+	internal (or private) class Availability()
+	{
+		internal UpdateAvailability()
+	}
+	
+	AND
+	
+	internal (or private) class Potential()
+	{
+	
+	}
+}
 
-AVAILABILITY OF 21 IS WRONG NOW!
+---
+AND HOW ABOUT PUTTING POTENTIAL FLAG ON A SQUARE!
+. PROPERTY ISPOTENTIAL? - POTENTIAL NUMBER - HOW IT BECAME POTENTIAL (REFERENCE GROUP OR SQUARE)
+. AND THEN ADD/REMOVE POTENTIAL EVENTS!
+
+---
+FIXED: AVAILABILITY OF 21 IS WRONG NOW!
 

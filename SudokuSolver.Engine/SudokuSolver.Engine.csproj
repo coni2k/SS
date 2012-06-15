@@ -55,6 +55,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Availability.cs" />
     <Compile Include="Potential.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Number.cs" />

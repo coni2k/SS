@@ -8,8 +8,8 @@
     public enum PotentialTypes
     {
         None,
-        Square,
-        Group
+        Square, //Second grade ?
+        Group //First grade ?
     }
 
     /// <summary>

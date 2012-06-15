@@ -103,21 +103,35 @@ namespace OSP.SudokuSolver.Engine
             _Squares.Add(square);
         }
 
+        /// <summary>
+        /// Makes the old number of the changing square available in the related squares in the group
+        /// </summary>
+        /// <param name="square"></param>
         void Square_NumberChanging(Square square)
         {
-            if (square.Number.IsZero)
-                return;
+            //// If the old value is zero, then there is nothing to do.
+            //// Zero value is not used in availabilities list (always available).
+            //if (!square.Number.IsZero)
+            //{
+            //    foreach (var relatedSquare in Squares)
+            //        relatedSquare.MakeNumberAvailable(square.Number);
+            //}
 
+            //avail - new
             foreach (var relatedSquare in Squares)
-                relatedSquare.MakeNumberAvailable(square.Number);
+                relatedSquare.ToggleAvailability(square.Number, this.GroupType, null);
         }
 
         void Square_NumberChanged(Square square)
         {
+            //foreach (var relatedSquare in Squares)
+            //{
+            //    relatedSquare.MakeNumberUnavailable(square.Number);
+            //}
+
+            //avail - new
             foreach (var relatedSquare in Squares)
-            {
-                relatedSquare.MakeNumberUnavailable(square.Number);
-            }
+                relatedSquare.ToggleAvailability(square.Number, this.GroupType, square);
 
             //Check for potential square
             foreach (var number in RelatedNumbers)
@@ -126,11 +140,11 @@ namespace OSP.SudokuSolver.Engine
 
         void Square_NumberBecameUnavailable(Number number)
         {
-            foreach (var square in Squares)
-            {
-                if (square.IsNumberAvailable(number) && !square.AvailableNumbers2.Contains(number))
-                    square.AvailableNumbers2.Add(number);
-            }
+            //foreach (var square in Squares)
+            //{
+            //    if (square.IsNumberAvailable(number) && !square.AvailableNumbers2.Contains(number))
+            //        square.AvailableNumbers2.Add(number);
+            //}
 
             CheckPotentialSquare(number);
         }
@@ -157,7 +171,8 @@ namespace OSP.SudokuSolver.Engine
 
             //Get the list of squares which are available
             //var list = Squares.Where(s => s.IsAvailable && s.AvailableNumbers.Any(n => n.Equals(number))).ToList();
-            var list = GetAvailableSquaresForNumber(number);
+            //var list = GetAvailableSquaresForNumber(number);
+            var list = GetAvailableSquaresForNumberNew(number);
 
             //If there is only one, set it as potential
             if (list.Count().Equals(1))
@@ -166,9 +181,14 @@ namespace OSP.SudokuSolver.Engine
             return null;
         }
 
-        public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
+        //public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
+        //{
+        //    return AvailableSquares.Where(s => s.AvailableNumbers.Any(n => n.Equals(number)));
+        //}
+
+        public IEnumerable<Square> GetAvailableSquaresForNumberNew(Number number)
         {
-            return AvailableSquares.Where(s => s.AvailableNumbers.Any(n => n.Equals(number)));
+            return AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable())); //)); //   .AvailableNumbers.Any(n => n.Equals(number)));
         }
 
         #endregion

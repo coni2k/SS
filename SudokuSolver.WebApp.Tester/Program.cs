@@ -239,6 +239,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
                 //Availability per number; "X" for available squares, "." for non-available ones
                 foreach (var number in numbersExceptZero)
                 {
+                    //TODO THIS METHOD DOESNT EXIST ANYMORE - UPDATE THIS BLOCK!
                     var availableNumbersOfSquare = GetWebApiClient("squareavailability").GetItem<IEnumerable<NumberContainer>>(currentSudokuId, square.SquareId);
 
                     var availableText = string.Format(" | {0}", availableNumbersOfSquare.Any(availableNumber => availableNumber.Value.Equals(number.Value)) ? "X" : ".");

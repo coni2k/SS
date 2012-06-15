@@ -175,7 +175,8 @@ namespace OSP.SudokuSolver.ConsoleApp
                 //Availability per number; "X" for available squares, "." for non-available ones
                 foreach (var number in Sudoku.NumbersExceptZero)
                 {
-                    var availableText = string.Format(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
+                    //var availableText = string.Format(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
+                    var availableText = string.Format(" | {0}", square.IsNumberAvailableNew(number) ? "X" : ".");
                     Console.Write(availableText);
                 }
 

@@ -124,7 +124,10 @@ namespace OSP.SudokuSolver.WebApp.Models
             foreach (var s in Sudoku.Squares)
             {
                 foreach (var n in Sudoku.NumbersExceptZero)
-                    list.Add(new AvailabilityContainer() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailable(n) });
+                {
+                    //list.Add(new AvailabilityContainer() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailable(n) });
+                    list.Add(new AvailabilityContainer() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailableNew(n) });
+                }
             }
 
             return list;
@@ -134,50 +137,50 @@ namespace OSP.SudokuSolver.WebApp.Models
         {
             var list = new List<Availability2Container>();
 
-            foreach (var s in Sudoku.Squares)
-            {
-                foreach (var n in Sudoku.NumbersExceptZero)
-                    list.Add(new Availability2Container() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailable2(n) });
-            }
+            //foreach (var s in Sudoku.Squares)
+            //{
+            //    foreach (var n in Sudoku.NumbersExceptZero)
+            //        list.Add(new Availability2Container() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailable2(n) });
+            //}
 
             return list;
         }
 
-        public IEnumerable<Availability2Container> GetAvailabilities3()
-        {
-            var list = new List<Availability2Container>();
+        //public IEnumerable<Availability2Container> GetAvailabilities3()
+        //{
+        //    var list = new List<Availability2Container>();
 
-            foreach (var s in Sudoku.Squares)
-            {
-                foreach (var n in Sudoku.NumbersExceptZero)
-                    list.Add(new Availability2Container() { SquareId = s.Id, Number = n.Value, IsAvailable = false });
-            }
+        //    foreach (var s in Sudoku.Squares)
+        //    {
+        //        foreach (var n in Sudoku.NumbersExceptZero)
+        //            list.Add(new Availability2Container() { SquareId = s.Id, Number = n.Value, IsAvailable = false });
+        //    }
 
-            foreach (var s in Sudoku.Squares)
-            {
-                if (s.AvailableNumbers.Count() == 1)
-                {
-                    list.First(a => a.SquareId == s.Id && a.Number == (s.AvailableNumbers.First().Value)).IsAvailable = true;
-                }
-                else
-                {
-                    foreach (var n in s.AvailableNumbers)
-                    {
-                        foreach (var g in s.SquareGroups)
-                        {
-                            var count = g.GetAvailableSquaresForNumber(n).Count();
+        //    foreach (var s in Sudoku.Squares)
+        //    {
+        //        if (s.AvailableNumbers.Count() == 1)
+        //        {
+        //            list.First(a => a.SquareId == s.Id && a.Number == (s.AvailableNumbers.First().Value)).IsAvailable = true;
+        //        }
+        //        else
+        //        {
+        //            foreach (var n in s.AvailableNumbers)
+        //            {
+        //                foreach (var g in s.SquareGroups)
+        //                {
+        //                    var count = g.GetAvailableSquaresForNumber(n).Count();
 
-                            if (count == 1)
-                            {
-                                list.First(a => a.SquareId == s.Id && a.Number == n.Value).IsAvailable = true;
-                            }
-                        }
-                    }
-                }
-            }
+        //                    if (count == 1)
+        //                    {
+        //                        list.First(a => a.SquareId == s.Id && a.Number == n.Value).IsAvailable = true;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return list;
-        }
+        //    return list;
+        //}
 
         public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities()
         {
@@ -186,7 +189,10 @@ namespace OSP.SudokuSolver.WebApp.Models
             foreach (var g in Sudoku.SquareTypeGroups)
             {
                 foreach (var n in Sudoku.NumbersExceptZero)
-                    list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumber(n).Count() });
+                {
+                    //list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumber(n).Count() });
+                    list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumberNew(n).Count() });
+                }
             }
 
             return list;
