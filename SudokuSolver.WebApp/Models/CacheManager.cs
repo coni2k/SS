@@ -243,20 +243,20 @@ namespace OSP.SudokuSolver.WebApp.Models
             sample14.UpdateSquare(30, 1);
             sample14.UpdateSquare(22, 0);
 
-            var cont1 = new SudokuContainer() { SudokuId = 1 };
-            var cont2 = new SudokuContainer() { SudokuId = 2 };
-            var cont3 = new SudokuContainer() { SudokuId = 3 };
-            var cont4 = new SudokuContainer() { SudokuId = 4 };
-            var cont5 = new SudokuContainer() { SudokuId = 5 };
-            var cont6 = new SudokuContainer() { SudokuId = 6 };
-            var cont7 = new SudokuContainer() { SudokuId = 7 };
-            var cont8 = new SudokuContainer() { SudokuId = 8 };
-            var cont9 = new SudokuContainer() { SudokuId = 9 };
-            var cont10 = new SudokuContainer() { SudokuId = 10 };
-            var cont11 = new SudokuContainer() { SudokuId = 11 };
-            var cont12 = new SudokuContainer() { SudokuId = 12 };
-            var cont13 = new SudokuContainer() { SudokuId = 13 };
-            var cont14 = new SudokuContainer() { SudokuId = 14 };
+            var cont1 = new SudokuContainer() { SudokuId = 1, Title = "1. Type - Horizontal - 8" };
+            var cont2 = new SudokuContainer() { SudokuId = 2, Title = "1. Type - Vertical - 8" };
+            var cont3 = new SudokuContainer() { SudokuId = 3, Title = "1. Type - Square - 8" };
+            var cont4 = new SudokuContainer() { SudokuId = 4, Title = "1. Type - Mixed - 8" };
+            var cont5 = new SudokuContainer() { SudokuId = 5, Title = "2. Type - Straight 1" };
+            var cont6 = new SudokuContainer() { SudokuId = 6, Title = "Mixed Types" };
+            var cont7 = new SudokuContainer() { SudokuId = 7, Title = "Domino" };
+            var cont8 = new SudokuContainer() { SudokuId = 8, Title = "Headache (1-2-3)" };
+            var cont9 = new SudokuContainer() { SudokuId = 9, Title = "Wrong" };
+            var cont10 = new SudokuContainer() { SudokuId = 10, Title = "Real case" };
+            var cont11 = new SudokuContainer() { SudokuId = 11, Title = "Headache 2" };
+            var cont12 = new SudokuContainer() { SudokuId = 12, Title = "Mini size" };
+            var cont13 = new SudokuContainer() { SudokuId = 13, Title = "Beauty" };
+            var cont14 = new SudokuContainer() { SudokuId = 14, Title = "Availability bug" };
 
             cont1.SetSudoku(sample1);
             cont2.SetSudoku(sample2);

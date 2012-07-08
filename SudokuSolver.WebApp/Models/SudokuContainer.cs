@@ -10,6 +10,8 @@ namespace OSP.SudokuSolver.WebApp.Models
     public class SudokuContainer
     {
         public int SudokuId { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
         private Sudoku Sudoku { get; set; }
         public int Size { get { return this.Sudoku.Size; } }
         public bool AutoSolve { get; set; }

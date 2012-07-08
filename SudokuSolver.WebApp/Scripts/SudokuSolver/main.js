@@ -3,6 +3,8 @@
 
     //Id, Size, SquaresLeft
     self.SudokuId = ko.observable(0);
+    self.Title = ko.observable('');
+    self.Description = ko.observable('');
     self.Size = ko.observable(0);
     self.TotalSize = ko.computed(function () { return self.Size() * self.Size(); });
     self.SquareRootofSize = ko.computed(function () { return Math.sqrt(self.Size()); });
@@ -326,6 +328,8 @@ function loadSudoku(model, sudoku) {
 
     //Load sudoku
     model.SudokuId(sudoku.SudokuId);
+    model.Title(sudoku.Title);
+    model.Description(sudoku.Description);
     model.Size(sudoku.Size);
     model.Ready(sudoku.Ready);
     model.AutoSolve(sudoku.AutoSolve);
