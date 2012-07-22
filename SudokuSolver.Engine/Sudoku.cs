@@ -118,10 +118,10 @@ namespace OSP.SudokuSolver.Engine
             get { return Numbers.Where(n => !n.IsZero); }
         }
 
-        public IEnumerable<Number> AvailableNumbers
-        {
-            get { return NumbersExceptZero.Where(n => n.IsAvailable); }
-        }
+        //public IEnumerable<Number> AvailableNumbers
+        //{
+        //    get { return NumbersExceptZero.Where(n => n.IsAvailable); }
+        //}
 
         /// <summary>
         /// Gets horizontal type square groups
@@ -392,11 +392,11 @@ namespace OSP.SudokuSolver.Engine
                 else if (potential.PotentialType == PotentialTypes.Group)
                 {
                     //To be able to validate, get the potential square from the group one more time
-                    Square potentialFromGroup = potential.SquareGroup.GetPotentialSquare(potential.Number);
+                    // Square potentialFromGroup = potential.SquareGroup.GetPotentialSquare(potential.Number);
 
                     //If there is one square and if it's the same square from the potential class, then it's valid
                     //TODO Maybe we can found a way to be sure that the square from potential is always correct! Then these can be avoided?!
-                    if (potentialFromGroup != null && potential.Square.Equals(potentialFromGroup))
+                    // if (potentialFromGroup != null && potential.Square.Equals(potentialFromGroup))
                         UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
                 }
 

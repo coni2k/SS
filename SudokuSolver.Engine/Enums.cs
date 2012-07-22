@@ -19,6 +19,7 @@
     {
         Initial,
         User,
+        Potential,
         Solver
     }
 

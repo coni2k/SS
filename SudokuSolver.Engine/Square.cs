@@ -9,19 +9,13 @@ namespace OSP.SudokuSolver.Engine
         #region Events
 
         public delegate void SquareEventHandler(Square square);
-        //internal delegate void AvailabilityChangedEventHandler(Square square, Number number);
-
-        //internal delegate void GroupSquareEventHandler(Group group, Square square);
 
         internal event SquareEventHandler NumberChanging;
         internal event SquareEventHandler NumberChanged;
-
-        //internal event GroupSquareEventHandler NumberChanging2;
-        //internal event GroupSquareEventHandler NumberChanged2;
-
-        internal event Potential.FoundEventHandler PotentialSquareFound;
-        //internal event AvailabilityChangedEventHandler AvailabilityChanged;
         internal event SquareEventHandler AvailabilityChanged;
+
+        // TODO We will come back ye, mi friend!
+        internal event Potential.FoundEventHandler PotentialSquareFound;
 
         #endregion
 
@@ -68,7 +62,7 @@ namespace OSP.SudokuSolver.Engine
         /// </summary>
         public IEnumerable<Availability> Availabilities { get; private set; }
 
-        //public IEnumerable<SquareContainer> RelatedSquares { get; private set; }
+        public Group Potential_SquareGroup { get; internal set; }
 
         #endregion
 
@@ -78,16 +72,7 @@ namespace OSP.SudokuSolver.Engine
         {
             this.Id = id;
             this.Sudoku = sudoku;
-            //this.Sudoku.Initialized += Sudoku_Initialized;
-
-            // Number (zero as initial value)
-            var zeroNumber = sudoku.Numbers.Single(n => n.IsZero);
-            this.Number = zeroNumber;
-
-            // Set the square to the number too (cross)
-            zeroNumber.AssignSquare(this);
-
-            // Assign type
+            this.Number = sudoku.Numbers.Single(n => n.IsZero); // Zero as initial value
             this.AssignType = AssignTypes.Initial;
 
             // Groups
@@ -108,7 +93,6 @@ namespace OSP.SudokuSolver.Engine
                 group.SquareNumberChanging += Group_SquareNumberChanging;
                 group.SquareNumberChanged += Group_SquareNumberChanged;
                 group.SquareAvailabilityChanged += Group_SquareAvailabilityChanged;
-                // group.UpdateCompleted += Group_UpdateCompleted;
             }
 
             // Available numbers; assign all numbers, except zero
@@ -122,62 +106,14 @@ namespace OSP.SudokuSolver.Engine
 
         #region Methods
 
-        //void Sudoku_Initialized()
-        //{
-        //    RegisterRelatedSquareEvents();
-        //}
-
-        //void RegisterRelatedSquareEvents()
-        //{
-        //    var relatedSquares = new List<SquareContainer>();
-
-        //    foreach (var group in this.SquareGroups)
-        //    {
-        //        foreach (var relatedSquare in group.Squares)
-        //        {
-        //            if (relatedSquare != this)
-        //            {
-        //                var container = new SquareContainer(group, relatedSquare);
-
-
-
-        //                //relatedSquare.NumberChanging += RelatedSquare_NumberChanging;
-        //                //relatedSquare.NumberChanged += RelatedSquare_NumberChanged;
-
-        //                //relatedSquare.NumberChanging += relatedSquare_NumberChanging;
-
-        //                //relatedSquare.NumberChanged += relatedSquare_NumberChanged;
-
-        //                relatedSquares.Add(container);
-        //            }
-        //        }
-        //    }
-
-        //    this.RelatedSquares = relatedSquares;
-        //}
-
-        //void RelatedSquare_NumberChanging(Square relatedSquare)
-        //{
-        //    this.ToggleAvailability(relatedSquare.Number, relatedSquare..GroupType, null);
-        //}
-
-        //void RelatedSquare_NumberChanged(Square relatedSquare)
-        //{
-        //    // TODO
-        //}
-
         internal void Update(Number number, AssignTypes type)
         {
             // Old number; raise an event to let the sudoku to handle the availability of the other squares
             if (NumberChanging != null)
                 NumberChanging(this);
 
-            // Deassign the square from the old number
-            Number.DeassignSquare(this);
-
             // Assign the new number to this square & let the number know it (there is a cross reference)
             Number = number;
-            Number.AssignSquare(this);
 
             // Set the type
             AssignType = type;
@@ -199,24 +135,23 @@ namespace OSP.SudokuSolver.Engine
 
         void Group_SquareNumberChanging(Group sourceGroup, Square sourceSquare)
         {
-            //if (this != sourceSquare)
+            // Make this number available again
             ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, null);
         }
 
         void Group_SquareNumberChanged(Group sourceGroup, Square sourceSquare)
         {
-            //if (this != sourceSquare)
+            // Make this number unavailable
             ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, sourceSquare);
 
+            // Tell to other square in the group that this square's availability has changed
             if (AvailabilityChanged != null)
                 AvailabilityChanged(this);
         }
 
         void Group_SquareAvailabilityChanged(Group sourceGroup, Square sourceSquare)
         {
-            // Check for potential
-
-            // If it's not available, return already
+            // If it's not available, nothing to check
             if (!this.IsAvailable)
                 return;
 
@@ -241,16 +176,15 @@ namespace OSP.SudokuSolver.Engine
                 // If there is only one number left in the list, then we found a new potential
                 if (list.Count().Equals(1))
                 {
+                    // TODO NEW POTENTIAL (SOLVED?) CODE HERE
+                    // this.Update(item.Number., AssignTypes.Potential);
+                    // this.Potential_SquareGroup = null;
+
                     // Get the item from the list
                     var item = list.Single();
 
                     if (PotentialSquareFound != null)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a potential");
                         PotentialSquareFound(new Potential(this, null, item.Number, PotentialTypes.Square));
-
-                        // return; ?!?!?!
-                    }
                 }
             }
         }
@@ -267,56 +201,28 @@ namespace OSP.SudokuSolver.Engine
         {
             // If the old value is zero, then there is nothing to do.
             // Zero value is not used in availabilities list (always available).
-            if (!number.IsZero)
+            if (number.IsZero)
+                return;
+
+            switch (type)
             {
+                case GroupTypes.Horizontal:
+                    this.Availabilities.Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
+                    break;
 
-                switch (type)
-                {
-                    case GroupTypes.Horizontal:
-                        this.Availabilities.Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
-                        break;
+                case GroupTypes.Vertical:
+                    this.Availabilities.Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
+                    break;
 
-                    case GroupTypes.Vertical:
-                        this.Availabilities.Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
-                        break;
-
-                    case GroupTypes.Square:
-                        this.Availabilities.Single(a => a.Number.Equals(number)).SquareTypeSource = source;
-                        break;
-                }
-
+                case GroupTypes.Square:
+                    this.Availabilities.Single(a => a.Number.Equals(number)).SquareTypeSource = source;
+                    break;
             }
-
-            // TODO is this check necessary?
-            //if (source != null)
-            //{
-            //    if (ValidatePotential(this))
-            //    {
-            //        if (PotentialSquareFound != null)
-            //            PotentialSquareFound(new Potential(this, null, this.Availabilities.Single(a => a.IsAvailable()).Number, PotentialTypes.Square));
-            //    }
-            //}
-
-            //if (source != null) // Which means its not in Changing state, but Changed!
-            //{
-            //    if (AvailabilityChanged != null)
-            //        AvailabilityChanged(this, number);
-            //}
         }
-
-        ///// <summary>
-        ///// Validate
-        ///// </summary>
-        ///// <param name="square"></param>
-        ///// <returns></returns>
-        //internal static bool ValidatePotential(Square square)
-        //{
-        //    return square.IsAvailable && square.Availabilities.Count(a => a.IsAvailable()).Equals(1);
-        //}
 
         public override string ToString()
         {
-            return Id.ToString();
+            return string.Format("Id: {0} - Number: {1}", Id.ToString(), Number.Value.ToString());
         }
 
         #endregion
