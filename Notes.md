@@ -275,3 +275,5 @@ Git Tests
 1. TortoiseGit - Working copy test - (looks) OK
 2. TortoiseGit - Checkout test;
 Note 1
+
+Note 2 (later than note 1)
