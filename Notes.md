@@ -265,15 +265,6 @@ IT WAS NOT GOING BAD BUT, WE DID THIS PART AT THE END AND CASE 5 DOESNT WORK NOW
 			BE CAREFUL ABOUT THESE TRIGGERS
 			BUT ITS GOING GOOD AND HOPEFULLY IT WILL BE BETTER.. ?!
 
----
-GITHUB TEST; TRYING TO UNDERSTAND ROLLBACK + REVERT OPTIONS
-thýs ýs the second note before trying revert option
-
----
-Git Tests
-
-1. TortoiseGit - Working copy test - (looks) OK
-2. TortoiseGit - Checkout test;
-Note 3 (later than note 1,2)
-
-Note 2 (later than note 1)
+			---
+			pass squares to group constructor - to make square property readonly and remove setsquare method
+			

@@ -24,7 +24,7 @@ namespace OSP.SudokuSolver.Engine
 
         internal event GroupSquareEventHandler SquareAvailabilityChanged;
 
-        internal event GroupEventHandler UpdateCompleted;
+        //internal event GroupEventHandler UpdateCompleted;
 
         internal event Potential.FoundEventHandler PotentialFound;
 
@@ -138,7 +138,7 @@ namespace OSP.SudokuSolver.Engine
         {
             square.NumberChanging += new Square.SquareEventHandler(Square_NumberChanging);
             square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
-            square.AvailabilityChanged += new Square.AvailabilityChangedEventHandler(Square_AvailabilityChanged);
+            square.AvailabilityChanged += new Square.SquareEventHandler(Square_AvailabilityChanged);
             _Squares.Add(square);
         }
 
@@ -213,7 +213,7 @@ namespace OSP.SudokuSolver.Engine
             //}
         }
 
-        void Square_AvailabilityChanged(Square square, Number isThisNumberNecessary)
+        void Square_AvailabilityChanged(Square square)
         {
         //    if (CheckPotentialSquare(number))
         //        System.Diagnostics.Debug.WriteLine("Group.Square_AvailabilityChanged found a potential");
@@ -221,6 +221,23 @@ namespace OSP.SudokuSolver.Engine
             
             if (SquareAvailabilityChanged != null)
                 SquareAvailabilityChanged(this, square);
+
+            // Check for potential square removal
+
+            var potentialList = Sudoku.PotentialSquares.Where(p => (p.SquareGroup != null && p.SquareGroup.Equals(this)) && p.PotentialType == PotentialTypes.Group);
+
+            if (potentialList.Count() > 0)
+            {
+                foreach (var p in potentialList)
+                {
+                    var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(p.Number) && a.IsAvailable()));
+
+                    if (!list.Count().Equals(1))
+                    {
+                        System.Diagnostics.Debug.WriteLine("Group.Square_AvailabilityChanged found a potential to be REMOVED - Id: {0} - Value: {1}", p.Square.Id.ToString(), p.Number.Value.ToString());
+                    }
+                }
+            }
 
             // Check for potential square
 

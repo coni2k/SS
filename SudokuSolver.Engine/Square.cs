@@ -9,7 +9,7 @@ namespace OSP.SudokuSolver.Engine
         #region Events
 
         public delegate void SquareEventHandler(Square square);
-        internal delegate void AvailabilityChangedEventHandler(Square square, Number number);
+        //internal delegate void AvailabilityChangedEventHandler(Square square, Number number);
 
         //internal delegate void GroupSquareEventHandler(Group group, Square square);
 
@@ -20,7 +20,8 @@ namespace OSP.SudokuSolver.Engine
         //internal event GroupSquareEventHandler NumberChanged2;
 
         internal event Potential.FoundEventHandler PotentialSquareFound;
-        internal event AvailabilityChangedEventHandler AvailabilityChanged;
+        //internal event AvailabilityChangedEventHandler AvailabilityChanged;
+        internal event SquareEventHandler AvailabilityChanged;
 
         #endregion
 
@@ -196,6 +197,64 @@ namespace OSP.SudokuSolver.Engine
             return this.Availabilities.Single(a => a.Number.Equals(number)).IsAvailable();
         }
 
+        void Group_SquareNumberChanging(Group sourceGroup, Square sourceSquare)
+        {
+            //if (this != sourceSquare)
+            ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, null);
+        }
+
+        void Group_SquareNumberChanged(Group sourceGroup, Square sourceSquare)
+        {
+            //if (this != sourceSquare)
+            ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, sourceSquare);
+
+            if (AvailabilityChanged != null)
+                AvailabilityChanged(this);
+        }
+
+        void Group_SquareAvailabilityChanged(Group sourceGroup, Square sourceSquare)
+        {
+            // Check for potential
+
+            // If it's not available, return already
+            if (!this.IsAvailable)
+                return;
+
+            // TODO !!!
+
+            if (Sudoku.PotentialSquares.Any(p => p.Square.Equals(this) && p.PotentialType == PotentialTypes.Square))
+            {
+                // Get the available numbers
+                var list = Availabilities.Where(a => a.IsAvailable());
+
+                // If there is only one number left in the list, then we found a new potential
+                if (!list.Count().Equals(1))
+                {
+                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a potential to be REMOVED - Id: {0} - Value: {1}", this.Id.ToString(), this.Number.Value.ToString());
+                }
+            }
+            else
+            {
+                // Get the available numbers
+                var list = Availabilities.Where(a => a.IsAvailable());
+
+                // If there is only one number left in the list, then we found a new potential
+                if (list.Count().Equals(1))
+                {
+                    // Get the item from the list
+                    var item = list.Single();
+
+                    if (PotentialSquareFound != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a potential");
+                        PotentialSquareFound(new Potential(this, null, item.Number, PotentialTypes.Square));
+
+                        // return; ?!?!?!
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Updates the availability of the square
         /// The value of "source" parameter determines whether it's going to be available or not.
@@ -204,26 +263,28 @@ namespace OSP.SudokuSolver.Engine
         /// <param name="number"></param>
         /// <param name="type"></param>
         /// <param name="source"></param>
-        internal void ToggleAvailability(Number number, GroupTypes type, Square source)
+        void ToggleAvailability(Number number, GroupTypes type, Square source)
         {
             // If the old value is zero, then there is nothing to do.
             // Zero value is not used in availabilities list (always available).
-            if (number.IsZero)
-                return;
-
-            switch (type)
+            if (!number.IsZero)
             {
-                case GroupTypes.Horizontal:
-                    this.Availabilities.Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
-                    break;
 
-                case GroupTypes.Vertical:
-                    this.Availabilities.Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
-                    break;
+                switch (type)
+                {
+                    case GroupTypes.Horizontal:
+                        this.Availabilities.Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
+                        break;
 
-                case GroupTypes.Square:
-                    this.Availabilities.Single(a => a.Number.Equals(number)).SquareTypeSource = source;
-                    break;
+                    case GroupTypes.Vertical:
+                        this.Availabilities.Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
+                        break;
+
+                    case GroupTypes.Square:
+                        this.Availabilities.Single(a => a.Number.Equals(number)).SquareTypeSource = source;
+                        break;
+                }
+
             }
 
             // TODO is this check necessary?
@@ -236,8 +297,11 @@ namespace OSP.SudokuSolver.Engine
             //    }
             //}
 
-            if (AvailabilityChanged != null)
-                AvailabilityChanged(this, number);
+            //if (source != null) // Which means its not in Changing state, but Changed!
+            //{
+            //    if (AvailabilityChanged != null)
+            //        AvailabilityChanged(this, number);
+            //}
         }
 
         ///// <summary>
@@ -249,46 +313,6 @@ namespace OSP.SudokuSolver.Engine
         //{
         //    return square.IsAvailable && square.Availabilities.Count(a => a.IsAvailable()).Equals(1);
         //}
-
-        void Group_SquareNumberChanging(Group sourceGroup, Square sourceSquare)
-        {
-            //if (this != sourceSquare)
-            ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, null);
-        }
-
-        void Group_SquareNumberChanged(Group sourceGroup, Square sourceSquare)
-        {
-            //if (this != sourceSquare)
-            ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, sourceSquare);
-        }
-
-        void Group_SquareAvailabilityChanged(Group sourceGroup, Square sourceSquare)
-        {
-            // Check for potential
-
-            // If it's not available, return already
-            if (!this.IsAvailable)
-                return;
-
-            // Get the available numbers
-            var list = Availabilities.Where(a => a.IsAvailable());
-
-            // If there is only one number left in the list, then we found a new potential
-            if (list.Count().Equals(1))
-            {
-                // Get the item from the list
-                var item = list.Single();
-
-                if (PotentialSquareFound != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareNumberChanged found a potential");
-                    PotentialSquareFound(new Potential(this, null, item.Number, PotentialTypes.Square));
-                }
-            }
-
-
-
-        }
 
         public override string ToString()
         {
