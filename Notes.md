@@ -270,4 +270,8 @@ GITHUB TEST; TRYING TO UNDERSTAND ROLLBACK + REVERT OPTIONS
 thýs ýs the second note before trying revert option
 
 ---
-tortoise git working changes test
+Git Tests
+
+1. TortoiseGit - Working copy test - (looks) OK
+2. TortoiseGit - Checkout test;
+Note 1
