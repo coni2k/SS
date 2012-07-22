@@ -1,4 +1,3 @@
----
 WRONG SUDOKU! - try this after fixing CASE 1: ID 5
 
 1,1
@@ -20,18 +19,6 @@ WRONG SUDOKU! - try this after fixing CASE 1: ID 5
 14,2
 
 ---
-- All squares can hold the groups which can affect them (SecondGradeGroups) ?
-Maybe this can be done in SquareGroup level?
-In general, we have to be able to pin-point the squares
-At the moment we are still doing extra checks? It should be less and less
-Try to use GetPotentialSquare() method to see the number of action?
-
-- GetPotentialSquare() should not be necessary in ideal situation?
-There should be one case to solve all the time?
-It should not be necessary to validate it later on
-Because AvailabilityChanged is not working good enough in reserve mode, validation is necessary
-But if removing the potentials will work as it should be, probably there will be no INVALID POTENTIAL left!
-
 - clear the cases
 101, 102, hard etc.?
 
@@ -50,8 +37,6 @@ ID 8, 3. grid cannot have any number except 1,2,3.
 . squaresLeft (numbersModel.ZeroValue count) can be improved, maybe moved to sudoku
 details? - STILL NECESSARY?
 
-. checkpotential & getpotentials methods in the engine should be better!
-
 . retrieve only updated values from server - usedSquares + numbers count + availabilities!
 
 . try to remove Container classes!
@@ -62,8 +47,6 @@ How to serialize Read-Only properties with Json.Net?
 
 . improve general (content) styling! general list template? + use jQuery animations
 ?! - IE doesnt support "inherit" - try to have more generic css items ?!
-
-. IEnumerable or list or ..? and any() or exists() or contains()?
 
 . add samples for different sizes - 4 + 9 (OK) + 16 + 25? + wrong cases; invalid
 sudoku, invalid number, invalid square, invalid assignment!
@@ -106,10 +89,6 @@ atanabýlecek 6 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
 atanabýlecek 7 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
 atanabýlecek 8 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
 
----
-en son bunu gruba ekledýk, kontrol et sonuclarý;
-GetAvailableSquaresForNumber
-
 --
 now its possible to use readonly property by default - check objects!
 
@@ -148,123 +127,22 @@ ancak bu durumda sadece identical karelerde oluyormuþ gibi de gelmiyor.
 bu olayý anlamak için daha fazla case gerekiyor gibi ?!?!?!
 
 ---
-potentialfound eventine karþýlýk potentiallost eventi de olmasý gerekmiyor mu?
-
----
 how about;
-public class Square
-{
-	internal (or private) class Availability()
-	{
-		internal UpdateAvailability()
-	}
-	
-	AND
-	
-	internal (or private) class Potential()
-	{
-	
-	}
-}
-
----
-AND HOW ABOUT PUTTING POTENTIAL FLAG ON A SQUARE!
-. PROPERTY ISPOTENTIAL? - POTENTIAL NUMBER - HOW IT BECAME POTENTIAL (REFERENCE GROUP OR SQUARE)
-. AND THEN ADD/REMOVE POTENTIAL EVENTS!
-
----
-TOGGLE AVAILABILITY ALTINDAKI EVENT RAISE DURUMUNU TEST ET!
-AVAILABILITY CHANGED!
-
----
-SQUARE LERE RELATED (NEIGHBOURS) EKLE VE ONLARIN EVENTLERINI TAKIP ET!
-BOYLECE GROUP ALTINDA CHECKPOTENTIALSQUARE VE GETPOTENTIALSQUARE METHODLARINI SQUARELERE TASIYABILIRSIN..
-
-ANCAK SU TUHAF SEYE DIKKAT ET!;
-var b = CheckPotentialSquare(number);
-
-if (b)
-	System.Console.WriteLine("this strage thing found something");    
-	
----
-AYRICA POTENTIAL DEGIL, SOLVER FOUND THE NEXT ONE, ITS NOT A POTENTIAL ?!
-VE SQUARE UZERINDE TUTMAYA CALIS BUNU, POTENTIALS LIST GIBI AYRI BIRSEYE GEREK YOK!
-
----
-SQUAREGROUPTAKI SETSQUARE YERINE DAHA GUZEL BIR APPROACH OLABILIR MI?
-
----
-square bulmamýza yardým eden kac event, method var, onlarý bir gözden gecir, fazla birþey mý vardýr?
+public class Square + internal (or private) class Availability() + internal UpdateAvailability()
 
 ---
 Remove osp from namespace for now ?!
 
 ---
-Doesnt work with vs2010 now?
-
- 
+Doesnt work with vs2010 now? - APM
 
 Server Error in '/' Application.
-
-
 --------------------------------------------------------------------------------
-
 Could not load type 'System.Web.Http.RouteParameter' from assembly 'System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. 
 
 ---
-CONTINUE WITH;
+pass squares to group constructor - to make square property readonly and remove setsquare method
 
-            foreach (var number in RelatedNumbers)
-            {
-                var b = CheckPotentialSquare(number);
-
-                if (b)
-                    System.Console.WriteLine("this strage thing found something");                
-            }
-			
-NOW WE HAVE;
-        void Group_SquareNumberChanged(Group sourceGroup, Square sourceSquare)
-        {
-            //if (this != sourceSquare)
-            ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, sourceSquare);
-        }
-		
-AND TRY TO MOVE THESE FUNC. INTO SQUARE CLASS!
-
-IS IT POSSIBLE TO HAVE "FALSE" POTENTIAL, TRY TO TEST AND GET RID OF ADDITIONAL CHECKS!
-CheckPotentialSquare()!
-
-AND CONTINUE WITH THIS;
-            var list = Availabilities.Where(a => a.IsAvailable());
-
-            if (list.Count().Equals(1))
-            {
-                // TODO This should be a potential square!
-            }
-			
 ---
-IT WAS NOT GOING BAD BUT, WE DID THIS PART AT THE END AND CASE 5 DOESNT WORK NOW;
-            foreach (var number in AvailableNumbers)
-            {
-                var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable()));
-
-                if (list.Count().Equals(1))
-                {
-                    // Get the item from the list
-                    var item = list.Single();
-
-                    if (PotentialFound != null)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Square.Group_SquareNumberChanged found a potential");
-                        PotentialFound(new Potential(item, this, number, PotentialTypes.Group));
-                    }                
-                }
-            }
-			
-			BECAUSE SQUARE TYPE GROUP (ID 1) IS NOT EVEN CHECKED. IT' ONLY CHECKING ITS OWN GROUPS (HOR 3, VER 7, SQU 3)
-			BE CAREFUL ABOUT THESE TRIGGERS
-			BUT ITS GOING GOOD AND HOPEFULLY IT WILL BE BETTER.. ?!
-
-			---
-			pass squares to group constructor - to make square property readonly and remove setsquare method
-			
+CONTINUE WITH new potential + proper potential removal!
+merge potential class + square!

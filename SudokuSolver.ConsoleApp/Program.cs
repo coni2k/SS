@@ -187,7 +187,7 @@ namespace OSP.SudokuSolver.ConsoleApp
         static void ShowNumbers()
         {
             foreach (var number in Sudoku.Numbers)
-                Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.Count.ToString()));
+                Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.GetCount().ToString()));
         }
 
         static void ShowPotentialSquares()

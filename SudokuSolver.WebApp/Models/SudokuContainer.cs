@@ -104,7 +104,7 @@ namespace OSP.SudokuSolver.WebApp.Models
             var list = new List<NumberContainer>();
 
             foreach (var n in Sudoku.Numbers)
-                list.Add(new NumberContainer() { Value = n.Value, Count = n.Count });
+                list.Add(new NumberContainer() { Value = n.Value, Count = n.GetCount() });
 
             return list;
         }

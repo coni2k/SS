@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 namespace OSP.SudokuSolver.Engine
 {
     public class Number
     {
-        #region Members
-
-        private IList<Square> _AssignedSquares = null;
-
-        #endregion
 
         #region Properties
 
@@ -28,11 +24,6 @@ namespace OSP.SudokuSolver.Engine
         /// </summary>
         public bool IsZero { get { return Value.Equals(0); } }
 
-        /// <summary>
-        /// Gets the square list which this number has been used
-        /// </summary>
-        //private IEnumerable<Square> AssignedSquares { get { return _AssignedSquares; }}
-
         #endregion
 
         #region Constructors
@@ -41,38 +32,20 @@ namespace OSP.SudokuSolver.Engine
         {
             Sudoku = sudoku;
             Value = value;
-            _AssignedSquares = new List<Square>(Sudoku.Size);
         }
 
         #endregion
 
         #region Methods
 
-        internal void AssignSquare(Square square)
+        public int GetCount()
         {
-            if (!_AssignedSquares.Contains(square))
-                _AssignedSquares.Add(square);
-        }
-
-        internal void DeassignSquare(Square square)
-        {
-            if (_AssignedSquares.Contains(square))
-                _AssignedSquares.Remove(square);
-        }
-
-        public int Count
-        {
-            get { return _AssignedSquares.Count; }
-        }
-
-        public bool IsAvailable
-        {
-            get { return !Count.Equals(0); }
+            return Sudoku.Squares.Count(s => s.Number.Equals(this));
         }
 
         public override string ToString()
         {
-            return this.Value.ToString();
+            return string.Format("Value: {0}", Value.ToString());
         }
 
         #endregion
