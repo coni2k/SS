@@ -16,6 +16,16 @@ namespace OSP.SudokuSolver.Engine
 
         #region Events
 
+        internal delegate void GroupSquareEventHandler(Group group, Square square);
+        internal delegate void GroupEventHandler(Group group);
+
+        internal event GroupSquareEventHandler SquareNumberChanging;
+        internal event GroupSquareEventHandler SquareNumberChanged;
+
+        internal event GroupSquareEventHandler SquareAvailabilityChanged;
+
+        internal event GroupEventHandler UpdateCompleted;
+
         internal event Potential.FoundEventHandler PotentialFound;
 
         #endregion
@@ -56,7 +66,7 @@ namespace OSP.SudokuSolver.Engine
             get { return Squares.Where(s => s.IsAvailable); }
         }
 
-        internal List<Number> RelatedNumbers
+        internal IEnumerable<Number> RelatedNumbers
         {
             get
             {
@@ -75,7 +85,36 @@ namespace OSP.SudokuSolver.Engine
                     }
                 }
 
+                //foreach (var s in UsedSquares)
+                //{
+                //    //foreach (var sg in s.SquareGroups)
+                //    //{
+                //    //    foreach (var fs in sg.UsedSquares)
+                //    //    {
+                //            if (!list.Contains(s.Number))
+                //                list.Add(s.Number);
+                //    //    }
+                //    //}
+                //}
+
+                //return UsedSquares.Select(us => us.SquareGroups.Select(sg => sg.UsedSquares .Number);
                 return list;
+            }
+        }
+
+        internal IEnumerable<Number> UsedNumbers
+        {
+            get
+            {
+                return UsedSquares.Select(s => s.Number);
+            }
+        }
+
+        internal IEnumerable<Number> AvailableNumbers
+        {
+            get
+            {
+                return Sudoku.NumbersExceptZero.Except(UsedNumbers);
             }
         }
 
@@ -95,11 +134,11 @@ namespace OSP.SudokuSolver.Engine
 
         #region Methods
 
-        internal void AddSquare(Square square)
+        internal void SetSquare(Square square)
         {
             square.NumberChanging += new Square.SquareEventHandler(Square_NumberChanging);
             square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
-            square.NumberBecameUnavailable += new Square.NumberBecameUnavailableEventHandler(Square_NumberBecameUnavailable);
+            square.AvailabilityChanged += new Square.AvailabilityChangedEventHandler(Square_AvailabilityChanged);
             _Squares.Add(square);
         }
 
@@ -109,57 +148,116 @@ namespace OSP.SudokuSolver.Engine
         /// <param name="square"></param>
         void Square_NumberChanging(Square square)
         {
-            //// If the old value is zero, then there is nothing to do.
-            //// Zero value is not used in availabilities list (always available).
-            //if (!square.Number.IsZero)
-            //{
-            //    foreach (var relatedSquare in Squares)
-            //        relatedSquare.MakeNumberAvailable(square.Number);
-            //}
+            if (SquareNumberChanging != null)
+                SquareNumberChanging(this, square);
 
-            //avail - new
-            foreach (var relatedSquare in Squares)
-                relatedSquare.ToggleAvailability(square.Number, this.GroupType, null);
+            //foreach (var relatedSquare in Squares)
+            //    relatedSquare.ToggleAvailability(square.Number, this.GroupType, null);
         }
 
         void Square_NumberChanged(Square square)
         {
+            if (SquareNumberChanged != null)
+                SquareNumberChanged(this, square);
+
             //foreach (var relatedSquare in Squares)
+            //    relatedSquare.ToggleAvailability(square.Number, this.GroupType, square);
+
+            // TODO ?!
+
+            //if (UpdateCompleted != null)
+            //    UpdateCompleted(this);
+
+            //// Check for potential square
+
+            //foreach (var number in AvailableNumbers)
             //{
-            //    relatedSquare.MakeNumberUnavailable(square.Number);
+            //    var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable()));
+
+            //    if (list.Count().Equals(1))
+            //    {
+            //        // Get the item from the list
+            //        var item = list.Single();
+
+            //        if (PotentialFound != null)
+            //        {
+            //            System.Diagnostics.Debug.WriteLine("Square.Group_SquareNumberChanged found a potential");
+            //            PotentialFound(new Potential(item, this, number, PotentialTypes.Group));
+            //        }                
+            //    }
             //}
 
-            //avail - new
-            foreach (var relatedSquare in Squares)
-                relatedSquare.ToggleAvailability(square.Number, this.GroupType, square);
+            //var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.IsAvailable() && AvailableNumbers.Any(an => an.Equals(a.Number)))); // && a.IsAvailable())));
+                //return AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable()));
+    
+            //if (potentialSquare != null)
+            //{
+            //    PotentialFound(new Potential(potentialSquare, this, number, PotentialTypes.Group));
+            //    return true;
+            //}
 
-            //Check for potential square
-            foreach (var number in RelatedNumbers)
-                CheckPotentialSquare(number);
+            //if (list.Count().Equals(1))
+            //{
+            //    // Get the item from the list
+            //    var item = list.Single();
+
+            //    if (PotentialFound != null)
+            //        PotentialFound(new Potential(item, this, number, PotentialTypes.Group));
+            //}
+
+            ////Check for potential square
+            //foreach (var number in RelatedNumbers)
+            //{
+            //    if (CheckPotentialSquare(number))
+            //        System.Diagnostics.Debug.WriteLine("Group.NumberChanged found a potential");
+            //}
         }
 
-        void Square_NumberBecameUnavailable(Number number)
+        void Square_AvailabilityChanged(Square square, Number isThisNumberNecessary)
         {
-            //foreach (var square in Squares)
-            //{
-            //    if (square.IsNumberAvailable(number) && !square.AvailableNumbers2.Contains(number))
-            //        square.AvailableNumbers2.Add(number);
-            //}
+        //    if (CheckPotentialSquare(number))
+        //        System.Diagnostics.Debug.WriteLine("Group.Square_AvailabilityChanged found a potential");
 
-            CheckPotentialSquare(number);
+            
+            if (SquareAvailabilityChanged != null)
+                SquareAvailabilityChanged(this, square);
+
+            // Check for potential square
+
+            foreach (var number in AvailableNumbers)
+            {
+                var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable()));
+
+                if (list.Count().Equals(1))
+                {
+                    // Get the item from the list
+                    var item = list.Single();
+
+                    if (PotentialFound != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Square.Group_SquareNumberChanged found a potential");
+                        PotentialFound(new Potential(item, this, number, PotentialTypes.Group));
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Checks for potential square
         /// </summary>
         /// <param name="number"></param>
-        void CheckPotentialSquare(Number number)
+        bool CheckPotentialSquare(Number number)
         {
             Square potentialSquare = GetPotentialSquare(number);
 
             //If there is a potential, raise an event to let Sudoku class to add this potential to the list
             if (potentialSquare != null)
+            {
                 PotentialFound(new Potential(potentialSquare, this, number, PotentialTypes.Group));
+                return true;
+            }
+
+            return false;
         }
 
         internal Square GetPotentialSquare(Number number)
@@ -170,25 +268,18 @@ namespace OSP.SudokuSolver.Engine
                 return null;
 
             //Get the list of squares which are available
-            //var list = Squares.Where(s => s.IsAvailable && s.AvailableNumbers.Any(n => n.Equals(number))).ToList();
-            //var list = GetAvailableSquaresForNumber(number);
-            var list = GetAvailableSquaresForNumberNew(number);
+            var list = GetAvailableSquaresForNumber(number);
 
             //If there is only one, set it as potential
             if (list.Count().Equals(1))
-                return list.First();
+                return list.Single();
 
             return null;
         }
 
-        //public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
-        //{
-        //    return AvailableSquares.Where(s => s.AvailableNumbers.Any(n => n.Equals(number)));
-        //}
-
-        public IEnumerable<Square> GetAvailableSquaresForNumberNew(Number number)
+        public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
         {
-            return AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable())); //)); //   .AvailableNumbers.Any(n => n.Equals(number)));
+            return AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable()));
         }
 
         #endregion

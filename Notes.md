@@ -96,15 +96,6 @@ try to load availabilities as a sepearate thingy?
 use ff net panel to improve the performance
 
 ---
-try to mention the components;
-jQuery
-blockUI ?!
-
----
-OK
-. should IsAvailable = false squares have a different css/value on availabilities grid ?!
-
----
 bir grupta; 
 atanabýlecek 1 numara kaldýysa, kalan numara dýþýndakilerin hiçbiri atanamaz
 atanabýlecek 2 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
@@ -123,13 +114,7 @@ GetAvailableSquaresForNumber
 now its possible to use readonly property by default - check objects!
 
 ---
-OK;
-. Update assign type in case of successful update
-. Error message panel reserve its space
-
----
-bir availability assign edildiginde (false) oldugunda, gruptaki diger squarelerin yeni availabilit listelerine o rakam ekleniyor olabilir..?
-ama sonra nasýl çýkaracaðýz?
+bir availability assign edildiginde (false) oldugunda, gruptaki diger squarelerin yeni availability listelerine o rakam ekleniyor olabilir..? ama sonra nasýl çýkaracaðýz?
 
 ---
 try to use a profiler (eaqutec?) to see that how many times functions being called (especially set availability etc.)
@@ -146,6 +131,9 @@ also in size 4, counts are dissappeared ?! - how to display them?
 ---
 horizontal + vertical groups for square? and then use them as well with ToggleSelected()
 these calculations can come from the server?
+
+---
+offline mode? if the server is not there etc.?
 
 ---
 first grade availability - only from its own group?
@@ -185,4 +173,98 @@ AND HOW ABOUT PUTTING POTENTIAL FLAG ON A SQUARE!
 . AND THEN ADD/REMOVE POTENTIAL EVENTS!
 
 ---
-FIXED: AVAILABILITY OF 21 IS WRONG NOW!
+TOGGLE AVAILABILITY ALTINDAKI EVENT RAISE DURUMUNU TEST ET!
+AVAILABILITY CHANGED!
+
+---
+SQUARE LERE RELATED (NEIGHBOURS) EKLE VE ONLARIN EVENTLERINI TAKIP ET!
+BOYLECE GROUP ALTINDA CHECKPOTENTIALSQUARE VE GETPOTENTIALSQUARE METHODLARINI SQUARELERE TASIYABILIRSIN..
+
+ANCAK SU TUHAF SEYE DIKKAT ET!;
+var b = CheckPotentialSquare(number);
+
+if (b)
+	System.Console.WriteLine("this strage thing found something");    
+	
+---
+AYRICA POTENTIAL DEGIL, SOLVER FOUND THE NEXT ONE, ITS NOT A POTENTIAL ?!
+VE SQUARE UZERINDE TUTMAYA CALIS BUNU, POTENTIALS LIST GIBI AYRI BIRSEYE GEREK YOK!
+
+---
+SQUAREGROUPTAKI SETSQUARE YERINE DAHA GUZEL BIR APPROACH OLABILIR MI?
+
+---
+square bulmamýza yardým eden kac event, method var, onlarý bir gözden gecir, fazla birþey mý vardýr?
+
+---
+Remove osp from namespace for now ?!
+
+---
+Doesnt work with vs2010 now?
+
+ 
+
+Server Error in '/' Application.
+
+
+--------------------------------------------------------------------------------
+
+Could not load type 'System.Web.Http.RouteParameter' from assembly 'System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. 
+
+---
+CONTINUE WITH;
+
+            foreach (var number in RelatedNumbers)
+            {
+                var b = CheckPotentialSquare(number);
+
+                if (b)
+                    System.Console.WriteLine("this strage thing found something");                
+            }
+			
+NOW WE HAVE;
+        void Group_SquareNumberChanged(Group sourceGroup, Square sourceSquare)
+        {
+            //if (this != sourceSquare)
+            ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, sourceSquare);
+        }
+		
+AND TRY TO MOVE THESE FUNC. INTO SQUARE CLASS!
+
+IS IT POSSIBLE TO HAVE "FALSE" POTENTIAL, TRY TO TEST AND GET RID OF ADDITIONAL CHECKS!
+CheckPotentialSquare()!
+
+AND CONTINUE WITH THIS;
+            var list = Availabilities.Where(a => a.IsAvailable());
+
+            if (list.Count().Equals(1))
+            {
+                // TODO This should be a potential square!
+            }
+			
+---
+IT WAS NOT GOING BAD BUT, WE DID THIS PART AT THE END AND CASE 5 DOESNT WORK NOW;
+            foreach (var number in AvailableNumbers)
+            {
+                var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable()));
+
+                if (list.Count().Equals(1))
+                {
+                    // Get the item from the list
+                    var item = list.Single();
+
+                    if (PotentialFound != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Square.Group_SquareNumberChanged found a potential");
+                        PotentialFound(new Potential(item, this, number, PotentialTypes.Group));
+                    }                
+                }
+            }
+			
+			BECAUSE SQUARE TYPE GROUP (ID 1) IS NOT EVEN CHECKED. IT' ONLY CHECKING ITS OWN GROUPS (HOR 3, VER 7, SQU 3)
+			BE CAREFUL ABOUT THESE TRIGGERS
+			BUT ITS GOING GOOD AND HOPEFULLY IT WILL BE BETTER.. ?!
+
+---
+GITHUB TEST; TRYING TO UNDERSTAND ROLLBACK + REVERT OPTIONS
+thýs ýs the second note before trying revert option

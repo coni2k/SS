@@ -128,7 +128,7 @@ namespace OSP.SudokuSolver.WebApp.Models
                 foreach (var n in Sudoku.NumbersExceptZero)
                 {
                     //list.Add(new AvailabilityContainer() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailable(n) });
-                    list.Add(new AvailabilityContainer() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailableNew(n) });
+                    list.Add(new AvailabilityContainer() { SquareId = s.Id, Number = n.Value, IsAvailable = s.IsNumberAvailable(n) });
                 }
             }
 
@@ -193,7 +193,7 @@ namespace OSP.SudokuSolver.WebApp.Models
                 foreach (var n in Sudoku.NumbersExceptZero)
                 {
                     //list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumber(n).Count() });
-                    list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumberNew(n).Count() });
+                    list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumber(n).Count() });
                 }
             }
 

@@ -176,7 +176,7 @@ namespace OSP.SudokuSolver.ConsoleApp
                 foreach (var number in Sudoku.NumbersExceptZero)
                 {
                     //var availableText = string.Format(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
-                    var availableText = string.Format(" | {0}", square.IsNumberAvailableNew(number) ? "X" : ".");
+                    var availableText = string.Format(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
                     Console.Write(availableText);
                 }
 

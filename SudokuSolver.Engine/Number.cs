@@ -31,7 +31,7 @@ namespace OSP.SudokuSolver.Engine
         /// <summary>
         /// Gets the square list which this number has been used
         /// </summary>
-        private IEnumerable<Square> AssignedSquares { get { return _AssignedSquares; }}
+        //private IEnumerable<Square> AssignedSquares { get { return _AssignedSquares; }}
 
         #endregion
 

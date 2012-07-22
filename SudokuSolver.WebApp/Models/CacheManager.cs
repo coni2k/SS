@@ -248,7 +248,7 @@ namespace OSP.SudokuSolver.WebApp.Models
             var cont3 = new SudokuContainer() { SudokuId = 3, Title = "1. Type - Square - 8" };
             var cont4 = new SudokuContainer() { SudokuId = 4, Title = "1. Type - Mixed - 8" };
             var cont5 = new SudokuContainer() { SudokuId = 5, Title = "2. Type - Straight 1" };
-            var cont6 = new SudokuContainer() { SudokuId = 6, Title = "Mixed Types" };
+            var cont6 = new SudokuContainer() { SudokuId = 6, Title = "Mixed Types (triggers strange RelatedNumbers block)" };
             var cont7 = new SudokuContainer() { SudokuId = 7, Title = "Domino" };
             var cont8 = new SudokuContainer() { SudokuId = 8, Title = "Headache (1-2-3)" };
             var cont9 = new SudokuContainer() { SudokuId = 9, Title = "Wrong" };

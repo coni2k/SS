@@ -135,6 +135,7 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             //New container
             var container = new SudokuContainer();
             container.SudokuId = nextId;
+            container.Title = string.Format("New sudoku {0}", nextId.ToString());
             container.SetSudoku(sudoku);
 
             CacheManager.SudokuList.Add(container);
@@ -221,6 +222,5 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             //Return
             return container;
         }
-
     }
 }
