@@ -115,10 +115,6 @@ these calculations can come from the server?
 offline mode? if the server is not there etc.?
 
 ---
-first grade availability - only from its own group?
-and is there any second grade availability?
-
----
 diger SIKISMA caseleri neler olabilir? onlari arastir
 
 eger bir numaranin konulabilecegi 2 kare varsa ve karedeki diger numara da sadece o 2 kareye konulabiliyorsa, o zaman SIKISMA var ihtimali uzerinde duruyoruz
@@ -127,18 +123,15 @@ ancak bu durumda sadece identical karelerde oluyormuþ gibi de gelmiyor.
 bu olayý anlamak için daha fazla case gerekiyor gibi ?!?!?!
 
 ---
+first grade availability - only from its own group?
+and is there any second grade availability?
+
+---
 how about;
 public class Square + internal (or private) class Availability() + internal UpdateAvailability()
 
 ---
 Remove osp from namespace for now ?!
-
----
-Doesnt work with vs2010 now? - APM
-
-Server Error in '/' Application.
---------------------------------------------------------------------------------
-Could not load type 'System.Web.Http.RouteParameter' from assembly 'System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. 
 
 ---
 pass squares to group constructor - to make square property readonly and remove setsquare method

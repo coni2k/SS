@@ -215,7 +215,14 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             //If there is no, throw an exception
             if (container == null)
             {
-                var response = Request.CreateResponse(HttpStatusCode.NotFound, "Sudoku not found");
+                // var response = Request.CreateResponse(HttpStatusCode.NotFound, "Sudoku not found");
+
+                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent(string.Format("No sudoku with ID = {0}", id.ToString())),
+                    ReasonPhrase = "Sudoku ID Not Found"
+                };
+
                 throw new HttpResponseException(response);
             }
 
