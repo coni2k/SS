@@ -139,3 +139,56 @@ pass squares to group constructor - to make square property readonly and remove 
 ---
 CONTINUE WITH new potential + proper potential removal!
 merge potential class + square!
+
+---
+html template for sudoku killa!
+is it possible to download a template from vix?
+
+and gýthub pass
+and also fake email address?
+
+---
+vmware or výrtualbox? whých vmware version?
+http://www.go-mono.com/mono-downloads/download.html
+
+---
+esudoku;
+http://www.iui-js.org/powered-by/index.html?id=esudoku
+
+---
+Vs2010 looks okay, but check it in general.
+
+ 
+
+Also check the differences between request.createponse & new httpresponsemessage
+
+ 
+
+                // var response = Request.CreateResponse(HttpStatusCode.NotFound, "Sudoku not found");
+
+ 
+
+                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
+
+                {
+
+                    Content = new StringContent(string.Format("No sudoku with ID = {0}", id.ToString())),
+
+                    ReasonPhrase = "Sudoku ID Not Found"
+
+                };
+
+
+
+        var category = _reviewRepository.Get(id);
+        if (category == null)
+        {
+            return Request.CreateResponse(HttpStatusCode.NotFound);
+        }
+        return Request.CreateResponse(HttpStatusCode.OK, category);				
+
+ 
+
+and check Sudoku not found cases, sometimes its failing?
+
+And with vs2010 (or maybe new FF) it works very slow right now??
