@@ -100,6 +100,7 @@ try to use a profiler (eaqutec?) to see that how many times functions being call
 
 ---
 sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
+history.js?!
 
 ---
 size 4 sudoku is okay

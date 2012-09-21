@@ -1,13 +1,13 @@
-﻿namespace OSP.SudokuSolver.WebApp.Tester
-{
-    using System.Collections.Generic;
-    using System.Net.Http;
-    using System.Net.Http.Formatting;
-    using System.Net.Http.Headers;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-    using OSP.SudokuSolver.WebApp.Models;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using OSP.SudokuSolver.WebApp.Models;
 
+namespace OSP.SudokuSolver.WebApp.Tester
+{
     public class WebApiClient
     {
         protected readonly string _endpoint;
@@ -106,17 +106,24 @@
             }
         }
 
-        protected HttpRequestMessage GetHttpRequestMessage<T>(T data)
+        protected System.Net.Http.HttpRequestMessage GetHttpRequestMessage<T>(T data)
         {
-            var mediaType = new MediaTypeHeaderValue("application/json");
-            var jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.Converters.Add(new IsoDateTimeConverter());
+            //var mediaType = new MediaTypeHeaderValue("application/json");
+            //var jsonSerializerSettings = new JsonSerializerSettings();
+            //jsonSerializerSettings.Converters.Add(new IsoDateTimeConverter());
 
-            var jsonFormatter = new JsonNetFormatter(jsonSerializerSettings);
+            //var jsonFormatter = new JsonNetFormatter(jsonSerializerSettings);
 
-            var requestMessage = new HttpRequestMessage<T>(data, mediaType, new MediaTypeFormatter[] { jsonFormatter });
+            // var requestMessage = new HttpRequestMessage<T>(data, mediaType, new MediaTypeFormatter[] { jsonFormatter });
 
-            return requestMessage;
+            //var requestMessage = new HttpRequestMessage(HttpMethod.Post,  HttpRequestMessage<T>(data, mediaType, new MediaTypeFormatter[] { jsonFormatter });
+
+            // return requestMessage;
+
+            var message = new HttpRequestMessage();
+            //message.Content = data.ToString();
+
+            return message;
         }
 
         protected HttpClient NewHttpClient()

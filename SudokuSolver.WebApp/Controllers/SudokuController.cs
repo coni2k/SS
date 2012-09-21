@@ -216,14 +216,27 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             {
                 // var response = Request.CreateResponse(HttpStatusCode.NotFound, "Sudoku not found");
 
+                //Request.CreateResponse
+
                 var response = new HttpResponseMessage(HttpStatusCode.NotFound)
                 {
                     Content = new StringContent(string.Format("No sudoku with ID = {0}", id.ToString())),
                     ReasonPhrase = "Sudoku ID Not Found"
                 };
 
+                //var response2 = Request.CreateErrorResponse(
+
                 throw new HttpResponseException(response);
+
+                //Request.CreateErrorResponse(
             }
+
+            //var category = _reviewRepository.Get(id);
+            //if (category == null)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.NotFound);
+            //}
+            //return Request.CreateResponse(HttpStatusCode.OK, category);	
 
             //Return
             return container;
