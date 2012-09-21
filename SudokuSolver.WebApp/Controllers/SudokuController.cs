@@ -1,12 +1,11 @@
-﻿using System;
+﻿using OSP.SudokuSolver.Engine;
+using OSP.SudokuSolver.WebApp.Models;
+using System;
 using System.Collections.Generic;
-//using System.Json;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using OSP.SudokuSolver.Engine;
-using OSP.SudokuSolver.WebApp.Models;
 
 namespace OSP.SudokuSolver.WebApp.Controllers
 {
