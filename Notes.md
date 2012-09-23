@@ -18,6 +18,11 @@ WRONG SUDOKU! - try this after fixing CASE 1: ID 5
 13,1
 14,2
 
+Wishlist:
+. Sudoku generator
+. Drag & drop the numbers
+. Multi-language
+
 ---
 - clear the cases
 101, 102, hard etc.?
@@ -31,8 +36,6 @@ WRONG SUDOKU! - try this after fixing CASE 1: ID 5
 ID 8, 3. grid cannot have any number except 1,2,3.
 
 . CASE 2: ID 1, square 36 cannot have number 9.
-
-. how about drag&drop the numbers?
 
 . squaresLeft (numbersModel.ZeroValue count) can be improved, maybe moved to sudoku
 details? - STILL NECESSARY?
@@ -57,11 +60,7 @@ sudoku, invalid number, invalid square, invalid assignment!
 
 . step counter ?!
 
-. multiple language support
-
 . save to db?
-
-. sudoku generator?
 
 . test with all browsers + mobile!
 
@@ -88,9 +87,6 @@ atanabýlecek 5 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
 atanabýlecek 6 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
 atanabýlecek 7 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
 atanabýlecek 8 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
-
---
-now its possible to use readonly property by default - check objects!
 
 ---
 bir availability assign edildiginde (false) oldugunda, gruptaki diger squarelerin yeni availability listelerine o rakam ekleniyor olabilir..? ama sonra nasýl çýkaracaðýz?
