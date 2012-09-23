@@ -132,9 +132,6 @@ how about;
 public class Square + internal (or private) class Availability() + internal UpdateAvailability()
 
 ---
-Remove osp from namespace for now ?!
-
----
 pass squares to group constructor - to make square property readonly and remove setsquare method
 
 ---
@@ -145,17 +142,16 @@ merge potential class + square!
 html template for sudoku killa!
 is it possible to download a template from vix?
 
-and gýthub pass
-and also fake email address?
-
----
-vmware or výrtualbox? whých vmware version?
-http://www.go-mono.com/mono-downloads/download.html
-
 ---
 esudoku;
 http://www.iui-js.org/powered-by/index.html?id=esudoku
 
 ---
-check Sudoku not found cases, sometimes its failing?
-with vs2010 (or maybe new FF) it works very slow right now??
+with APM51, it works very slow?!
+
+---
+webapi.tester doesnt work at the moment (after the package updates) - check webapiclient!
+
+---
+do we need to use fake email? if yes;
+https://help.github.com/articles/keeping-your-email-address-private

@@ -1,5 +1,6 @@
 # Sudoku Solver (Killer - Killa)
 
+"No one should ever waste their precious time for something that can be automated!"  
 "No one should ever waste their precious time on something that can be automated!"  
 "No one should waste their precious time on something that can be automated!"  
 "No one should waste time on something that can be automated!"  

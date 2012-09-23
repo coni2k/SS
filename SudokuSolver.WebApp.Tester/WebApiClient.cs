@@ -4,9 +4,9 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using OSP.SudokuSolver.WebApp.Models;
+using SudokuSolver.WebApp.Models;
 
-namespace OSP.SudokuSolver.WebApp.Tester
+namespace SudokuSolver.WebApp.Tester
 {
     public class WebApiClient
     {

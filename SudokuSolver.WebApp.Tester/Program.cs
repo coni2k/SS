@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OSP.SudokuSolver.Engine;
-using OSP.SudokuSolver.WebApp.Models;
+using SudokuSolver.Engine;
+using SudokuSolver.WebApp.Models;
 
-namespace OSP.SudokuSolver.WebApp.Tester
+namespace SudokuSolver.WebApp.Tester
 {
     class Program
     {
@@ -214,7 +214,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
         static void ShowAvailability()
         {
             //Get numbers first
-            var numbers = GetWebApiClient("numbers").GetItem<IEnumerable<NumberContainer>>(currentSudokuId);
+            var numbers = GetWebApiClient("numbers").GetItem<IEnumerable<Number>>(currentSudokuId);
 
             //Remove zero
             var numbersExceptZero = numbers.Where(n => n.Value > 0);
@@ -240,7 +240,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
                 foreach (var number in numbersExceptZero)
                 {
                     //TODO THIS METHOD DOESNT EXIST ANYMORE - UPDATE THIS BLOCK!
-                    var availableNumbersOfSquare = GetWebApiClient("squareavailability").GetItem<IEnumerable<NumberContainer>>(currentSudokuId, square.SquareId);
+                    var availableNumbersOfSquare = GetWebApiClient("squareavailability").GetItem<IEnumerable<Number>>(currentSudokuId, square.SquareId);
 
                     var availableText = string.Format(" | {0}", availableNumbersOfSquare.Any(availableNumber => availableNumber.Value.Equals(number.Value)) ? "X" : ".");
                     Console.Write(availableText);
@@ -253,7 +253,7 @@ namespace OSP.SudokuSolver.WebApp.Tester
         static void ShowNumbers()
         {
             //Get
-            var numbers = GetWebApiClient("numbers").GetItem<IEnumerable<NumberContainer>>(currentSudokuId);
+            var numbers = GetWebApiClient("numbers").GetItem<IEnumerable<Number>>(currentSudokuId);
 
             foreach (var number in numbers)
                 Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.Count.ToString()));

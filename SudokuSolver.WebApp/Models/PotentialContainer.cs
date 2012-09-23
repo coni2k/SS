@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using OSP.SudokuSolver.Engine;
+using SudokuSolver.Engine;
 using System.ComponentModel.Design.Serialization;
 
-namespace OSP.SudokuSolver.WebApp.Models
+namespace SudokuSolver.WebApp.Models
 {
     public class PotentialContainer
     {

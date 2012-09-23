@@ -1,5 +1,5 @@
-﻿using OSP.SudokuSolver.Engine;
-using OSP.SudokuSolver.WebApp.Models;
+﻿using SudokuSolver.Engine;
+using SudokuSolver.WebApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace OSP.SudokuSolver.WebApp.Controllers
+namespace SudokuSolver.WebApp.Controllers
 {
     public class SudokuController : ApiController
     {
@@ -25,13 +25,13 @@ namespace OSP.SudokuSolver.WebApp.Controllers
         //    return container;
         //}
 
-        [ActionName("squares")]
-        public IEnumerable<SquareContainer> GetSquares(int id)
-        {
-            var container = ValidateAndGetSudokuContainer(id);
+        //[ActionName("squares")]
+        //public IEnumerable<SquareContainer> GetSquares(int id)
+        //{
+        //    var container = ValidateAndGetSudokuContainer(id);
 
-            return container.GetSquares();
-        }
+        //    return container.GetSquares();
+        //}
 
         [ActionName("horizontaltypegroups")]
         public IEnumerable<GroupContainer> GetHorizontalTypeGroups(int id)
@@ -58,8 +58,16 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             return container.GetSquareGroups(type);
         }
 
+        //[ActionName("usedsquares")]
+        //public IEnumerable<SquareContainer> GetUsedSquares(int id)
+        //{
+        //    var container = ValidateAndGetSudokuContainer(id);
+
+        //    return container.GetUsedSquares();
+        //}
+
         [ActionName("usedsquares")]
-        public IEnumerable<SquareContainer> GetUsedSquares(int id)
+        public IEnumerable<Square> GetUsedSquares(int id)
         {
             var container = ValidateAndGetSudokuContainer(id);
 
@@ -75,16 +83,32 @@ namespace OSP.SudokuSolver.WebApp.Controllers
         //    return container.GetSquares().Find(s => s.SquareId.Equals(squareid)).GetAvailableNumbers();
         //}
 
+        //[ActionName("numbers")]
+        //public IEnumerable<NumberContainer> GetNumbers(int id)
+        //{
+        //    var container = ValidateAndGetSudokuContainer(id);
+
+        //    return container.GetNumbers();
+        //}
+
         [ActionName("numbers")]
-        public IEnumerable<NumberContainer> GetNumbers(int id)
+        public IEnumerable<Number> GetNumbers(int id)
         {
             var container = ValidateAndGetSudokuContainer(id);
 
             return container.GetNumbers();
         }
 
+        //[ActionName("potentials")]
+        //public IEnumerable<PotentialContainer> GetPotentials(int id)
+        //{
+        //    var container = ValidateAndGetSudokuContainer(id);
+
+        //    return container.GetPotentials();
+        //}
+
         [ActionName("potentials")]
-        public IEnumerable<PotentialContainer> GetPotentials(int id)
+        public IEnumerable<Potential> GetPotentials(int id)
         {
             var container = ValidateAndGetSudokuContainer(id);
 

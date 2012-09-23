@@ -7,8 +7,8 @@
     <ProjectGuid>{4428D1E3-C5CB-41BB-955F-E0213DEDE413}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OSP.SudokuSolver.WebApp.Tester</RootNamespace>
-    <AssemblyName>OSP.SudokuSolver.WebApp.Tester</AssemblyName>
+    <RootNamespace>SudokuSolver.WebApp.Tester</RootNamespace>
+    <AssemblyName>SudokuSolver.WebApp.Tester</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>

@@ -1,4 +1,4 @@
-﻿namespace OSP.SudokuSolver.Engine
+﻿namespace SudokuSolver.Engine
 {
     /// <summary>
     /// There could be two potential squares;

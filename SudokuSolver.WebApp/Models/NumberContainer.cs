@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using OSP.SudokuSolver.Engine;
+using SudokuSolver.Engine;
 
-namespace OSP.SudokuSolver.WebApp.Models
+namespace SudokuSolver.WebApp.Models
 {
-    public class NumberContainer
-    {
-        public int Value { get; set; }
-        public int Count { get; set; }
+    //public class NumberContainer
+    //{
+    //    public int Value { get; set; }
+    //    public int Count { get; set; }
 
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
-    }
+    //    public override string ToString()
+    //    {
+    //        return Value.ToString();
+    //    }
+    //}
 }

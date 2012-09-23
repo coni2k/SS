@@ -11,8 +11,8 @@
     <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OSP.SudokuSolver.WebApp</RootNamespace>
-    <AssemblyName>OSP.SudokuSolver.WebApp</AssemblyName>
+    <RootNamespace>SudokuSolver.WebApp</RootNamespace>
+    <AssemblyName>SudokuSolver.WebApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <FileUpgradeFlags>
@@ -137,9 +137,13 @@
     <Compile Include="Models\Availability2Container.cs" />
     <Compile Include="Models\GroupNumberAvailabilityContainer.cs" />
     <Compile Include="Models\GroupContainer.cs" />
-    <Compile Include="Models\NumberContainer.cs" />
+    <Compile Include="Models\NumberContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Models\PotentialContainer.cs" />
-    <Compile Include="Models\SquareContainer.cs" />
+    <Compile Include="Models\SquareContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Models\SudokuContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

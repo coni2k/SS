@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OSP.SudokuSolver.Engine
+namespace SudokuSolver.Engine
 {
     public class Square
     {
@@ -44,7 +44,7 @@ namespace OSP.SudokuSolver.Engine
         /// <summary>
         /// Gets the groups that this square assigned to
         /// </summary>
-        public IEnumerable<Group> SquareGroups { get; private set; }
+        internal IEnumerable<Group> SquareGroups { get; private set; }
 
         /// <summary>
         /// Gets whether the square is available or not; if the number of the square is ZERO, it's an available one

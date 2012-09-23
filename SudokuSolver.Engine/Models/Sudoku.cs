@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OSP.SudokuSolver.Engine
+namespace SudokuSolver.Engine
 {
     public class Sudoku
     {

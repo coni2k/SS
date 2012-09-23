@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
-namespace OSP.SudokuSolver.Engine
+namespace SudokuSolver.Engine
 {
     public class Number
     {
@@ -38,9 +38,17 @@ namespace OSP.SudokuSolver.Engine
 
         #region Methods
 
-        public int GetCount()
+        //public int GetCount()
+        //{
+        //    return Sudoku.Squares.Count(s => s.Number.Equals(this));
+        //}
+
+        public int Count
         {
-            return Sudoku.Squares.Count(s => s.Number.Equals(this));
+            get
+            {
+                return Sudoku.Squares.Count(s => s.Number.Equals(this));
+            }
         }
 
         public override string ToString()

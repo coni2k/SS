@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Sudoku Solver Web Application")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Open Source Pioneers")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Sudoku Solver Web Application")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]

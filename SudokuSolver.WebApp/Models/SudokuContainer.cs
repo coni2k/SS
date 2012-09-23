@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Newtonsoft.Json;
-using OSP.SudokuSolver.Engine;
+using SudokuSolver.Engine;
 
-namespace OSP.SudokuSolver.WebApp.Models
+namespace SudokuSolver.WebApp.Models
 {
     public class SudokuContainer
     {
@@ -28,14 +28,14 @@ namespace OSP.SudokuSolver.WebApp.Models
             Sudoku = sudoku;
         }
 
-        public List<SquareContainer> GetSquares()
-        {
-            var list = new List<SquareContainer>();
-            foreach (var square in Sudoku.Squares)
-                list.Add(new SquareContainer(square) { SquareId = square.Id, Number = square.Number.Value, AssignType = square.AssignType });
+        //public List<SquareContainer> GetSquares()
+        //{
+        //    var list = new List<SquareContainer>();
+        //    foreach (var square in Sudoku.Squares)
+        //        list.Add(new SquareContainer(square) { SquareId = square.Id, Number = square.Number.Value, AssignType = square.AssignType });
 
-            return list;
-        }
+        //    return list;
+        //}
 
         public IEnumerable<GroupContainer> GetSquareGroups(GroupTypes type)
         {
@@ -89,34 +89,49 @@ namespace OSP.SudokuSolver.WebApp.Models
             return containers;
         }
 
-        public IEnumerable<SquareContainer> GetUsedSquares()
-        {
-            var list = new List<SquareContainer>();
+        //public IEnumerable<SquareContainer> GetUsedSquares()
+        //{
+        //    var list = new List<SquareContainer>();
 
-            foreach (var s in Sudoku.UsedSquares)
-                list.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value, AssignType = s.AssignType });
-            
-            return list;
+        //    foreach (var s in Sudoku.UsedSquares)
+        //        list.Add(new SquareContainer(s) { SquareId = s.Id, Number = s.Number.Value, AssignType = s.AssignType });
+
+        //    return list;
+        //}
+
+        public IEnumerable<Square> GetUsedSquares()
+        {
+            return Sudoku.UsedSquares;
         }
 
-        public IEnumerable<NumberContainer> GetNumbers()
+        //public IEnumerable<NumberContainer> GetNumbers()
+        //{
+        //    var list = new List<NumberContainer>();
+
+        //    foreach (var n in Sudoku.Numbers)
+        //        list.Add(new NumberContainer() { Value = n.Value, Count = n.GetCount() });
+
+        //    return list;
+        //}
+
+        public IEnumerable<Number> GetNumbers()
         {
-            var list = new List<NumberContainer>();
-
-            foreach (var n in Sudoku.Numbers)
-                list.Add(new NumberContainer() { Value = n.Value, Count = n.GetCount() });
-
-            return list;
+            return Sudoku.Numbers;
         }
 
-        public IEnumerable<PotentialContainer> GetPotentials()
+        //public IEnumerable<PotentialContainer> GetPotentials()
+        //{
+        //    var list = new List<PotentialContainer>();
+
+        //    foreach (var p in Sudoku.PotentialSquares.OrderBy(p => p.Square.Id))
+        //        list.Add(new PotentialContainer() { SquareId = p.Square.Id, PotentialValue = p.Number.Value, PotentialType = p.PotentialType } );
+
+        //    return list;
+        //}
+
+        public IEnumerable<Potential> GetPotentials()
         {
-            var list = new List<PotentialContainer>();
-
-            foreach (var p in Sudoku.PotentialSquares.OrderBy(p => p.Square.Id))
-                list.Add(new PotentialContainer() { SquareId = p.Square.Id, PotentialValue = p.Number.Value, PotentialType = p.PotentialType } );
-
-            return list;
+            return Sudoku.PotentialSquares;
         }
 
         public IEnumerable<AvailabilityContainer> GetAvailabilities()

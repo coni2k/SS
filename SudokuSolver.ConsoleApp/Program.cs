@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OSP.SudokuSolver.Engine;
+using SudokuSolver.Engine;
 
-namespace OSP.SudokuSolver.ConsoleApp
+namespace SudokuSolver.ConsoleApp
 {
     /// <summary>
     /// For testing purposes
@@ -186,8 +186,11 @@ namespace OSP.SudokuSolver.ConsoleApp
 
         static void ShowNumbers()
         {
+            //foreach (var number in Sudoku.Numbers)
+            //    Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.GetCount().ToString()));
+
             foreach (var number in Sudoku.Numbers)
-                Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.GetCount().ToString()));
+                Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.Count.ToString()));
         }
 
         static void ShowPotentialSquares()

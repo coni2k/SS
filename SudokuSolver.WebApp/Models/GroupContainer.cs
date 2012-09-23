@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using OSP.SudokuSolver.Engine;
+using SudokuSolver.Engine;
 
-namespace OSP.SudokuSolver.WebApp.Models
+namespace SudokuSolver.WebApp.Models
 {
     public class GroupContainer
     {
@@ -14,7 +14,7 @@ namespace OSP.SudokuSolver.WebApp.Models
 
         public GroupContainer()
         {
-            Squares = new List<SquareContainer>();   
+            Squares = new List<SquareContainer>();
         }
     }
 }

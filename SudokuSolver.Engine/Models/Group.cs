@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
-namespace OSP.SudokuSolver.Engine
+namespace SudokuSolver.Engine
 {
     /// <summary>
     /// Group of squares (for horizontal, vertical and square groups)

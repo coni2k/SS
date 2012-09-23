@@ -468,12 +468,16 @@ function loadUsedSquares(model) {
 
         $.each(usedSquareList, function () {
 
+            var usedSquare = this;
+
             //Find the square
-            var matchedSquare = model.FilteredSquaresById(this.SquareId);
+            //var matchedSquare = model.FilteredSquaresById(this.SquareId);
+            var matchedSquare = model.FilteredSquaresById(usedSquare.Id);
 
             //Update
-            matchedSquare.Value(this.Number);
-            matchedSquare.AssignType(this.AssignType);
+            //matchedSquare.Value(this.Number);
+            matchedSquare.Value(usedSquare.Number.Value);
+            matchedSquare.AssignType(usedSquare.AssignType);
         });
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
@@ -539,11 +543,19 @@ function loadPotentials(model) {
 
         $.each(potentialList, function () {
 
+            var potentialItem = this;
+
             //Create potential
             var potential = new Potential(model);
-            potential.SquareId = this.SquareId;
-            potential.PotentialValue = this.PotentialValue;
-            potential.PotentialType = this.PotentialType;
+
+            //potential.SquareId = this.SquareId;
+            //potential.PotentialValue = this.PotentialValue;
+            //potential.PotentialType = this.PotentialType;
+
+            potential.SquareId = potentialItem.Square.Id;
+            potential.PotentialValue = potentialItem.Number.Value;
+            potential.PotentialType = potentialItem.PotentialType;
+
             model.Potentials.push(potential);
         });
     

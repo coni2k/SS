@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace OSP.SudokuSolver.WebApp
+namespace SudokuSolver.WebApp
 {
     public class FilterConfig
     {

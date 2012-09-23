@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OSP.SudokuSolver.Engine
+namespace SudokuSolver.Engine
 {
     public class Potential
     {
@@ -20,7 +20,7 @@ namespace OSP.SudokuSolver.Engine
         /// <summary>
         /// The group of the potential square
         /// </summary>
-        public Group SquareGroup { get; internal set; }
+        internal Group SquareGroup { get; set; }
 
         /// <summary>
         /// Potential value of the square
