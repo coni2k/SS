@@ -17,13 +17,13 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             return CacheManager.SudokuList;
         }
 
-        [ActionName("item")]
-        public SudokuContainer GetItem(int id)
-        {
-            var container = ValidateAndGetSudokuContainer(id);
+        //[ActionName("item")]
+        //public SudokuContainer GetItem(int id)
+        //{
+        //    var container = ValidateAndGetSudokuContainer(id);
 
-            return container;
-        }
+        //    return container;
+        //}
 
         [ActionName("squares")]
         public IEnumerable<SquareContainer> GetSquares(int id)
@@ -156,9 +156,9 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             {
                 container.UpdateSquare(square.SquareId, square.Number);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                var response = Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message);
+                var response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
                 throw new HttpResponseException(response);
             }
         }
@@ -175,7 +175,7 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                var response = Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message);
+                var response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
                 throw new HttpResponseException(response);
             }
         }
@@ -214,29 +214,11 @@ namespace OSP.SudokuSolver.WebApp.Controllers
             //If there is no, throw an exception
             if (container == null)
             {
-                // var response = Request.CreateResponse(HttpStatusCode.NotFound, "Sudoku not found");
-
-                //Request.CreateResponse
-
-                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
-                {
-                    Content = new StringContent(string.Format("No sudoku with ID = {0}", id.ToString())),
-                    ReasonPhrase = "Sudoku ID Not Found"
-                };
-
-                //var response2 = Request.CreateErrorResponse(
-
+                var message = string.Format("Sudoku with Id = {0} not found", id.ToString());
+                var response = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
+                //responseMessage.ReasonPhrase = "Sudoku ID Not Found";                
                 throw new HttpResponseException(response);
-
-                //Request.CreateErrorResponse(
             }
-
-            //var category = _reviewRepository.Get(id);
-            //if (category == null)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.NotFound);
-            //}
-            //return Request.CreateResponse(HttpStatusCode.OK, category);	
 
             //Return
             return container;

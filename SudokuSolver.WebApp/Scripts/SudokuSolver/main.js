@@ -700,14 +700,17 @@ $(function () {
                     padding: '10px 0'
                 }
             });
-        }).ajaxStop($.unblockUI);
+        }).ajaxStop(function () {
+            $.unblockUI();
+        })
 });
 
 //Ajax error handling
 function handleError(jqXHR) {
 
     //Get the message
-    var validationResult = $.parseJSON(jqXHR.responseText);
+    //var validationResult = $.parseJSON(jqXHR.responseText);
+    var validationResult = $.parseJSON(jqXHR.responseText).Message;
 
     //Show
     showMessagePanel(validationResult);
