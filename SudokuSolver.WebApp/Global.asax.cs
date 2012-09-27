@@ -26,6 +26,8 @@ namespace SudokuSolver.WebApp
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            CacheManager.LoadSamples();
         }
     }
 }

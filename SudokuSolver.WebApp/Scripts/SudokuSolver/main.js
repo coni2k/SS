@@ -226,8 +226,8 @@ function Square(group, id) {
 
     self.Update = function (data, event) {
 
-        //Prepare post data
-        var squareContainer = JSON.stringify({ SquareId: data.SquareId, Number: data.Value() });
+        //Prepare the data
+        var squareContainer = JSON.stringify({ SquareId: data.SquareId, Value: data.Value() });
 
         //Post; because contentType needs to be set, $.post() couldn't be used
         $.ajax({
@@ -564,15 +564,17 @@ function loadPotentials(model) {
 
 function loadAvailabilities(model) {
 
-    $.getJSON(serverUrl + 'availabilities/' + model.SudokuId(), function (availabilityList) {
+    $.getJSON(serverUrl + 'usedavailabilities/' + model.SudokuId(), function (availabilityList) {
 
         $.each(availabilityList, function () {
 
+            var availabilityItem = this;
+
             //Number
-            var number = this.Number;
+            var number = availabilityItem.Number.Value;
 
             //Find the square
-            var matchedSquare = model.FilteredSquaresById(this.SquareId);
+            var matchedSquare = model.FilteredSquaresById(availabilityItem.SquareId);
 
             //Find the availability
             var matchedAvailability = ko.utils.arrayFirst(matchedSquare.Availabilities(), function (availability) {
@@ -580,7 +582,7 @@ function loadAvailabilities(model) {
             });
 
             //Update
-            matchedAvailability.IsAvailable(this.IsAvailable);
+            matchedAvailability.IsAvailable(availabilityItem.IsAvailable);
 
         });
 

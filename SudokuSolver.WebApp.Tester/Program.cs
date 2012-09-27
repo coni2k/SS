@@ -118,7 +118,7 @@ namespace SudokuSolver.WebApp.Tester
 
             var squareContainer = new SquareContainer();
             squareContainer.SquareId = id;
-            squareContainer.Number = number;
+            squareContainer.Value = number;
 
             //Update
             GetWebApiClient("updatesquare").Post<SquareContainer>(currentSudokuId, squareContainer);
@@ -205,7 +205,7 @@ namespace SudokuSolver.WebApp.Tester
             var squares = GetWebApiClient("used").GetItem<IEnumerable<SquareContainer>>(currentSudokuId);
 
             foreach (var usedSquare in squares)
-                Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.SquareId.ToString("D2"), usedSquare.Number.ToString(), usedSquare.AssignType.ToString()));
+                Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.SquareId.ToString("D2"), usedSquare.Value.ToString(), usedSquare.AssignType.ToString()));
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace SudokuSolver.WebApp.Tester
             foreach (var square in squares)
             {
                 //Square text: Square id + value
-                var output = string.Format("Id {0}: {1}", square.SquareId.ToString("D2"), square.Number.ToString());
+                var output = string.Format("Id {0}: {1}", square.SquareId.ToString("D2"), square.Value.ToString());
                 Console.Write(output);
 
                 //Availability per number; "X" for available squares, "." for non-available ones

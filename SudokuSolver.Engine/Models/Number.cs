@@ -12,7 +12,7 @@ namespace SudokuSolver.Engine
         /// Value of the number
         /// TODO Try to ensure that every number will be used once (one instance per value)
         /// </summary>
-        public int Value { get; private set; }
+        public int Value { get; set; }
 
         /// <summary>
         /// Gets the parent sudoku class
@@ -22,11 +22,13 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// This is a special flag for zero value, which will be treated differently in many cases
         /// </summary>
-        public bool IsZero { get { return Value.Equals(0); } }
+        public bool IsZero { get { return Value == 0; } }
 
         #endregion
 
         #region Constructors
+
+        public Number() { }
 
         internal Number(Sudoku sudoku, int value)
         {

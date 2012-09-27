@@ -12,7 +12,7 @@ namespace SudokuSolver.WebApp.Controllers
     public class SudokuController : ApiController
     {
         [ActionName("list")]
-        public List<SudokuContainer> GetList()
+        public List<Sudoku> GetList()
         {
             return CacheManager.SudokuList;
         }
@@ -33,30 +33,30 @@ namespace SudokuSolver.WebApp.Controllers
         //    return container.GetSquares();
         //}
 
-        [ActionName("horizontaltypegroups")]
-        public IEnumerable<GroupContainer> GetHorizontalTypeGroups(int id)
-        {
-            return GetSquareGroups(id, GroupTypes.Horizontal);
-        }
+        //[ActionName("horizontaltypegroups")]
+        //public IEnumerable<GroupContainer> GetHorizontalTypeGroups(int id)
+        //{
+        //    return GetSquareGroups(id, GroupTypes.Horizontal);
+        //}
 
-        [ActionName("verticaltypegroups")]
-        public IEnumerable<GroupContainer> GetVerticalTypeGroups(int id)
-        {
-            return GetSquareGroups(id, GroupTypes.Vertical);
-        }
+        //[ActionName("verticaltypegroups")]
+        //public IEnumerable<GroupContainer> GetVerticalTypeGroups(int id)
+        //{
+        //    return GetSquareGroups(id, GroupTypes.Vertical);
+        //}
 
-        [ActionName("squaretypegroups")]
-        public IEnumerable<GroupContainer> GetSquareTypeGroups(int id)
-        {
-            return GetSquareGroups(id, GroupTypes.Square);
-        }
+        //[ActionName("squaretypegroups")]
+        //public IEnumerable<GroupContainer> GetSquareTypeGroups(int id)
+        //{
+        //    return GetSquareGroups(id, GroupTypes.Square);
+        //}
 
-        private IEnumerable<GroupContainer> GetSquareGroups(int id, GroupTypes type)
-        {
-            var container = ValidateAndGetSudokuContainer(id);
+        //private IEnumerable<GroupContainer> GetSquareGroups(int id, GroupTypes type)
+        //{
+        //    var container = ValidateAndGetSudokuContainer(id);
 
-            return container.GetSquareGroups(type);
-        }
+        //    return container.GetSquareGroups(type);
+        //}
 
         //[ActionName("usedsquares")]
         //public IEnumerable<SquareContainer> GetUsedSquares(int id)
@@ -69,7 +69,7 @@ namespace SudokuSolver.WebApp.Controllers
         [ActionName("usedsquares")]
         public IEnumerable<Square> GetUsedSquares(int id)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
 
             return container.GetUsedSquares();
         }
@@ -94,7 +94,7 @@ namespace SudokuSolver.WebApp.Controllers
         [ActionName("numbers")]
         public IEnumerable<Number> GetNumbers(int id)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
 
             return container.GetNumbers();
         }
@@ -108,25 +108,25 @@ namespace SudokuSolver.WebApp.Controllers
         //}
 
         [ActionName("potentials")]
-        public IEnumerable<Potential> GetPotentials(int id)
+        public IEnumerable<Potential> GetPotentialSquares(int id)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
 
-            return container.GetPotentials();
+            return container.GetPotentialSquares();
         }
 
-        [ActionName("availabilities")]
-        public IEnumerable<AvailabilityContainer> GetAvailabilities(int id)
+        [ActionName("usedavailabilities")]
+        public IEnumerable<Availability> GetAvailabilities(int id)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
 
-            return container.GetAvailabilities();
+            return container.GetUsedAvailabilities();
         }
 
         [ActionName("availabilities2")]
-        public IEnumerable<Availability2Container> GetAvailabilities2(int id)
+        public IEnumerable<Availability> GetAvailabilities2(int id)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
 
             return container.GetAvailabilities2();
         }
@@ -134,7 +134,7 @@ namespace SudokuSolver.WebApp.Controllers
         [ActionName("groupnumberavailabilities")]
         public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities(int id)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
 
             return container.GetGroupNumberAvailabilities();
         }
@@ -156,29 +156,46 @@ namespace SudokuSolver.WebApp.Controllers
             var sudoku = new Sudoku(9);
 
             //New container
-            var container = new SudokuContainer();
-            container.SudokuId = nextId;
-            container.Title = string.Format("New sudoku {0}", nextId.ToString());
-            container.SetSudoku(sudoku);
+            //var container = new Sudoku();
+            sudoku.SudokuId = nextId;
+            sudoku.Title = string.Format("New sudoku {0}", nextId.ToString());
+            //container.SetSudoku(sudoku);
 
-            CacheManager.SudokuList.Add(container);
+            CacheManager.SudokuList.Add(sudoku);
 
             //Response
-            var response = Request.CreateResponse<SudokuContainer>(HttpStatusCode.Created, container);
-            string uri = Url.Link("DefaultApi", new { id = container.SudokuId });
+            var response = Request.CreateResponse<Sudoku>(HttpStatusCode.Created, sudoku);
+            string uri = Url.Link("DefaultApi", new { id = sudoku.SudokuId });
             response.Headers.Location = new Uri(uri);
             return response;
         }
+
+        //[HttpPost]
+        //[ActionName("updatesquare")]
+        //public void UpdateSquare(int id, SquareContainer square)
+        //{
+        //    var container = ValidateAndGetSudokuContainer(id);
+
+        //    try
+        //    {
+        //        container.UpdateSquare(square.SquareId, square.Number);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+        //        throw new HttpResponseException(response);
+        //    }
+        //}
 
         [HttpPost]
         [ActionName("updatesquare")]
         public void UpdateSquare(int id, SquareContainer square)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
 
             try
             {
-                container.UpdateSquare(square.SquareId, square.Number);
+                container.UpdateSquare(square.SquareId, square.Value);
             }
             catch (Exception ex)
             {
@@ -187,11 +204,12 @@ namespace SudokuSolver.WebApp.Controllers
             }
         }
 
+
         [HttpPost]
         [ActionName("toggleready")]
         public void ToggleReady(int id)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
 
             try
             {
@@ -211,7 +229,7 @@ namespace SudokuSolver.WebApp.Controllers
         [ActionName("toggleautosolve")]
         public void ToggleAutoSolve(int id)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
             container.ToggleAutoSolve();
         }
 
@@ -219,7 +237,7 @@ namespace SudokuSolver.WebApp.Controllers
         [ActionName("solve")]
         public void Solve(int id)
         {
-            var container = ValidateAndGetSudokuContainer(id);
+            var container = ValidateAndGetSudoku(id);
             container.Solve();
         }
 
@@ -230,7 +248,7 @@ namespace SudokuSolver.WebApp.Controllers
             CacheManager.LoadSamples();
         }
 
-        private SudokuContainer ValidateAndGetSudokuContainer(int id)
+        private Sudoku ValidateAndGetSudoku(int id)
         {
             //Search the container in CacheManager
             var container = CacheManager.SudokuList.Find(s => s.SudokuId.Equals(id));

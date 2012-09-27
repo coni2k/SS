@@ -8,20 +8,20 @@ namespace SudokuSolver.WebApp.Models
 {
     public class CacheManager
     {
-        public static List<SudokuContainer> SudokuList
+        public static List<Sudoku> SudokuList
         {
             get
             {
                 if (HttpContext.Current.Cache["SudokuList"] == null)
                     LoadSamples();
 
-                return (List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"];
+                return (List<Sudoku>)HttpContext.Current.Cache["SudokuList"];
             }
         }
 
         public static void LoadSamples()
         {
-            HttpContext.Current.Cache["SudokuList"] = new List<SudokuContainer>();
+            HttpContext.Current.Cache["SudokuList"] = new List<Sudoku>();
 
             var sample1 = new Sudoku(9);
             var sample2 = new Sudoku(9);
@@ -243,65 +243,110 @@ namespace SudokuSolver.WebApp.Models
             sample14.UpdateSquare(30, 1);
             sample14.UpdateSquare(22, 0);
 
-            var cont1 = new SudokuContainer() { SudokuId = 1, Title = "1. Type - Horizontal - 8" };
-            var cont2 = new SudokuContainer() { SudokuId = 2, Title = "1. Type - Vertical - 8" };
-            var cont3 = new SudokuContainer() { SudokuId = 3, Title = "1. Type - Square - 8" };
-            var cont4 = new SudokuContainer() { SudokuId = 4, Title = "1. Type - Mixed - 8" };
-            var cont5 = new SudokuContainer() { SudokuId = 5, Title = "2. Type - Straight 1" };
-            var cont6 = new SudokuContainer() { SudokuId = 6, Title = "Mixed Types (triggers strange RelatedNumbers block)" };
-            var cont7 = new SudokuContainer() { SudokuId = 7, Title = "Domino" };
-            var cont8 = new SudokuContainer() { SudokuId = 8, Title = "Headache (1-2-3)" };
-            var cont9 = new SudokuContainer() { SudokuId = 9, Title = "Wrong" };
-            var cont10 = new SudokuContainer() { SudokuId = 10, Title = "Real case" };
-            var cont11 = new SudokuContainer() { SudokuId = 11, Title = "Headache 2" };
-            var cont12 = new SudokuContainer() { SudokuId = 12, Title = "Mini size" };
-            var cont13 = new SudokuContainer() { SudokuId = 13, Title = "Beauty" };
-            var cont14 = new SudokuContainer() { SudokuId = 14, Title = "Availability bug" };
+            //var cont1 = new SudokuContainer() { SudokuId = 1, Title = "1. Type - Horizontal - 8" };
+            //var cont2 = new SudokuContainer() { SudokuId = 2, Title = "1. Type - Vertical - 8" };
+            //var cont3 = new SudokuContainer() { SudokuId = 3, Title = "1. Type - Square - 8" };
+            //var cont4 = new SudokuContainer() { SudokuId = 4, Title = "1. Type - Mixed - 8" };
+            //var cont5 = new SudokuContainer() { SudokuId = 5, Title = "2. Type - Straight 1" };
+            //var cont6 = new SudokuContainer() { SudokuId = 6, Title = "Mixed Types (triggers strange RelatedNumbers block)" };
+            //var cont7 = new SudokuContainer() { SudokuId = 7, Title = "Domino" };
+            //var cont8 = new SudokuContainer() { SudokuId = 8, Title = "Headache (1-2-3)" };
+            //var cont9 = new SudokuContainer() { SudokuId = 9, Title = "Wrong" };
+            //var cont10 = new SudokuContainer() { SudokuId = 10, Title = "Real case" };
+            //var cont11 = new SudokuContainer() { SudokuId = 11, Title = "Headache 2" };
+            //var cont12 = new SudokuContainer() { SudokuId = 12, Title = "Mini size" };
+            //var cont13 = new SudokuContainer() { SudokuId = 13, Title = "Beauty" };
+            //var cont14 = new SudokuContainer() { SudokuId = 14, Title = "Availability bug" };
 
-            cont1.SetSudoku(sample1);
-            cont2.SetSudoku(sample2);
-            cont3.SetSudoku(sample3);
-            cont4.SetSudoku(sample4);
-            cont5.SetSudoku(sample5);
-            cont6.SetSudoku(sample6);
-            cont7.SetSudoku(sample7);
-            cont8.SetSudoku(sample8);
-            cont9.SetSudoku(sample9);
-            cont10.SetSudoku(sample10);
-            cont11.SetSudoku(sample11);
-            cont12.SetSudoku(sample12);
-            cont13.SetSudoku(sample13);
-            cont14.SetSudoku(sample14);
+            //var cont1 = new SudokuContainer();
+            //var cont2 = new SudokuContainer();
+            //var cont3 = new SudokuContainer();
+            //var cont4 = new SudokuContainer();
+            //var cont5 = new SudokuContainer();
+            //var cont6 = new SudokuContainer();
+            //var cont7 = new SudokuContainer();
+            //var cont8 = new SudokuContainer();
+            //var cont9 = new SudokuContainer();
+            //var cont10 = new SudokuContainer();
+            //var cont11 = new SudokuContainer();
+            //var cont12 = new SudokuContainer();
+            //var cont13 = new SudokuContainer();
+            //var cont14 = new SudokuContainer();
 
-            cont1.ToggleReady();
-            cont2.ToggleReady();
-            cont3.ToggleReady();
-            cont4.ToggleReady();
-            cont5.ToggleReady();
-            cont6.ToggleReady();
-            cont7.ToggleReady();
-            cont8.ToggleReady();
-            cont9.ToggleReady();
-            cont10.ToggleReady();
-            cont11.ToggleReady();
-            cont12.ToggleReady();
-            cont13.ToggleReady();
-            cont14.ToggleReady();
+            //cont1.SetSudoku(sample1);
+            //cont2.SetSudoku(sample2);
+            //cont3.SetSudoku(sample3);
+            //cont4.SetSudoku(sample4);
+            //cont5.SetSudoku(sample5);
+            //cont6.SetSudoku(sample6);
+            //cont7.SetSudoku(sample7);
+            //cont8.SetSudoku(sample8);
+            //cont9.SetSudoku(sample9);
+            //cont10.SetSudoku(sample10);
+            //cont11.SetSudoku(sample11);
+            //cont12.SetSudoku(sample12);
+            //cont13.SetSudoku(sample13);
+            //cont14.SetSudoku(sample14);
 
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont1);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont2);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont3);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont4);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont5);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont6);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont7);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont8);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont9);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont10);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont11);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont12);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont13);
-            ((List<SudokuContainer>)HttpContext.Current.Cache["SudokuList"]).Add(cont14);
+            sample1.SudokuId = 1; //"1. Type - Horizontal - 8" };
+            sample2.SudokuId = 2; //"1. Type - Vertical - 8" };
+            sample3.SudokuId = 3; //"1. Type - Square - 8" };
+            sample4.SudokuId = 4; //"1. Type - Mixed - 8" };
+            sample5.SudokuId = 5; //"2. Type - Straight 1" };
+            sample6.SudokuId = 6; //"Mixed Types (triggers strange RelatedNumbers block)" };
+            sample7.SudokuId = 7; //"Domino" };
+            sample8.SudokuId = 8; //"Headache (1-2-3)" };
+            sample9.SudokuId = 9; //"Wrong" };
+            sample10.SudokuId = 10; //"Real case" };
+            sample11.SudokuId = 11; //"Headache 2" };
+            sample12.SudokuId = 12; //"Mini size" };
+            sample13.SudokuId = 13; //"Beauty" };
+            sample14.SudokuId = 14; //"Availability bug" };
+
+            sample1.Title = "1. Type - Horizontal - 8";
+            sample2.Title = "1. Type - Vertical - 8";
+            sample3.Title = "1. Type - Square - 8";
+            sample4.Title = "1. Type - Mixed - 8";
+            sample5.Title = "2. Type - Straight 1";
+            sample6.Title = "Mixed Types (triggers strange RelatedNumbers block)";
+            sample7.Title = "Domino";
+            sample8.Title = "Headache (1-2-3)";
+            sample9.Title = "Wrong";
+            sample10.Title = "Real case";
+            sample11.Title = "Headache 2";
+            sample12.Title = "Mini size";
+            sample13.Title = "Beauty";
+            sample14.Title = "Availability bug";
+
+            sample1.ToggleReady();
+            sample2.ToggleReady();
+            sample3.ToggleReady();
+            sample4.ToggleReady();
+            sample5.ToggleReady();
+            sample6.ToggleReady();
+            sample7.ToggleReady();
+            sample8.ToggleReady();
+            sample9.ToggleReady();
+            sample10.ToggleReady();
+            sample11.ToggleReady();
+            sample12.ToggleReady();
+            sample13.ToggleReady();
+            sample14.ToggleReady();
+
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample1);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample2);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample3);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample4);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample5);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample6);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample7);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample8);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample9);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample10);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample11);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample12);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample13);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample14);
         }
     }
 }

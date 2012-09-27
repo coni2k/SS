@@ -42,10 +42,6 @@ details? - STILL NECESSARY?
 
 . retrieve only updated values from server - usedSquares + numbers count + availabilities!
 
-. try to remove Container classes!
-there is a problem about serialization but is it possible to make them compatible?
-How to serialize Read-Only properties with Json.Net?
-
 . validation; in general OK, but numpad values are ignored as well!
 
 . improve general (content) styling! general list template? + use jQuery animations

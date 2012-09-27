@@ -150,7 +150,7 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowUsedSquares()
         {
-            foreach (var usedSquare in Sudoku.UsedSquares)
+            foreach (var usedSquare in Sudoku.GetUsedSquares())
                 Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.Id.ToString("D2"), usedSquare.Number.ToString(), usedSquare.AssignType.ToString()));
         }
 
@@ -161,7 +161,7 @@ namespace SudokuSolver.ConsoleApp
         {
             //Header; display the sudoku numbers
             Console.Write("        "); //Necessary to make the starting points equal - TODO This should check the length of the squareText?
-            foreach (var number in Sudoku.NumbersExceptZero)
+            foreach (var number in Sudoku.GetNumbersExceptZero())
                 Console.Write(string.Format(" | {0}", number.ToString()));
             Console.WriteLine();
 
@@ -173,7 +173,7 @@ namespace SudokuSolver.ConsoleApp
                 Console.Write(output);
 
                 //Availability per number; "X" for available squares, "." for non-available ones
-                foreach (var number in Sudoku.NumbersExceptZero)
+                foreach (var number in Sudoku.GetNumbersExceptZero())
                 {
                     //var availableText = string.Format(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
                     var availableText = string.Format(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
@@ -189,16 +189,16 @@ namespace SudokuSolver.ConsoleApp
             //foreach (var number in Sudoku.Numbers)
             //    Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.GetCount().ToString()));
 
-            foreach (var number in Sudoku.Numbers)
+            foreach (var number in Sudoku.GetNumbers())
                 Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.Count.ToString()));
         }
 
         static void ShowPotentialSquares()
         {
-            if (Sudoku.PotentialSquares.Count().Equals(0))
+            if (Sudoku.GetPotentialSquares().Count() == 0)
                 Console.WriteLine("There are no potential squares");
 
-            foreach (var potential in Sudoku.PotentialSquares.OrderBy(s => s.Square.Id))
+            foreach (var potential in Sudoku.GetPotentialSquares().OrderBy(s => s.Square.Id))
             {
                 Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", potential.Square.Id.ToString("D2"), potential.Square.Number.ToString(), potential.Number.ToString(), potential.PotentialType.ToString()));
             }

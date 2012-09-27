@@ -62,6 +62,14 @@ namespace SudokuSolver.Engine
         /// </summary>
         public IEnumerable<Availability> Availabilities { get; private set; }
 
+        /// <summary>
+        /// Unavailable ones
+        /// </summary>
+        public IEnumerable<Availability> UsedAvailabilities
+        {
+            get { return Availabilities.Where(x => !x.IsAvailable); }
+        }
+
         public Group Potential_SquareGroup { get; internal set; }
 
         #endregion
@@ -72,7 +80,7 @@ namespace SudokuSolver.Engine
         {
             this.Id = id;
             this.Sudoku = sudoku;
-            this.Number = sudoku.Numbers.Single(n => n.IsZero); // Zero as initial value
+            this.Number = sudoku.GetNumbers().Single(n => n.IsZero); // Zero as initial value
             this.AssignType = AssignTypes.Initial;
 
             // Groups
@@ -97,7 +105,7 @@ namespace SudokuSolver.Engine
 
             // Available numbers; assign all numbers, except zero
             var availabilities = new List<Availability>(this.Sudoku.Size);
-            foreach (var sudokuNumber in this.Sudoku.NumbersExceptZero)
+            foreach (var sudokuNumber in this.Sudoku.GetNumbersExceptZero())
                 availabilities.Add(new Availability(this, sudokuNumber));
             this.Availabilities = availabilities;
         }
@@ -130,7 +138,7 @@ namespace SudokuSolver.Engine
         /// <returns></returns>
         public bool IsNumberAvailable(Number number)
         {
-            return this.Availabilities.Single(a => a.Number.Equals(number)).IsAvailable();
+            return this.Availabilities.Single(a => a.Number.Equals(number)).IsAvailable;
         }
 
         void Group_SquareNumberChanging(Group sourceGroup, Square sourceSquare)
@@ -157,10 +165,10 @@ namespace SudokuSolver.Engine
 
             // TODO !!!
 
-            if (Sudoku.PotentialSquares.Any(p => p.Square.Equals(this) && p.PotentialType == PotentialTypes.Square))
+            if (Sudoku.GetPotentialSquares().Any(p => p.Square.Equals(this) && p.PotentialType == PotentialTypes.Square))
             {
                 // Get the available numbers
-                var list = Availabilities.Where(a => a.IsAvailable());
+                var list = Availabilities.Where(a => a.IsAvailable);
 
                 // If there is only one number left in the list, then we found a new potential
                 if (!list.Count().Equals(1))
@@ -171,7 +179,7 @@ namespace SudokuSolver.Engine
             else
             {
                 // Get the available numbers
-                var list = Availabilities.Where(a => a.IsAvailable());
+                var list = Availabilities.Where(a => a.IsAvailable);
 
                 // If there is only one number left in the list, then we found a new potential
                 if (list.Count().Equals(1))
@@ -226,5 +234,14 @@ namespace SudokuSolver.Engine
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// To be used to just update the sudoku
+    /// </summary>
+    public class SquareContainer
+    {
+        public int SquareId { get; set; }
+        public int Value { get; set; }
     }
 }

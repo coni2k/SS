@@ -132,19 +132,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\CacheManager.cs" />
-    <Compile Include="Models\AvailabilityContainer.cs" />
-    <Compile Include="Models\Availability2Container.cs" />
-    <Compile Include="Models\GroupNumberAvailabilityContainer.cs" />
-    <Compile Include="Models\GroupContainer.cs" />
-    <Compile Include="Models\NumberContainer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Models\PotentialContainer.cs" />
-    <Compile Include="Models\SquareContainer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Models\SudokuContainer.cs" />
+    <Compile Include="Code\CacheManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

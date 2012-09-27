@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Availability.cs" />
+    <Compile Include="Models\GroupNumberAvailabilityContainer.cs" />
     <Compile Include="Models\Potential.cs" />
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\Number.cs" />

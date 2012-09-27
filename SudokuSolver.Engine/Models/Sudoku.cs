@@ -10,11 +10,12 @@ namespace SudokuSolver.Engine
 
         private int _Size = 0;
         //private List<Square> _Squares = null;
-        //private IList<Number> _Numbers = null;
+        private List<Number> _Numbers = null;
         //private IList<Group> _HorizontalTypeGroups = null;
         //private IList<Group> _VerticalTypeGroups = null;
         //private IList<Group> _SquareTypeGroups = null;
-        private List<Potential> _PotentialSquares = null;
+        private List<Potential> _PotentialSquares = new List<Potential>();
+        private List<Availability> _Availabilities = new List<Availability>();
         private bool _Ready = false;
         private bool _AutoSolve = false;
 
@@ -31,6 +32,10 @@ namespace SudokuSolver.Engine
         #endregion
 
         #region Properties
+
+        public int SudokuId { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Id of the sudoku
@@ -98,24 +103,24 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets all the used squares of the sudoku
         /// </summary>
-        public IEnumerable<Square> UsedSquares
+        public IEnumerable<Square> GetUsedSquares()
         {
-            get { return Squares.Where(s => !s.IsAvailable); }
+            return Squares.Where(s => !s.IsAvailable);
         }
 
         /// <summary>
         /// Gets all numbers which can be used in sudoku, including zero.
         /// Count of the list equals to Size property of the sudoku + 1 (for size 9, it's 10)
         /// </summary>
-        public IEnumerable<Number> Numbers { get; private set; }
+        public IEnumerable<Number> GetNumbers() { return _Numbers; }
 
         /// <summary>
         /// Gets all usable numbers, except zero.
         /// Count of the list equals to Size property of the sudoku
         /// </summary>
-        public IEnumerable<Number> NumbersExceptZero
+        public IEnumerable<Number> GetNumbersExceptZero()
         {
-            get { return Numbers.Where(n => !n.IsZero); }
+            return GetNumbers().Where(n => !n.IsZero);
         }
 
         //public IEnumerable<Number> AvailableNumbers
@@ -138,12 +143,29 @@ namespace SudokuSolver.Engine
         /// </summary>
         public IEnumerable<Group> SquareTypeGroups { get; private set; } // { return _SquareTypeGroups; } }
 
+        //public IEnumerable<Availability> UsedAvailabilities
+        //{
+        //    get
+        //    {
+        //        return Squares.Select(x => x.UsedAvailabilities.);
+        //    }
+        //}
+
         /// <summary>
         /// Gets the potential squares
         /// During UpdateSquare() method, when the solver finds a potential square, it puts them to this list.
         /// When Solve() method called, this list will be checked and if the potential square has still the same conditions, then the square will be update with the value.
         /// </summary>
-        public IEnumerable<Potential> PotentialSquares { get { return _PotentialSquares; } }
+        public IEnumerable<Potential> GetPotentialSquares() { return _PotentialSquares; }
+
+        public IEnumerable<Availability> GetAvailabilities() { return _Availabilities; }
+
+        public IEnumerable<Availability> GetUsedAvailabilities() { return _Availabilities.Where(x => !x.IsAvailable); }
+
+        public IEnumerable<Availability> GetAvailabilities2()
+        {
+            return new List<Availability>();
+        }
 
         /// <summary>
         /// Determines the whether sudoku is ready to solve or not.
@@ -185,6 +207,24 @@ namespace SudokuSolver.Engine
             }
         }
 
+
+        public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities()
+        {
+            var list = new List<GroupNumberAvailabilityContainer>();
+
+            foreach (var g in SquareTypeGroups)
+            {
+                foreach (var n in GetNumbersExceptZero())
+                {
+                    //list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumber(n).Count() });
+                    list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumber(n).Count() });
+                }
+            }
+
+            return list;
+        }
+
+
         #endregion
 
         #region Constructors
@@ -213,11 +253,11 @@ namespace SudokuSolver.Engine
             this.Size = size;
 
             //All numbers; numbers will be created as the size of the sudoku (default 9 + zero value = 10)
-            var numbers = new List<Number>(this.Size + 1);
-            numbers.Add(new Number(this, 0)); //Zero value
+            _Numbers = new List<Number>(this.Size + 1);
+            _Numbers.Add(new Number(this, 0)); //Zero value
             for (int i = 1; i <= Size; i++)
-                numbers.Add(new Number(this, i));
-            this.Numbers = numbers;
+                _Numbers.Add(new Number(this, i));
+            //this.Numbers = _Numbers;
 
             //All square groups
             var horizontalTypeGroups = new List<Group>(Size);
@@ -270,15 +310,20 @@ namespace SudokuSolver.Engine
                 square.PotentialSquareFound += new Potential.FoundEventHandler(PotentialSquare_Found);
                 squares.Add(square);
 
+                // Get the squares availabilities
+                //_Availabilities = new List<Availability>();
+                _Availabilities.AddRange(square.Availabilities);
+
                 //Add the squares to their own groups
                 //horizontalTypeGroup.AddSquare(square);
                 //verticalTypeGroup.AddSquare(square);
                 //squareTypeGroup.AddSquare(square);
             }
+
             this.Squares = squares;
 
             //Potential squares
-            _PotentialSquares = new List<Potential>();
+            //_PotentialSquares = new List<Potential>();
 
             //// Initialization completed; raise the event
             //if (Initialized != null)
@@ -291,7 +336,7 @@ namespace SudokuSolver.Engine
             var square = this.Squares.Single(s => s.Id.Equals(squareId));
 
             //Get the number
-            var number = this.Numbers.Single(n => n.Value.Equals(value));
+            var number = this.GetNumbers().Single(n => n.Value.Equals(value));
 
             //Assign type
             var type = !this.Ready ? AssignTypes.Initial : AssignTypes.User;
@@ -358,6 +403,16 @@ namespace SudokuSolver.Engine
             }
         }
 
+        public void ToggleReady()
+        {
+            Ready = !Ready;
+        }
+
+        public void ToggleAutoSolve()
+        {
+            AutoSolve = !AutoSolve;
+        }
+
         /// <summary>
         /// To solve the sudoku, this logic checks the spotted squares.
         /// These are the squares which found during UpdateSquare() operation.
@@ -368,11 +423,11 @@ namespace SudokuSolver.Engine
                 throw new InvalidOperationException("Sudoku cannot be Solved if it's not in Ready state");
 
             //Is there anything to do?
-            if (PotentialSquares.Count().Equals(0))
+            if (GetPotentialSquares().Count() == 0)
                 return;
 
             //Copy to a new list; since the PotentialSquares can take new values during this operation, it's not possible to use that one directly
-            var potentials = PotentialSquares.ToList();
+            var potentials = GetPotentialSquares().ToList();
 
             foreach (var potential in potentials)
             {

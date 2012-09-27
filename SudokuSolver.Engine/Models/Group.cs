@@ -69,7 +69,7 @@ namespace SudokuSolver.Engine
 
         internal IEnumerable<Number> AvailableNumbers
         {
-            get { return Sudoku.NumbersExceptZero.Except(UsedNumbers); }
+            get { return Sudoku.GetNumbersExceptZero().Except(UsedNumbers); }
         }
 
         #endregion
@@ -119,13 +119,13 @@ namespace SudokuSolver.Engine
 
             // Check for potential square removal
 
-            var potentialList = Sudoku.PotentialSquares.Where(p => (p.SquareGroup != null && p.SquareGroup.Equals(this)) && p.PotentialType == PotentialTypes.Group);
+            var potentialList = Sudoku.GetPotentialSquares().Where(p => (p.SquareGroup != null && p.SquareGroup.Equals(this)) && p.PotentialType == PotentialTypes.Group);
 
             if (potentialList.Count() > 0)
             {
                 foreach (var p in potentialList)
                 {
-                    var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(p.Number) && a.IsAvailable()));
+                    var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(p.Number) && a.IsAvailable));
 
                     if (!list.Count().Equals(1))
                     {
@@ -138,7 +138,7 @@ namespace SudokuSolver.Engine
 
             foreach (var number in AvailableNumbers)
             {
-                var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable()));
+                var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable));
 
                 if (list.Count().Equals(1))
                 {
@@ -161,7 +161,7 @@ namespace SudokuSolver.Engine
         // TOD IS THIS REALLY NECESSARY?
         public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
         {
-            return AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable()));
+            return AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable));
         }
 
         public override string ToString()
