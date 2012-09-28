@@ -303,4 +303,8 @@
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>powershell start-process -WindowStyle Hidden D:\Development\Libraries\APMI\WebRequester\20111004\APMI.WebRequester.exe http://localhost:56105/default.html
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

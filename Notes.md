@@ -1,27 +1,16 @@
-WRONG SUDOKU! - try this after fixing CASE 1: ID 5
 
-1,1
-2,2
-3,3
-4,4
-5,5
-6,6
-7,7
-8,8
-9,9
-10,4
-11,5
-12,6
-19,7
-20,8
-21,9
-13,1
-14,2
+Another sudoku application sample;
+http://www.iui-js.org/powered-by/index.html?id=esudoku
 
+---
 Wishlist:
+. Database connection?
+. Unit Testing?
 . Sudoku generator
 . Drag & drop the numbers
 . Multi-language
+. Offline mode
+. Mobile application
 
 ---
 - clear the cases
@@ -50,13 +39,9 @@ details? - STILL NECESSARY?
 . add samples for different sizes - 4 + 9 (OK) + 16 + 25? + wrong cases; invalid
 sudoku, invalid number, invalid square, invalid assignment!
 
-. unit test projects!
-
 . firefox shows an error in case of 400 ?! is it normal
 
 . step counter ?!
-
-. save to db?
 
 . test with all browsers + mobile!
 
@@ -105,9 +90,6 @@ horizontal + vertical groups for square? and then use them as well with ToggleSe
 these calculations can come from the server?
 
 ---
-offline mode? if the server is not there etc.?
-
----
 diger SIKISMA caseleri neler olabilir? onlari arastir
 
 eger bir numaranin konulabilecegi 2 kare varsa ve karedeki diger numara da sadece o 2 kareye konulabiliyorsa, o zaman SIKISMA var ihtimali uzerinde duruyoruz
@@ -135,15 +117,7 @@ html template for sudoku killa!
 is it possible to download a template from vix?
 
 ---
-esudoku;
-http://www.iui-js.org/powered-by/index.html?id=esudoku
-
----
 with APM51, it works very slow?!
 
 ---
 webapi.tester doesnt work at the moment (after the package updates) - check webapiclient!
-
----
-do we need to use fake email? if yes;
-https://help.github.com/articles/keeping-your-email-address-private

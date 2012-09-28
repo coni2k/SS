@@ -41,6 +41,8 @@ namespace SudokuSolver.WebApp.Models
 
             var sample14 = new Sudoku(9); // Availability bug
 
+            var sample15 = new Sudoku(9); // Wrong 2
+
             sample1.UpdateSquare(1, 1);
             sample1.UpdateSquare(2, 2);
             sample1.UpdateSquare(3, 3);
@@ -243,6 +245,24 @@ namespace SudokuSolver.WebApp.Models
             sample14.UpdateSquare(30, 1);
             sample14.UpdateSquare(22, 0);
 
+            sample15.UpdateSquare(1, 1);
+            sample15.UpdateSquare(2, 2);
+            sample15.UpdateSquare(3, 3);
+            sample15.UpdateSquare(4, 4);
+            sample15.UpdateSquare(5, 5);
+            sample15.UpdateSquare(6, 6);
+            sample15.UpdateSquare(7, 7);
+            sample15.UpdateSquare(8, 8);
+            sample15.UpdateSquare(9, 9);
+            sample15.UpdateSquare(10, 4);
+            sample15.UpdateSquare(11, 5);
+            sample15.UpdateSquare(12, 6);
+            sample15.UpdateSquare(19, 7);
+            sample15.UpdateSquare(20, 8);
+            sample15.UpdateSquare(21, 9);
+            sample15.UpdateSquare(13, 1);
+            sample15.UpdateSquare(14, 2);
+
             //var cont1 = new SudokuContainer() { SudokuId = 1, Title = "1. Type - Horizontal - 8" };
             //var cont2 = new SudokuContainer() { SudokuId = 2, Title = "1. Type - Vertical - 8" };
             //var cont3 = new SudokuContainer() { SudokuId = 3, Title = "1. Type - Square - 8" };
@@ -302,6 +322,7 @@ namespace SudokuSolver.WebApp.Models
             sample12.SudokuId = 12; //"Mini size" };
             sample13.SudokuId = 13; //"Beauty" };
             sample14.SudokuId = 14; //"Availability bug" };
+            sample15.SudokuId = 15;
 
             sample1.Title = "1. Type - Horizontal - 8";
             sample2.Title = "1. Type - Vertical - 8";
@@ -317,6 +338,7 @@ namespace SudokuSolver.WebApp.Models
             sample12.Title = "Mini size";
             sample13.Title = "Beauty";
             sample14.Title = "Availability bug";
+            sample15.Title = "Wrong 2"; // Try this after fixing CASE 1: ID 5
 
             sample1.ToggleReady();
             sample2.ToggleReady();
@@ -332,6 +354,7 @@ namespace SudokuSolver.WebApp.Models
             sample12.ToggleReady();
             sample13.ToggleReady();
             sample14.ToggleReady();
+            sample15.ToggleReady();
 
             ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample1);
             ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample2);
@@ -347,6 +370,7 @@ namespace SudokuSolver.WebApp.Models
             ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample12);
             ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample13);
             ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample14);
+            ((List<Sudoku>)HttpContext.Current.Cache["SudokuList"]).Add(sample15);
         }
     }
 }
