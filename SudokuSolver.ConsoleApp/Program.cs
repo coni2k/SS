@@ -125,7 +125,7 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowSudoku()
         {
-            foreach (var group in Sudoku.HorizontalTypeGroups)
+            foreach (var group in Sudoku.GetHorizontalTypeGroups())
             {
                 foreach (var square in group.Squares)
                 {
@@ -166,7 +166,7 @@ namespace SudokuSolver.ConsoleApp
             Console.WriteLine();
 
             //Details
-            foreach (var square in Sudoku.Squares)
+            foreach (var square in Sudoku.GetSquares())
             {
                 //Square text: Square id + value
                 var output = string.Format("Id {0}: {1}", square.Id.ToString("D2"), square.Number.ToString());
