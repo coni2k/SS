@@ -155,8 +155,7 @@ namespace SudokuSolver.WebApp.Controllers
         Sudoku ValidateAndGetSudoku(int id)
         {
             //Search the container in CacheManager
-            //var container = CacheManager.SudokuList.Find(s => s.SudokuId.Equals(id));
-            Sudoku container = null;
+            var container = CacheManager.SudokuList.Find(s => s.SudokuId.Equals(id));
 
             //If there is no, throw an exception
             if (container == null)

@@ -26,9 +26,6 @@ ID 8, 3. grid cannot have any number except 1,2,3.
 
 . CASE 2: ID 1, square 36 cannot have number 9.
 
-. squaresLeft (numbersModel.ZeroValue count) can be improved, maybe moved to sudoku
-details? - STILL NECESSARY?
-
 . retrieve only updated values from server - usedSquares + numbers count + availabilities!
 
 . validation; in general OK, but numpad values are ignored as well!
@@ -38,8 +35,6 @@ details? - STILL NECESSARY?
 
 . add samples for different sizes - 4 + 9 (OK) + 16 + 25? + wrong cases; invalid
 sudoku, invalid number, invalid square, invalid assignment!
-
-. firefox shows an error in case of 400 ?! is it normal
 
 . step counter ?!
 
@@ -117,7 +112,13 @@ html template for sudoku killa!
 is it possible to download a template from vix?
 
 ---
-with APM51, it works very slow?!
+with APM51, it keeps resetting the application, why?
+is there any problem with IIS Express?
+when we move to iis and extend the timeouts, it was fine?
 
 ---
 webapi.tester doesnt work at the moment (after the package updates) - check webapiclient!
+
+---
+how to use a web requester;
+powershell start-process -WindowStyle Hidden D:\Development\Libraries\APMI\WebRequester\20111004\APMI.WebRequester.exe http://localhost:56105/default.html

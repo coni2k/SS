@@ -9,11 +9,11 @@ namespace SudokuSolver.Engine
         #region Members
 
         private int _Size = 0;
-        //private List<Square> _Squares = null;
+        private List<Square> _Squares = null;
         private List<Number> _Numbers = null;
-        //private IList<Group> _HorizontalTypeGroups = null;
-        //private IList<Group> _VerticalTypeGroups = null;
-        //private IList<Group> _SquareTypeGroups = null;
+        private IList<Group> _HorizontalTypeGroups = null;
+        private IList<Group> _VerticalTypeGroups = null;
+        private IList<Group> _SquareTypeGroups = null;
         private List<Potential> _PotentialSquares = new List<Potential>();
         private List<Availability> _Availabilities = new List<Availability>();
         private bool _Ready = false;
@@ -94,18 +94,30 @@ namespace SudokuSolver.Engine
             get { return Size * Size; }
         }
 
+        public int SquaresLeft
+        {
+            get { return GetNumbers().Single(x => x.IsZero).Count; }
+            //set { var x = value; }
+        }
+
         /// <summary>
         /// Gets all the squares of the sudoku
         /// Count of the list equals to the TotalSize property
         /// </summary>
-        public IEnumerable<Square> Squares { get; private set; } // { return _Squares; } }
+        public IEnumerable<Square> GetSquares()
+        {
+            return _Squares;
+
+            //get;
+            //private set;
+        }
 
         /// <summary>
         /// Gets all the used squares of the sudoku
         /// </summary>
         public IEnumerable<Square> GetUsedSquares()
         {
-            return Squares.Where(s => !s.IsAvailable);
+            return GetSquares().Where(s => !s.IsAvailable);
         }
 
         /// <summary>
@@ -131,17 +143,35 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets horizontal type square groups
         /// </summary>
-        public IEnumerable<Group> HorizontalTypeGroups { get; private set; } // { return _HorizontalTypeGroups; } }
+        public IEnumerable<Group> GetHorizontalTypeGroups()
+        {
+            return _HorizontalTypeGroups;
+
+            //get;
+            //private set;
+        } // { return _HorizontalTypeGroups; } }
 
         /// <summary>
         /// Gets vertical type square groups
         /// </summary>
-        public IEnumerable<Group> VerticalTypeGroups { get; private set; } //{ return _VerticalTypeGroups; } }
+        public IEnumerable<Group> GetVerticalTypeGroups()
+        {
+            return _VerticalTypeGroups;
+
+            //get;
+            //private set;
+        } //{ return _VerticalTypeGroups; } }
 
         /// <summary>
         /// Gets square type square groups
         /// </summary>
-        public IEnumerable<Group> SquareTypeGroups { get; private set; } // { return _SquareTypeGroups; } }
+        public IEnumerable<Group> GetSquareTypeGroups()
+        {
+            return _SquareTypeGroups;
+
+            //get;
+            //private set;
+        } // { return _SquareTypeGroups; } }
 
         //public IEnumerable<Availability> UsedAvailabilities
         //{
@@ -180,7 +210,7 @@ namespace SudokuSolver.Engine
                 //Validate: Cannot set to false, if there are any Square with User/Solver assign type
                 if (value == false)
                 {
-                    var hasInvalidAssignType = Squares.Any(s => (s.AssignType == AssignTypes.User || s.AssignType == AssignTypes.Solver) && !s.IsAvailable);
+                    var hasInvalidAssignType = GetSquares().Any(s => (s.AssignType == AssignTypes.User || s.AssignType == AssignTypes.Solver) && !s.IsAvailable);
                     if (hasInvalidAssignType)
                         throw new Exception("Ready cannot set to false again if there are any squares with User or Solver Assign Type");
                 }
@@ -212,7 +242,7 @@ namespace SudokuSolver.Engine
         {
             var list = new List<GroupNumberAvailabilityContainer>();
 
-            foreach (var g in SquareTypeGroups)
+            foreach (var g in GetSquareTypeGroups())
             {
                 foreach (var n in GetNumbersExceptZero())
                 {
@@ -260,9 +290,9 @@ namespace SudokuSolver.Engine
             //this.Numbers = _Numbers;
 
             //All square groups
-            var horizontalTypeGroups = new List<Group>(Size);
-            var verticalTypeGroups = new List<Group>(Size);
-            var squareTypeGroups = new List<Group>(Size);
+            _HorizontalTypeGroups = new List<Group>(Size);
+            _VerticalTypeGroups = new List<Group>(Size);
+            _SquareTypeGroups = new List<Group>(Size);
 
             for (int i = 1; i <= Size; i++)
             {
@@ -277,18 +307,19 @@ namespace SudokuSolver.Engine
                 squareGroup.PotentialFound += new Potential.FoundEventHandler(PotentialSquare_Found);
 
                 //Add to the lists
-                horizontalTypeGroups.Add(horizontalGroup);
-                verticalTypeGroups.Add(verticalGroup);
-                squareTypeGroups.Add(squareGroup);
+                _HorizontalTypeGroups.Add(horizontalGroup);
+                _VerticalTypeGroups.Add(verticalGroup);
+                _SquareTypeGroups.Add(squareGroup);
             }
 
             //Assign to the public properties
-            this.HorizontalTypeGroups = horizontalTypeGroups;
-            this.VerticalTypeGroups = verticalTypeGroups;
-            this.SquareTypeGroups = squareTypeGroups;
+            //this.HorizontalTypeGroups = horizontalTypeGroups;
+            //this.VerticalTypeGroups = verticalTypeGroups;
+            //this.SquareTypeGroups = squareTypeGroups;
 
             //All squares
-            var squares = new List<Square>(TotalSize);
+            //var squares = new List<Square>(TotalSize);
+            _Squares = new List<Square>(TotalSize);
             for (int i = 0; i < TotalSize; i++)
             {
                 //Square id
@@ -300,19 +331,19 @@ namespace SudokuSolver.Engine
                 int squareGroupIndex = (verticalGroupIndex / SquareRootOfSize) + ((horizontalGroupIndex / SquareRootOfSize) * SquareRootOfSize);
 
                 //Get the groups
-                var horizontalTypeGroup = horizontalTypeGroups[horizontalGroupIndex];
-                var verticalTypeGroup = verticalTypeGroups[verticalGroupIndex];
-                var squareTypeGroup = squareTypeGroups[squareGroupIndex];
+                var horizontalTypeGroup = _HorizontalTypeGroups[horizontalGroupIndex];
+                var verticalTypeGroup = _VerticalTypeGroups[verticalGroupIndex];
+                var squareTypeGroup = _SquareTypeGroups[squareGroupIndex];
 
                 //Generate the squares
                 Square square = new Square(squareId, this, horizontalTypeGroup, verticalTypeGroup, squareTypeGroup);
                 square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
                 square.PotentialSquareFound += new Potential.FoundEventHandler(PotentialSquare_Found);
-                squares.Add(square);
+                _Squares.Add(square);
 
                 // Get the squares availabilities
                 //_Availabilities = new List<Availability>();
-                _Availabilities.AddRange(square.Availabilities);
+                _Availabilities.AddRange(square.GetAvailabilities());
 
                 //Add the squares to their own groups
                 //horizontalTypeGroup.AddSquare(square);
@@ -320,7 +351,7 @@ namespace SudokuSolver.Engine
                 //squareTypeGroup.AddSquare(square);
             }
 
-            this.Squares = squares;
+            //this.Squares = squares;
 
             //Potential squares
             //_PotentialSquares = new List<Potential>();
@@ -333,13 +364,13 @@ namespace SudokuSolver.Engine
         public void UpdateSquare(int squareId, int value)
         {
             //Get the square
-            var square = this.Squares.Single(s => s.Id.Equals(squareId));
+            var square = GetSquares().Single(s => s.Id.Equals(squareId));
 
             //Get the number
-            var number = this.GetNumbers().Single(n => n.Value.Equals(value));
+            var number = GetNumbers().Single(n => n.Value.Equals(value));
 
             //Assign type
-            var type = !this.Ready ? AssignTypes.Initial : AssignTypes.User;
+            var type = !Ready ? AssignTypes.Initial : AssignTypes.User;
 
             //Update
             UpdateSquare(square, number, type);

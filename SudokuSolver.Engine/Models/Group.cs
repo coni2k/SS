@@ -125,7 +125,7 @@ namespace SudokuSolver.Engine
             {
                 foreach (var p in potentialList)
                 {
-                    var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(p.Number) && a.IsAvailable));
+                    var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable));
 
                     if (!list.Count().Equals(1))
                     {
@@ -138,7 +138,7 @@ namespace SudokuSolver.Engine
 
             foreach (var number in AvailableNumbers)
             {
-                var list = AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable));
+                var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
 
                 if (list.Count().Equals(1))
                 {
@@ -161,7 +161,7 @@ namespace SudokuSolver.Engine
         // TOD IS THIS REALLY NECESSARY?
         public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
         {
-            return AvailableSquares.Where(s => s.Availabilities.Any(a => a.Number.Equals(number) && a.IsAvailable));
+            return AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
         }
 
         public override string ToString()

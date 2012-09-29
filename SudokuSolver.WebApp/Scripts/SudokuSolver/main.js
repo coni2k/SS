@@ -331,6 +331,7 @@ function loadSudoku(model, sudoku) {
     model.Title(sudoku.Title);
     model.Description(sudoku.Description);
     model.Size(sudoku.Size);
+    model.SquaresLeft(sudoku.SquaresLeft);
     model.Ready(sudoku.Ready);
     model.AutoSolve(sudoku.AutoSolve);
 

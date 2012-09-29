@@ -6,6 +6,8 @@ namespace SudokuSolver.Engine
 {
     public class Square
     {
+        private List<Availability> _Availabilities = null;
+
         #region Events
 
         public delegate void SquareEventHandler(Square square);
@@ -60,14 +62,21 @@ namespace SudokuSolver.Engine
         /// Even if this square has a value, this list may contain other numbers as available.
         /// The availability will only be determined by looking whether the related squares have that number or not.
         /// </summary>
-        public IEnumerable<Availability> Availabilities { get; private set; }
+        public IEnumerable<Availability> GetAvailabilities()
+        {
+            return _Availabilities;
+            // get;
+            // private set;
+    }
 
         /// <summary>
         /// Unavailable ones
         /// </summary>
-        public IEnumerable<Availability> UsedAvailabilities
+        public IEnumerable<Availability> GetUsedAvailabilities()
         {
-            get { return Availabilities.Where(x => !x.IsAvailable); }
+            return GetAvailabilities().Where(x => !x.IsAvailable);
+
+            //get { return GetAvailabilities().Where(x => !x.IsAvailable); }
         }
 
         public Group Potential_SquareGroup { get; internal set; }
@@ -104,10 +113,11 @@ namespace SudokuSolver.Engine
             }
 
             // Available numbers; assign all numbers, except zero
-            var availabilities = new List<Availability>(this.Sudoku.Size);
+            //var availabilities = new List<Availability>(this.Sudoku.Size);
+            _Availabilities = new List<Availability>(this.Sudoku.Size);
             foreach (var sudokuNumber in this.Sudoku.GetNumbersExceptZero())
-                availabilities.Add(new Availability(this, sudokuNumber));
-            this.Availabilities = availabilities;
+                _Availabilities.Add(new Availability(this, sudokuNumber));
+            //this.Availabilities = availabilities;
         }
 
         #endregion
@@ -138,7 +148,7 @@ namespace SudokuSolver.Engine
         /// <returns></returns>
         public bool IsNumberAvailable(Number number)
         {
-            return this.Availabilities.Single(a => a.Number.Equals(number)).IsAvailable;
+            return GetAvailabilities().Single(a => a.Number.Equals(number)).IsAvailable;
         }
 
         void Group_SquareNumberChanging(Group sourceGroup, Square sourceSquare)
@@ -168,7 +178,7 @@ namespace SudokuSolver.Engine
             if (Sudoku.GetPotentialSquares().Any(p => p.Square.Equals(this) && p.PotentialType == PotentialTypes.Square))
             {
                 // Get the available numbers
-                var list = Availabilities.Where(a => a.IsAvailable);
+                var list = GetAvailabilities().Where(a => a.IsAvailable);
 
                 // If there is only one number left in the list, then we found a new potential
                 if (!list.Count().Equals(1))
@@ -179,7 +189,7 @@ namespace SudokuSolver.Engine
             else
             {
                 // Get the available numbers
-                var list = Availabilities.Where(a => a.IsAvailable);
+                var list = GetAvailabilities().Where(a => a.IsAvailable);
 
                 // If there is only one number left in the list, then we found a new potential
                 if (list.Count().Equals(1))
@@ -215,15 +225,15 @@ namespace SudokuSolver.Engine
             switch (type)
             {
                 case GroupTypes.Horizontal:
-                    this.Availabilities.Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
+                    GetAvailabilities().Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
                     break;
 
                 case GroupTypes.Vertical:
-                    this.Availabilities.Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
+                    GetAvailabilities().Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
                     break;
 
                 case GroupTypes.Square:
-                    this.Availabilities.Single(a => a.Number.Equals(number)).SquareTypeSource = source;
+                    GetAvailabilities().Single(a => a.Number.Equals(number)).SquareTypeSource = source;
                     break;
             }
         }

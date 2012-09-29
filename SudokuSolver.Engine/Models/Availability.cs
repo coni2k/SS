@@ -26,9 +26,9 @@ namespace SudokuSolver.Engine
 
         public bool IsAvailable
         {
-            get
-            {
-                return HorizontalTypeSource == null && VerticalTypeSource == null && SquareTypeSource == null;
+            get { return HorizontalTypeSource == null
+                      && VerticalTypeSource == null
+                      && SquareTypeSource == null;
             }
         }
     }

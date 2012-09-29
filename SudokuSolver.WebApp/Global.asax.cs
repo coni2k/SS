@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿using SudokuSolver.WebApp.Models;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using SudokuSolver.WebApp.Models;
 
 namespace SudokuSolver.WebApp
 {
@@ -26,6 +18,8 @@ namespace SudokuSolver.WebApp
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            FormatterConfig.RegisterFormatters(GlobalConfiguration.Configuration.Formatters);
 
             CacheManager.LoadSamples();
         }

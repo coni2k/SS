@@ -49,7 +49,7 @@ namespace SudokuSolver.Engine
         {
             get
             {
-                return Sudoku.Squares.Count(s => s.Number.Equals(this));
+                return Sudoku.GetSquares().Count(s => s.Number.Equals(this));
             }
         }
 
