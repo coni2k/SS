@@ -11,6 +11,26 @@
     self.SquaresLeft = ko.observable(0);
     self.SudokuList = ko.observableArray([]);
 
+    self.SelectedSquare = ko.observable(null);
+    self.SetSelectedSquare = function (square) {
+
+        // Remove the previous selected
+        if (self.SelectedSquare() !== null)
+            self.SelectedSquare().RemoveActiveSelected();
+
+        self.SelectedSquare(square);
+    };
+
+    self.SelectedNumber = ko.observable(null);
+    self.SetSelectedNumber = function (sudokuNumber) {
+
+        self.SelectedNumber(sudokuNumber);
+
+        // Assign the number to the square
+        if (self.SelectedSquare() !== null)
+            self.SelectedSquare().UpdateSquare(sudokuNumber.Value);
+    };
+
     self.LoadSudoku = function (sudoku) { loadSudoku(self, sudoku); }
     self.NewSudoku = function () { newSudoku(self); }
     self.ResetList = function () { resetList(self); }
@@ -170,23 +190,115 @@ function Square(group, id) {
             self.Value(value === '' ? 0 : value);
         }
     });
+    //self.HasValue = ko.computed(function () { return self.Value() !== 0; });
+    self.RemoveValue = function () {
+        self.UpdateSquare(0);
+    };
     self.OldValue = 0;
     self.IsAvailable = ko.computed(function () { return self.Value() === 0; });
     self.AssignType = ko.observable(0);
     self.Availabilities = ko.observableArray([]);
     self.Availabilities2 = ko.observableArray([]);
+
+    self.IsPassiveSelected = ko.observable(false);
+    self.TogglePassiveSelect = function (data, event)
+    {
+        //Toggle select itself
+        self.IsPassiveSelected(event.type == 'mouseenter');
+    }
+
+    self.IsActiveSelected = ko.observable(false);
+    self.ToggleActiveSelect = function (data, event) {
+
+        self.Group.Model.SetSelectedSquare(self);
+
+        self.IsActiveSelected(true);
+
+        // Related square selected
+        ko.utils.arrayForEach(self.Group.Squares(), function (square) {
+            if (square !== self)
+                square.IsRelatedSelected(true);
+        });
+    };
+
+    self.RemoveActiveSelected = function () {
+        self.IsActiveSelected(false);
+
+        // Related square selected
+        ko.utils.arrayForEach(self.Group.Squares(), function (square) {
+            if (square !== self)
+                square.IsRelatedSelected(false);
+        });
+    };
+
     self.IsSelected = ko.observable(false);
     self.IsRelatedSelected = ko.observable(false);
-    self.ToggleSelect = function (data, event) {
-        //Self selected
-        self.IsSelected(event.type == 'mouseenter');
 
-        //Related square selected
-        ko.utils.arrayForEach(data.Group.Squares(), function (square) {
-            if (square !== data)
-                square.IsRelatedSelected(data.IsSelected());
-        });
-    }
+    //self.SetRelatedSelected = ko.computed(function () {
+        
+    //    //clearDebugPanel();
+    //    addDebugMessage('SetRelatedSelected: square: ' + self.SquareId);
+
+    //    //self.IsRelatedSelected(false);
+
+    //    ////ko.util.array
+
+    //    //ko.utils.arrayForEach(self.Group.Squares(), function (square) {
+    //    //    if (square !== self)
+    //    //    {
+    //    //        if (square.IsSelected())
+    //    //        {
+    //    //            self.IsRelatedSelected(true);
+    //    //            return;
+    //    //        }
+    //    //    }
+    //    //})
+
+    //    self.IsRelatedSelected(function () {
+
+    //        var selectedRelatedSquare = ko.utils.arrayFirst(self.Group.Squares(), function (square) {
+    //            return square !== self && square.IsSelected();
+    //        });
+
+    //        addDebugMessage('yes there is a selected square in my group, so i can be a related selected');
+
+    //        return selectedRelatedSquare !== null;
+    //    });
+    //});
+
+
+    //self.SetSelected = function () {
+        
+    //    self.IsSelected(
+
+    //}
+
+    //self.SetRelatedSelected = ko.computed(function () {
+
+    //    // Related square selected
+    //    ko.utils.arrayForEach(self.Group.Squares(), function (square) {
+    //        if (square !== self)
+    //            square.IsRelatedSelected(self.IsSelected());
+    //    });
+    //});
+
+    // self.ToggleSelect = function (data, event) {
+    //self.ToggleSelect = function (data) {
+
+    //    addDebugMessage(data);
+
+    //    // Self selected
+    //    //self.IsSelected(event.type == 'mouseenter');
+    //    self.IsSelected(!self.IsSelected());
+
+    //    // Related square selected
+    //    ko.utils.arrayForEach(data.Group.Squares(), function (square) {
+    //        if (square !== data)
+    //            square.IsRelatedSelected(data.IsSelected());
+    //    });
+
+    //    return self.IsSelected();
+    //}
 
     //Ensure that it is a valid number
     self.Updating = function (data, event) {
@@ -226,29 +338,25 @@ function Square(group, id) {
 
     self.Update = function (data, event) {
 
+        data.UpdateSquare(data.Value());
+
+    }
+
+    self.UpdateSquare = function(newValue) {
+
         //Prepare the data
-        var squareContainer = JSON.stringify({ SquareId: data.SquareId, Value: data.Value() });
+        var squareContainer = JSON.stringify({ SquareId: self.SquareId, Value: newValue });
 
-        //Post; because contentType needs to be set, $.post() couldn't be used
-        $.ajax({
-            url: serverUrl + 'updatesquare/' + data.Group.Model.SudokuId(),
-            type: 'POST',
-            data: squareContainer,
-            contentType: 'application/json; charset=utf-8'
-        }).done(function () {
+        $.post(serverUrl + 'updatesquare/' + self.Group.Model.SudokuId(), squareContainer, function () {
 
-            //Assign type
-            data.AssignType(data.Group.Model.Ready() ? 1 : 0);
+            // Set the new values
+            self.Value(newValue);
+            self.AssignType(self.Group.Model.Ready() ? 1 : 0);
 
             //Load details (if it's AutoSolve, load "used squares" as well
-            loadSudokuDetails(data.Group.Model, data.Group.Model.AutoSolve());
+            loadSudokuDetails(self.Group.Model, self.Group.Model.AutoSolve());
 
-        }).fail(function (jqXHR) {
-            handleError(jqXHR);
-
-            //Clear the square
-            data.Value(data.OldValue);
-        });
+        }).fail(function (jqXHR) { handleError(jqXHR); });
     }
 }
 
@@ -258,17 +366,22 @@ function SudokuNumber(model) {
     self.Value = 0;
     self.Count = ko.observable(0);
     self.IsSelected = ko.observable(false);
+    //self.ToggleSelect = function () { return false; };
     self.ToggleSelect = function (data, event) {
 
         //Toggle select itself
         self.IsSelected(event.type == 'mouseenter');
 
         //Find & toggle select related square as well
-        var relatedSquares = data.Model.FilteredSquaresByNumber(data.Value);
-        $.each(relatedSquares, function () {
-            this.ToggleSelect(this, event);
-        });
+        //var relatedSquares = data.Model.FilteredSquaresByNumber(data.Value);
+        //$.each(relatedSquares, function () {
+        //    this.ToggleSelect(this, event);
+        //});
     }
+
+    self.SetNumber = function () {
+        self.Model.SetSelectedNumber(self);
+    };
 }
 
 function Potential(model) {
@@ -278,15 +391,16 @@ function Potential(model) {
     self.PotentialValue = 0;
     self.PotentialType = 0;
     self.IsSelected = ko.observable(false);
+    //self.ToggleSelect = function () { return false; };
     self.ToggleSelect = function (data, event) {
 
         //Toggle select itself
         self.IsSelected(event.type == 'mouseenter');
 
-        //Find & toggle select related square as well
-        var relatedSquare = data.Model.FilteredSquaresById(data.SquareId);
-        relatedSquare.Value(event.type == 'mouseenter' ? self.PotentialValue : 0);
-        relatedSquare.ToggleSelect(relatedSquare, event);
+    //    //Find & toggle select related square as well
+    //    var relatedSquare = data.Model.FilteredSquaresById(data.SquareId);
+    //    relatedSquare.Value(event.type == 'mouseenter' ? self.PotentialValue : 0);
+    //    relatedSquare.ToggleSelect(relatedSquare, event);
     }
 }
 
@@ -365,13 +479,13 @@ function loadSudokuDetails(model, refreshSquares)
     loadPotentials(model);
 
     //Load availabilities
-    loadAvailabilities(model);
+    // loadAvailabilities(model);
 
     //Load availabilities
-    loadAvailabilities2(model);
+    // loadAvailabilities2(model);
 
     //Load group number availabilities
-    loadGroupNumberAvailabilities(model);
+    // loadGroupNumberAvailabilities(model);
 
 }
 
@@ -724,12 +838,33 @@ $(function () {
 function handleError(jqXHR) {
 
     //Get the message
-    //var validationResult = $.parseJSON(jqXHR.responseText);
     var validationResult = $.parseJSON(jqXHR.responseText).Message;
 
     //Show
     showMessagePanel(validationResult);
 }
+
+// Handle the delete key
+$(document).keydown(function (e) {
+
+    if (e.keyCode !== 46)
+        return;
+
+    if (sudokuViewModel === null)
+        return;
+    
+    if (sudokuViewModel.SelectedSquare() === null)
+        return;
+    
+    var selectedSquare = sudokuViewModel.SelectedSquare();
+
+    if (!selectedSquare.IsAvailable()) {
+        selectedSquare.UpdateSquare(0);
+    }
+    else {
+        sudokuViewModel.SetSelectedSquare(null);
+    }
+});
 
 $("#messagePanelClear").live('click', function () {
     hideMessagePanel();

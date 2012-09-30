@@ -11,6 +11,7 @@ Wishlist:
 . Multi-language
 . Offline mode
 . Mobile application
+. Add "number of actions" counter
 
 ---
 - clear the cases
@@ -30,17 +31,19 @@ ID 8, 3. grid cannot have any number except 1,2,3.
 
 . validation; in general OK, but numpad values are ignored as well!
 
-. improve general (content) styling! general list template? + use jQuery animations
-?! - IE doesnt support "inherit" - try to have more generic css items ?!
-
 . add samples for different sizes - 4 + 9 (OK) + 16 + 25? + wrong cases; invalid
 sudoku, invalid number, invalid square, invalid assignment!
 
-. step counter ?!
-
-. test with all browsers + mobile!
+size 4 sudoku is okay
+but UI calculations are terrible - it takes too much time to apply them
+try to create some shortcut css block for different size - 2,3,4,5 = 4,9,16,25?
+also in size 4, counts are dissappeared ?! - how to display them?
 
 . clean up; css etc. + check TODO in general!
+
+. use span instead of textbox for squareValue in default.html
+the user will select a square first and then select the number to assign
+but can it work with mobile app? it could help to get rid of lot of hassle with the input (validation + css)
 
 ---
 try to have a new (initialized) sudoku on the page - try to decrease the first page load time
@@ -73,12 +76,6 @@ try to use a profiler (eaqutec?) to see that how many times functions being call
 ---
 sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
 history.js?!
-
----
-size 4 sudoku is okay
-but UI calculations are terrible - it takes too much time to apply them
-try to create some shortcut css block for different size - 2,3,4,5 = 4,9,16,25?
-also in size 4, counts are dissappeared ?! - how to display them?
 
 ---
 horizontal + vertical groups for square? and then use them as well with ToggleSelected()
@@ -122,3 +119,10 @@ webapi.tester doesnt work at the moment (after the package updates) - check weba
 ---
 how to use a web requester;
 powershell start-process -WindowStyle Hidden D:\Development\Libraries\APMI\WebRequester\20111004\APMI.WebRequester.exe http://localhost:56105/default.html
+
+---
+test this new selection stuff in mobile?
+
+---
+there is are two problems with chrome style;
+passiveSelected + square content
