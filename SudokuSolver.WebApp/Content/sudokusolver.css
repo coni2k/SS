@@ -256,21 +256,25 @@ div.solve {
         background-color: #ccddff;
     }
     
+    /* 0 */
     .initial {
         color: 	#000000;
     }
 
+    /* 1 */
     .user {
         color: Green;
     }
 
-    .solver {
-        color: Red;
-    }
-
+    /* 2 */
     .potential {
         color: white;
         background-color: Purple !important;
+    }
+
+    /* 3 */
+    .solver {
+        color: Red;
     }
 
 .squareId {

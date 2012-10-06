@@ -17,10 +17,10 @@
     /// </summary>
     public enum AssignTypes
     {
-        Initial,
-        User,
-        Potential,
-        Solver
+        Initial = 0,
+        User = 1,
+        Potential = 2,
+        Solver = 3
     }
 
     public enum GroupTypes

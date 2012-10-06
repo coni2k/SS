@@ -1,5 +1,4 @@
-﻿using SudokuSolver.WebApp.Models;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -15,10 +14,10 @@ namespace SudokuSolver.WebApp
         {
             AreaRegistration.RegisterAllAreas();
 
+            WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
             FormatterConfig.RegisterFormatters(GlobalConfiguration.Configuration.Formatters);
 
             CacheManager.LoadSamples();

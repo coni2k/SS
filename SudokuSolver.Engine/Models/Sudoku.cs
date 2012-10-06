@@ -70,7 +70,7 @@ namespace SudokuSolver.Engine
                 }
 
                 //The square root of the size must be a round number
-                if (!squareRootOfValue.Equals(Math.Round(squareRootOfValue)))
+                if (squareRootOfValue != Math.Round(squareRootOfValue))
                     throw new Exception("Please enter a valid sudoku size");
 
                 _Size = value;
@@ -336,7 +336,7 @@ namespace SudokuSolver.Engine
                 var squareTypeGroup = _SquareTypeGroups[squareGroupIndex];
 
                 //Generate the squares
-                Square square = new Square(squareId, this, horizontalTypeGroup, verticalTypeGroup, squareTypeGroup);
+                var square = new Square(squareId, this, horizontalTypeGroup, verticalTypeGroup, squareTypeGroup);
                 square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
                 square.PotentialSquareFound += new Potential.FoundEventHandler(PotentialSquare_Found);
                 _Squares.Add(square);
@@ -363,14 +363,20 @@ namespace SudokuSolver.Engine
 
         public void UpdateSquare(int squareId, int value)
         {
+            //Assign type
+            var type = !Ready ? AssignTypes.Initial : AssignTypes.User;
+
+            //Update
+            UpdateSquare(squareId, value, type);
+        }
+
+        public void UpdateSquare(int squareId, int value, AssignTypes type)
+        {
             //Get the square
             var square = GetSquares().Single(s => s.Id.Equals(squareId));
 
             //Get the number
             var number = GetNumbers().Single(n => n.Value.Equals(value));
-
-            //Assign type
-            var type = !Ready ? AssignTypes.Initial : AssignTypes.User;
 
             //Update
             UpdateSquare(square, number, type);
@@ -381,13 +387,17 @@ namespace SudokuSolver.Engine
             //Validations;
             //a. Square
             if (square == null)
-                throw new Exception("Not a valid square id");
+                throw new ArgumentNullException("square", "Not a valid square id");
 
             //b. Number
             if (number == null)
-                throw new Exception("Not a valid number");
+                throw new ArgumentNullException("number", "Not a valid number");
 
-            //c. Is it available; Checks the related squares in the related groups
+            //c. Is it valid; The value cannot be changed if the sudoku is in Ready state and the square has a initial value
+            if (Ready && square.AssignType == AssignTypes.Initial && !square.IsAvailable)
+                throw new InvalidOperationException("Not a valid assignment, initial values can not be changed in Ready state");
+
+            //d. Is it available; Checks the related squares in the related groups
             if (!number.IsZero && square.SquareGroups.Any(sg => sg.Squares.Any(s => s.Number.Equals(number))))
                 throw new Exception("Not a valid assignment, the number is already in use in one of the related groups");
 
@@ -410,8 +420,12 @@ namespace SudokuSolver.Engine
             //And how about zero case?
             if (!square.IsAvailable)
             {
-                if (_PotentialSquares.Any(p => p.Square.Id.Equals(square.Id)))
-                    _PotentialSquares.RemoveAll(p => p.Square.Id.Equals(square.Id));
+                //if (_PotentialSquares.Any(p => p.Square.Equals(square)))
+                _PotentialSquares.RemoveAll(p => p.Square.Equals(square));
+
+                //if (_PotentialSquares.Any(p => p.Number.Equals(square.Number) && square.SquareGroups.Contains(p.SquareGroup)))
+                _PotentialSquares.RemoveAll(p => p.Number.Equals(square.Number) && square.SquareGroups.Contains(p.SquareGroup));
+
             }
 
             if (SquareNumberChanged != null)
@@ -425,7 +439,7 @@ namespace SudokuSolver.Engine
         /// <param name="potential"></param>
         void PotentialSquare_Found(Potential potential)
         {
-            if (!_PotentialSquares.Any(p => p.Square.Id.Equals(potential.Square.Id)))
+            if (!_PotentialSquares.Any(p => p.Square.Equals(potential.Square)))
             {
                 _PotentialSquares.Add(potential);
 
@@ -468,7 +482,7 @@ namespace SudokuSolver.Engine
                     //if (Square.ValidatePotential(potential.Square))
                     //if (Square.ValidatePotential(potential.Square))
                     //{
-                        UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
+                    UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
                     //}
                     //else
                     //{
@@ -483,7 +497,7 @@ namespace SudokuSolver.Engine
                     //If there is one square and if it's the same square from the potential class, then it's valid
                     //TODO Maybe we can found a way to be sure that the square from potential is always correct! Then these can be avoided?!
                     // if (potentialFromGroup != null && potential.Square.Equals(potentialFromGroup))
-                        UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
+                    UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
                 }
 
                 potential.PotentialType = PotentialTypes.None;
@@ -495,6 +509,19 @@ namespace SudokuSolver.Engine
             //Again; since it could spot more squares during this method, run it again
             //If there are no potential square, it will quit anyway
             Solve();
+        }
+
+        public void Reset()
+        {
+            foreach (var s in _Squares)
+            {
+                if (s.AssignType == AssignTypes.User
+                    || s.AssignType == AssignTypes.Solver
+                    || (s.AssignType == AssignTypes.Initial && !Ready))
+                {
+                    UpdateSquare(s.Id, 0, AssignTypes.Initial);
+                }
+            }
         }
 
         #endregion

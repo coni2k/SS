@@ -181,7 +181,7 @@ namespace SudokuSolver.Engine
                 var list = GetAvailabilities().Where(a => a.IsAvailable);
 
                 // If there is only one number left in the list, then we found a new potential
-                if (!list.Count().Equals(1))
+                if (list.Count() != 1)
                 {
                     System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a potential to be REMOVED - Id: {0} - Value: {1}", this.Id.ToString(), this.Number.Value.ToString());
                 }
@@ -192,7 +192,7 @@ namespace SudokuSolver.Engine
                 var list = GetAvailabilities().Where(a => a.IsAvailable);
 
                 // If there is only one number left in the list, then we found a new potential
-                if (list.Count().Equals(1))
+                if (list.Count() == 1)
                 {
                     // TODO NEW POTENTIAL (SOLVED?) CODE HERE
                     // this.Update(item.Number., AssignTypes.Potential);

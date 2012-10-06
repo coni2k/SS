@@ -10,7 +10,7 @@ namespace SudokuSolver.Engine
     {
         #region Members
 
-        private List<Square> _Squares = null;
+        private ICollection<Square> squares = null;
 
         #endregion
 
@@ -47,7 +47,7 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets the list of squares which this group is holding
         /// </summary>
-        public IEnumerable<Square> Squares { get { return _Squares; } }
+        public IEnumerable<Square> Squares { get { return squares; } }
 
         /// <summary>
         /// Gets the list of used squares
@@ -81,7 +81,7 @@ namespace SudokuSolver.Engine
             Id = id;
             GroupType = type;
             Sudoku = sudoku;
-            _Squares = new List<Square>(Sudoku.Size);
+            squares = new List<Square>(Sudoku.Size);
         }
 
         #endregion
@@ -93,7 +93,7 @@ namespace SudokuSolver.Engine
             square.NumberChanging += new Square.SquareEventHandler(Square_NumberChanging);
             square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
             square.AvailabilityChanged += new Square.SquareEventHandler(Square_AvailabilityChanged);
-            _Squares.Add(square);
+            squares.Add(square);
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace SudokuSolver.Engine
                 {
                     var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable));
 
-                    if (!list.Count().Equals(1))
+                    if (list.Count() != 1)
                     {
                         System.Diagnostics.Debug.WriteLine("Group.Square_AvailabilityChanged found a potential to be REMOVED - Id: {0} - Value: {1}", p.Square.Id.ToString(), p.Number.Value.ToString());
                     }
@@ -140,7 +140,7 @@ namespace SudokuSolver.Engine
             {
                 var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
 
-                if (list.Count().Equals(1))
+                if (list.Count() == 1)
                 {
                     // TODO NEW POTENTIAL (SOLVED?) CODE HERE
                     // this.Update(item.Number., AssignTypes.Potential);

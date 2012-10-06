@@ -32,7 +32,7 @@ namespace SudokuSolver.ConsoleApp
             {
                 Console.WriteLine();
 
-                if (args.Length.Equals(0))
+                if (args.Length == 0)
                 {
                     Console.WriteLine("Please enter your command: ");
                     commandLine = Console.ReadLine().ToLower().Trim();

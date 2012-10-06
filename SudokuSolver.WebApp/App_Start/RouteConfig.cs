@@ -10,12 +10,6 @@ namespace SudokuSolver.WebApp
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{action}/{id}/{squareid}",
-                defaults: new { controller = "Sudoku", action = "list", id = RouteParameter.Optional, squareId = RouteParameter.Optional }
-            );
-
             //routes.MapRoute(
             //    name: "Default",
             //    url: "{controller}/{action}/{id}",
