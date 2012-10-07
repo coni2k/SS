@@ -186,7 +186,8 @@ namespace SudokuSolver.Engine
         /// During UpdateSquare() method, when the solver finds a potential square, it puts them to this list.
         /// When Solve() method called, this list will be checked and if the potential square has still the same conditions, then the square will be update with the value.
         /// </summary>
-        public IEnumerable<Potential> GetPotentialSquares() { return _PotentialSquares; }
+        //public IEnumerable<Potential> GetPotentialSquares() { return _PotentialSquares; }
+        public List<Potential> GetPotentialSquares() { return _PotentialSquares; }
 
         public IEnumerable<Availability> GetAvailabilities() { return _Availabilities; }
 
@@ -423,8 +424,10 @@ namespace SudokuSolver.Engine
                 //if (_PotentialSquares.Any(p => p.Square.Equals(square)))
                 _PotentialSquares.RemoveAll(p => p.Square.Equals(square));
 
+                //var list = _PotentialSquares.Where(p => p.PotentialType == PotentialTypes.Group && 
+
                 //if (_PotentialSquares.Any(p => p.Number.Equals(square.Number) && square.SquareGroups.Contains(p.SquareGroup)))
-                _PotentialSquares.RemoveAll(p => p.Number.Equals(square.Number) && square.SquareGroups.Contains(p.SquareGroup));
+                //_PotentialSquares.RemoveAll(p => p.Number.Equals(square.Number) && square.SquareGroups.Contains(p.SquareGroup));
 
             }
 

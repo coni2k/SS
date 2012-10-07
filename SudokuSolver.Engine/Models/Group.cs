@@ -110,6 +110,11 @@ namespace SudokuSolver.Engine
         {
             if (SquareNumberChanged != null)
                 SquareNumberChanged(this, square);
+
+            //var list = Sudoku.GetPotentialSquares().Where(p => p.PotentialType == PotentialTypes.Group && p.SquareGroup.Equals(this));
+            //Sudoku.GetPotentialSquares().remmo .Where(p => p.PotentialType == PotentialTypes.Group && p.SquareGroup.Equals(this));
+
+            Sudoku.GetPotentialSquares().RemoveAll(p => p.PotentialType == PotentialTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.Number));
         }
 
         void Square_AvailabilityChanged(Square square)
@@ -129,7 +134,7 @@ namespace SudokuSolver.Engine
 
                     if (list.Count() != 1)
                     {
-                        System.Diagnostics.Debug.WriteLine("Group.Square_AvailabilityChanged found a potential to be REMOVED - Id: {0} - Value: {1}", p.Square.Id.ToString(), p.Number.Value.ToString());
+                        System.Diagnostics.Debug.WriteLine("P (Remove found) - Id: {0} - Value: {1} - Type: Group", p.Square.Id.ToString(), p.Number.Value.ToString());
                     }
                 }
             }
@@ -151,7 +156,7 @@ namespace SudokuSolver.Engine
 
                     if (PotentialFound != null)
                     {
-                        System.Diagnostics.Debug.WriteLine("Square.Group_SquareNumberChanged found a potential");
+                        System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.Id.ToString(), number.Value.ToString());
                         PotentialFound(new Potential(item, this, number, PotentialTypes.Group));
                     }
                 }

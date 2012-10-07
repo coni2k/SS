@@ -79,7 +79,7 @@
     });
 
     //Availability2 grid
-    self.Availability2Grid = new Availability2Grid(self.Groups);
+    //self.Availability2Grid = new Availability2Grid(self.Groups);
     //self.ToggleDisplayAvailabilities = function () {
     //    self.AvailabilityGrid.Visible(!self.AvailabilityGrid.Visible());
     //}
@@ -164,13 +164,13 @@ function AvailabilityGrid(groups) {
     self.Visible = ko.observable(true);
 }
 
-function Availability2Grid(groups) {
-    var self = this;
-    self.Groups = ko.observableArray(groups);
-    self.DisplayMode = 'availability2';
-    //self.Visible = ko.observable(true);
-    self.Visible = true; //ko.observable(true);
-}
+//function Availability2Grid(groups) {
+//    var self = this;
+//    self.Groups = ko.observableArray(groups);
+//    self.DisplayMode = 'availability2';
+//    //self.Visible = ko.observable(true);
+//    self.Visible = true; //ko.observable(true);
+//}
 
 function IDGrid(groups) {
     var self = this;
@@ -214,10 +214,10 @@ function Square(group, id) {
 
     self.AssignType = ko.observable(0);
 
-    //self.IsUpdatable = ko.computed(function () { return !(self.Group.Model.Ready() && self.AssignType() === 0 && !self.IsAvailable()); });
+    self.IsUpdatable = ko.computed(function () { return !(self.Group.Model.Ready() && self.AssignType() === 0 && !self.IsAvailable()); });
 
     self.Availabilities = ko.observableArray([]);
-    self.Availabilities2 = ko.observableArray([]);
+    //self.Availabilities2 = ko.observableArray([]);
 
     // Passive select
     self.IsPassiveSelected = ko.observable(false);
@@ -422,11 +422,11 @@ function Availability() {
     self.IsAvailable = ko.observable(true);
 }
 
-function Availability2() {
-    var self = this;
-    self.Value = 0;
-    self.IsAvailable = ko.observable(true);
-}
+//function Availability2() {
+//    var self = this;
+//    self.Value = 0;
+//    self.IsAvailable = ko.observable(true);
+//}
 
 function GroupNumberAvailability() {
     var self = this;
@@ -532,9 +532,9 @@ function initGrid(model) {
 
                 //TODO NEW BLOCK!
                 //Create availability2 item
-                var availability2 = new Availability2();
-                availability2.Value = availabilityCounter + 1;
-                square.Availabilities2.push(availability2);
+                //var availability2 = new Availability2();
+                //availability2.Value = availabilityCounter + 1;
+                //square.Availabilities2.push(availability2);
             }
 
             group.Squares.push(square);

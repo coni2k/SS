@@ -12,12 +12,20 @@ namespace SudokuSolver.ConsoleApp
     class Program
     {
         static Sudoku Sudoku { get; set; }
+        static IEnumerable<Sudoku> Cases { get; set; }
 
         static void Main(string[] args)
         {
+            LoadCases();
+
             NewSudoku();
 
             ShowCommands(args);
+        }
+
+        static void LoadCases()
+        {
+            Cases = new CaseManager().GetCases();
         }
 
         /// <summary>
@@ -93,6 +101,26 @@ namespace SudokuSolver.ConsoleApp
             Console.WriteLine("New sudoku is ready!");
         }
 
+        /// <summary>
+        /// Loads the sample cases
+        /// See Helper.xslx file for more info (The file is now outdated - 07 Oct. '12)
+        /// </summary>
+        /// <param name="caseNo"></param>
+        static void LoadCase(int caseNo)
+        {
+            ClearScreen();
+
+            Sudoku = Cases.SingleOrDefault(s => s.SudokuId == caseNo);
+
+            if (Sudoku == null)
+                throw new ArgumentException("Invalid case no");
+
+            Sudoku.SquareNumberChanged += new Square.SquareEventHandler(Sudoku_SquareNumberChanged);
+            Sudoku.PotentialSquareFound += new Potential.FoundEventHandler(Sudoku_PotentialSquareFound);
+
+            Console.WriteLine("Case {0} is ready!", caseNo.ToString());
+        }
+
         static void ToggleAutoSolve()
         {
             Sudoku.AutoSolve = !Sudoku.AutoSolve;
@@ -130,7 +158,7 @@ namespace SudokuSolver.ConsoleApp
                 foreach (var square in group.Squares)
                 {
                     //Square value
-                    string output = string.Format(" {0}", square.Number.IsZero ? "." : square.Number.ToString());
+                    string output = string.Format(" {0}", square.Number.IsZero ? "." : square.Number.Value.ToString());
 
                     //Seperator for square groups; (3rd, 6th, 12th squares)
                     if (square.Id % Sudoku.SquareRootOfSize == 0 && square.Id % Sudoku.Size != 0)
@@ -151,7 +179,7 @@ namespace SudokuSolver.ConsoleApp
         static void ShowUsedSquares()
         {
             foreach (var usedSquare in Sudoku.GetUsedSquares())
-                Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.Id.ToString("D2"), usedSquare.Number.ToString(), usedSquare.AssignType.ToString()));
+                Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.Id.ToString("D2"), usedSquare.Number.Value.ToString(), usedSquare.AssignType.ToString()));
         }
 
         /// <summary>
@@ -162,14 +190,14 @@ namespace SudokuSolver.ConsoleApp
             //Header; display the sudoku numbers
             Console.Write("        "); //Necessary to make the starting points equal - TODO This should check the length of the squareText?
             foreach (var number in Sudoku.GetNumbersExceptZero())
-                Console.Write(string.Format(" | {0}", number.ToString()));
+                Console.Write(string.Format(" | {0}", number.Value.ToString()));
             Console.WriteLine();
 
             //Details
             foreach (var square in Sudoku.GetSquares())
             {
                 //Square text: Square id + value
-                var output = string.Format("Id {0}: {1}", square.Id.ToString("D2"), square.Number.ToString());
+                var output = string.Format("Id {0}: {1}", square.Id.ToString("D2"), square.Number.Value.ToString());
                 Console.Write(output);
 
                 //Availability per number; "X" for available squares, "." for non-available ones
@@ -190,7 +218,7 @@ namespace SudokuSolver.ConsoleApp
             //    Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.GetCount().ToString()));
 
             foreach (var number in Sudoku.GetNumbers())
-                Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.Count.ToString()));
+                Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.Value.ToString(), number.Count.ToString()));
         }
 
         static void ShowPotentialSquares()
@@ -200,7 +228,7 @@ namespace SudokuSolver.ConsoleApp
 
             foreach (var potential in Sudoku.GetPotentialSquares().OrderBy(s => s.Square.Id))
             {
-                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", potential.Square.Id.ToString("D2"), potential.Square.Number.ToString(), potential.Number.ToString(), potential.PotentialType.ToString()));
+                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", potential.Square.Id.ToString("D2"), potential.Square.Number.Value.ToString(), potential.Number.Value.ToString(), potential.PotentialType.ToString()));
             }
         }
 
@@ -209,240 +237,16 @@ namespace SudokuSolver.ConsoleApp
             Console.Clear();
         }
 
-        /// <summary>
-        /// Loads the sample cases
-        /// See Helper.xslx file for more info
-        /// </summary>
-        /// <param name="caseNo"></param>
-        static void LoadCase(int caseNo)
-        {
-            //Reset first
-            NewSudoku();
-
-            //Load the case
-            switch (caseNo)
-            {
-                case 1:
-                    Sudoku.UpdateSquare(1, 1);
-                    Sudoku.UpdateSquare(2, 2);
-                    Sudoku.UpdateSquare(3, 3);
-                    Sudoku.UpdateSquare(4, 4);
-                    Sudoku.UpdateSquare(5, 5);
-                    Sudoku.UpdateSquare(6, 6);
-                    Sudoku.UpdateSquare(7, 7);
-                    Sudoku.UpdateSquare(8, 8);
-
-                    break;
-
-                case 2:
-
-                    Sudoku.UpdateSquare(1, 1);
-                    Sudoku.UpdateSquare(10, 2);
-                    Sudoku.UpdateSquare(19, 3);
-                    Sudoku.UpdateSquare(28, 4);
-                    Sudoku.UpdateSquare(37, 5);
-                    Sudoku.UpdateSquare(46, 6);
-                    Sudoku.UpdateSquare(55, 7);
-                    Sudoku.UpdateSquare(64, 8);
-
-                    break;
-
-                case 3:
-
-                    Sudoku.UpdateSquare(1, 1);
-                    Sudoku.UpdateSquare(2, 2);
-                    Sudoku.UpdateSquare(3, 3);
-                    Sudoku.UpdateSquare(10, 4);
-                    Sudoku.UpdateSquare(11, 5);
-                    Sudoku.UpdateSquare(12, 6);
-                    Sudoku.UpdateSquare(19, 7);
-                    Sudoku.UpdateSquare(20, 8);
-
-                    break;
-
-                case 4:
-
-                    Sudoku.UpdateSquare(1, 1);
-                    Sudoku.UpdateSquare(2, 2);
-                    Sudoku.UpdateSquare(3, 3);
-                    Sudoku.UpdateSquare(8, 7);
-                    Sudoku.UpdateSquare(18, 8);
-                    Sudoku.UpdateSquare(36, 4);
-                    Sudoku.UpdateSquare(45, 5);
-                    Sudoku.UpdateSquare(54, 6);
-
-                    break;
-
-                case 5:
-
-                    Sudoku.UpdateSquare(13, 1);
-                    Sudoku.UpdateSquare(25, 1);
-                    Sudoku.UpdateSquare(29, 1);
-                    Sudoku.UpdateSquare(57, 1);
-
-                    break;
-
-                case 6:
-
-                    Sudoku.UpdateSquare(25, 1);
-                    Sudoku.UpdateSquare(57, 1);
-                    Sudoku.UpdateSquare(69, 1);
-                    Sudoku.UpdateSquare(80, 2);
-
-                    break;
-
-                case 7:
-
-                    Sudoku.UpdateSquare(10, 3);
-                    Sudoku.UpdateSquare(13, 1);
-                    Sudoku.UpdateSquare(17, 2);
-                    Sudoku.UpdateSquare(19, 4);
-                    Sudoku.UpdateSquare(25, 1);
-                    Sudoku.UpdateSquare(28, 5);
-                    Sudoku.UpdateSquare(29, 1);
-                    Sudoku.UpdateSquare(31, 2);
-                    Sudoku.UpdateSquare(46, 6);
-                    Sudoku.UpdateSquare(55, 7);
-                    Sudoku.UpdateSquare(57, 1);
-                    Sudoku.UpdateSquare(61, 2);
-                    Sudoku.UpdateSquare(64, 8);
-                    Sudoku.UpdateSquare(73, 9);
-
-                    break;
-
-                case 101: //Real sudoku samples
-
-                    Sudoku.UpdateSquare(1, 9);
-                    Sudoku.UpdateSquare(2, 7);
-                    Sudoku.UpdateSquare(3, 3);
-                    Sudoku.UpdateSquare(4, 6);
-                    Sudoku.UpdateSquare(5, 2);
-                    Sudoku.UpdateSquare(6, 8);
-                    Sudoku.UpdateSquare(7, 4);
-                    Sudoku.UpdateSquare(8, 5);
-                    Sudoku.UpdateSquare(9, 1);
-                    Sudoku.UpdateSquare(10, 5);
-                    Sudoku.UpdateSquare(11, 6);
-                    Sudoku.UpdateSquare(12, 8);
-                    Sudoku.UpdateSquare(13, 4);
-                    Sudoku.UpdateSquare(14, 1);
-                    Sudoku.UpdateSquare(15, 3);
-                    Sudoku.UpdateSquare(16, 7);
-                    Sudoku.UpdateSquare(17, 9);
-                    Sudoku.UpdateSquare(18, 2);
-                    Sudoku.UpdateSquare(19, 1);
-                    Sudoku.UpdateSquare(20, 2);
-                    Sudoku.UpdateSquare(21, 4);
-                    Sudoku.UpdateSquare(22, 5);
-                    Sudoku.UpdateSquare(23, 9);
-                    Sudoku.UpdateSquare(24, 7);
-                    Sudoku.UpdateSquare(25, 8);
-                    Sudoku.UpdateSquare(26, 3);
-                    Sudoku.UpdateSquare(27, 6);
-                    Sudoku.UpdateSquare(28, 8);
-                    Sudoku.UpdateSquare(29, 1);
-                    Sudoku.UpdateSquare(30, 5);
-                    Sudoku.UpdateSquare(31, 7);
-                    Sudoku.UpdateSquare(33, 9);
-                    Sudoku.UpdateSquare(34, 6);
-                    Sudoku.UpdateSquare(35, 4);
-                    Sudoku.UpdateSquare(36, 3);
-                    Sudoku.UpdateSquare(37, 6);
-                    Sudoku.UpdateSquare(38, 4);
-                    Sudoku.UpdateSquare(39, 9);
-                    Sudoku.UpdateSquare(40, 3);
-                    Sudoku.UpdateSquare(41, 5);
-                    Sudoku.UpdateSquare(42, 2);
-                    Sudoku.UpdateSquare(43, 1);
-                    Sudoku.UpdateSquare(44, 7);
-                    Sudoku.UpdateSquare(45, 8);
-                    Sudoku.UpdateSquare(46, 2);
-                    Sudoku.UpdateSquare(47, 3);
-                    Sudoku.UpdateSquare(48, 7);
-                    Sudoku.UpdateSquare(49, 1);
-                    Sudoku.UpdateSquare(50, 6);
-                    Sudoku.UpdateSquare(51, 4);
-                    Sudoku.UpdateSquare(52, 9);
-                    Sudoku.UpdateSquare(54, 5);
-                    Sudoku.UpdateSquare(55, 4);
-                    Sudoku.UpdateSquare(56, 5);
-                    Sudoku.UpdateSquare(57, 2);
-                    Sudoku.UpdateSquare(58, 8);
-                    Sudoku.UpdateSquare(59, 7);
-                    Sudoku.UpdateSquare(61, 3);
-                    Sudoku.UpdateSquare(62, 6);
-                    Sudoku.UpdateSquare(63, 9);
-                    Sudoku.UpdateSquare(64, 7);
-                    Sudoku.UpdateSquare(65, 8);
-                    Sudoku.UpdateSquare(66, 6);
-                    Sudoku.UpdateSquare(67, 9);
-                    Sudoku.UpdateSquare(68, 3);
-                    Sudoku.UpdateSquare(69, 1);
-                    Sudoku.UpdateSquare(70, 5);
-                    Sudoku.UpdateSquare(71, 2);
-                    Sudoku.UpdateSquare(72, 4);
-                    Sudoku.UpdateSquare(73, 3);
-                    Sudoku.UpdateSquare(74, 9);
-                    Sudoku.UpdateSquare(75, 1);
-                    Sudoku.UpdateSquare(76, 2);
-                    Sudoku.UpdateSquare(77, 4);
-                    Sudoku.UpdateSquare(78, 6);
-                    Sudoku.UpdateSquare(80, 8);
-                    Sudoku.UpdateSquare(81, 7);
-
-                    break;
-
-                case 102:
-
-                    Sudoku.UpdateSquare(3, 8);
-                    Sudoku.UpdateSquare(4, 3);
-                    Sudoku.UpdateSquare(5, 4);
-                    Sudoku.UpdateSquare(6, 2);
-                    Sudoku.UpdateSquare(7, 9);
-                    Sudoku.UpdateSquare(12, 9);
-                    Sudoku.UpdateSquare(16, 7);
-                    Sudoku.UpdateSquare(19, 4);
-                    Sudoku.UpdateSquare(27, 3);
-                    Sudoku.UpdateSquare(30, 6);
-                    Sudoku.UpdateSquare(31, 4);
-                    Sudoku.UpdateSquare(32, 7);
-                    Sudoku.UpdateSquare(33, 3);
-                    Sudoku.UpdateSquare(34, 2);
-                    Sudoku.UpdateSquare(38, 3);
-                    Sudoku.UpdateSquare(44, 1);
-                    Sudoku.UpdateSquare(48, 2);
-                    Sudoku.UpdateSquare(49, 8);
-                    Sudoku.UpdateSquare(50, 5);
-                    Sudoku.UpdateSquare(51, 1);
-                    Sudoku.UpdateSquare(52, 6);
-                    Sudoku.UpdateSquare(55, 7);
-                    Sudoku.UpdateSquare(63, 8);
-                    Sudoku.UpdateSquare(66, 4);
-                    Sudoku.UpdateSquare(70, 1);
-                    Sudoku.UpdateSquare(75, 3);
-                    Sudoku.UpdateSquare(76, 6);
-                    Sudoku.UpdateSquare(77, 9);
-                    Sudoku.UpdateSquare(78, 7);
-                    Sudoku.UpdateSquare(79, 5);
-
-                    break;
-
-                default:
-                    break;
-            }
-
-            Sudoku.Ready = true;
-        }
-
         static void Help()
         {
-            var sbOutput = new System.Text.StringBuilder();
+            var sbOutput = new StringBuilder();
+
             sbOutput.AppendLine("General Commands");
             sbOutput.AppendLine(". new");
-            sbOutput.AppendLine(". autosolve - Currently: " + (Sudoku.AutoSolve ? "on" : "off"));
+            sbOutput.AppendFormat(". autosolve - Currently: {0}", Sudoku.AutoSolve ? "on" : "off").AppendLine();
             sbOutput.AppendLine(". update [square], [number]");
             sbOutput.AppendLine(". solve");
-            sbOutput.AppendLine(". case [case no] - 1, 2, 3, 4, 5, 6, 7, 101, 102");
+            sbOutput.AppendFormat(". case [case no] - {0}", GetCaseIds()).AppendLine();
             sbOutput.AppendLine(". quit");
 
             sbOutput.AppendLine().AppendLine("Display Commands");
@@ -456,14 +260,19 @@ namespace SudokuSolver.ConsoleApp
             Console.Write(sbOutput.ToString());
         }
 
+        static string GetCaseIds()
+        {
+            return string.Join(", ", Cases.Select(s => s.SudokuId.ToString()));
+        }
+
         static void Sudoku_SquareNumberChanged(Square square)
         {
-            Console.WriteLine(string.Format("  Id {0}: {1} - {2}", square.Id.ToString("D2"), square.Number.ToString(), square.AssignType.ToString()));
+            Console.WriteLine("  Id {0}: {1} - {2}", square.Id.ToString("D2"), square.Number.Value.ToString(), square.AssignType.ToString());
         }
 
         static void Sudoku_PotentialSquareFound(Potential potential)
         {
-            Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", potential.Square.Id.ToString("D2"), potential.Square.Number.ToString(), potential.Number.ToString(), potential.PotentialType.ToString()));
+            Console.WriteLine("P Id {0}: {1} - {2} - {3}", potential.Square.Id.ToString("D2"), potential.Square.Number.Value.ToString(), potential.Number.Value.ToString(), potential.PotentialType.ToString());
         }
     }
 }

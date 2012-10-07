@@ -110,23 +110,23 @@ history.js?!
 . horizontal + vertical groups for square? and then use them as well with ToggleSelected()
 these calculations can come from the server?
 
-. move samples to the engine?
-
-. new sudoku window with size selection!
+. new sudoku window with title + desc + size
 
 . make the cases more clear - have a sample for the ones that have a problem
 
 . is it possible to load availabilities async. way?
 
-. what is webgrease? and learn more about modernizer!
+. what is webgrease? and learn more about modernizer! and how about nav.js?
 
 . try to remove calculateId for square! would it help?
 sample sudoku ids need to be updated!!! and probably square.Groups calculation ?!
 
-. knockout - knockout debug?
-<pre data-bind="text: ko.toJSON($root, null, 2)"></pre>
-
 ---
-cases - getcases is okay
-check in general
-cachemanager etc.
+potential bug
+case 17, id 1 is repeating it..
+how come we dont have availability for squareid 9, number 9?
+also check this;
+                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a potential to be REMOVED - Id: {0} - Value: {1}", this.Id.ToString(), this.Number.Value.ToString());
+
+create more cases for potential bug
+and think about it from scratch.. how to keep the potential, how to remove etc.

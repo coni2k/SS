@@ -22,7 +22,7 @@ namespace SudokuSolver.WebApp
 
         public static void LoadSamples()
         {
-            HttpContext.Current.Cache["SudokuList"] = new Cases().GetCases();
+            HttpContext.Current.Cache["SudokuList"] = new CaseManager().GetCases();
         }
     }
 }

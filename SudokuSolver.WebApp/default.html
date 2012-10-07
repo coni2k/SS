@@ -125,9 +125,9 @@
             <div id="availabilityGridPanel" data-bind="template: { name: 'grid-template', data: AvailabilityGrid }, css: { hide: !AvailabilityGrid.Visible() }"
                 class="gridPanel hide">
             </div>
-            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
+<!--            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
                 class="gridPanel hide">
-            </div>
+            </div>-->
             <div id="idGridPanel" data-bind="template: { name: 'grid-template', data: IdGrid }, css: { hide: !IdGrid.Visible() }"
                 class="gridPanel">
             </div>
@@ -168,11 +168,11 @@
                     <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
                         class="availabilityItem"></span>
                 </div>
-                <div data-bind="foreach: Availabilities2, css: { hide: $parents[1].DisplayMode !== 'availability2' }"
+<!--                <div data-bind="foreach: Availabilities2, css: { hide: $parents[1].DisplayMode !== 'availability2' }"
                     class="squareAvailabilities">
                     <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
                         class="availabilityItem"></span>
-                </div>
+                </div>-->
                 <span data-bind="text: SquareId, css: { hide: $parents[1].DisplayMode !== 'id' }"
                     class="squareId"></span>
             </div>
