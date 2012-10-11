@@ -267,7 +267,7 @@ div.solve {
     }
 
     /* 2 */
-    .potential {
+    .hint {
         color: white;
         background-color: Purple !important;
     }
@@ -343,12 +343,12 @@ div.solve {
         text-decoration: line-through;
     }
 
-#potentialsPanel {
+#hintsPanel {
     float: left;
     margin: 20px 20px 0 0;
 }
 
-.potentialItem {
+.hintItem {
     
 }
 

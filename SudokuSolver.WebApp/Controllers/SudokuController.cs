@@ -16,20 +16,12 @@ namespace SudokuSolver.WebApp.Controllers
             return CacheManager.SudokuList;
         }
 
-        //[ActionName("usedsquares")]
-        //public IEnumerable<Square> GetUsedSquares(int id)
-        //{
-        //    var sudoku = ValidateAndGetSudoku(id);
-
-        //    return sudoku.GetUsedSquares();
-        //}
-
         [ActionName("squares")]
         public IEnumerable<Square> GetSquares(int id)
         {
             var sudoku = ValidateAndGetSudoku(id);
 
-            return sudoku.GetUsedSquares();
+            return sudoku.GetSquares();
         }
 
         [ActionName("numbers")]
@@ -40,37 +32,20 @@ namespace SudokuSolver.WebApp.Controllers
             return sudoku.GetNumbers();
         }
 
-        [ActionName("potentials")]
-        public IEnumerable<Potential> GetPotentialSquares(int id)
+        [ActionName("hints")]
+        public IEnumerable<Hint> GetHints(int id)
         {
             var sudoku = ValidateAndGetSudoku(id);
 
-            return sudoku.GetPotentialSquares();
+            return sudoku.GetHints();
         }
-
-        //[ActionName("usedavailabilities")]
-        //public IEnumerable<Availability> GetAvailabilities(int id)
-        //{
-        //    var sudoku = ValidateAndGetSudoku(id);
-
-        //    return sudoku.GetUsedAvailabilities();
-        //}
 
         [ActionName("availabilities")]
         public IEnumerable<Availability> GetAvailabilities(int id)
         {
             var sudoku = ValidateAndGetSudoku(id);
 
-            return sudoku.GetUsedAvailabilities();
-        }
-
-
-        [ActionName("availabilities2")]
-        public IEnumerable<Availability> GetAvailabilities2(int id)
-        {
-            var sudoku = ValidateAndGetSudoku(id);
-
-            return sudoku.GetAvailabilities2();
+            return sudoku.GetAvailabilities();
         }
 
         [ActionName("groupnumberavailabilities")]

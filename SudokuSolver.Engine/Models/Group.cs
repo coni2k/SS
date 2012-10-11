@@ -22,7 +22,7 @@ namespace SudokuSolver.Engine
         internal event GroupSquareEventHandler SquareNumberChanged;
         internal event GroupSquareEventHandler SquareAvailabilityChanged;
 
-        internal event Potential.FoundEventHandler PotentialFound;
+        internal event Hint.FoundEventHandler HintFound;
 
         #endregion
 
@@ -111,10 +111,10 @@ namespace SudokuSolver.Engine
             if (SquareNumberChanged != null)
                 SquareNumberChanged(this, square);
 
-            //var list = Sudoku.GetPotentialSquares().Where(p => p.PotentialType == PotentialTypes.Group && p.SquareGroup.Equals(this));
-            //Sudoku.GetPotentialSquares().remmo .Where(p => p.PotentialType == PotentialTypes.Group && p.SquareGroup.Equals(this));
+            //var list = Sudoku.GetHints().Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
+            //Sudoku.GetHints().remmo .Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
 
-            Sudoku.GetPotentialSquares().RemoveAll(p => p.PotentialType == PotentialTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.Number));
+            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.Number));
         }
 
         void Square_AvailabilityChanged(Square square)
@@ -122,24 +122,24 @@ namespace SudokuSolver.Engine
             if (SquareAvailabilityChanged != null)
                 SquareAvailabilityChanged(this, square);
 
-            // Check for potential square removal
+            // Check for hint removal
+            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && AvailableSquares.Count(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable)) != 1);
 
-            var potentialList = Sudoku.GetPotentialSquares().Where(p => (p.SquareGroup != null && p.SquareGroup.Equals(this)) && p.PotentialType == PotentialTypes.Group);
+            //var hintList = Sudoku.GetHints().Where(p => (p.SquareGroup != null && p.SquareGroup.Equals(this)) && p.Type == HintTypes.Group);
 
-            if (potentialList.Count() > 0)
-            {
-                foreach (var p in potentialList)
-                {
-                    var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable));
+            //if (hintList.Count() > 0)
+            //{
+            //    foreach (var p in hintList)
+            //    {
+            //        var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable));
+            //        if (list.Count() != 1)
+            //        {
+            //            System.Diagnostics.Debug.WriteLine("P (Remove found) - Id: {0} - Value: {1} - Type: Group", p.Square.Id.ToString(), p.Number.Value.ToString());
+            //        }
+            //    }
+            //}
 
-                    if (list.Count() != 1)
-                    {
-                        System.Diagnostics.Debug.WriteLine("P (Remove found) - Id: {0} - Value: {1} - Type: Group", p.Square.Id.ToString(), p.Number.Value.ToString());
-                    }
-                }
-            }
-
-            // Check for potential square
+            // Check for hint
 
             foreach (var number in AvailableNumbers)
             {
@@ -147,23 +147,23 @@ namespace SudokuSolver.Engine
 
                 if (list.Count() == 1)
                 {
-                    // TODO NEW POTENTIAL (SOLVED?) CODE HERE
-                    // this.Update(item.Number., AssignTypes.Potential);
-                    // this.Potential_SquareGroup = this;
+                    // TODO NEW HINT CODE HERE
+                    // this.Update(item.Number., AssignTypes.Hint);
+                    // this.Hint_SquareGroup = this;
 
                     // Get the item from the list
                     var item = list.Single();
 
-                    if (PotentialFound != null)
+                    if (HintFound != null)
                     {
                         System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.Id.ToString(), number.Value.ToString());
-                        PotentialFound(new Potential(item, this, number, PotentialTypes.Group));
+                        HintFound(new Hint(item, this, number, HintTypes.Group));
                     }
                 }
             }
         }
 
-        // TOD IS THIS REALLY NECESSARY?
+        // TODO IS THIS REALLY NECESSARY?
         public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
         {
             return AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));

@@ -15,7 +15,7 @@ namespace SudokuSolver.Engine
         Sudoku Case1()
         {
             var sudoku = new Sudoku();
-            sudoku.SudokuId = 0; //TODO cor..
+            sudoku.SudokuId = 0; //TODO make it 1 again after bugfix
             sudoku.Title = "1. Type - Horizontal - 8";
 
             sudoku.UpdateSquare(1, 1);
@@ -482,15 +482,16 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Availability bug
+        /// Availability + hint bug
+        /// SOLVED
         /// </summary>
         /// <returns></returns>
         Sudoku Case17()
         {
             var sudoku = new Sudoku();
 
-            sudoku.SudokuId = 1;
-            sudoku.Title = "Potential bug";
+            sudoku.SudokuId = 17;
+            sudoku.Title = "Hint bug";
 
             sudoku.UpdateSquare(1, 1);
             sudoku.UpdateSquare(2, 2);
@@ -503,7 +504,36 @@ namespace SudokuSolver.Engine
             
             sudoku.UpdateSquare(1, 9);
 
+            //sudoku.UpdateSquare(1, 1);
+
+            // sudoku.ToggleReady();
+
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Free-style
+        /// </summary>
+        /// <returns></returns>
+        Sudoku Case18()
+        {
+            var sudoku = new Sudoku();
+
+            sudoku.SudokuId = 1;
+            sudoku.Title = "Free-style";
+
             sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
+            sudoku.UpdateSquare(4, 4);
+            sudoku.UpdateSquare(5, 5);
+            sudoku.UpdateSquare(6, 6);
+            sudoku.UpdateSquare(7, 7);
+            sudoku.UpdateSquare(8, 8);
+
+            sudoku.UpdateSquare(1, 9);
+
+            //sudoku.UpdateSquare(1, 1);
 
             // sudoku.ToggleReady();
 
@@ -514,23 +544,24 @@ namespace SudokuSolver.Engine
         {
             var list = new Collection<Sudoku>();
 
-            //list.Add(Case1());
-            //list.Add(Case2());
-            //list.Add(Case3());
-            //list.Add(Case4());
-            //list.Add(Case5());
-            //list.Add(Case6());
-            //list.Add(Case7());
-            //list.Add(Case8());
-            //list.Add(Case9());
-            //list.Add(Case10());
-            //list.Add(Case11());
-            //list.Add(Case12());
-            //list.Add(Case13());
-            //list.Add(Case14());
-            //list.Add(Case15());
-            //list.Add(Case16());
+            list.Add(Case1());
+            list.Add(Case2());
+            list.Add(Case3());
+            list.Add(Case4());
+            list.Add(Case5());
+            list.Add(Case6());
+            list.Add(Case7());
+            list.Add(Case8());
+            list.Add(Case9());
+            list.Add(Case10());
+            list.Add(Case11());
+            list.Add(Case12());
+            list.Add(Case13());
+            list.Add(Case14());
+            list.Add(Case15());
+            list.Add(Case16());
             list.Add(Case17());
+            list.Add(Case18());
 
             return list;
         }

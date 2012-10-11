@@ -4,16 +4,14 @@
     <meta charset="utf-8" />
     <title>Sudoku Solver</title>
     <link href="Content/sudokusolver.css" rel="stylesheet" type="text/css" />
-    <script src="Scripts/jquery-1.8.1.js" type="text/javascript"></script>
+    <link href="Content/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="Scripts/jquery-1.8.2.js" type="text/javascript"></script>
+    <script src="Scripts/jquery-ui-1.9.0.js" type="text/javascript"></script>
     <script src="Scripts/knockout-2.1.0.js" type="text/javascript"></script>
     <script src="Scripts/knockout.mapping-latest.js" type="text/javascript"></script>
     <script src="Scripts/jquery.blockUI.js" type="text/javascript"></script>
 </head>
 <body>
-    <div id="loadingMessagePanel" class="hide">
-        <span>Loading, please wait!</span><br />
-        <img src="Images/ajax-loader.gif" border="0" />
-    </div>
     <div class="header">
         <h1>Sudoku Solver</h1>
     </div>
@@ -125,19 +123,18 @@
             <div id="availabilityGridPanel" data-bind="template: { name: 'grid-template', data: AvailabilityGrid }, css: { hide: !AvailabilityGrid.Visible() }"
                 class="gridPanel hide">
             </div>
-<!--            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
+            <!--            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
                 class="gridPanel hide">
             </div>-->
             <div id="idGridPanel" data-bind="template: { name: 'grid-template', data: IdGrid }, css: { hide: !IdGrid.Visible() }"
                 class="gridPanel">
             </div>
-            <div id="potentialsPanel">
-                <strong>Potentials</strong>
+            <div id="hintsPanel">
+                <strong>Hints</strong>
                 <br />
-                <div data-bind="foreach: Potentials">
-                    <div class="potentialItem" data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { passiveSelected: IsSelected() }">
-                        <span data-bind="text: 'SquareId: ' + SquareId + ' - PotentialValue: ' + PotentialValue + ' - PotentialType: ' + PotentialType">
-                        </span>
+                <div data-bind="foreach: Hints">
+                    <div class="hintItem" data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { passiveSelected: IsSelected() }">
+                        <span data-bind="text: 'SquareId: ' + SquareId + ' - HintValue: ' + HintValue + ' - HintType: ' + HintType"></span>
                     </div>
                 </div>
             </div>
@@ -146,8 +143,7 @@
                 <br />
                 <div data-bind="foreach: GroupNumberAvailabilities">
                     <div class="" data-bind="">
-                        <span data-bind="text: 'GroupId: ' + GroupId + ' - Number: ' + Number + ' - Count: ' + Count">
-                        </span>
+                        <span data-bind="text: 'GroupId: ' + GroupId + ' - Number: ' + Number + ' - Count: ' + Count"></span>
                     </div>
                 </div>
             </div>
@@ -157,10 +153,24 @@
 </body>
 </html>
 <!-- Html templates -->
+<div id="loadingMessagePanel" class="hide">
+    <span>Loading, please wait!</span><br />
+    <img src="Images/ajax-loader.gif" border="0" />
+</div>
+<!--<script type="text/html" id="resetListDialog-template">-->
+    <div id="resetListDialog" title="Reset list?" class="hide">
+        <p>Are you sure you want to reset the list?</p>
+    </div>
+<!--</script>-->
+<!--<script type="text/html" id="resetListDialog-template">-->
+    <div id="resetSudokuDialog" title="Reset sudoku?" class="hide">
+        <p>Are you sure you want to reset the sudoku?</p>
+    </div>
+<!--</script>-->
 <script type="text/html" id="grid-template">
     <div data-bind="foreach: Groups">
         <div class="groupItem" data-bind="foreach: Squares">
-            <div data-bind="event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect, click: $root.SetSelectedSquare }, css: { initial: AssignType() === 0, user: AssignType() === 1, potential: AssignType() === 2, solver: AssignType() === 3, selected: IsActiveSelected, related_selected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd() }" class="squareItem">
+            <div data-bind="event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect, click: $root.SetSelectedSquare }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, selected: IsActiveSelected, related_selected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd() }" class="squareItem">
                 <div data-bind="text: ValueFormatted, css: { hide: $parents[1].DisplayMode !== 'value' }"
                     class="squareValue" />
                 <div data-bind="foreach: Availabilities, css: { hide: $parents[1].DisplayMode !== 'availability' }"
@@ -168,7 +178,7 @@
                     <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
                         class="availabilityItem"></span>
                 </div>
-<!--                <div data-bind="foreach: Availabilities2, css: { hide: $parents[1].DisplayMode !== 'availability2' }"
+                <!--                <div data-bind="foreach: Availabilities2, css: { hide: $parents[1].DisplayMode !== 'availability2' }"
                     class="squareAvailabilities">
                     <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
                         class="availabilityItem"></span>
@@ -186,6 +196,14 @@
     // jQuery ajax settings
     $.ajaxSetup({
         contentType: 'application/json; charset=utf-8'
+    });
+
+    // Loading message setup
+    $("#loadingMessagePanel").dialog({
+        autoOpen: false,
+        resizable: false,
+        height: 200,
+        modal: true
     });
 
     // Base url

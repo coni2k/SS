@@ -2,48 +2,48 @@
 
 namespace SudokuSolver.Engine
 {
-    public class Potential
+    public class Hint
     {
         #region Events
 
-        public delegate void FoundEventHandler(Potential potential);
+        public delegate void FoundEventHandler(Hint hint);
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Potential square
+        /// Source square
         /// </summary>
         public Square Square { get; internal set; }
 
         /// <summary>
-        /// The group of the potential square
+        /// The group of the square
         /// </summary>
         internal Group SquareGroup { get; set; }
 
         /// <summary>
-        /// Potential value of the square
+        /// Hint value
         /// </summary>
         public Number Number { get; internal set; }
 
         /// <summary>
-        /// The type of the potential square
+        /// The type of the hint
         /// </summary>
-        public PotentialTypes PotentialType { get; internal set; }
+        public HintTypes Type { get; internal set; }
 
         #endregion
 
         #region Constructors
 
-        public Potential() {}
+        public Hint() {}
 
-        internal Potential(Square square, Group group, Number number,PotentialTypes potentialType)
+        internal Hint(Square square, Group group, Number number,HintTypes type)
         {
             this.Square = square;
             this.SquareGroup = group;
             this.Number = number;
-            this.PotentialType = potentialType;
+            this.Type = type;
         }
 
         #endregion

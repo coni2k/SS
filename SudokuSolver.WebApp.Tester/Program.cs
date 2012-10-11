@@ -73,7 +73,7 @@ namespace SudokuSolver.WebApp.Tester
                     case "used": ShowUsed(); break;
                     case "availability": ShowAvailability(); break;
                     case "numbers": ShowNumbers(); break;
-                    case "potentials": ShowPotentialSquares(); break;
+                    case "hints": ShowHints(); break;
                     case "clear": ClearScreen(); break;
 
                     default: Help(); break;
@@ -259,16 +259,16 @@ namespace SudokuSolver.WebApp.Tester
                 Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.Count.ToString()));
         }
 
-        static void ShowPotentialSquares()
+        static void ShowHints()
         {
             //Get
-            var potentials = GetWebApiClient("potentials").GetItem<IEnumerable<PotentialContainer>>(currentSudokuId);
+            var hints = GetWebApiClient("hints").GetItem<IEnumerable<Hint>>(currentSudokuId);
 
-            if (potentials.Count().Equals(0))
-                Console.WriteLine("There are no potential squares");
+            if (hints.Count().Equals(0))
+                Console.WriteLine("There are no hints");
 
-            foreach (var potential in potentials)
-                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", potential.SquareId.ToString("D2"), potential.SquareGroupId.ToString(), potential.PotentialValue.ToString(), potential.PotentialType.ToString()));
+            foreach (var hint in hints)
+                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", hint.Square.Id.ToString("D2"), hint.SquareGroup.Id.ToString(), hint.Number.Value.ToString(), hint.Type.ToString()));
         }
 
         static void ClearScreen()
@@ -297,7 +297,7 @@ namespace SudokuSolver.WebApp.Tester
             sbOutput.AppendLine(". used");
             sbOutput.AppendLine(". availability");
             sbOutput.AppendLine(". numbers");
-            sbOutput.AppendLine(". potentials");
+            sbOutput.AppendLine(". hints");
             sbOutput.AppendLine(". clear");
 
             Console.Write(sbOutput.ToString());
@@ -308,9 +308,9 @@ namespace SudokuSolver.WebApp.Tester
         //    Console.WriteLine(string.Format("  Id {0}: {1} - {2}", square.Id.ToString("D2"), square.Number.ToString(), square.AssignType.ToString()));
         //}
 
-        //static void Sudoku_PotentialSquareFound(Potential potential)
+        //static void Sudoku_HintFound(Hint hint)
         //{
-        //    Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", potential.Square.Id.ToString("D2"), potential.Square.Number.ToString(), potential.Number.ToString(), potential.PotentialType.ToString()));
+        //    Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", hint.Square.Id.ToString("D2"), hint.Square.Number.ToString(), hint.Number.ToString(), hint.Type.ToString()));
         //}
 
         /// <summary>

@@ -81,7 +81,7 @@ namespace SudokuSolver.ConsoleApp
                     case "used": ShowUsedSquares(); break;
                     case "availability": ShowAvailability(); break;
                     case "numbers": ShowNumbers(); break;
-                    case "potentials": ShowPotentialSquares(); break;
+                    case "hints": ShowHints(); break;
                     case "clear": ClearScreen(); break;
 
                     default: Help(); break;
@@ -96,7 +96,7 @@ namespace SudokuSolver.ConsoleApp
 
             Sudoku = new Sudoku();
             Sudoku.SquareNumberChanged += new Square.SquareEventHandler(Sudoku_SquareNumberChanged);
-            Sudoku.PotentialSquareFound += new Potential.FoundEventHandler(Sudoku_PotentialSquareFound);
+            Sudoku.HintFound += new Hint.FoundEventHandler(Sudoku_HintFound);
 
             Console.WriteLine("New sudoku is ready!");
         }
@@ -116,7 +116,7 @@ namespace SudokuSolver.ConsoleApp
                 throw new ArgumentException("Invalid case no");
 
             Sudoku.SquareNumberChanged += new Square.SquareEventHandler(Sudoku_SquareNumberChanged);
-            Sudoku.PotentialSquareFound += new Potential.FoundEventHandler(Sudoku_PotentialSquareFound);
+            Sudoku.HintFound += new Hint.FoundEventHandler(Sudoku_HintFound);
 
             Console.WriteLine("Case {0} is ready!", caseNo.ToString());
         }
@@ -221,14 +221,14 @@ namespace SudokuSolver.ConsoleApp
                 Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.Value.ToString(), number.Count.ToString()));
         }
 
-        static void ShowPotentialSquares()
+        static void ShowHints()
         {
-            if (Sudoku.GetPotentialSquares().Count() == 0)
-                Console.WriteLine("There are no potential squares");
+            if (Sudoku.GetHints().Count() == 0)
+                Console.WriteLine("There are no hints");
 
-            foreach (var potential in Sudoku.GetPotentialSquares().OrderBy(s => s.Square.Id))
+            foreach (var hint in Sudoku.GetHints().OrderBy(s => s.Square.Id))
             {
-                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", potential.Square.Id.ToString("D2"), potential.Square.Number.Value.ToString(), potential.Number.Value.ToString(), potential.PotentialType.ToString()));
+                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", hint.Square.Id.ToString("D2"), hint.Square.Number.Value.ToString(), hint.Number.Value.ToString(), hint.Type.ToString()));
             }
         }
 
@@ -254,7 +254,7 @@ namespace SudokuSolver.ConsoleApp
             sbOutput.AppendLine(". used");
             sbOutput.AppendLine(". availability");
             sbOutput.AppendLine(". numbers");
-            sbOutput.AppendLine(". potentials");
+            sbOutput.AppendLine(". hints");
             sbOutput.AppendLine(". clear");
 
             Console.Write(sbOutput.ToString());
@@ -270,9 +270,9 @@ namespace SudokuSolver.ConsoleApp
             Console.WriteLine("  Id {0}: {1} - {2}", square.Id.ToString("D2"), square.Number.Value.ToString(), square.AssignType.ToString());
         }
 
-        static void Sudoku_PotentialSquareFound(Potential potential)
+        static void Sudoku_HintFound(Hint hint)
         {
-            Console.WriteLine("P Id {0}: {1} - {2} - {3}", potential.Square.Id.ToString("D2"), potential.Square.Number.Value.ToString(), potential.Number.Value.ToString(), potential.PotentialType.ToString());
+            Console.WriteLine("P Id {0}: {1} - {2} - {3}", hint.Square.Id.ToString("D2"), hint.Square.Number.Value.ToString(), hint.Number.Value.ToString(), hint.Type.ToString());
         }
     }
 }

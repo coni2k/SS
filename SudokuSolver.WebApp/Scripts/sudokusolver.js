@@ -40,7 +40,22 @@
 
     self.LoadSudoku = function (sudoku) { loadSudoku(self, sudoku); }
     self.NewSudoku = function () { newSudoku(self); }
-    self.ResetList = function () { resetList(self); }
+    self.ResetList = function () {
+        $("#resetListDialog").dialog({
+            resizable: false,
+            height: 200,
+            modal: true,
+            buttons: {
+                "Reset list": function () {
+                    $(this).dialog("close");
+                    resetList(self);
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    }
 
     //Ready
     self.Ready = ko.observable(false);
@@ -60,7 +75,24 @@
     self.Solve = function () { solve(self); };
 
     //Reset (sudoku)
-    self.ResetSudoku = function () { resetSudoku(self); };
+    self.ResetSudoku = function () {
+
+        $("#resetSudokuDialog").dialog({
+            resizable: false,
+            height: 200,
+            modal: true,
+            buttons: {
+                "Reset": function () {
+                    $(this).dialog("close");
+                    resetSudoku(self);
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+    };
 
     //Groups (squares)
     self.Groups = ko.observableArray([]);
@@ -99,8 +131,8 @@
     //Numbers
     self.NumberGroups = ko.observableArray([]);
 
-    //Potentials
-    self.Potentials = ko.observableArray([]);
+    //Hints
+    self.Hints = ko.observableArray([]);
 
     //Group number availabilities
     self.GroupNumberAvailabilities = ko.observableArray([]);
@@ -395,12 +427,12 @@ function SudokuNumber(model) {
     };
 }
 
-function Potential(model) {
+function Hint(model) {
     var self = this;
     self.Model = model;
     self.SquareId = 0;
-    self.PotentialValue = 0;
-    self.PotentialType = 0;
+    self.HintValue = 0;
+    self.HintType = 0;
     self.IsSelected = ko.observable(false);
     //self.ToggleSelect = function () { return false; };
     self.ToggleSelect = function (data, event) {
@@ -410,7 +442,7 @@ function Potential(model) {
 
         //Find & toggle select related square as well
         var relatedSquare = data.Model.FilteredSquaresById(data.SquareId);
-        relatedSquare.Value(event.type == 'mouseenter' ? self.PotentialValue : 0);
+        relatedSquare.Value(event.type == 'mouseenter' ? self.HintValue : 0);
         relatedSquare.AssignType(event.type == 'mouseenter' ? 2 : 0);
         relatedSquare.TogglePassiveSelect(relatedSquare, event);
     }
@@ -476,7 +508,7 @@ function loadSudoku(model, sudoku) {
 
 function loadSudokuDetails(model, refreshSquares) {
     //Optional refresh squares, default value is 'true'
-    refreshSquares = (typeof refreshSquares === "undefined") ? true : refreshSquares
+    refreshSquares = (typeof refreshSquares === "undefined") ? true : refreshSquares;
 
     //If refreshSquares flag is true, load used squares
     if (refreshSquares) {
@@ -486,8 +518,8 @@ function loadSudokuDetails(model, refreshSquares) {
     //Load numbers
     loadNumbers(model);
 
-    //Load potentials
-    loadPotentials(model);
+    //Load hints
+    loadHints(model);
 
     //Load availabilities
     loadAvailabilities(model);
@@ -519,8 +551,8 @@ function initGrid(model) {
             square = new Square(group, squareId);
 
             //TODO Is it correct way of doing it?
-            if (model.Ready())
-                square.AssignType(1);
+            //if (model.Ready())
+                //square.AssignType(1);
 
             //Availability loop
             for (var availabilityCounter = 0; availabilityCounter < size; availabilityCounter++) {
@@ -579,7 +611,7 @@ function refreshGrid(model) {
     ko.utils.arrayForEach(model.Groups(), function (group) {
         ko.utils.arrayForEach(group.Squares(), function (square) {
             square.Value(0);
-            square.AssignType(model.Ready() ? 1 : 0);
+            square.AssignType(0);
             ko.utils.arrayForEach(square.Availabilities(), function (availability) {
                 availability.IsAvailable(true);
             });
@@ -597,11 +629,9 @@ function loadSquares(model) {
             var square = this;
 
             //Find the square
-            //var matchedSquare = model.FilteredSquaresById(this.SquareId);
             var matchedSquare = model.FilteredSquaresById(square.Id);
 
             //Update
-            //matchedSquare.Value(this.Number);
             matchedSquare.Value(square.Number.Value);
             matchedSquare.AssignType(square.AssignType);
         });
@@ -661,28 +691,28 @@ function loadNumbers(model) {
     }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
-function loadPotentials(model) {
+function loadHints(model) {
 
-    $.getJSON(serverUrl + 'potentials/' + model.SudokuId(), function (potentialList) {
+    $.getJSON(serverUrl + 'hints/' + model.SudokuId(), function (hintList) {
 
-        model.Potentials([]);
+        model.Hints([]);
 
-        $.each(potentialList, function () {
+        $.each(hintList, function () {
 
-            var potentialItem = this;
+            var hintItem = this;
 
-            //Create potential
-            var potential = new Potential(model);
+            //Create hint
+            var hint = new Hint(model);
 
-            //potential.SquareId = this.SquareId;
-            //potential.PotentialValue = this.PotentialValue;
-            //potential.PotentialType = this.PotentialType;
+            //hint.SquareId = this.SquareId;
+            //hint.HintValue = this.HintValue;
+            //hint.HintType = this.HintType;
 
-            potential.SquareId = potentialItem.Square.Id;
-            potential.PotentialValue = potentialItem.Number.Value;
-            potential.PotentialType = potentialItem.PotentialType;
+            hint.SquareId = hintItem.Square.Id;
+            hint.HintValue = hintItem.Number.Value;
+            hint.HintType = hintItem.Type;
 
-            model.Potentials.push(potential);
+            model.Hints.push(hint);
         });
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
@@ -715,30 +745,30 @@ function loadAvailabilities(model) {
     }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
-function loadAvailabilities2(model) {
+//function loadAvailabilities2(model) {
 
-    $.getJSON(serverUrl + 'availabilities2/' + model.SudokuId(), function (list) {
+//    $.getJSON(serverUrl + 'availabilities2/' + model.SudokuId(), function (list) {
 
-        $.each(list, function () {
+//        $.each(list, function () {
 
-            //Number
-            var number = this.Number;
+//            //Number
+//            var number = this.Number;
 
-            //Find the square
-            var matchedSquare = model.FilteredSquaresById(this.SquareId);
+//            //Find the square
+//            var matchedSquare = model.FilteredSquaresById(this.SquareId);
 
-            //Find the availability
-            var matched = ko.utils.arrayFirst(matchedSquare.Availabilities2(), function (availability2) {
-                return availability2.Value === number;
-            });
+//            //Find the availability
+//            var matched = ko.utils.arrayFirst(matchedSquare.Availabilities2(), function (availability2) {
+//                return availability2.Value === number;
+//            });
 
-            //Update
-            matched.IsAvailable(this.IsAvailable);
+//            //Update
+//            matched.IsAvailable(this.IsAvailable);
 
-        });
+//        });
 
-    }).fail(function (jqXHR) { handleError(jqXHR); });
-}
+//    }).fail(function (jqXHR) { handleError(jqXHR); });
+//}
 
 function loadGroupNumberAvailabilities(model) {
 
@@ -748,7 +778,6 @@ function loadGroupNumberAvailabilities(model) {
 
         $.each(list, function () {
 
-            //Create potential
             var groupNumberAvailability = new GroupNumberAvailability();
             groupNumberAvailability.GroupId = this.GroupId;
             groupNumberAvailability.Number = this.Number;
@@ -789,12 +818,12 @@ function toggleReady(model) {
         model.Ready(!model.Ready());
 
         //Assign Types
-        ko.utils.arrayForEach(model.Groups(), function (group) {
-            ko.utils.arrayForEach(group.Squares(), function (square) {
-                if (square.Value() === 0)
-                    square.AssignType(model.Ready() ? 1 : 0);
-            });
-        });
+        //ko.utils.arrayForEach(model.Groups(), function (group) {
+        //    ko.utils.arrayForEach(group.Squares(), function (square) {
+        //        if (square.Value() === 0)
+        //            square.AssignType(model.Ready() ? 1 : 0);
+        //    });
+        //});
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
 }
@@ -846,18 +875,23 @@ $(function () {
         hideMessagePanel();
 
         // Block UI
-        $.blockUI({
-            message: $('#loadingMessagePanel').html(),
-            css: {
-                left: '45%',
-                width: '10%',
-                padding: '10px 0'
-            }
-        });
+        //$.blockUI({
+        //    message: $('#loadingMessagePanel').html(),
+        //    css: {
+        //        left: '45%',
+        //        width: '10%',
+        //        padding: '10px 0'
+        //    }
+        //});
+
+        $("#loadingMessagePanel").dialog('open');
+
     }).ajaxStop(function () {
 
+        $("#loadingMessagePanel").dialog('close');
+
         // Unblock UI
-        $.unblockUI();
+        //$.unblockUI();
     })
 });
 

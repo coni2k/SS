@@ -43,15 +43,15 @@ also in size 4, counts are dissappeared ?! - how to display them?
 . clean up; css etc. + check TODO in general!
 
 ---
-about potentials, add these cases;
-new potential
+about hints, add these cases;
+new hint
 removal of an existing square
 removal of an existing number
 
 number changing and changed should have similar operation but reverse?
 and also double check the zero case?
 
-also potentials should be a dynamic list?
+also hints should be a dynamic list?
 
 ---
 try to have a new (initialized) sudoku on the page - try to decrease the first page load time
@@ -86,6 +86,9 @@ and is there any second grade availability?
 how about; public class Square + internal (or private) class Availability() + internal UpdateAvailability()
 
 ---
+. relatives instead of related?
+
+---
 pass squares to group constructor - to make square property readonly and remove setsquare method
 not that easy, first it generates the groups and then squares.. ?!
 
@@ -95,14 +98,8 @@ webapi.tester doesnt work at the moment (after the package updates) - check weba
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 HOT STUFF;
 
-. potential bug!
-case 1 - square 1 - number 9 - square 9 must be potential for value 1
-
-. new potential + proper potential removal!
-merge potential class + square!
-
-. hints instead of potentials
-relatives instead of related
+. proper new/remove hint - is it possible to merge hint + square
+dynamic hints?
 
 . sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
 history.js?!
@@ -121,12 +118,17 @@ these calculations can come from the server?
 . try to remove calculateId for square! would it help?
 sample sudoku ids need to be updated!!! and probably square.Groups calculation ?!
 
----
-potential bug
-case 17, id 1 is repeating it..
-how come we dont have availability for squareid 9, number 9?
-also check this;
-                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a potential to be REMOVED - Id: {0} - Value: {1}", this.Id.ToString(), this.Number.Value.ToString());
 
-create more cases for potential bug
-and think about it from scratch.. how to keep the potential, how to remove etc.
+work on loading message
+http://stackoverflow.com/questions/1023072/jquery-ui-dialog-how-to-initialize-without-a-title-bar
+
+http://api.jqueryui.com/dialog/#option-title
+
+---
+Solving Methods?;
+. Square's last no
+. Number's last square
+. Group's last square
+. Group's last number
+. Sudoku's last square
+. Sudoku's last number

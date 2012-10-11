@@ -9,12 +9,12 @@ namespace SudokuSolver.Engine
         #region Members
 
         private int _Size = 0;
-        private List<Square> _Squares = null;
-        private List<Number> _Numbers = null;
+        private ICollection<Square> _Squares = null;
+        private ICollection<Number> _Numbers = null;
         private IList<Group> _HorizontalTypeGroups = null;
         private IList<Group> _VerticalTypeGroups = null;
         private IList<Group> _SquareTypeGroups = null;
-        private List<Potential> _PotentialSquares = new List<Potential>();
+        private List<Hint> _Hints = new List<Hint>();
         private List<Availability> _Availabilities = new List<Availability>();
         private bool _Ready = false;
         private bool _AutoSolve = false;
@@ -23,11 +23,8 @@ namespace SudokuSolver.Engine
 
         #region Events
 
-        //internal delegate void InitializedEventHandler();
-        //internal event InitializedEventHandler Initialized;
-
         public event Square.SquareEventHandler SquareNumberChanged;
-        public event Potential.FoundEventHandler PotentialSquareFound;
+        public event Hint.FoundEventHandler HintFound;
 
         #endregion
 
@@ -36,14 +33,6 @@ namespace SudokuSolver.Engine
         public int SudokuId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-
-        /// <summary>
-        /// Id of the sudoku
-        /// TODO Actually this is nothing to do with the engine, it's more about data/database
-        /// Maybe there can be SudokuData project and SudokuContainer class, which can hold this class and the ID as a seperate property.
-        /// </summary>
-        /* public Guid Id { get; private set; } */
-        //public int Id { get; set; }
 
         /// <summary>
         /// Size of the sudoku; number of squares in one row, column or group
@@ -56,10 +45,9 @@ namespace SudokuSolver.Engine
             }
             private set
             {
-                //Validate first
+                // Validate first
                 double squareRootOfValue = 0;
 
-                //TODO Is there any chance to have an exception over here?
                 try
                 {
                     squareRootOfValue = Math.Sqrt(value);
@@ -69,7 +57,7 @@ namespace SudokuSolver.Engine
                     throw new Exception("Please enter a valid sudoku size");
                 }
 
-                //The square root of the size must be a round number
+                // The square root of the size must be a round number
                 if (squareRootOfValue != Math.Round(squareRootOfValue))
                     throw new Exception("Please enter a valid sudoku size");
 
@@ -83,7 +71,7 @@ namespace SudokuSolver.Engine
         /// <returns></returns>
         public int SquareRootOfSize
         {
-            get { return (int)Math.Sqrt(this.Size); }
+            get { return (int)Math.Sqrt(Size); }
         }
 
         /// <summary>
@@ -97,7 +85,6 @@ namespace SudokuSolver.Engine
         public int SquaresLeft
         {
             get { return GetNumbers().Single(x => x.IsZero).Count; }
-            //set { var x = value; }
         }
 
         /// <summary>
@@ -107,9 +94,6 @@ namespace SudokuSolver.Engine
         public IEnumerable<Square> GetSquares()
         {
             return _Squares;
-
-            //get;
-            //private set;
         }
 
         /// <summary>
@@ -124,7 +108,10 @@ namespace SudokuSolver.Engine
         /// Gets all numbers which can be used in sudoku, including zero.
         /// Count of the list equals to Size property of the sudoku + 1 (for size 9, it's 10)
         /// </summary>
-        public IEnumerable<Number> GetNumbers() { return _Numbers; }
+        public IEnumerable<Number> GetNumbers()
+        {
+            return _Numbers;
+        }
 
         /// <summary>
         /// Gets all usable numbers, except zero.
@@ -135,21 +122,13 @@ namespace SudokuSolver.Engine
             return GetNumbers().Where(n => !n.IsZero);
         }
 
-        //public IEnumerable<Number> AvailableNumbers
-        //{
-        //    get { return NumbersExceptZero.Where(n => n.IsAvailable); }
-        //}
-
         /// <summary>
         /// Gets horizontal type square groups
         /// </summary>
         public IEnumerable<Group> GetHorizontalTypeGroups()
         {
             return _HorizontalTypeGroups;
-
-            //get;
-            //private set;
-        } // { return _HorizontalTypeGroups; } }
+        }
 
         /// <summary>
         /// Gets vertical type square groups
@@ -157,10 +136,7 @@ namespace SudokuSolver.Engine
         public IEnumerable<Group> GetVerticalTypeGroups()
         {
             return _VerticalTypeGroups;
-
-            //get;
-            //private set;
-        } //{ return _VerticalTypeGroups; } }
+        }
 
         /// <summary>
         /// Gets square type square groups
@@ -168,35 +144,19 @@ namespace SudokuSolver.Engine
         public IEnumerable<Group> GetSquareTypeGroups()
         {
             return _SquareTypeGroups;
-
-            //get;
-            //private set;
-        } // { return _SquareTypeGroups; } }
-
-        //public IEnumerable<Availability> UsedAvailabilities
-        //{
-        //    get
-        //    {
-        //        return Squares.Select(x => x.UsedAvailabilities.);
-        //    }
-        //}
+        }
 
         /// <summary>
-        /// Gets the potential squares
-        /// During UpdateSquare() method, when the solver finds a potential square, it puts them to this list.
-        /// When Solve() method called, this list will be checked and if the potential square has still the same conditions, then the square will be update with the value.
+        /// Gets the hints
+        /// During UpdateSquare() method, when the solver finds a hint, it puts them to this list.
+        /// When Solve() method called, this list will be checked and if the hint has still the same conditions, then the square will be update with the value.
         /// </summary>
-        //public IEnumerable<Potential> GetPotentialSquares() { return _PotentialSquares; }
-        public List<Potential> GetPotentialSquares() { return _PotentialSquares; }
+        //public IEnumerable<Hint> GetHints() { return _Hints; }
+        public List<Hint> GetHints() { return _Hints; }
 
         public IEnumerable<Availability> GetAvailabilities() { return _Availabilities; }
 
         public IEnumerable<Availability> GetUsedAvailabilities() { return _Availabilities.Where(x => !x.IsAvailable); }
-
-        public IEnumerable<Availability> GetAvailabilities2()
-        {
-            return new List<Availability>();
-        }
 
         /// <summary>
         /// Determines the whether sudoku is ready to solve or not.
@@ -228,7 +188,7 @@ namespace SudokuSolver.Engine
             get { return _AutoSolve; }
             set
             {
-                if (!this.Ready)
+                if (!Ready)
                     throw new Exception("AutoSolve cannot be set to true if it's not in Ready state");
 
                 _AutoSolve = value;
@@ -247,7 +207,6 @@ namespace SudokuSolver.Engine
             {
                 foreach (var n in GetNumbersExceptZero())
                 {
-                    //list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumber(n).Count() });
                     list.Add(new GroupNumberAvailabilityContainer() { GroupId = g.Id, Number = n.Value, Count = g.GetAvailableSquaresForNumber(n).Count() });
                 }
             }
@@ -277,10 +236,6 @@ namespace SudokuSolver.Engine
 
         void Init(int size)
         {
-            //Id
-            //this.Id = Guid.NewGuid();
-
-            //Size
             this.Size = size;
 
             //All numbers; numbers will be created as the size of the sudoku (default 9 + zero value = 10)
@@ -288,7 +243,6 @@ namespace SudokuSolver.Engine
             _Numbers.Add(new Number(this, 0)); //Zero value
             for (int i = 1; i <= Size; i++)
                 _Numbers.Add(new Number(this, i));
-            //this.Numbers = _Numbers;
 
             //All square groups
             _HorizontalTypeGroups = new List<Group>(Size);
@@ -303,9 +257,9 @@ namespace SudokuSolver.Engine
                 var squareGroup = new Group(i, GroupTypes.Square, this);
 
                 //Register the events
-                horizontalGroup.PotentialFound += new Potential.FoundEventHandler(PotentialSquare_Found);
-                verticalGroup.PotentialFound += new Potential.FoundEventHandler(PotentialSquare_Found);
-                squareGroup.PotentialFound += new Potential.FoundEventHandler(PotentialSquare_Found);
+                horizontalGroup.HintFound += new Hint.FoundEventHandler(Hint_Found);
+                verticalGroup.HintFound += new Hint.FoundEventHandler(Hint_Found);
+                squareGroup.HintFound += new Hint.FoundEventHandler(Hint_Found);
 
                 //Add to the lists
                 _HorizontalTypeGroups.Add(horizontalGroup);
@@ -313,13 +267,7 @@ namespace SudokuSolver.Engine
                 _SquareTypeGroups.Add(squareGroup);
             }
 
-            //Assign to the public properties
-            //this.HorizontalTypeGroups = horizontalTypeGroups;
-            //this.VerticalTypeGroups = verticalTypeGroups;
-            //this.SquareTypeGroups = squareTypeGroups;
-
             //All squares
-            //var squares = new List<Square>(TotalSize);
             _Squares = new List<Square>(TotalSize);
             for (int i = 0; i < TotalSize; i++)
             {
@@ -339,27 +287,12 @@ namespace SudokuSolver.Engine
                 //Generate the squares
                 var square = new Square(squareId, this, horizontalTypeGroup, verticalTypeGroup, squareTypeGroup);
                 square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
-                square.PotentialSquareFound += new Potential.FoundEventHandler(PotentialSquare_Found);
+                square.HintFound += new Hint.FoundEventHandler(Hint_Found);
                 _Squares.Add(square);
 
                 // Get the squares availabilities
-                //_Availabilities = new List<Availability>();
                 _Availabilities.AddRange(square.GetAvailabilities());
-
-                //Add the squares to their own groups
-                //horizontalTypeGroup.AddSquare(square);
-                //verticalTypeGroup.AddSquare(square);
-                //squareTypeGroup.AddSquare(square);
             }
-
-            //this.Squares = squares;
-
-            //Potential squares
-            //_PotentialSquares = new List<Potential>();
-
-            //// Initialization completed; raise the event
-            //if (Initialized != null)
-            //    Initialized();
         }
 
         public void UpdateSquare(int squareId, int value)
@@ -416,19 +349,12 @@ namespace SudokuSolver.Engine
         /// <param name="square"></param>
         void Square_NumberChanged(Square square)
         {
-            //Update potentials!
+            //Update hints!
             //Is it correct place to do this?
             //And how about zero case?
             if (!square.IsAvailable)
             {
-                //if (_PotentialSquares.Any(p => p.Square.Equals(square)))
-                _PotentialSquares.RemoveAll(p => p.Square.Equals(square));
-
-                //var list = _PotentialSquares.Where(p => p.PotentialType == PotentialTypes.Group && 
-
-                //if (_PotentialSquares.Any(p => p.Number.Equals(square.Number) && square.SquareGroups.Contains(p.SquareGroup)))
-                //_PotentialSquares.RemoveAll(p => p.Number.Equals(square.Number) && square.SquareGroups.Contains(p.SquareGroup));
-
+                _Hints.RemoveAll(p => p.Square.Equals(square));
             }
 
             if (SquareNumberChanged != null)
@@ -436,18 +362,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// When the PotentialSquare_Found event raises from a square or squareGroup, this method adds the potential square to the list.
+        /// When the Hint_Found event raises from a square or squareGroup, this method adds the hint to the list.
         /// These squares will be checked in Solve method
         /// </summary>
-        /// <param name="potential"></param>
-        void PotentialSquare_Found(Potential potential)
+        /// <param name="hint"></param>
+        void Hint_Found(Hint hint)
         {
-            if (!_PotentialSquares.Any(p => p.Square.Equals(potential.Square)))
+            if (!_Hints.Any(p => p.Square.Equals(hint.Square)))
             {
-                _PotentialSquares.Add(potential);
+                _Hints.Add(hint);
 
-                if (PotentialSquareFound != null)
-                    PotentialSquareFound(potential);
+                if (HintFound != null)
+                    HintFound(hint);
             }
         }
 
@@ -471,46 +397,26 @@ namespace SudokuSolver.Engine
                 throw new InvalidOperationException("Sudoku cannot be Solved if it's not in Ready state");
 
             //Is there anything to do?
-            if (GetPotentialSquares().Count() == 0)
+            if (GetHints().Count() == 0)
                 return;
 
-            //Copy to a new list; since the PotentialSquares can take new values during this operation, it's not possible to use that one directly
-            var potentials = GetPotentialSquares().ToList();
+            //Copy to a new list; since the Hints can take new values during this operation, it's not possible to use that one directly
+            var hints = GetHints().ToList();
 
-            foreach (var potential in potentials)
+            foreach (var hint in hints)
             {
-                if (potential.PotentialType == PotentialTypes.Square)
+                if (hint.Type != HintTypes.None)
                 {
-                    //If it's still valid..
-                    //if (Square.ValidatePotential(potential.Square))
-                    //if (Square.ValidatePotential(potential.Square))
-                    //{
-                    UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
-                    //}
-                    //else
-                    //{
-                    //   Console.WriteLine("we have a false potential");
-                    //}
+                    UpdateSquare(hint.Square, hint.Number, AssignTypes.Solver);
                 }
-                else if (potential.PotentialType == PotentialTypes.Group)
-                {
-                    //To be able to validate, get the potential square from the group one more time
-                    // Square potentialFromGroup = potential.SquareGroup.GetPotentialSquare(potential.Number);
-
-                    //If there is one square and if it's the same square from the potential class, then it's valid
-                    //TODO Maybe we can found a way to be sure that the square from potential is always correct! Then these can be avoided?!
-                    // if (potentialFromGroup != null && potential.Square.Equals(potentialFromGroup))
-                    UpdateSquare(potential.Square, potential.Number, AssignTypes.Solver);
-                }
-
-                potential.PotentialType = PotentialTypes.None;
+                hint.Type = HintTypes.None;
             }
 
-            //Remove the processed ones?
-            _PotentialSquares.RemoveAll(s => s.PotentialType.Equals(PotentialTypes.None));
+            //Remove the processed ones
+            _Hints.RemoveAll(s => s.Type.Equals(HintTypes.None));
 
             //Again; since it could spot more squares during this method, run it again
-            //If there are no potential square, it will quit anyway
+            //If there are no hint, it will quit anyway
             Solve();
         }
 

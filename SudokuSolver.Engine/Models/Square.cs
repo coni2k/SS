@@ -17,7 +17,7 @@ namespace SudokuSolver.Engine
         internal event SquareEventHandler AvailabilityChanged;
 
         // TODO We will come back ye, mi friend!
-        internal event Potential.FoundEventHandler PotentialSquareFound;
+        internal event Hint.FoundEventHandler HintFound;
 
         #endregion
 
@@ -79,7 +79,7 @@ namespace SudokuSolver.Engine
             //get { return GetAvailabilities().Where(x => !x.IsAvailable); }
         }
 
-        public Group Potential_SquareGroup { get; internal set; }
+        // public Group Hint_SquareGroup { get; internal set; }
 
         #endregion
 
@@ -126,7 +126,7 @@ namespace SudokuSolver.Engine
 
         internal void Update(Number number, AssignTypes type)
         {
-            // Old number; raise an event to let the sudoku to handle the availability of the other squares
+            // Raise an event to let the sudoku to handle the availability of the other squares for the old number
             if (NumberChanging != null)
                 NumberChanging(this);
 
@@ -136,7 +136,7 @@ namespace SudokuSolver.Engine
             // Set the type
             AssignType = type;
 
-            // Raise an event to let the sudoku to handle the availability of the other squares (again)
+            // Raise an event to let the sudoku to handle the availability of the other squares for the new number
             if (NumberChanged != null)
                 NumberChanged(this);
         }
@@ -154,13 +154,13 @@ namespace SudokuSolver.Engine
         void Group_SquareNumberChanging(Group sourceGroup, Square sourceSquare)
         {
             // Make this number available again
-            ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, null);
+            SetAvailability(sourceSquare.Number, sourceGroup.GroupType, null);
         }
 
         void Group_SquareNumberChanged(Group sourceGroup, Square sourceSquare)
         {
             // Make this number unavailable
-            ToggleAvailability(sourceSquare.Number, sourceGroup.GroupType, sourceSquare);
+            SetAvailability(sourceSquare.Number, sourceGroup.GroupType, sourceSquare);
 
             // Tell to other square in the group that this square's availability has changed
             if (AvailabilityChanged != null)
@@ -175,15 +175,15 @@ namespace SudokuSolver.Engine
 
             // TODO !!!
 
-            if (Sudoku.GetPotentialSquares().Any(p => p.Square.Equals(this) && p.PotentialType == PotentialTypes.Square))
+            if (Sudoku.GetHints().Any(p => p.Square.Equals(this) && p.Type == HintTypes.Square))
             {
                 // Get the available numbers
                 var list = GetAvailabilities().Where(a => a.IsAvailable);
 
-                // If there is only one number left in the list, then we found a new potential
+                // If there is only one number left in the list, then we found a new hint
                 if (list.Count() != 1)
                 {
-                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a potential to be REMOVED - Id: {0} - Value: {1}", this.Id.ToString(), this.Number.Value.ToString());
+                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a hint to be REMOVED - Id: {0} - Value: {1}", this.Id.ToString(), this.Number.Value.ToString());
                 }
             }
             else
@@ -191,18 +191,18 @@ namespace SudokuSolver.Engine
                 // Get the available numbers
                 var list = GetAvailabilities().Where(a => a.IsAvailable);
 
-                // If there is only one number left in the list, then we found a new potential
+                // If there is only one number left in the list, then we found a new hint
                 if (list.Count() == 1)
                 {
-                    // TODO NEW POTENTIAL (SOLVED?) CODE HERE
-                    // this.Update(item.Number., AssignTypes.Potential);
-                    // this.Potential_SquareGroup = null;
+                    // TODO NEW HINT CODE HERE
+                    // this.Update(item.Number., AssignTypes.Hint);
+                    // this.Hint_SquareGroup = null;
 
                     // Get the item from the list
                     var item = list.Single();
 
-                    if (PotentialSquareFound != null)
-                        PotentialSquareFound(new Potential(this, null, item.Number, PotentialTypes.Square));
+                    if (HintFound != null)
+                        HintFound(new Hint(this, null, item.Number, HintTypes.Square));
                 }
             }
         }
@@ -215,7 +215,7 @@ namespace SudokuSolver.Engine
         /// <param name="number"></param>
         /// <param name="type"></param>
         /// <param name="source"></param>
-        void ToggleAvailability(Number number, GroupTypes type, Square source)
+        void SetAvailability(Number number, GroupTypes type, Square source)
         {
             // If the old value is zero, then there is nothing to do.
             // Zero value is not used in availabilities list (always available).
