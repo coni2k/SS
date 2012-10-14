@@ -1,8 +1,3 @@
-
-Another sudoku application sample;
-http://www.iui-js.org/powered-by/index.html?id=esudoku
-
----
 Wishlist:
 . Minified versions?
 . Only retrieve "changes" from the server; squares + numbers + availabilites etc. ("used" version don't work in case of removed objects)
@@ -19,7 +14,7 @@ Wishlist:
 . Measure the performance (eqatec profiler + firefox net panel etc.)
 . Drag & drop the numbers?
 . Try to use web requester (needs to be included as nuget package);
-powershell start-process -WindowStyle Hidden D:\Development\Libraries\APMI\WebRequester\20111004\APMI.WebRequester.exe http://localhost:56105/default.html
+powershell start-process -WindowStyle Hidden D:\WebRequester.exe http://localhost:56107/default.html
 
 ---
 . change the repository name
@@ -109,7 +104,9 @@ dynamic hints?
 . sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
 history.js?!
 
-. what is webgrease? and learn more about modernizer! and how about nav.js?
+. modernizr: currently we dont use modernizer, can there be a case that we should use it? what might not be supported?
+. webgrease: javascript + css compile+check+bundle? needs sample
+. nav.js: for arrow key navigation? needs sample
 
 . looks like there is a problem with hints load / refresh after reset?
 

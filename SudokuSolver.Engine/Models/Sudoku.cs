@@ -11,9 +11,9 @@ namespace SudokuSolver.Engine
         private int _Size = 0;
         private ICollection<Square> _Squares = null;
         private ICollection<Number> _Numbers = null;
+        private ICollection<Group> _SquareTypeGroups = null;
         private ICollection<Group> _HorizontalTypeGroups = null;
         private ICollection<Group> _VerticalTypeGroups = null;
-        private ICollection<Group> _SquareTypeGroups = null;
         private List<Hint> _Hints = new List<Hint>();
         private List<Availability> _Availabilities = new List<Availability>();
         private bool _Ready = false;
@@ -113,6 +113,14 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
+        /// Gets square type square groups
+        /// </summary>
+        public IEnumerable<Group> GetSquareTypeGroups()
+        {
+            return _SquareTypeGroups;
+        }
+
+        /// <summary>
         /// Gets horizontal type square groups
         /// </summary>
         public IEnumerable<Group> GetHorizontalTypeGroups()
@@ -126,14 +134,6 @@ namespace SudokuSolver.Engine
         public IEnumerable<Group> GetVerticalTypeGroups()
         {
             return _VerticalTypeGroups;
-        }
-
-        /// <summary>
-        /// Gets square type square groups
-        /// </summary>
-        public IEnumerable<Group> GetSquareTypeGroups()
-        {
-            return _SquareTypeGroups;
         }
 
         /// <summary>
@@ -237,26 +237,26 @@ namespace SudokuSolver.Engine
                 _Numbers.Add(new Number(this, i));
 
             // Square groups
+            _SquareTypeGroups = new List<Group>(Size);
             _HorizontalTypeGroups = new List<Group>(Size);
             _VerticalTypeGroups = new List<Group>(Size);
-            _SquareTypeGroups = new List<Group>(Size);
 
             for (int i = 1; i <= Size; i++)
             {
                 // Generate the groups
+                var squareGroup = new Group(i, GroupTypes.Square, this);
                 var horizontalGroup = new Group(i, GroupTypes.Horizontal, this);
                 var verticalGroup = new Group(i, GroupTypes.Vertical, this);
-                var squareGroup = new Group(i, GroupTypes.Square, this);
 
                 // Register the events
+                squareGroup.HintFound += new Hint.FoundEventHandler(Hint_Found);
                 horizontalGroup.HintFound += new Hint.FoundEventHandler(Hint_Found);
                 verticalGroup.HintFound += new Hint.FoundEventHandler(Hint_Found);
-                squareGroup.HintFound += new Hint.FoundEventHandler(Hint_Found);
 
                 // Add to the lists
+                _SquareTypeGroups.Add(squareGroup);
                 _HorizontalTypeGroups.Add(horizontalGroup);
                 _VerticalTypeGroups.Add(verticalGroup);
-                _SquareTypeGroups.Add(squareGroup);
             }
 
             // Squares
@@ -284,12 +284,12 @@ namespace SudokuSolver.Engine
                 int verticalGroupId = v1 + (v3 * SquareRootOfSize);
 
                 // Find the groups of the square
+                var squareTypeGroup = _SquareTypeGroups.Single(g => g.Id == squareGroupId);
                 var horizontalTypeGroup = _HorizontalTypeGroups.Single(g => g.Id == horizontalGroupId);
                 var verticalTypeGroup = _VerticalTypeGroups.Single(g => g.Id == verticalGroupId);
-                var squareTypeGroup = _SquareTypeGroups.Single(g => g.Id == squareGroupId);
 
                 // Generate the squares
-                var square = new Square(squareId, this, horizontalTypeGroup, verticalTypeGroup, squareTypeGroup);
+                var square = new Square(squareId, this, squareTypeGroup, horizontalTypeGroup, verticalTypeGroup);
                 square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
                 square.HintFound += new Hint.FoundEventHandler(Hint_Found);
                 _Squares.Add(square);

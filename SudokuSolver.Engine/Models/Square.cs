@@ -57,6 +57,8 @@ namespace SudokuSolver.Engine
             get { return Number.IsZero; }
         }
 
+        public Hint Hint { get; set; }
+
         /// <summary>
         /// Holds the list of available numbers
         /// IMPORTANT This doesn't mean that this square is available or not.
@@ -81,7 +83,7 @@ namespace SudokuSolver.Engine
 
         #region Constructors
 
-        internal Square(int id, Sudoku sudoku, Group horizantolTypeGroup, Group verticalTypeGroup, Group squareTypeGroup)
+        internal Square(int id, Sudoku sudoku,  Group squareTypeGroup, Group horizantalTypeGroup, Group verticalTypeGroup)
         {
             this.Id = id;
             this.Sudoku = sudoku;
@@ -90,15 +92,15 @@ namespace SudokuSolver.Engine
 
             // Groups
             var groups = new List<Group>(3);
-            groups.Add(horizantolTypeGroup);
-            groups.Add(verticalTypeGroup);
             groups.Add(squareTypeGroup);
+            groups.Add(horizantalTypeGroup);
+            groups.Add(verticalTypeGroup);
             this.SquareGroups = groups;
 
             // Set the square to the groups too (cross)
-            horizantolTypeGroup.SetSquare(this);
-            verticalTypeGroup.SetSquare(this);
             squareTypeGroup.SetSquare(this);
+            horizantalTypeGroup.SetSquare(this);
+            verticalTypeGroup.SetSquare(this);
 
             // Register the groups' events
             foreach (var group in SquareGroups)
@@ -218,16 +220,16 @@ namespace SudokuSolver.Engine
 
             switch (type)
             {
+                case GroupTypes.Square:
+                    GetAvailabilities().Single(a => a.Number.Equals(number)).SquareTypeSource = source;
+                    break;
+
                 case GroupTypes.Horizontal:
                     GetAvailabilities().Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
                     break;
 
                 case GroupTypes.Vertical:
                     GetAvailabilities().Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
-                    break;
-
-                case GroupTypes.Square:
-                    GetAvailabilities().Single(a => a.Number.Equals(number)).SquareTypeSource = source;
                     break;
             }
         }
