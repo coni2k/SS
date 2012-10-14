@@ -9,99 +9,177 @@
     self.TotalSize = ko.computed(function () { return self.Size() * self.Size(); });
     self.SquareRootofSize = ko.computed(function () { return Math.sqrt(self.Size()); });
     self.SquaresLeft = ko.observable(0);
-    self.SudokuList = ko.observableArray([]);
-
-    // Selected square
+    self.SudokuList = ko.observableArray([]); // doesn't belong to sudoku class!
+    self.Groups = ko.observableArray([]);
+    self.NumberGroups = ko.observableArray([]);
+    self.Hints = ko.observableArray([]);
+    self.GroupNumberAvailabilities = ko.observableArray([]);
     self.SelectedSquare = ko.observable(null);
+    self.SelectedNumber = ko.observable(null);
+    self.Ready = ko.observable(false);
+    self.AutoSolve = ko.observable(false);
+
     self.SetSelectedSquare = function (square) {
 
         // Remove the previous selected square
         if (self.SelectedSquare() !== null)
             self.SelectedSquare().SetActiveSelect(false);
 
-        // Set the new square as selected
-        self.SelectedSquare(square);
+        // If the new value is null
+        if (square === null) {
+            self.SelectedSquare(null);
+            return;
+        }
 
-        // Set "activeselect" of the new square
-        if (square !== null)
-            square.SetActiveSelect(true);
+        // If there is no selected number
+        if (self.SelectedNumber() === null) {
+            self.SelectedSquare(square);
+            square.SetActiveSelect(true); // Then set the new square as selected
+        }
+        else {
+            square.UpdateSquare(self.SelectedNumber().Value); // Else update the selected square
+        }
     };
 
     // Selected number
-    self.SelectedNumber = ko.observable(null);
     self.SetSelectedNumber = function (sudokuNumber) {
 
-        self.SelectedNumber(sudokuNumber);
+        // Remove the previous selected number
+        if (self.SelectedNumber() !== null)
+            self.SelectedNumber().SetActiveSelect(false);
 
-        // Assign the number to the square
-        if (self.SelectedSquare() !== null)
-            self.SelectedSquare().UpdateSquare(sudokuNumber.Value);
+        // If the new value is null
+        if (sudokuNumber === null) {
+            self.SelectedNumber(null);
+            return;
+        }
+
+        // If there is no selected square
+        if (self.SelectedSquare() === null) {
+            self.SelectedNumber(sudokuNumber);
+            sudokuNumber.SetActiveSelect(true); // Then set the new number as selected
+        }
+        else {
+            self.SelectedSquare().UpdateSquare(sudokuNumber.Value); // Else update the selected square
+        }
     };
 
     self.LoadSudoku = function (sudoku) { loadSudoku(self, sudoku); }
-    self.NewSudoku = function () { newSudoku(self); }
-    self.ResetList = function () {
-        $("#resetListDialog").dialog({
+
+    self.NewSudoku = function () {
+        $('#newSudokuDialog').dialog({
             resizable: false,
-            height: 200,
+            height: 275,
+            width: 350,
             modal: true,
             buttons: {
-                "Reset list": function () {
-                    $(this).dialog("close");
-                    resetList(self);
+                'Create': function () {
+
+                    // Validate the form
+                    var isValid = $('#newSudokuForm').validate().form();
+                    if (!isValid)
+                        return false;
+
+                    // Close the dialog
+                    $(this).dialog('close');
+
+                    // Get the variables
+                    var size = $('#newSudokuSize').val();
+                    var title = $('#newSudokuTitle').val();
+                    var description = $('#newSudokuDescription').val();
+
+                    // Create a new sudoku
+                    newSudoku(self, size, title, description);
+
                 },
                 Cancel: function () {
-                    $(this).dialog("close");
+                    $(this).dialog('close');
                 }
             }
         });
     }
 
-    //Ready
-    self.Ready = ko.observable(false);
+    self.ResetList = function () {
+        $('#resetListDialog').dialog({
+            resizable: false,
+            height: 200,
+            width: 450,
+            modal: true,
+            buttons: {
+                'Reset list': function () {
+                    $(this).dialog('close');
+                    resetList(self);
+                },
+                Cancel: function () {
+                    $(this).dialog('close');
+                }
+            }
+        });
+    }
+
+    // Ready
     self.ToggleReady = function () { toggleReady(self); }
     self.ReadyFormatted = ko.computed(function () {
         return capitaliseFirstLetter(self.Ready().toString());
     });
 
-    //AutoSolve
-    self.AutoSolve = ko.observable(false);
+    // AutoSolve
     self.ToggleAutoSolve = function () { toggleAutoSolve(self); }
     self.AutoSolveFormatted = ko.computed(function () {
         return capitaliseFirstLetter(self.AutoSolve().toString());
     });
 
-    //Solve
+    // Solve
     self.Solve = function () { solve(self); };
 
-    //Reset (sudoku)
-    self.ResetSudoku = function () {
+    // Reset
+    self.Resettable = ko.computed(function () {
 
-        $("#resetSudokuDialog").dialog({
+        if (self.Ready()) {
+
+            // If it's ready, check whether there are any squares that set by user, solver or hint
+            return ko.utils.arrayFirst(self.Groups(), function (group) {
+                return ko.utils.arrayFirst(group.Squares(), function (square) {
+                    return square.AssignType() === 1 || square.AssignType() === 2 || square.AssignType() === 3;
+                });
+            }) !== null;
+        }
+        else {
+
+            // If it's not ready, check whether there are any squares that have a value
+            return ko.utils.arrayFirst(self.Groups(), function (group) {
+                return ko.utils.arrayFirst(group.Squares(), function (square) {
+                    return square.AssignType() === 0 && square.Value() !== 0;
+                });
+            }) !== null;
+        }
+    });
+
+    self.Reset = function () {
+
+        $('#resetDialog').dialog({
             resizable: false,
             height: 200,
+            width: 450,
             modal: true,
             buttons: {
-                "Reset": function () {
-                    $(this).dialog("close");
-                    resetSudoku(self);
+                'Reset': function () {
+                    $(this).dialog('close');
+                    reset(self);
                 },
                 Cancel: function () {
-                    $(this).dialog("close");
+                    $(this).dialog('close');
                 }
             }
         });
 
     };
 
-    //Groups (squares)
-    self.Groups = ko.observableArray([]);
-    //TODO initGrid here?
-
-    //Value grid
+    // Grids;
+    // a. Value grid
     self.ValueGrid = new ValueGrid(self.Groups);
 
-    //Availability grid
+    // b. Availability grid
     self.AvailabilityGrid = new AvailabilityGrid(self.Groups);
     self.ToggleDisplayAvailabilities = function () {
         self.AvailabilityGrid.Visible(!self.AvailabilityGrid.Visible());
@@ -110,7 +188,7 @@
         return capitaliseFirstLetter(self.AvailabilityGrid.Visible().toString());
     });
 
-    //Availability2 grid
+    // c. Availability2 grid
     //self.Availability2Grid = new Availability2Grid(self.Groups);
     //self.ToggleDisplayAvailabilities = function () {
     //    self.AvailabilityGrid.Visible(!self.AvailabilityGrid.Visible());
@@ -119,7 +197,7 @@
     //    return capitaliseFirstLetter(self.AvailabilityGrid.Visible().toString());
     //});
 
-    //Id grid
+    // d. Id grid
     self.IdGrid = new IDGrid(self.Groups);
     self.ToggleDisplayIDs = function () {
         self.IdGrid.Visible(!self.IdGrid.Visible());
@@ -128,51 +206,42 @@
         return capitaliseFirstLetter(self.IdGrid.Visible().toString());
     });
 
-    //Numbers
-    self.NumberGroups = ko.observableArray([]);
-
-    //Hints
-    self.Hints = ko.observableArray([]);
-
-    //Group number availabilities
-    self.GroupNumberAvailabilities = ko.observableArray([]);
-
-    //Square filters
-    //a. by Square Id
-    self.FilteredSquaresById = function (squareId) {
+    // Filters
+    // a. Find square by squareId
+    self.FindSquareBySquareId = function (squareId) {
 
         var matchedSquare = null;
 
-        //Loop through groups
+        // Loop through groups
         ko.utils.arrayFirst(self.Groups(), function (group) {
 
-            //Loop through squares
+            // Loop through squares
             matchedSquare = ko.utils.arrayFirst(group.Squares(), function (square) {
 
-                //Return if you find the square
+                // Return if you find the square
                 return square.SquareId === squareId;
             });
 
-            //Stop groups loop as well
-            return matchedSquare !== null && matchedSquare !== undefined;
+            // Stop groups loop as well
+            return matchedSquare !== null;
         });
 
         return matchedSquare;
 
     };
 
-    //b. by Number
-    self.FilteredSquaresByNumber = function (number) {
+    // b. Find square by number
+    self.FindSquareByNumber = function (number) {
 
         var matchedSquares = new Array();
 
-        //Loop through groups
+        // Loop through groups
         ko.utils.arrayForEach(self.Groups(), function (group) {
 
-            //Loop through squares
+            // Loop through squares
             ko.utils.arrayForEach(group.Squares(), function (square) {
 
-                //If it matches, add to the list
+                // If it matches, add to the list
                 if (square.Value() === number)
                     matchedSquares.push(square);
             });
@@ -180,13 +249,35 @@
 
         return matchedSquares;
     };
+
+    // c. Find number by number value
+    self.FindNumberByNumberValue = function (numberValue) {
+
+        var matchedNumber = null;
+
+        // Loop through groups
+        ko.utils.arrayFirst(self.NumberGroups(), function (group) {
+
+            // Loop through squares
+            matchedNumber = ko.utils.arrayFirst(group.Numbers, function (sudokuNumber) {
+
+                // Return if you find the square
+                return sudokuNumber.Value === numberValue;
+            });
+
+            // Stop groups loop as well
+            return matchedNumber !== null;
+        });
+
+        return matchedNumber;
+    }
 }
 
 function ValueGrid(groups) {
     var self = this;
     self.Groups = ko.observableArray(groups);
     self.DisplayMode = 'value';
-    //Visible = always!
+    // Visible = always!
 }
 
 function AvailabilityGrid(groups) {
@@ -220,14 +311,12 @@ function Group(model) {
 }
 
 function Square(group, id) {
-
     var self = this;
-
     self.Group = group;
-
     self.SquareId = id;
-
     self.Value = ko.observable(0);
+    self.AssignType = ko.observable(0);
+
     self.ValueFormatted = ko.computed({
         read: function () {
             return self.Value() === 0 ? '' : self.Value();
@@ -236,15 +325,12 @@ function Square(group, id) {
             self.Value(value === '' ? 0 : value);
         }
     });
-    //self.HasValue = ko.computed(function () { return self.Value() !== 0; });
+
     self.RemoveValue = function () {
         self.UpdateSquare(0);
     };
-    // TODO If we dont go back to input version, remove OldValue prop.
-    self.OldValue = 0;
-    self.IsAvailable = ko.computed(function () { return self.Value() === 0; });
 
-    self.AssignType = ko.observable(0);
+    self.IsAvailable = ko.computed(function () { return self.Value() === 0; });
 
     self.IsUpdatable = ko.computed(function () { return !(self.Group.Model.Ready() && self.AssignType() === 0 && !self.IsAvailable()); });
 
@@ -254,14 +340,11 @@ function Square(group, id) {
     // Passive select
     self.IsPassiveSelected = ko.observable(false);
     self.TogglePassiveSelect = function (data, event) {
-        //Toggle select itself
         self.IsPassiveSelected(event.type == 'mouseenter');
     }
 
     // Active select
     self.IsActiveSelected = ko.observable(false);
-
-    // Sets IsActiveSelected
     self.SetActiveSelect = function (isActive) {
 
         // Set IsActiveSelected property
@@ -277,126 +360,22 @@ function Square(group, id) {
     // Related selected
     self.IsRelatedSelected = ko.observable(false);
 
-    //self.SetRelatedSelected = ko.computed(function () {
+    // Update (for click event)
+    self.Update = function (data) { data.UpdateSquare(data.Value()); }
 
-    //    //clearDebugPanel();
-    //    addDebugMessage('SetRelatedSelected: square: ' + self.SquareId);
-
-    //    //self.IsRelatedSelected(false);
-
-    //    ////ko.util.array
-
-    //    //ko.utils.arrayForEach(self.Group.Squares(), function (square) {
-    //    //    if (square !== self)
-    //    //    {
-    //    //        if (square.IsSelected())
-    //    //        {
-    //    //            self.IsRelatedSelected(true);
-    //    //            return;
-    //    //        }
-    //    //    }
-    //    //})
-
-    //    self.IsRelatedSelected(function () {
-
-    //        var selectedRelatedSquare = ko.utils.arrayFirst(self.Group.Squares(), function (square) {
-    //            return square !== self && square.IsSelected();
-    //        });
-
-    //        addDebugMessage('yes there is a selected square in my group, so i can be a related selected');
-
-    //        return selectedRelatedSquare !== null;
-    //    });
-    //});
-
-
-    //self.SetSelected = function () {
-
-    //    self.IsSelected(
-
-    //}
-
-    //self.SetRelatedSelected = ko.computed(function () {
-
-    //    // Related square selected
-    //    ko.utils.arrayForEach(self.Group.Squares(), function (square) {
-    //        if (square !== self)
-    //            square.IsRelatedSelected(self.IsSelected());
-    //    });
-    //});
-
-    // self.ToggleSelect = function (data, event) {
-    //self.ToggleSelect = function (data) {
-
-    //    addDebugMessage(data);
-
-    //    // Self selected
-    //    //self.IsSelected(event.type == 'mouseenter');
-    //    self.IsSelected(!self.IsSelected());
-
-    //    // Related square selected
-    //    ko.utils.arrayForEach(data.Group.Squares(), function (square) {
-    //        if (square !== data)
-    //            square.IsRelatedSelected(data.IsSelected());
-    //    });
-
-    //    return self.IsSelected();
-    //}
-
-    //Ensure that it is a valid number
-    self.Updating = function (data, event) {
-
-        //Hide previous error messages
-        hideMessagePanel();
-
-        //TODO This is only for Size 9, for Size 4 it wouldn't work?!
-        if (event.keyCode === 8 || //Backspace
-            event.keyCode === 9 || //Tab
-            event.keyCode === 37 || //Left arrow
-            event.keyCode === 39 || //Right arrow
-            event.keyCode === 46) //Delete
-        {
-            //Let it happen
-        }
-        else if (event.keyCode < 49 || event.keyCode > 57) /* Numbers 1 to 9 - BUT HOW ABOUT NUMPAD? */ {
-            event.preventDefault();
-        }
-        else {
-
-            //Keep the value; this value will be restored in case of a server error
-            data.OldValue = data.Value();
-
-            //To be able to do "new value" validation properly, first reset the current value
-            data.Value(0);
-
-            //Ensure that the value is smaller than sudoku size
-            var newValue = $(event.target).val() + String.fromCharCode(event.keyCode);
-            if (newValue > data.Group.Model.Size()) {
-                event.preventDefault();
-            }
-        }
-
-        return true;
-    }
-
-    self.Update = function (data, event) {
-
-        data.UpdateSquare(data.Value());
-
-    }
-
+    // Update square
     self.UpdateSquare = function (newValue) {
 
-        //Prepare the data
+        // Prepare the data
         var squareContainer = JSON.stringify({ SquareId: self.SquareId, Value: newValue });
 
-        $.post(serverUrl + 'updatesquare/' + self.Group.Model.SudokuId(), squareContainer, function () {
+        $.post(baseApiUrl + 'updatesquare/' + self.Group.Model.SudokuId(), squareContainer, function () {
 
             // Set the new values
             self.Value(newValue);
-            self.AssignType(self.Group.Model.Ready() ? 1 : 0);
+            self.AssignType(newValue === 0 ? 0 : self.Group.Model.Ready() ? 1 : 0);
 
-            //Load details (if it's AutoSolve, load "used squares" as well
+            // Load details (if it's AutoSolve, load 'used squares' as well
             loadSudokuDetails(self.Group.Model, self.Group.Model.AutoSolve());
 
         }).fail(function (jqXHR) { handleError(jqXHR); });
@@ -408,22 +387,25 @@ function SudokuNumber(model) {
     self.Model = model;
     self.Value = 0;
     self.Count = ko.observable(0);
-    self.IsSelected = ko.observable(false);
-    //self.ToggleSelect = function () { return false; };
-    self.ToggleSelect = function (data, event) {
 
-        //Toggle select itself
-        self.IsSelected(event.type == 'mouseenter');
-
-        //Find & toggle select related square as well
-        //var relatedSquares = data.Model.FilteredSquaresByNumber(data.Value);
-        //$.each(relatedSquares, function () {
-        //    this.ToggleSelect(this, event);
-        //});
+    // Passive select (for mouseenter + leave)
+    self.IsPassiveSelected = ko.observable(false);
+    self.TogglePassiveSelect = function (data, event) {
+        self.IsPassiveSelected(event.type == 'mouseenter');
     }
 
-    self.SetNumber = function () {
-        self.Model.SetSelectedNumber(self);
+    // Active select
+    self.IsActiveSelected = ko.observable(false);
+    self.SetActiveSelect = function (isActive) {
+
+        // Set IsActiveSelected property
+        self.IsActiveSelected(isActive);
+
+        // Related square selected
+        //ko.utils.arrayForEach(self.Group.Squares(), function (square) {
+        //    if (square !== self)
+        //        square.IsRelatedSelected(isActive);
+        //});
     };
 }
 
@@ -434,14 +416,13 @@ function Hint(model) {
     self.HintValue = 0;
     self.HintType = 0;
     self.IsSelected = ko.observable(false);
-    //self.ToggleSelect = function () { return false; };
     self.ToggleSelect = function (data, event) {
 
-        //Toggle select itself
+        // Toggle select itself
         self.IsSelected(event.type == 'mouseenter');
 
-        //Find & toggle select related square as well
-        var relatedSquare = data.Model.FilteredSquaresById(data.SquareId);
+        // Find & toggle select related square as well
+        var relatedSquare = data.Model.FindSquareBySquareId(data.SquareId);
         relatedSquare.Value(event.type == 'mouseenter' ? self.HintValue : 0);
         relatedSquare.AssignType(event.type == 'mouseenter' ? 2 : 0);
         relatedSquare.TogglePassiveSelect(relatedSquare, event);
@@ -469,7 +450,7 @@ function GroupNumberAvailability() {
 
 function loadSudokuList(model) {
 
-    $.getJSON(serverUrl + 'list', function (sudokuList) {
+    $.getJSON(baseApiUrl + 'list', function (sudokuList) {
 
         model.SudokuList([]);
         model.SudokuList(sudokuList);
@@ -481,10 +462,10 @@ function loadSudokuList(model) {
 
 function loadSudoku(model, sudoku) {
 
-    //Determines whether the a new grid needs to be initialized or the existing one will be refreshed
-    var initOrRefreshGrid = model.Size() !== sudoku.Size;
+    // Determines whether the a new grid needs to be initialized or the existing one will be refreshed
+    var initOrRefreshSudoku = model.Size() !== sudoku.Size;
 
-    //Load sudoku
+    // Load sudoku
     model.SudokuId(sudoku.SudokuId);
     model.Title(sudoku.Title);
     model.Description(sudoku.Description);
@@ -493,77 +474,74 @@ function loadSudoku(model, sudoku) {
     model.Ready(sudoku.Ready);
     model.AutoSolve(sudoku.AutoSolve);
 
-    //Grid
-    if (initOrRefreshGrid)
-        initGrid(model);
+    // Grid
+    if (initOrRefreshSudoku)
+        initSudoku(model);
     else
         refreshGrid(model);
 
-    //Load details
+    // Load details
     loadSudokuDetails(model);
 
-    //Clear messages
+    // Clear messages
     hideMessagePanel();
 }
 
 function loadSudokuDetails(model, refreshSquares) {
-    //Optional refresh squares, default value is 'true'
-    refreshSquares = (typeof refreshSquares === "undefined") ? true : refreshSquares;
+    // Optional refresh squares, default value is 'true'
+    refreshSquares = (typeof refreshSquares === 'undefined') ? true : refreshSquares;
 
-    //If refreshSquares flag is true, load used squares
+    // If refreshSquares flag is true, load used squares
     if (refreshSquares) {
         loadSquares(model);
     }
 
-    //Load numbers
+    // Load numbers
     loadNumbers(model);
 
-    //Load hints
+    // Load hints
     loadHints(model);
 
-    //Load availabilities
+    // Load availabilities
     loadAvailabilities(model);
 
-    //Load availabilities
+    // Load availabilities
     // loadAvailabilities2(model);
 
-    //Load group number availabilities
+    // Load group number availabilities
     // loadGroupNumberAvailabilities(model);
 
 }
 
-function initGrid(model) {
+function initSudoku(model) {
 
-    //Create an array for square type groups
+    // Squares
+    // Create an array for square type groups
     model.Groups([]);
     var size = model.Size();
     for (groupCounter = 1; groupCounter <= size; groupCounter++) {
 
-        //Create group
+        // Create group
         var group = new Group(model);
         group.GroupId(groupCounter);
 
-        //Squares loop
+        // Squares loop
         for (var squareCounter = 1; squareCounter <= size; squareCounter++) {
 
-            //Create square
-            var squareId = calculateSquareId(size, groupCounter, squareCounter);
+            // Create square
+            var squareId = squareCounter + ((groupCounter - 1) * size);
             square = new Square(group, squareId);
 
-            //TODO Is it correct way of doing it?
-            //if (model.Ready())
-                //square.AssignType(1);
-
-            //Availability loop
+            // Availability loop
             for (var availabilityCounter = 0; availabilityCounter < size; availabilityCounter++) {
 
-                //Create availability item
+                // Create availability item
                 var availability = new Availability();
                 availability.Value = availabilityCounter + 1;
                 square.Availabilities.push(availability);
 
-                //TODO NEW BLOCK!
-                //Create availability2 item
+                // TODO NEW BLOCK!
+                // Create availability2 item
                 //var availability2 = new Availability2();
                 //availability2.Value = availabilityCounter + 1;
                 //square.Availabilities2.push(availability2);
@@ -575,7 +553,26 @@ function initGrid(model) {
         model.Groups.push(group);
     }
 
-    //UI calculations;
+    // Numbers
+    // Group the numbers, to be able to display them nicely (see numbersPanel on default.html)
+    model.NumberGroups([]);
+    var sqrtSize = model.SquareRootofSize();
+    for (groupCounter = 1; groupCounter <= sqrtSize; groupCounter++) {
+
+        var numberGroup = new Object();
+        numberGroup.Numbers = new Array();
+
+        for (numberCounter = 1; numberCounter <= sqrtSize; numberCounter++) {
+
+            var sudokuNumber = new SudokuNumber(model);
+            sudokuNumber.Value = numberCounter + ((groupCounter - 1) * sqrtSize);
+            numberGroup.Numbers.push(sudokuNumber);
+        }
+
+        model.NumberGroups.push(numberGroup);
+    };
+
+    // UI calculations;
     var minWidth = 15;
 
     var squareWidth = minWidth * model.SquareRootofSize();
@@ -619,21 +616,18 @@ function refreshGrid(model) {
     });
 }
 
-//Is it possible to retrieve only the changes?
 function loadSquares(model) {
 
-    $.getJSON(serverUrl + 'squares/' + model.SudokuId(), function (squareList) {
+    $.getJSON(baseApiUrl + 'squares/' + model.SudokuId(), function (squareList) {
 
         $.each(squareList, function () {
 
-            var square = this;
+            // Find the square
+            var matchedSquare = model.FindSquareBySquareId(this.Id);
 
-            //Find the square
-            var matchedSquare = model.FilteredSquaresById(square.Id);
-
-            //Update
-            matchedSquare.Value(square.Number.Value);
-            matchedSquare.AssignType(square.AssignType);
+            // Update
+            matchedSquare.Value(this.Number.Value);
+            matchedSquare.AssignType(this.AssignType);
         });
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
@@ -641,76 +635,39 @@ function loadSquares(model) {
 
 function loadNumbers(model) {
 
-    $.getJSON(serverUrl + 'numbers/' + model.SudokuId(), function (numberList) {
+    $.getJSON(baseApiUrl + 'numbers/' + model.SudokuId(), function (numberList) {
 
-        //Zero value (SquaresLeft on detailsPanel)
+        // Zero value (SquaresLeft on detailsPanel)
         var zeroNumber = numberList.splice(0, 1);
         model.SquaresLeft(zeroNumber[0].Count);
 
-        //TODO Why cant it be used without assigning to a local?
-        var sqrtSize = model.SquareRootofSize();
+        $.each(numberList, function () {
 
-        //Group the numbers, to be able to display them nicely (see numbersPanel on default.html)
-        model.NumberGroups([]);
-        for (groupCounter = 0; groupCounter < sqrtSize; groupCounter++) {
+            // Find the square
+            var matchedNumber = model.FindNumberByNumberValue(this.Value);
 
-            var numberGroup = new Object();
-            numberGroup.Numbers = new Array();
-
-            for (numberCounter = 0; numberCounter < sqrtSize; numberCounter++) {
-
-                var numberData = numberList.splice(0, 1);
-
-                var sudokuNumber = new SudokuNumber(model);
-                sudokuNumber.Value = numberData[0].Value;
-                sudokuNumber.Count(numberData[0].Count);
-                numberGroup.Numbers.push(sudokuNumber);
-            }
-
-            model.NumberGroups.push(numberGroup);
-        };
-
-        //UI calculations;
-        var minWidth = 15;
-
-        var squareWidth = minWidth * model.SquareRootofSize();
-
-        var groupWidth = (squareWidth * model.SquareRootofSize()) + (2 * model.SquareRootofSize()); /* Border */;
-
-        var panelWidth = (groupWidth * model.SquareRootofSize()) + (2 * model.SquareRootofSize()); /* Border */;
-
-        $('.numberItem').css('width', squareWidth);
-        $('.numberItem').css('height', squareWidth);
-        $('.numberItem').css('line-height', squareWidth.toString() + 'px');
-
-        $('.numberGroupItem').css('width', groupWidth);
-
-        $('.numberGroupContainer').css('width', panelWidth);
-
+            // Update
+            matchedNumber.Count(this.Count);
+        });
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function loadHints(model) {
 
-    $.getJSON(serverUrl + 'hints/' + model.SudokuId(), function (hintList) {
+    $.getJSON(baseApiUrl + 'hints/' + model.SudokuId(), function (hintList) {
 
+        // Reset
         model.Hints([]);
 
         $.each(hintList, function () {
 
-            var hintItem = this;
-
-            //Create hint
+            // Create hint
             var hint = new Hint(model);
 
-            //hint.SquareId = this.SquareId;
-            //hint.HintValue = this.HintValue;
-            //hint.HintType = this.HintType;
-
-            hint.SquareId = hintItem.Square.Id;
-            hint.HintValue = hintItem.Number.Value;
-            hint.HintType = hintItem.Type;
+            hint.SquareId = this.Square.Id;
+            hint.HintValue = this.Number.Value;
+            hint.HintType = this.Type;
 
             model.Hints.push(hint);
         });
@@ -720,24 +677,24 @@ function loadHints(model) {
 
 function loadAvailabilities(model) {
 
-    $.getJSON(serverUrl + 'availabilities/' + model.SudokuId(), function (availabilityList) {
+    $.getJSON(baseApiUrl + 'availabilities/' + model.SudokuId(), function (availabilityList) {
 
         $.each(availabilityList, function () {
 
             var availabilityItem = this;
 
-            //Number
+            // Number
             var number = availabilityItem.Number.Value;
 
-            //Find the square
-            var matchedSquare = model.FilteredSquaresById(availabilityItem.SquareId);
+            // Find the square
+            var matchedSquare = model.FindSquareBySquareId(availabilityItem.SquareId);
 
-            //Find the availability
+            // Find the availability
             var matchedAvailability = ko.utils.arrayFirst(matchedSquare.Availabilities(), function (availability) {
                 return availability.Value === number;
             });
 
-            //Update
+            // Update
             matchedAvailability.IsAvailable(availabilityItem.IsAvailable);
 
         });
@@ -747,7 +704,7 @@ function loadAvailabilities(model) {
 
 //function loadAvailabilities2(model) {
 
-//    $.getJSON(serverUrl + 'availabilities2/' + model.SudokuId(), function (list) {
+//    $.getJSON(baseApiUrl + 'availabilities2/' + model.SudokuId(), function (list) {
 
 //        $.each(list, function () {
 
@@ -755,7 +712,7 @@ function loadAvailabilities(model) {
 //            var number = this.Number;
 
 //            //Find the square
-//            var matchedSquare = model.FilteredSquaresById(this.SquareId);
+//            var matchedSquare = model.FindSquareBySquareId(this.SquareId);
 
 //            //Find the availability
 //            var matched = ko.utils.arrayFirst(matchedSquare.Availabilities2(), function (availability2) {
@@ -772,7 +729,7 @@ function loadAvailabilities(model) {
 
 function loadGroupNumberAvailabilities(model) {
 
-    $.getJSON(serverUrl + 'groupnumberavailabilities/' + model.SudokuId(), function (list) {
+    $.getJSON(baseApiUrl + 'groupnumberavailabilities/' + model.SudokuId(), function (list) {
 
         model.GroupNumberAvailabilities([]);
 
@@ -788,13 +745,17 @@ function loadGroupNumberAvailabilities(model) {
     }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
-function newSudoku(model) {
+function newSudoku(model, size, title, description) {
 
-    $.post(serverUrl + 'item').done(function (newSudoku) {
-        //Add the item to the list
+    // Prepare the data
+    var sudokuContainer = JSON.stringify({ Size: size, Title: title, Description: description });
+
+    $.post(baseApiUrl + 'newsudoku', sudokuContainer).done(function (newSudoku) {
+
+        // Add the item to the list
         model.SudokuList.push(newSudoku);
 
-        //Load the sudoku
+        // Load the sudoku
         loadSudoku(model, newSudoku);
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
@@ -802,9 +763,9 @@ function newSudoku(model) {
 
 function resetList(model) {
 
-    $.post(serverUrl + 'reset').done(function () {
+    $.post(baseApiUrl + 'resetlist').done(function () {
 
-        //Load app again
+        // Load app again
         loadSudokuList(model);
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
@@ -812,30 +773,22 @@ function resetList(model) {
 
 function toggleReady(model) {
 
-    $.post(serverUrl + 'toggleready/' + model.SudokuId()).done(function () {
+    $.post(baseApiUrl + 'toggleready/' + model.SudokuId()).done(function () {
 
-        //Toggle
+        // Toggle
         model.Ready(!model.Ready());
-
-        //Assign Types
-        //ko.utils.arrayForEach(model.Groups(), function (group) {
-        //    ko.utils.arrayForEach(group.Squares(), function (square) {
-        //        if (square.Value() === 0)
-        //            square.AssignType(model.Ready() ? 1 : 0);
-        //    });
-        //});
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
 function toggleAutoSolve(model) {
 
-    $.post(serverUrl + 'toggleautosolve/' + model.SudokuId()).done(function () {
+    $.post(baseApiUrl + 'toggleautosolve/' + model.SudokuId()).done(function () {
 
-        //Update UI
+        // Update UI
         model.AutoSolve(!model.AutoSolve());
 
-        //If autosolve, load details
+        // If autosolve, load details
         if (model.AutoSolve()) { loadSudokuDetails(model); }
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
@@ -843,75 +796,60 @@ function toggleAutoSolve(model) {
 
 function solve(model) {
 
-    $.post(serverUrl + 'solve/' + model.SudokuId()).done(function () {
+    $.post(baseApiUrl + 'solve/' + model.SudokuId()).done(function () {
 
-        //Load details
+        // Load details
         loadSudokuDetails(model);
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
 }
 
-function resetSudoku(model) {
+function reset(model) {
 
-    $.post(serverUrl + 'resetsudoku/' + model.SudokuId()).done(function () {
+    $.post(baseApiUrl + 'reset/' + model.SudokuId()).done(function () {
 
-        //Load details
+        // Load details
         loadSudokuDetails(model);
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
 
 }
 
-//TODO Should there be generic functions js file?
+// TODO Should there be generic functions js file?
 function capitaliseFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-//Loading panel
+// Loading panel
 $(function () {
     $(this).ajaxStart(function () {
 
         // Hide previous error message
         hideMessagePanel();
 
-        // Block UI
-        //$.blockUI({
-        //    message: $('#loadingMessagePanel').html(),
-        //    css: {
-        //        left: '45%',
-        //        width: '10%',
-        //        padding: '10px 0'
-        //    }
-        //});
-
-        $("#loadingMessagePanel").dialog('open');
+        $('#loadingMessagePanel').dialog('open');
 
     }).ajaxStop(function () {
 
-        $("#loadingMessagePanel").dialog('close');
+        $('#loadingMessagePanel').dialog('close');
 
-        // Unblock UI
-        //$.unblockUI();
     })
 });
 
-//Ajax error handling
+// Ajax error handling
 function handleError(jqXHR) {
 
-    //Get the message
+    // Get the message
     var validationResult = $.parseJSON(jqXHR.responseText).Message;
 
-    //Show
+    // Show
     showMessagePanel(validationResult);
 }
 
-// Handle the delete key
+// Handle the delete key; remove selected square's value
 $(document).keydown(function (e) {
 
     if (e.keyCode !== 46)
-        return;
-
-    if (sudokuViewModel === null)
         return;
 
     if (sudokuViewModel.SelectedSquare() === null)
@@ -922,12 +860,24 @@ $(document).keydown(function (e) {
     if (!selectedSquare.IsAvailable()) {
         selectedSquare.RemoveValue();
     }
-    else {
-        sudokuViewModel.SetSelectedSquare(null);
-    }
 });
 
-$("#messagePanelClear").live('click', function () {
+// Handle the escape key; remove selected square
+$(document).keyup(function (e) {
+    
+    if (e.keyCode !== 27)
+        return;
+
+    if (sudokuViewModel.SelectedSquare() !== null)
+        sudokuViewModel.SetSelectedSquare(null);
+
+    if (sudokuViewModel.SelectedNumber() !== null)
+        sudokuViewModel.SetSelectedNumber(null);
+
+});
+
+// Panels
+$('#messagePanelClear').live('click', function () {
     hideMessagePanel();
 });
 
@@ -938,84 +888,4 @@ function showMessagePanel(message) {
 
 function hideMessagePanel() {
     $('#messagePanel').fadeTo(200, 0.01);
-}
-
-function addDebugMessage(message) {
-    $('#debugPanel').html($('#debugPanel').html() + '<br>' + message);
-    $('#debugPanel').show();
-}
-
-function clearDebugPanel() {
-    $('#debugPanel').hide();
-    $('#debugPanel').html('');
-}
-
-//Calculates the square id by using it's group + square position
-//This calculation is necessary just because the normal order of the squares (in Engine) goes horizontally;
-//If the order would be compatible with this UI (square group type based), this calculation wouldn't be necessary at all!
-//Current order of the squares in Engine;
-//1st group: 1-2-3-4-5-6-7-8-9
-//2nd group: 10-11-12-13-14-15-16-17-18
-//Instead of this;
-//1st group: 1-2-3 - 2nd group: 10-11-12
-//           4-5-6              13-14-15
-//           7-8-9              16-17-18
-function calculateSquareId(size, groupCounter, squareCounter) {
-
-    //Square root of the size
-    var sqrtSize = Math.sqrt(size);
-
-    //Small vertical modifier (on it's own group level);
-    //for square counter / modifier: 1 / 1
-    //                               2 / 2
-    //                               3 / 3
-    //                               4 / 1
-    //                               5 / 2
-    //                               6 / 3
-    //                               7 / 1
-    //                               8 / 2
-    //                               9 / 3
-    var smallVerticalModifier = squareCounter % sqrtSize == 0 ? sqrtSize : squareCounter % sqrtSize;
-
-    //Small horizontal modifier (on it's own group level);
-    //for square counter / index / modifier: 1 / 0 / 0
-    //                                       2 / 0 / 0
-    //                                       3 / 0 / 0
-    //                                       4 / 1 / 9
-    //                                       5 / 1 / 9
-    //                                       6 / 1 / 9
-    //                                       7 / 2 / 18
-    //                                       8 / 2 / 18
-    //                                       9 / 2 / 18
-    var smallHorizontalIndex = Math.floor((squareCounter - 1) / sqrtSize);
-    var smallHorizontalModifier = (smallHorizontalIndex * size);
-
-    //Big vertical modifier (on grid level);
-    //for group counter / index / modifier: 1 / 0 / 0
-    //                                      2 / 1 / 3
-    //                                      3 / 2 / 6
-    //                                      4 / 0 / 0
-    //                                      5 / 1 / 3
-    //                                      6 / 2 / 6
-    //                                      7 / 0 / 0
-    //                                      8 / 1 / 3
-    //                                      9 / 2 / 6
-    var bigVerticalIndex = (groupCounter % sqrtSize == 0 ? sqrtSize : groupCounter % sqrtSize) - 1;
-    var bigVerticalModifier = (bigVerticalIndex * sqrtSize);
-
-    //Big horizontal modifier (on grid level);
-    //for group counter / index / modifier: 1 / 0 / 0
-    //                                      2 / 0 / 0
-    //                                      3 / 0 / 0
-    //                                      4 / 1 / 27
-    //                                      5 / 1 / 27
-    //                                      6 / 1 / 27
-    //                                      7 / 2 / 54
-    //                                      8 / 2 / 54
-    //                                      9 / 2 / 54
-    var bigHorizontalIndex = Math.floor((groupCounter - 1) / sqrtSize);
-    var bigHorizontalModifier = (bigHorizontalIndex * size * sqrtSize);
-
-    //Sum all the modifiers and return
-    return (smallVerticalModifier + smallHorizontalModifier + bigVerticalModifier + bigHorizontalModifier);
 }

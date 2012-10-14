@@ -8,7 +8,7 @@ body {
     border-top: solid 10px #000;
     color: #333;
     font-size: .85em;
-    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif !important;
     margin: 0;
     padding: 0;
 }
@@ -113,13 +113,27 @@ h5, h6 {
     max-width: 960px;
 }
 
-#todoHeader {
-    
+.panel {
+    margin: 20px 0 0 20px;
 }
 
-#todoPanel {
-    display: none;
+/* loading message panel */
+#loadingMessagePanel {
+    width: 100px;
+    text-align: center;
 }
+
+#loadingMessageText {
+    display: block;
+}
+
+#loadingMessageImage {
+    border: 0;
+}
+
+/* jquery ui dialog no title bar*/
+.ui-dialog-notitlebar .ui-dialog-titlebar { display: none; }
+
 
 .sudokuItem {
     /*list-style-type: none;*/
@@ -131,13 +145,29 @@ div.solve {
     display: inline;
 }
 
+#detailsPanel {
+    float: left;
+    width: 350px;
+}
+
+#selectedSquarePanel {
+    float: left;
+    width: 150px;
+}
+
+#selectedNumberPanel {
+    float: left;
+    width: 150px;
+}
+
 #legendPanel {
-    margin: 20px 0 0 0;
+    float: left;
+    clear: left;
 }
 
 #messagePanel {
-    margin: 20px 0 0 0;
-    display: none;
+    float: left;
+    clear: left;
 }
 
 #messagePanelClear {
@@ -152,13 +182,9 @@ div.solve {
     font-weight: bold;
 }
 
-#selectedSquarePanel {
-    margin: 20px 0 0 0;
-}
-
 #numbersPanel {
     float: left;
-    margin: 20px 20px 0 0;
+    clear: left;
 }
 
 .numberGroupContainer {
@@ -207,9 +233,8 @@ div.solve {
 .gridPanel {
     width: 429px; /* If this will stay fixed, it can only work for size 9 sudoku ?! */
     border: 1px solid gray;
-    overflow: auto;
+    /* overflow: auto; */
     float: left;
-    margin: 20px 20px 0 0;    
 }
 
 #valueGridPanel {
@@ -243,7 +268,7 @@ div.solve {
         background-color: #ffff99;
     }
 
-    .selected {
+    .activeSelected {
         background-color: #ccddff;
         border: 1px dashed #6699ff;
     }
@@ -252,7 +277,7 @@ div.solve {
         background-color: #6699ff !important;
     }
 
-    .related_selected {
+    .relatedSelected {
         background-color: #ccddff;
     }
     
@@ -345,7 +370,6 @@ div.solve {
 
 #hintsPanel {
     float: left;
-    margin: 20px 20px 0 0;
 }
 
 .hintItem {
@@ -354,19 +378,6 @@ div.solve {
 
 #groupNumberAvailabilityPanel {
     float: left;
-    margin: 20px 20px 0 0;
-}
-
-#debugPanel {
-    clear: both;
-    float: left;
-    border: 1px solid red;
-    background-color: white;
-    color: red;
-    line-height: 1em;
-    overflow: auto;
-    width: 100%;
-    display: none;
 }
 
 #body {
@@ -919,3 +930,10 @@ ul#social li {
             width: auto;
         }
 }
+
+input[type=text], textarea {
+    width: 200px;
+}
+
+/* New sudoku dialog */
+#newSudokuDialog em { font-weight: bold; padding-right: 1em; vertical-align: top; }

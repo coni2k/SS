@@ -4,13 +4,13 @@ using System.Collections.Generic;
 namespace SudokuSolver.Engine
 {
     /// <summary>
-    /// Group of squares (for horizontal, vertical and square groups)
+    /// Group of squares (for square, horizontal, vertical type)
     /// </summary>
     public class Group
     {
         #region Members
 
-        private ICollection<Square> squares = null;
+        private ICollection<Square> _Squares = null;
 
         #endregion
 
@@ -29,28 +29,27 @@ namespace SudokuSolver.Engine
         #region Properties
 
         /// <summary>
-        /// Gets the id of the group
-        /// Every type has it's own set of Ids; horizontal 1, 2 and vertical 1, 2..
+        /// Id of the group
         /// </summary>
         public int Id { get; private set; }
 
         /// <summary>
-        /// Gets the type of the group
+        /// Type of the group
         /// </summary>
         public GroupTypes GroupType { get; private set; }
 
         /// <summary>
-        /// Gets the parent sudoku class
+        /// Parent sudoku class
         /// </summary>
         private Sudoku Sudoku { get; set; }
 
         /// <summary>
-        /// Gets the list of squares which this group is holding
+        /// List of squares that group contains
         /// </summary>
-        public IEnumerable<Square> Squares { get { return squares; } }
+        public IEnumerable<Square> Squares { get { return _Squares; } }
 
         /// <summary>
-        /// Gets the list of used squares
+        /// List of used (with a value) squares
         /// </summary>
         public IEnumerable<Square> UsedSquares
         {
@@ -81,7 +80,7 @@ namespace SudokuSolver.Engine
             Id = id;
             GroupType = type;
             Sudoku = sudoku;
-            squares = new List<Square>(Sudoku.Size);
+            _Squares = new List<Square>(Sudoku.Size);
         }
 
         #endregion
@@ -93,7 +92,7 @@ namespace SudokuSolver.Engine
             square.NumberChanging += new Square.SquareEventHandler(Square_NumberChanging);
             square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
             square.AvailabilityChanged += new Square.SquareEventHandler(Square_AvailabilityChanged);
-            squares.Add(square);
+            _Squares.Add(square);
         }
 
         /// <summary>

@@ -25,8 +25,8 @@
 
     public enum GroupTypes
     {
+        Square, // Default group
         Horizontal,
-        Vertical,
-        Square
+        Vertical
     }
 }

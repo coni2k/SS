@@ -9,9 +9,9 @@ namespace SudokuSolver.Engine
     {
         private Square Square { get; set; }
         public Number Number { get; private set; }
+        internal Square SquareTypeSource { get; set; }
         internal Square HorizontalTypeSource { get; set; }
         internal Square VerticalTypeSource { get; set; }
-        internal Square SquareTypeSource { get; set; }
 
         internal Availability(Square square, Number number)
         {
@@ -26,9 +26,11 @@ namespace SudokuSolver.Engine
 
         public bool IsAvailable
         {
-            get { return HorizontalTypeSource == null
-                      && VerticalTypeSource == null
-                      && SquareTypeSource == null;
+            get
+            {
+                return SquareTypeSource == null
+                    && HorizontalTypeSource == null
+                    && VerticalTypeSource == null;
             }
         }
     }

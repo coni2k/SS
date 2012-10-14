@@ -4,7 +4,10 @@ http://www.iui-js.org/powered-by/index.html?id=esudoku
 
 ---
 Wishlist:
+. Minified versions?
 . Only retrieve "changes" from the server; squares + numbers + availabilites etc. ("used" version don't work in case of removed objects)
+. Square Id Order Type - currently it's square type by default - horizontal and vertical as well?
+. Horizontal + Vertical groups for square on client-side? And use them with ToggleActiveSelected() (Is it possible to retrieve this info from the server?)
 . Database connection?
 . Unit testing?
 . Sudoku generator
@@ -19,28 +22,49 @@ Wishlist:
 powershell start-process -WindowStyle Hidden D:\Development\Libraries\APMI\WebRequester\20111004\APMI.WebRequester.exe http://localhost:56105/default.html
 
 ---
-- clear the cases
-101, 102, hard etc.?
+. change the repository name
 
-- fatih's sample? and new samples!
+. check helpers + clean + add to the solution?
 
-- change the repository name
+. work on cases - make them more clear + have proper samples for invalid cases as well
+
+. check square size calculations on different sizes - that part is not good enough
+.. also do something about number counters
+
+. clean up; css etc. + check TODO in general!
+
+. try to have a new (initialized) sudoku on the page - try to decrease the first page load time
 
 ---
+BIG HINT ISSUE!
+
+. fatih's sample? and new samples!
+
 . CASE 1: ID 5, square 1 cannot have any number except 1.
 ID 8, 3. grid cannot have any number except 1,2,3.
 
 . CASE 2: ID 1, square 36 cannot have number 9.
 
-. add samples for different sizes - 4 + 9 (OK) + 16 + 25? + wrong cases; invalid
-sudoku, invalid number, invalid square, invalid assignment!
+. bir grupta;
+atanabýlecek 1 numara kaldýysa, kalan numara dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 2 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 3 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 4 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 5 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 6 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 7 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
+atanabýlecek 8 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
 
-size 4 sudoku is okay
-but UI calculations are terrible - it takes too much time to apply them
-try to create some shortcut css block for different size - 2,3,4,5 = 4,9,16,25?
-also in size 4, counts are dissappeared ?! - how to display them?
+. bir availability assign edildiginde (false) oldugunda, gruptaki diger squarelerin yeni availability listelerine o rakam ekleniyor olabilir..? ama sonra nasýl çýkaracaðýz?
 
-. clean up; css etc. + check TODO in general!
+. diger SIKISMA caseleri neler olabilir? onlari arastir
+
+. eger bir numaranin konulabilecegi 2 kare varsa ve karedeki diger numara da sadece o 2 kareye konulabiliyorsa, o zaman SIKISMA var ihtimali uzerinde duruyoruz
+ancak bu durumda sadece identical karelerde oluyormuþ gibi de gelmiyor.
+bu olayý anlamak için daha fazla case gerekiyor gibi ?!?!?!
+
+. first grade availability - only from its own group?
+and is there any second grade availability?
 
 ---
 about hints, add these cases;
@@ -54,46 +78,27 @@ and also double check the zero case?
 also hints should be a dynamic list?
 
 ---
-try to have a new (initialized) sudoku on the page - try to decrease the first page load time
+. how about; public class Square + internal (or private) class Availability() + internal UpdateAvailability()
 
----
-bir grupta; 
-atanabýlecek 1 numara kaldýysa, kalan numara dýþýndakilerin hiçbiri atanamaz
-atanabýlecek 2 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
-atanabýlecek 3 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
-atanabýlecek 4 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
-atanabýlecek 5 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
-atanabýlecek 6 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
-atanabýlecek 7 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
-atanabýlecek 8 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
-
----
-bir availability assign edildiginde (false) oldugunda, gruptaki diger squarelerin yeni availability listelerine o rakam ekleniyor olabilir..? ama sonra nasýl çýkaracaðýz?
-
----
-diger SIKISMA caseleri neler olabilir? onlari arastir
-
-eger bir numaranin konulabilecegi 2 kare varsa ve karedeki diger numara da sadece o 2 kareye konulabiliyorsa, o zaman SIKISMA var ihtimali uzerinde duruyoruz
-
-ancak bu durumda sadece identical karelerde oluyormuþ gibi de gelmiyor.
-bu olayý anlamak için daha fazla case gerekiyor gibi ?!?!?!
-
----
-first grade availability - only from its own group?
-and is there any second grade availability?
-
----
-how about; public class Square + internal (or private) class Availability() + internal UpdateAvailability()
-
----
 . relatives instead of related?
 
----
-pass squares to group constructor - to make square property readonly and remove setsquare method
+. pass squares to group constructor - to make square property readonly and remove setsquare method
 not that easy, first it generates the groups and then squares.. ?!
 
----
-webapi.tester doesnt work at the moment (after the package updates) - check webapiclient!
+. work on ui side javas. objects?
+is it possible to map to server objects? how to extend?
+sudoku and general viewmodel seperation
+and sudoku class instead of sudokuContainer? + square class instead of squareContainer (during post operations)
+
+. default font-family and size for select, input etc. (override ui-widget css)
+
+. server side validation for post operations (new sudoku, updatesquare)
+
+. mini-maxi size square values styling ?!
+
+. webapi.tester doesnt work at the moment (after the package updates) - check webapiclient!
+
+. probably console tester doesnt work - after horizontal to square id change
 
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 HOT STUFF;
@@ -104,28 +109,11 @@ dynamic hints?
 . sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
 history.js?!
 
-. horizontal + vertical groups for square? and then use them as well with ToggleSelected()
-these calculations can come from the server?
-
-. new sudoku window with title + desc + size
-
-. make the cases more clear - have a sample for the ones that have a problem
-
-. is it possible to load availabilities async. way?
-
 . what is webgrease? and learn more about modernizer! and how about nav.js?
 
-. try to remove calculateId for square! would it help?
-sample sudoku ids need to be updated!!! and probably square.Groups calculation ?!
+. looks like there is a problem with hints load / refresh after reset?
 
-
-work on loading message
-http://stackoverflow.com/questions/1023072/jquery-ui-dialog-how-to-initialize-without-a-title-bar
-
-http://api.jqueryui.com/dialog/#option-title
-
----
-Solving Methods?;
+. Solving Methods?;
 . Square's last no
 . Number's last square
 . Group's last square

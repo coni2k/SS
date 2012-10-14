@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace SudokuSolver.Engine
 {
     public class Square
     {
-        private List<Availability> _Availabilities = null;
+        private ICollection<Availability> _Availabilities = null;
 
         #region Events
 
@@ -57,7 +58,7 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Hold the list of available numbers
+        /// Holds the list of available numbers
         /// IMPORTANT This doesn't mean that this square is available or not.
         /// Even if this square has a value, this list may contain other numbers as available.
         /// The availability will only be determined by looking whether the related squares have that number or not.
@@ -65,9 +66,7 @@ namespace SudokuSolver.Engine
         public IEnumerable<Availability> GetAvailabilities()
         {
             return _Availabilities;
-            // get;
-            // private set;
-    }
+        }
 
         /// <summary>
         /// Unavailable ones
@@ -75,11 +74,8 @@ namespace SudokuSolver.Engine
         public IEnumerable<Availability> GetUsedAvailabilities()
         {
             return GetAvailabilities().Where(x => !x.IsAvailable);
-
             //get { return GetAvailabilities().Where(x => !x.IsAvailable); }
         }
-
-        // public Group Hint_SquareGroup { get; internal set; }
 
         #endregion
 
@@ -113,11 +109,9 @@ namespace SudokuSolver.Engine
             }
 
             // Available numbers; assign all numbers, except zero
-            //var availabilities = new List<Availability>(this.Sudoku.Size);
             _Availabilities = new List<Availability>(this.Sudoku.Size);
             foreach (var sudokuNumber in this.Sudoku.GetNumbersExceptZero())
                 _Availabilities.Add(new Availability(this, sudokuNumber));
-            //this.Availabilities = availabilities;
         }
 
         #endregion
@@ -247,7 +241,7 @@ namespace SudokuSolver.Engine
     }
 
     /// <summary>
-    /// To be used to just update the sudoku
+    /// To be used to update the square from client-side
     /// </summary>
     public class SquareContainer
     {

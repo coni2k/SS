@@ -40,17 +40,9 @@ namespace SudokuSolver.Engine
 
         #region Methods
 
-        //public int GetCount()
-        //{
-        //    return Sudoku.Squares.Count(s => s.Number.Equals(this));
-        //}
-
         public int Count
         {
-            get
-            {
-                return Sudoku.GetSquares().Count(s => s.Number.Equals(this));
-            }
+            get { return Sudoku.GetSquares().Count(s => s.Number.Equals(this)); }
         }
 
         public override string ToString()

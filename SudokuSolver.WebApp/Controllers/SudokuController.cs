@@ -57,9 +57,19 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         [HttpPost]
-        [ActionName("item")]
-        public HttpResponseMessage Post()
+        [ActionName("newsudoku")]
+        public HttpResponseMessage NewSudoku(SudokuContainer container)
         {
+            // Validate
+            if (container == null)
+                throw new ArgumentNullException("container");
+            
+            // Size?
+
+            // Title?
+            if (string.IsNullOrWhiteSpace(container.Title))
+                throw new ArgumentNullException("title");
+
             //Id of the container
             //TODO Thread safety?
             int nextId = 1;
@@ -70,9 +80,10 @@ namespace SudokuSolver.WebApp.Controllers
             }
 
             // Create and add a new sudoku
-            var sudoku = new Sudoku(9);
+            var sudoku = new Sudoku(container.Size);
             sudoku.SudokuId = nextId;
-            sudoku.Title = string.Format("New sudoku {0}", nextId.ToString());
+            sudoku.Title = container.Title;
+            sudoku.Description = container.Description;
             CacheManager.SudokuList.Add(sudoku);
 
             //Response
@@ -140,18 +151,18 @@ namespace SudokuSolver.WebApp.Controllers
 
         [HttpPost]
         [ActionName("reset")]
-        public void Reset()
-        {
-            CacheManager.LoadSamples();
-        }
-
-        [HttpPost]
-        [ActionName("resetsudoku")]
-        public void ResetSudoku(int id)
+        public void Reset(int id)
         {
             var sudoku = ValidateAndGetSudoku(id);
 
             sudoku.Reset();
+        }
+
+        [HttpPost]
+        [ActionName("resetlist")]
+        public void ResetList()
+        {
+            CacheManager.LoadSamples();
         }
 
         Sudoku ValidateAndGetSudoku(int id)
@@ -164,7 +175,6 @@ namespace SudokuSolver.WebApp.Controllers
             {
                 var message = string.Format("Sudoku with Id = {0} not found", id.ToString());
                 var response = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
-                //responseMessage.ReasonPhrase = "Sudoku ID Not Found";                
                 throw new HttpResponseException(response);
             }
 
