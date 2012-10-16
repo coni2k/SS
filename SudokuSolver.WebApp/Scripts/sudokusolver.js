@@ -149,6 +149,9 @@ function SudokuViewModel() {
                 Cancel: function () {
                     $(this).dialog('close');
                 }
+            },
+            open: function () {
+                $(this).parents('.ui-dialog-buttonpane button:eq(1)').focus();
             }
         });
     }

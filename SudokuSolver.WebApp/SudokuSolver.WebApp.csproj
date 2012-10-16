@@ -237,7 +237,6 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <Content Include="Scripts\_references.js" />
-    <Content Include="Scripts\AjaxLogin.js" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
