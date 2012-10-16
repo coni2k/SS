@@ -1,4 +1,37 @@
-﻿function SudokuViewModel() {
+﻿// Setup
+
+// jQuery ajax setup
+$.ajaxSetup({
+    contentType: 'application/json; charset=utf-8'
+});
+
+// Loading message setup
+$("#loadingMessagePanel").dialog({
+    dialogClass: 'ui-dialog-notitlebar',
+    autoOpen: true,
+    resizable: false,
+    height: 60,
+    width: 250,
+    modal: true
+});
+
+// Local variables
+var baseApiUrl = 'api/Sudoku/';
+var sudokuViewModel = null;
+
+// And start the app
+$(function () {
+
+    sudokuViewModel = new SudokuViewModel();
+    ko.applyBindings(sudokuViewModel);
+
+    //Load the app
+    loadSudokuList(sudokuViewModel);
+
+});
+
+// Sudoku view model - TODO This needs to be seperated to viewModel and Sudoku class!
+function SudokuViewModel() {
     var self = this;
 
     // Basics
@@ -22,8 +55,9 @@
     self.SetSelectedSquare = function (square) {
 
         // Remove the previous selected square
-        if (self.SelectedSquare() !== null)
+        if (self.SelectedSquare() !== null) {
             self.SelectedSquare().SetActiveSelect(false);
+        }
 
         // If the new value is null
         if (square === null) {
@@ -45,8 +79,9 @@
     self.SetSelectedNumber = function (sudokuNumber) {
 
         // Remove the previous selected number
-        if (self.SelectedNumber() !== null)
+        if (self.SelectedNumber() !== null) {
             self.SelectedNumber().SetActiveSelect(false);
+        }
 
         // If the new value is null
         if (sudokuNumber === null) {
@@ -77,8 +112,9 @@
 
                     // Validate the form
                     var isValid = $('#newSudokuForm').validate().form();
-                    if (!isValid)
+                    if (!isValid) {
                         return false;
+                    }
 
                     // Close the dialog
                     $(this).dialog('close');
@@ -242,8 +278,9 @@
             ko.utils.arrayForEach(group.Squares(), function (square) {
 
                 // If it matches, add to the list
-                if (square.Value() === number)
+                if (square.Value() === number) {
                     matchedSquares.push(square);
+                }
             });
         });
 
@@ -352,8 +389,9 @@ function Square(group, id) {
 
         // Related square selected
         ko.utils.arrayForEach(self.Group.Squares(), function (square) {
-            if (square !== self)
+            if (square !== self) {
                 square.IsRelatedSelected(isActive);
+            }
         });
     };
 
@@ -475,10 +513,12 @@ function loadSudoku(model, sudoku) {
     model.AutoSolve(sudoku.AutoSolve);
 
     // Grid
-    if (initOrRefreshSudoku)
+    if (initOrRefreshSudoku) {
         initSudoku(model);
-    else
+    }
+    else {
         refreshGrid(model);
+    }
 
     // Load details
     loadSudokuDetails(model);
@@ -519,7 +559,7 @@ function initSudoku(model) {
     // Create an array for square type groups
     model.Groups([]);
     var size = model.Size();
-    for (groupCounter = 1; groupCounter <= size; groupCounter++) {
+    for (var groupCounter = 1; groupCounter <= size; groupCounter++) {
 
         // Create group
         var group = new Group(model);
@@ -530,7 +570,7 @@ function initSudoku(model) {
 
             // Create square
             var squareId = squareCounter + ((groupCounter - 1) * size);
-            square = new Square(group, squareId);
+            var square = new Square(group, squareId);
 
             // Availability loop
             for (var availabilityCounter = 0; availabilityCounter < size; availabilityCounter++) {
@@ -562,7 +602,7 @@ function initSudoku(model) {
         var numberGroup = new Object();
         numberGroup.Numbers = new Array();
 
-        for (numberCounter = 1; numberCounter <= sqrtSize; numberCounter++) {
+        for (var numberCounter = 1; numberCounter <= sqrtSize; numberCounter++) {
 
             var sudokuNumber = new SudokuNumber(model);
             sudokuNumber.Value = numberCounter + ((groupCounter - 1) * sqrtSize);
@@ -849,11 +889,13 @@ function handleError(jqXHR) {
 // Handle the delete key; remove selected square's value
 $(document).keydown(function (e) {
 
-    if (e.keyCode !== 46)
+    if (e.keyCode !== 46) {
         return;
+    }
 
-    if (sudokuViewModel.SelectedSquare() === null)
+    if (sudokuViewModel.SelectedSquare() === null) {
         return;
+    }
 
     var selectedSquare = sudokuViewModel.SelectedSquare();
 
@@ -864,16 +906,18 @@ $(document).keydown(function (e) {
 
 // Handle the escape key; remove selected square
 $(document).keyup(function (e) {
-    
-    if (e.keyCode !== 27)
+
+    if (e.keyCode !== 27) {
         return;
+    }
 
-    if (sudokuViewModel.SelectedSquare() !== null)
+    if (sudokuViewModel.SelectedSquare() !== null) {
         sudokuViewModel.SetSelectedSquare(null);
+    }
 
-    if (sudokuViewModel.SelectedNumber() !== null)
+    if (sudokuViewModel.SelectedNumber() !== null) {
         sudokuViewModel.SetSelectedNumber(null);
-
+    }
 });
 
 // Panels
