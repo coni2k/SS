@@ -13,8 +13,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>
-            Sudoku Solver</h1>
+        <h1>Sudoku Solver</h1>
     </div>
     <div class="contentContainer">
         <div class="contentLeft">
@@ -40,23 +39,25 @@
                 <br />
                 Ready: <a id="toggleReady" data-bind="click: ToggleReady" href="#"><span data-bind="text: ReadyFormatted">
                 </span></a>
+                |
+                <span id="solvePanel" data-bind="visible: Ready">Autosolve:
+                    <a id="toggleAutoSolve" data-bind="click: ToggleAutoSolve" href="#">
+                        <span data-bind="text: AutoSolveFormatted"></span>
+                    </a>
+                    <span class="solve" data-bind="visible: !AutoSolve()">- <a data-bind="click: Solve"
+                        href="#">Solve now</a>
+                    </span>
+                </span>
+                <span data-bind="visible: Resettable">
+                    - 
+                    <a data-bind="click: Reset" href="#">Reset</a>
+                </span>
                 <br />
-                <div id="solvePanel" data-bind="visible: Ready">
-                    Autosolve: <a id="toggleAutoSolve" data-bind="click: ToggleAutoSolve" href="#"><span
-                        data-bind="text: AutoSolveFormatted"></span></a>
-                    <div class="solve" data-bind="visible: !AutoSolve()">
-                        <span>- </span><a data-bind="click: Solve" href="#">Solve now</a>
-                    </div>
-                </div>
-                <div id="resetPanel" data-bind="visible: Resettable">
-                    Reset: <a data-bind="click: Reset" href="#"><span>Reset</span> </a>
-                </div>
-                <div id="displayOptionsPanel">
-                    Display: <span>Values | </span><span>Availabilities: </span><a data-bind="click: ToggleDisplayAvailabilities"
-                        href="#"><span data-bind="text: DisplayAvailabilitiesFormatted"></span></a><span>|
+                <span>Display: Values | Availabilities: <a data-bind="click: ToggleDisplayAvailabilities"
+                    href="#"><span data-bind="text: DisplayAvailabilitiesFormatted"></span></a><span>|
                     </span><span>IDs: </span><a data-bind="click: ToggleDisplayIDs" href="#"><span data-bind="text: DisplayIDsFormatted">
                     </span></a>
-                </div>
+                </span>
             </div>
             <div id="selectedSquarePanel" class="panel">
                 <strong>Selected square</strong>
@@ -148,42 +149,42 @@
     <!-- New sudoku dialog -->
     <div id="newSudokuDialog" title="New sudoku" class="hide">
         <form id="newSudokuForm">
-        <table>
-            <tr>
-                <td>
-                    <label for="newSudokuSize">
-                        Size:
-                    </label>
-                </td>
-                <td>
-                    <select id="newSudokuSize" name="newSudokuSize" class="required">
-                        <option value="4">4</option>
-                        <option value="9" selected="selected">9</option>
-                        <option value="16">16</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="newSudokuTitle">
-                        Title:
-                    </label>
-                </td>
-                <td>
-                    <input id="newSudokuTitle" name="newSudokuTitle" type="text" class="required" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="newSudokuDescription">
-                        Description:
-                    </label>
-                </td>
-                <td>
-                    <textarea id="newSudokuDescription" name="newSudokuDescription"></textarea>
-                </td>
-            </tr>
-        </table>
+            <table>
+                <tr>
+                    <td>
+                        <label for="newSudokuSize">
+                            Size:
+                        </label>
+                    </td>
+                    <td>
+                        <select id="newSudokuSize" name="newSudokuSize" class="required">
+                            <option value="4">4</option>
+                            <option value="9" selected="selected">9</option>
+                            <option value="16">16</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="newSudokuTitle">
+                            Title:
+                        </label>
+                    </td>
+                    <td>
+                        <input id="newSudokuTitle" name="newSudokuTitle" type="text" class="required" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="newSudokuDescription">
+                            Description:
+                        </label>
+                    </td>
+                    <td>
+                        <textarea id="newSudokuDescription" name="newSudokuDescription"></textarea>
+                    </td>
+                </tr>
+            </table>
         </form>
     </div>
     <!-- Reset dialog -->
@@ -199,32 +200,33 @@
     <!--<script type="text/html" id="resetListDialog-template">-->
     <div id="resetListDialog" title="Reset list?" class="hide">
         <p>
-            Are you sure you want to reset the list?</p>
+            Are you sure you want to reset the list?
+        </p>
     </div>
     <!--</script>-->
     <!-- Sudoku grid template -->
     <script type="text/html" id="grid-template">
-    <div data-bind="foreach: Groups">
-        <div class="groupItem" data-bind="foreach: Squares">
-            <div data-bind="click: $root.SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, relatedSelected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd() }"
-                class="squareItem">
-                <div data-bind="text: ValueFormatted, css: { hide: $parents[1].DisplayMode !== 'value' }"
-                    class="squareValue" />
-                <div data-bind="foreach: Availabilities, css: { hide: $parents[1].DisplayMode !== 'availability' }"
-                    class="squareAvailabilities">
-                    <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
-                        class="availabilityItem"></span>
-                </div>
-                <!--                <div data-bind="foreach: Availabilities2, css: { hide: $parents[1].DisplayMode !== 'availability2' }"
+        <div data-bind="foreach: Groups">
+            <div class="groupItem" data-bind="foreach: Squares">
+                <div data-bind="click: $root.SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, relatedSelected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd() }"
+                    class="squareItem">
+                    <div data-bind="text: ValueFormatted, css: { hide: $parents[1].DisplayMode !== 'value' }"
+                        class="squareValue" />
+                    <div data-bind="foreach: Availabilities, css: { hide: $parents[1].DisplayMode !== 'availability' }"
+                        class="squareAvailabilities">
+                        <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
+                            class="availabilityItem"></span>
+                    </div>
+                    <!--                <div data-bind="foreach: Availabilities2, css: { hide: $parents[1].DisplayMode !== 'availability2' }"
                     class="squareAvailabilities">
                     <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
                         class="availabilityItem"></span>
                 </div>-->
-                <span data-bind="text: SquareId, css: { hide: $parents[1].DisplayMode !== 'id' }"
-                    class="squareId"></span>
+                    <span data-bind="text: SquareId, css: { hide: $parents[1].DisplayMode !== 'id' }"
+                        class="squareId"></span>
+                </div>
             </div>
         </div>
-    </div>
     </script>
     <!-- Html templates End -->
     <script src="Scripts/sudokusolver.js" type="text/javascript"></script>

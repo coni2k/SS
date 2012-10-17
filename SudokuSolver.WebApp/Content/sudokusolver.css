@@ -5,12 +5,17 @@
 }
 
 body {
-    border-top: solid 10px #000;
-    color: #333;
-    font-size: .85em;
-    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif !important;
+    color: #333 !important;
     margin: 0;
     padding: 0;
+    font-size: 0.95em !important;
+    font-family: Tahoma, Geneva, sans-serif !important;
+    line-height: 1.7em !important;
+}
+
+.ui-widget {
+    font-size: 0.95em !important;
+    font-family: Tahoma, Geneva, sans-serif !important;
 }
 
 a:link, a:visited,
@@ -202,7 +207,7 @@ div.solve {
 
 /* Same with squareItem ?! */
 .numberItem {
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: bold;
     text-align: center;
     
@@ -305,7 +310,7 @@ div.solve {
 .squareId {
     display: block;
     /* float:  left; */
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: bold;
     text-align: center;
     width: 45px;
@@ -323,7 +328,7 @@ div.solve {
 .squareValue {
     display: block;
     /* float:  left; */
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: bold;
     text-align: center;
     width: 45px;

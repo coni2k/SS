@@ -16,19 +16,18 @@ Wishlist:
 . Try to use web requester (needs to be included as nuget package);
 powershell start-process -WindowStyle Hidden D:\WebRequester.exe http://localhost:56107/default.html
 
----
-. change the repository name
-
-. check helpers + clean + add to the solution?
-
-. work on cases - make them more clear + have proper samples for invalid cases as well
-
-. check square size calculations on different sizes - that part is not good enough
-.. also do something about number counters
-
-. clean up; css etc. + check TODO in general!
-
-. try to have a new (initialized) sudoku on the page - try to decrease the first page load time
+Research:
+. modernizr: currently we dont use modernizer, can there be a case that we should use it? what might not be supported?
+http://modernizr.com/docs/#installing
+https://github.com/Modernizr/Modernizr/wiki/HTML5-Cross-browser-Polyfills
+. webgrease: javascript + css compile+check+bundle? needs sample
+http://www.asp.net/mvc/tutorials/mvc-4/bundling-and-minification
+http://kenhaines.net/post/2012/06/25/How-to-use-Webgrease-Configuration-Files.aspx
+http://codebetter.com/howarddierking/2012/06/04/web-optimization-in-visual-studio-2012-rc/
+http://kenhaines.net/post/2012/06/09/WebGrease-As-seen-in-Visual-Studio-2012.aspx
+http://bartwullems.blogspot.nl/2012/07/minification-and-bundling-in-aspnet.html
+. nav.js: browser's history/navigation? needs sample - similar to history.js?
+http://blog.stevensanderson.com/category/knockout/
 
 ---
 BIG HINT ISSUE!
@@ -73,6 +72,21 @@ and also double check the zero case?
 also hints should be a dynamic list?
 
 ---
+. change the repository name
+
+. merge the branches!
+
+. check helpers + clean + add to the solution?
+
+. work on cases - make them more clear + have proper samples for invalid cases as well
+
+. check square size calculations on different sizes - that part is not good enough
+.. also do something about number counters
+
+. clean up; css etc. + check TODO in general!
+
+. try to have a new (initialized) sudoku on the page - try to decrease the first page load time
+
 . how about; public class Square + internal (or private) class Availability() + internal UpdateAvailability()
 
 . relatives instead of related?
@@ -103,10 +117,6 @@ dynamic hints?
 
 . sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
 history.js?!
-
-. modernizr: currently we dont use modernizer, can there be a case that we should use it? what might not be supported?
-. webgrease: javascript + css compile+check+bundle? needs sample
-. nav.js: for arrow key navigation? needs sample
 
 . looks like there is a problem with hints load / refresh after reset?
 
