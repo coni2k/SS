@@ -141,6 +141,9 @@ function SudokuViewModel() {
             height: 200,
             width: 450,
             modal: true,
+            open: function () {
+                $(this).parent().find('.ui-dialog-buttonpane button:eq(1)').focus();
+            },
             buttons: {
                 'Reset list': function () {
                     $(this).dialog('close');
@@ -149,9 +152,6 @@ function SudokuViewModel() {
                 Cancel: function () {
                     $(this).dialog('close');
                 }
-            },
-            open: function () {
-                $(this).parents('.ui-dialog-buttonpane button:eq(1)').focus();
             }
         });
     }
@@ -201,6 +201,9 @@ function SudokuViewModel() {
             height: 200,
             width: 450,
             modal: true,
+            open: function () {
+                $(this).parent().find('.ui-dialog-buttonpane button:eq(1)').focus();
+            },
             buttons: {
                 'Reset': function () {
                     $(this).dialog('close');
