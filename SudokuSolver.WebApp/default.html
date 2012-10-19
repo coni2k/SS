@@ -114,26 +114,26 @@
             <div id="numbersPanel" class="panel">
                 <strong>Numbers</strong>
                 <br />
-                <div class="numberGroupContainer gridPanel2" data-bind="foreach: NumberGroups, css: { size9: $parent.Size() === 9} ">
-                    <div class="numberGroupItem" data-bind="foreach: Numbers">
-                        <div data-bind="click: $parents[1].SetSelectedNumber, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { passiveSelected: IsPassiveSelected(), activeSelected: IsActiveSelected() }"
-                            class="numberItem">
+                <div id="numberGridPanel" class="gridPanel" data-bind="foreach: NumberGroups, css: { size4: Size() === 4, size9: Size() === 9, size16: Size() === 16 }">
+                    <div class="groupItem" data-bind="foreach: Numbers, css: { size4: $parent.Size() === 4, size9: $parent.Size() === 9, size16: $parent.Size() === 16 }">
+                        <div data-bind="click: $parents[1].SetSelectedNumber, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { size4: $parents[1].Size() === 4, size9: $parents[1].Size() === 9, size16: $parents[1].Size() === 16, passiveSelected: IsPassiveSelected(), activeSelected: IsActiveSelected() }"
+                            class="squareItem">
                             <span class="value" data-bind="text: Value"></span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="valueGridPanel" data-bind="template: { name: 'grid-template', data: ValueGrid }"
-                class="panel gridPanel2 size9">
+            <div id="valueGridPanel" data-bind="template: { name: 'grid-template', data: ValueGrid }, css: { size4: Size() === 4, size9: Size() === 9, size16: Size() === 16 }"
+                class="panel gridPanel">
             </div>
-            <div id="availabilityGridPanel" data-bind="template: { name: 'grid-template', data: AvailabilityGrid }, css: { hide: !AvailabilityGrid.Visible() }"
-                class="panel gridPanel2 size9 hide">
+            <div id="availabilityGridPanel" data-bind="template: { name: 'grid-template', data: AvailabilityGrid }, css: { hide: !AvailabilityGrid.Visible(), size4: Size() === 4, size9: Size() === 9, size16: Size() === 16 }"
+                class="panel gridPanel hide">
             </div>
             <!--            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
                 class="gridPanel hide">
             </div>-->
-            <div id="idGridPanel" data-bind="template: { name: 'grid-template', data: IdGrid }, css: { hide: !IdGrid.Visible() }"
-                class="panel gridPanel2 size9">
+            <div id="idGridPanel" data-bind="template: { name: 'grid-template', data: IdGrid }, css: { hide: !IdGrid.Visible(), size4: Size() === 4, size9: Size() === 9, size16: Size() === 16 }"
+                class="panel gridPanel">
             </div>
             <div id="hintsPanel" class="panel">
                 <strong>Hints</strong>
@@ -223,18 +223,18 @@
     <!-- Sudoku grid template -->
     <script type="text/html" id="grid-template">
         <div data-bind="foreach: Groups">
-            <div class="groupItem" data-bind="foreach: Squares">
-                <div data-bind="click: $parents[2].SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, relatedSelected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd() }"
+            <div class="groupItem" data-bind="foreach: Squares, css: { size4: $parents[1].Size() === 4, size9: $parents[1].Size() === 9, size16: $parents[1].Size() === 16 }">
+                <div data-bind="click: $parents[2].SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, relatedSelected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd(), size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
                     class="squareItem">
-                    <span data-bind="text: ValueFormatted, css: { hide: $parents[1].DisplayMode !== 'value' }"
-                        class="squareValue" />
-                    <div data-bind="foreach: Availabilities, css: { hide: $parents[1].DisplayMode !== 'availability' }"
-                        class="squareAvailabilities">
+                    <span data-bind="text: ValueFormatted, css: { hide: $parents[1].DisplayMode !== 'value', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
+                        class="value" />
+                    <div data-bind="foreach: Availabilities, css: { hide: $parents[1].DisplayMode !== 'availability', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
+                        class="availabilities">
                         <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
                             class="availabilityItem" />
                     </div>
-                    <span data-bind="text: SquareId, css: { hide: $parents[1].DisplayMode !== 'id' }"
-                        class="squareId" />
+                    <span data-bind="text: SquareId, css: { hide: $parents[1].DisplayMode !== 'id', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
+                        class="value" />
                 </div>
             </div>
         </div>

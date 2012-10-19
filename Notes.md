@@ -140,3 +140,15 @@ it doesnt count hints when it comes to availabilities
 	4	2	30	66	138
 	9	3	45	141	429
 	16	4	60	246	990
+
+---
+ui-dialog size has a problem?
+
+continue with availabilities css
+probably we dont need availability.size4+9etc. for width
+it already takes that?
+focus on inner items?
+
+also availabilities fontsize has a problem?
+
+also check sudoku size4 at the end (also maxi)

@@ -435,27 +435,27 @@ function Sudoku() {
 
         var squareWidth = minWidth * self.SquareRootofSize(); // 45
 
-        var groupWidth = (squareWidth * self.SquareRootofSize()) + (2 * self.SquareRootofSize()); /* Border */; // 141
+        // var groupWidth = (squareWidth * self.SquareRootofSize()) + (2 * self.SquareRootofSize()); /* Border */; // 141
 
-        var panelWidth = (groupWidth * self.SquareRootofSize()) + (2 * self.SquareRootofSize()); /* Border */; // 429
+        // var panelWidth = (groupWidth * self.SquareRootofSize()) + (2 * self.SquareRootofSize()); /* Border */; // 429
 
-        $('.squareValue').css('width', squareWidth);
-        $('.squareValue').css('height', squareWidth);
+        //$('.numberItem').css('width', squareWidth);
+        //$('.numberItem').css('height', squareWidth);
+        //$('.numberItem').css('line-height', squareWidth.toString() + 'px');
 
-        $('.squareAvailabilities').css('width', squareWidth);
+        //$('.squareValue').css('width', squareWidth);
+        //$('.squareValue').css('height', squareWidth);
 
-        $('.squareId').css('width', squareWidth);
-        $('.squareId').css('line-height', squareWidth.toString() + 'px');
+        //$('.squareAvailabilities').css('width', squareWidth);
 
-        $('.groupItem').css('width', groupWidth);
+        //$('.squareId').css('width', squareWidth);
+        //$('.squareId').css('line-height', squareWidth.toString() + 'px');
+
+        // $('.groupItem').css('width', groupWidth);
 
         //$('.gridPanel').css('width', panelWidth);
 
-        $('.numberItem').css('width', squareWidth);
-        $('.numberItem').css('height', squareWidth);
-        $('.numberItem').css('line-height', squareWidth.toString() + 'px');
-
-        $('.numberGroupItem').css('width', groupWidth);
+        // $('.numberGroupItem').css('width', groupWidth);
 
         //$('.numberGroupContainer').css('width', panelWidth);
 
