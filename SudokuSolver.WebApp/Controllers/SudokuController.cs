@@ -10,50 +10,12 @@ namespace SudokuSolver.WebApp.Controllers
 {
     public class SudokuController : ApiController
     {
-        [ActionName("list")]
-        public ICollection<Sudoku> GetList()
+        #region + Application level commands
+
+        [ActionName("sudokulist")]
+        public ICollection<Sudoku> GetSudokuList()
         {
             return CacheManager.SudokuList;
-        }
-
-        [ActionName("squares")]
-        public IEnumerable<Square> GetSquares(int id)
-        {
-            var sudoku = ValidateAndGetSudoku(id);
-
-            return sudoku.GetSquares();
-        }
-
-        [ActionName("numbers")]
-        public IEnumerable<Number> GetNumbers(int id)
-        {
-            var sudoku = ValidateAndGetSudoku(id);
-
-            return sudoku.GetNumbers();
-        }
-
-        [ActionName("hints")]
-        public IEnumerable<Hint> GetHints(int id)
-        {
-            var sudoku = ValidateAndGetSudoku(id);
-
-            return sudoku.GetHints();
-        }
-
-        [ActionName("availabilities")]
-        public IEnumerable<Availability> GetAvailabilities(int id)
-        {
-            var sudoku = ValidateAndGetSudoku(id);
-
-            return sudoku.GetAvailabilities();
-        }
-
-        [ActionName("groupnumberavailabilities")]
-        public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities(int id)
-        {
-            var sudoku = ValidateAndGetSudoku(id);
-
-            return sudoku.GetGroupNumberAvailabilities();
         }
 
         [HttpPost]
@@ -63,7 +25,7 @@ namespace SudokuSolver.WebApp.Controllers
             // Validate
             if (container == null)
                 throw new ArgumentNullException("container");
-            
+
             // Size?
 
             // Title?
@@ -94,10 +56,61 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         [HttpPost]
+        [ActionName("resetlist")]
+        public void ResetList()
+        {
+            CacheManager.LoadSamples();
+        }
+
+        #endregion
+
+        #region + Sudoku level commands
+
+        [ActionName("squares")]
+        public IEnumerable<Square> GetSquares(int id)
+        {
+            var sudoku = GetSudoku(id);
+
+            return sudoku.GetSquares();
+        }
+
+        [ActionName("numbers")]
+        public IEnumerable<Number> GetNumbers(int id)
+        {
+            var sudoku = GetSudoku(id);
+
+            return sudoku.GetNumbers();
+        }
+
+        [ActionName("hints")]
+        public IEnumerable<Hint> GetHints(int id)
+        {
+            var sudoku = GetSudoku(id);
+
+            return sudoku.GetHints();
+        }
+
+        [ActionName("availabilities")]
+        public IEnumerable<Availability> GetAvailabilities(int id)
+        {
+            var sudoku = GetSudoku(id);
+
+            return sudoku.GetAvailabilities();
+        }
+
+        [ActionName("groupnumberavailabilities")]
+        public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities(int id)
+        {
+            var sudoku = GetSudoku(id);
+
+            return sudoku.GetGroupNumberAvailabilities();
+        }
+
+        [HttpPost]
         [ActionName("updatesquare")]
         public void UpdateSquare(int id, SquareContainer square)
         {
-            var sudoku = ValidateAndGetSudoku(id);
+            var sudoku = GetSudoku(id);
 
             try
             {
@@ -115,7 +128,7 @@ namespace SudokuSolver.WebApp.Controllers
         [ActionName("toggleready")]
         public void ToggleReady(int id)
         {
-            var sudoku = ValidateAndGetSudoku(id);
+            var sudoku = GetSudoku(id);
 
             try
             {
@@ -135,7 +148,7 @@ namespace SudokuSolver.WebApp.Controllers
         [ActionName("toggleautosolve")]
         public void ToggleAutoSolve(int id)
         {
-            var sudoku = ValidateAndGetSudoku(id);
+            var sudoku = GetSudoku(id);
 
             sudoku.ToggleAutoSolve();
         }
@@ -144,7 +157,7 @@ namespace SudokuSolver.WebApp.Controllers
         [ActionName("solve")]
         public void Solve(int id)
         {
-            var sudoku = ValidateAndGetSudoku(id);
+            var sudoku = GetSudoku(id);
 
             sudoku.Solve();
         }
@@ -153,19 +166,14 @@ namespace SudokuSolver.WebApp.Controllers
         [ActionName("reset")]
         public void Reset(int id)
         {
-            var sudoku = ValidateAndGetSudoku(id);
+            var sudoku = GetSudoku(id);
 
             sudoku.Reset();
         }
 
-        [HttpPost]
-        [ActionName("resetlist")]
-        public void ResetList()
-        {
-            CacheManager.LoadSamples();
-        }
+        #endregion
 
-        Sudoku ValidateAndGetSudoku(int id)
+        Sudoku GetSudoku(int id)
         {
             //Search the container in CacheManager
             var sudoku = CacheManager.SudokuList.SingleOrDefault(s => s.SudokuId == id);

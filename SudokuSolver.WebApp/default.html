@@ -17,19 +17,20 @@
     </div>
     <div class="contentContainer">
         <div class="contentLeft">
-            <div id="listPanel" class="panel">
+            <div id="sudokuListPanel" class="panel">
                 <strong>Sudoku List</strong>
                 <div data-bind="foreach: SudokuList">
                     <div class="sudokuItem">
-                        <a data-bind="click: $parent.LoadSudoku" href="#"><span data-bind="text: 'Id: ' + SudokuId + ' - Title: ' + Title">
-                        </span></a>
+                        <a data-bind="click: $parent.SelectSudoku" href="#">
+                            <span data-bind="text: 'Id: ' + SudokuId + ' - Title: ' + Title"></span>
+                        </a>
                     </div>
                 </div>
-                <a data-bind="click: NewSudoku" href="#">New sudoku</a> <a data-bind="click: ResetList"
-                    href="#">Reset list</a>
+                <a data-bind="click: NewSudoku" href="#">New sudoku</a>
+                <a data-bind="click: ResetList" href="#">Reset list</a>
             </div>
         </div>
-        <div id="contentRight" class="contentRight">
+        <div id="contentRight" class="contentRight" data-bind="with: Sudoku">
             <div id="detailsPanel" class="panel">
                 <strong>Details</strong>
                 <br />
@@ -37,48 +38,64 @@
                 <br />
                 Squares left: <span data-bind="text: SquaresLeft"></span>
                 <br />
-                Ready: <a id="toggleReady" data-bind="click: ToggleReady" href="#"><span data-bind="text: ReadyFormatted">
-                </span></a>
+                Ready: <a id="toggleReady" data-bind="click: ToggleReady" href="#">
+                    <span data-bind="text: ReadyFormatted"></span>
+                </a>
                 |
                 <span id="solvePanel" data-bind="visible: Ready">Autosolve:
                     <a id="toggleAutoSolve" data-bind="click: ToggleAutoSolve" href="#">
                         <span data-bind="text: AutoSolveFormatted"></span>
                     </a>
-                    <span class="solve" data-bind="visible: !AutoSolve()">- <a data-bind="click: Solve"
-                        href="#">Solve now</a>
+                    <span class="solve" data-bind="visible: !AutoSolve() && Hints().length > 0">- 
+                        <a data-bind="click: Solve" href="#">Solve now</a>
                     </span>
                 </span>
-                <span data-bind="visible: Resettable">
-                    - 
+                <span data-bind="visible: Resettable">- 
                     <a data-bind="click: Reset" href="#">Reset</a>
                 </span>
                 <br />
-                <span>Display: Values | Availabilities: <a data-bind="click: ToggleDisplayAvailabilities"
-                    href="#"><span data-bind="text: DisplayAvailabilitiesFormatted"></span></a><span>|
-                    </span><span>IDs: </span><a data-bind="click: ToggleDisplayIDs" href="#"><span data-bind="text: DisplayIDsFormatted">
-                    </span></a>
+                <span>Display: Values | Availabilities: 
+                    <a data-bind="click: ToggleDisplayAvailabilities" href="#">
+                        <span data-bind="text: DisplayAvailabilitiesFormatted"></span>
+                    </a><span>|
+                    </span>
+                    <span>IDs: </span>
+                    <a data-bind="click: ToggleDisplayIDs" href="#">
+                        <span data-bind="text: DisplayIDsFormatted"></span>
+                    </a>
                 </span>
             </div>
             <div id="selectedSquarePanel" class="panel">
                 <strong>Selected square</strong>
                 <br />
-                <span>Square Id: </span><span data-bind="with: SelectedSquare"><span data-bind="text: SquareId">
-                </span></span>
+                <span>Square Id: </span>
+                <span data-bind="with: SelectedSquare">
+                    <span data-bind="text: SquareId"></span>
+                </span>
                 <br />
-                <span>Value: </span><span data-bind="with: SelectedSquare"><span data-bind="if: !IsAvailable()">
-                    <span data-bind="text: ValueFormatted"></span><span data-bind="if: IsUpdatable()"><a
-                        data-bind="click: RemoveValue" href="#">[x]</a> </span></span></span>
-                <br />
+                <span>Value: </span>
+                <span data-bind="with: SelectedSquare">
+                    <span data-bind="if: !IsAvailable()">
+                        <span data-bind="text: ValueFormatted"></span>
+                        <span data-bind="if: $parents[$parents.length -2].IsSelectedSquareValueRemoveable">
+                            <a data-bind="click: $parents[$parents.length - 2].RemoveSelectedSquareValue" href="#">
+                                [x]</a>
+                        </span>
+                    </span>
+                </span>
             </div>
             <div id="selectedNumberPanel" class="panel">
                 <strong>Selected number</strong>
                 <br />
-                <span>Number: </span><span data-bind="with: SelectedNumber"><span data-bind="text: Value">
-                </span></span>
+                <span>Number: </span>
+                <span data-bind="with: SelectedNumber">
+                    <span data-bind="text: Value"></span>
+                </span>
                 <br />
-                <span>Count: </span><span data-bind="with: SelectedNumber"><span data-bind="text: Count">
-                </span></span>
-                <br />
+                <span>Count: </span>
+                <span data-bind="with: SelectedNumber">
+                    <span data-bind="text: Count"></span>
+                </span>
             </div>
             <div id="legendPanel" class="panel hide">
                 <strong>Legend</strong>
@@ -89,34 +106,34 @@
                 <br />
                 <span class="solver">Solver</span>
             </div>
-            <div id="messagePanel" class="panel hide">
-                <span id="messagePanelMessage"></span><a id="messagePanelClear" href="#">[x]</a>
+            <div id="messagePanel" class="panel almostHide">
+                <span class="error">
+                    <span id="messagePanelMessage"></span> <a id="messagePanelClear" href="#">[x]</a>
+                </span>
             </div>
             <div id="numbersPanel" class="panel">
-                <!--            <strong>Numbers (Counts)</strong>-->
                 <strong>Numbers</strong>
                 <br />
-                <div class="numberGroupContainer" data-bind="foreach: NumberGroups">
+                <div class="numberGroupContainer gridPanel2" data-bind="foreach: NumberGroups, css: { size9: $parent.Size() === 9} ">
                     <div class="numberGroupItem" data-bind="foreach: Numbers">
-                        <div data-bind="click: $root.SetSelectedNumber, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { passiveSelected: IsPassiveSelected(), activeSelected: IsActiveSelected() }"
+                        <div data-bind="click: $parents[1].SetSelectedNumber, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { passiveSelected: IsPassiveSelected(), activeSelected: IsActiveSelected() }"
                             class="numberItem">
                             <span class="value" data-bind="text: Value"></span>
-                            <!--                            <span class="count" data-bind="text: '(' + Count() + ')'"></span>-->
                         </div>
                     </div>
                 </div>
             </div>
             <div id="valueGridPanel" data-bind="template: { name: 'grid-template', data: ValueGrid }"
-                class="panel gridPanel">
+                class="panel gridPanel2 size9">
             </div>
             <div id="availabilityGridPanel" data-bind="template: { name: 'grid-template', data: AvailabilityGrid }, css: { hide: !AvailabilityGrid.Visible() }"
-                class="panel gridPanel hide">
+                class="panel gridPanel2 size9 hide">
             </div>
             <!--            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
                 class="gridPanel hide">
             </div>-->
             <div id="idGridPanel" data-bind="template: { name: 'grid-template', data: IdGrid }, css: { hide: !IdGrid.Visible() }"
-                class="panel gridPanel">
+                class="panel gridPanel2 size9">
             </div>
             <div id="hintsPanel" class="panel">
                 <strong>Hints</strong>
@@ -151,9 +168,9 @@
         <form id="newSudokuForm">
             <table>
                 <tr>
-                    <td>
+                    <td class="label">
                         <label for="newSudokuSize">
-                            Size:
+                            Size
                         </label>
                     </td>
                     <td>
@@ -165,9 +182,9 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td class="label">
                         <label for="newSudokuTitle">
-                            Title:
+                            Title
                         </label>
                     </td>
                     <td>
@@ -175,9 +192,9 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td class="label">
                         <label for="newSudokuDescription">
-                            Description:
+                            Description
                         </label>
                     </td>
                     <td>
@@ -191,7 +208,6 @@
     <!--<script type="text/html" id="resetDialog-template">-->
     <div id="resetDialog" title="Reset sudoku?" class="hide">
         <p>
-            All square will reset to their initial values.<br />
             Are you sure you want to reset the sudoku?
         </p>
     </div>
@@ -208,22 +224,17 @@
     <script type="text/html" id="grid-template">
         <div data-bind="foreach: Groups">
             <div class="groupItem" data-bind="foreach: Squares">
-                <div data-bind="click: $root.SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, relatedSelected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd() }"
+                <div data-bind="click: $parents[2].SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, relatedSelected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd() }"
                     class="squareItem">
-                    <div data-bind="text: ValueFormatted, css: { hide: $parents[1].DisplayMode !== 'value' }"
+                    <span data-bind="text: ValueFormatted, css: { hide: $parents[1].DisplayMode !== 'value' }"
                         class="squareValue" />
                     <div data-bind="foreach: Availabilities, css: { hide: $parents[1].DisplayMode !== 'availability' }"
                         class="squareAvailabilities">
                         <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
-                            class="availabilityItem"></span>
+                            class="availabilityItem" />
                     </div>
-                    <!--                <div data-bind="foreach: Availabilities2, css: { hide: $parents[1].DisplayMode !== 'availability2' }"
-                    class="squareAvailabilities">
-                    <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
-                        class="availabilityItem"></span>
-                </div>-->
                     <span data-bind="text: SquareId, css: { hide: $parents[1].DisplayMode !== 'id' }"
-                        class="squareId"></span>
+                        class="squareId" />
                 </div>
             </div>
         </div>

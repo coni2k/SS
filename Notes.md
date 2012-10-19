@@ -81,7 +81,6 @@ also hints should be a dynamic list?
 . work on cases - make them more clear + have proper samples for invalid cases as well
 
 . check square size calculations on different sizes - that part is not good enough
-.. also do something about number counters
 
 . clean up; css etc. + check TODO in general!
 
@@ -96,10 +95,7 @@ not that easy, first it generates the groups and then squares.. ?!
 
 . work on ui side javas. objects?
 is it possible to map to server objects? how to extend?
-sudoku and general viewmodel seperation
 and sudoku class instead of sudokuContainer? + square class instead of squareContainer (during post operations)
-
-. default font-family and size for select, input etc. (override ui-widget css)
 
 . server side validation for post operations (new sudoku, updatesquare)
 
@@ -112,13 +108,11 @@ and sudoku class instead of sudokuContainer? + square class instead of squareCon
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 HOT STUFF;
 
-. proper new/remove hint - is it possible to merge hint + square
-dynamic hints?
-
 . sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
 history.js?!
 
-. looks like there is a problem with hints load / refresh after reset?
+. proper new/remove hint - is it possible to merge hint + square
+dynamic hints?
 
 . Solving Methods?;
 . Square's last no
@@ -127,3 +121,22 @@ history.js?!
 . Group's last number
 . Sudoku's last square
 . Sudoku's last number
+
+---
+new wrong
+12345678(9hint)
+.
+.
+.
+.
+.
+.
+.
+........9
+it doesnt count hints when it comes to availabilities
+
+---
+	15		square	group	panel
+	4	2	30	66	138
+	9	3	45	141	429
+	16	4	60	246	990
