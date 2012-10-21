@@ -775,27 +775,10 @@ namespace SudokuSolver.Engine
             sudoku.SudokuId = 18;
             sudoku.Title = "Free-style";
 
-            // Horizontal ID version
-            //sudoku.UpdateSquare(1, 1);
-            //sudoku.UpdateSquare(2, 2);
-            //sudoku.UpdateSquare(3, 3);
-            //sudoku.UpdateSquare(4, 4);
-            //sudoku.UpdateSquare(5, 5);
-            //sudoku.UpdateSquare(6, 6);
-            //sudoku.UpdateSquare(7, 7);
-            //sudoku.UpdateSquare(8, 8);
-            //sudoku.UpdateSquare(1, 9);
+            sudoku.ToggleReady();
 
             // Square ID version
             sudoku.UpdateSquare(1, 1);
-            sudoku.UpdateSquare(2, 2);
-            sudoku.UpdateSquare(3, 3);
-            sudoku.UpdateSquare(10, 4);
-            sudoku.UpdateSquare(11, 5);
-            sudoku.UpdateSquare(12, 6);
-            sudoku.UpdateSquare(19, 7);
-            sudoku.UpdateSquare(20, 8);
-            sudoku.UpdateSquare(1, 9);
 
             return sudoku;
         }
@@ -805,23 +788,23 @@ namespace SudokuSolver.Engine
             var list = new Collection<Sudoku>();
 
             list.Add(Case1());
-            //list.Add(Case2());
-            //list.Add(Case3());
-            //list.Add(Case4());
-            //list.Add(Case5());
-            //list.Add(Case6());
-            //list.Add(Case7());
-            //list.Add(Case8());
-            //list.Add(Case9());
-            //list.Add(Case10());
-            //list.Add(Case11());
-            //list.Add(Case12());
-            //list.Add(Case13());
-            //list.Add(Case14());
-            //list.Add(Case15());
-            //list.Add(Case16());
-            //list.Add(Case17());
-            //list.Add(Case18());
+            list.Add(Case2());
+            list.Add(Case3());
+            list.Add(Case4());
+            list.Add(Case5());
+            list.Add(Case6());
+            list.Add(Case7());
+            list.Add(Case8());
+            list.Add(Case9());
+            list.Add(Case10());
+            list.Add(Case11());
+            list.Add(Case12());
+            list.Add(Case13());
+            list.Add(Case14());
+            list.Add(Case15());
+            list.Add(Case16());
+            list.Add(Case17());
+            list.Add(Case18());
 
             return list;
         }

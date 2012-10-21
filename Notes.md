@@ -104,6 +104,8 @@ and sudoku class instead of sudokuContainer? + square class instead of squareCon
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 HOT STUFF;
 
+. linq for javas.
+
 . sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
 history.js?!
 
@@ -132,22 +134,67 @@ new wrong
 it doesnt count hints when it comes to availabilities
 
 ---
-continue with availabilities css
-probably we dont need availability.size4+9etc. for width
-it already takes that?
-focus on inner items?
+ko arrayforeach
+ko arrayfirst
+$ each
+$ grep
+$ inarray
+linq..
 
 ---
-attr: class + templates went well in general.. but;
-when we use square templates, passiveSelected doesn't work..
-also not sure whether it's performance ?!
+
+resettable
+groups
+squares
+assign type check..
+
+var jsonArray = [
+    { "user": { "id": 100, "screen_name": "d_linq" }, "text": "to objects" },
+    { "user": { "id": 130, "screen_name": "c_bill" }, "text": "g" },
+    { "user": { "id": 155, "screen_name": "b_mskk" }, "text": "kabushiki kaisha" },
+    { "user": { "id": 301, "screen_name": "a_xbox" }, "text": "halo reach" }
+]
+
+{ "group": { "id": 1,
+	"square": { "id:" 1, "value" 1 }
+	} }
+
+Enumerable.From([    { "user": { "id": 155, "screen_name": "b_mskk" }, "text": "kabushiki kaisha" },
+    { "user": { "id": 301, "screen_name": "a_xbox" }, "text": "halo reach" }])
+.toArray()
+.WriteLine("$.index + ':' + $.value")
+
+Enumerable.Range(0, 20)
+.Where("$ % 3 == 0")
+.Select("value, index => {index:index, value:value * 10}")
+.WriteLine("$.index + ':' + $.value")
 
 ---
-<span data-bind="attr: { 'class': CssTest() }">test</span><br />
-handle dynamic css with class attribute..
-dynamic template
-http://www.knockmeout.net/2011/03/quick-tip-dynamically-changing.html
+Enumerable.From([
+{ "Group": { "GroupId": 1,
+"Squares": [
+{ "Square": { "SquareId": 1, "Value": 1 } },
+{ "Square": { "SquareId": 2, "Value": 2 } }
+]}},
+{ "Group": { "GroupId": 2,
+"Squares": [
+{ "Square": { "SquareId": 3, "Value": 1 } },
+{ "Square": { "SquareId": 4, "Value": 2 } }
+]}},
+])
+.Where(function(x) { return x.Group.GroupId == 1 })
+.WriteLine(function(x) x.Group.GroupId)
 
 ---
-all css work is okay but the performance is terrible.. ?!
-try to use less computed and observable in css calc.. ?1
+Enumerable.From([
+{ "Group": { "GroupId": 1, "Squares": [
+{ "Square": { "SquareId": 1, "Value": 1 } },
+{ "Square": { "SquareId": 2, "Value": 2 } }
+]}},
+{ "Group": { "GroupId": 2, "Squares": [
+{ "Square": { "SquareId": 3, "Value": 1 } },
+{ "Square": { "SquareId": 4, "Value": 2 } }
+]}},
+])
+.Where(function(group) { return group.Squares. })
+.WriteLine(function(x) x.Group.Squares)
