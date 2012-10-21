@@ -198,3 +198,17 @@ Enumerable.From([
 ])
 .Where(function(group) { return group.Squares. })
 .WriteLine(function(x) x.Group.Squares)
+
+---
+Enumerable.From([
+{ "Group": { "GroupId": 1, "Squares": [
+{ "Square": { "SquareId": 1, "Value": 1 } },
+{ "Square": { "SquareId": 2, "Value": 2 } }
+]}},
+{ "Group": { "GroupId": 2, "Squares": [
+{ "Square": { "SquareId": 3, "Value": 1 } },
+{ "Square": { "SquareId": 4, "Value": 2 } }
+]}},
+])
+.Where(function(group) { return group.Group.GroupId == 1 })
+.WriteLine(function(x) x )
