@@ -111,29 +111,22 @@
                     <span id="messagePanelMessage"></span> <a id="messagePanelClear" href="#">[x]</a>
                 </span>
             </div>
-            <div id="numbersPanel" class="panel">
-                <strong>Numbers</strong>
-                <br />
-                <div id="numberGridPanel" class="gridPanel" data-bind="foreach: NumberGroups, css: { size4: Size() === 4, size9: Size() === 9, size16: Size() === 16 }">
-                    <div class="groupItem" data-bind="foreach: Numbers, css: { size4: $parent.Size() === 4, size9: $parent.Size() === 9, size16: $parent.Size() === 16 }">
-                        <div data-bind="click: $parents[1].SetSelectedNumber, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { size4: $parents[1].Size() === 4, size9: $parents[1].Size() === 9, size16: $parents[1].Size() === 16, passiveSelected: IsPassiveSelected(), activeSelected: IsActiveSelected() }"
-                            class="squareItem">
-                            <span class="value" data-bind="text: Value"></span>
-                        </div>
+            <div id="numberGridPanel" data-bind="foreach: NumberGroups, attr: { 'class': CssValueGrid }">
+                <div data-bind="foreach: Numbers, attr: { 'class': CssClass }">
+                    <!--<div data-bind="click: $parents[1].SetSelectedNumber, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, attr: { 'class': CssClass() }">-->
+                    <div data-bind="click: $parents[1].SetSelectedNumber, attr: { 'class': CssClass() }">
+                        <span class="value" data-bind="text: Value"></span>
                     </div>
                 </div>
             </div>
-            <div id="valueGridPanel" data-bind="template: { name: 'grid-template', data: ValueGrid }, css: { size4: Size() === 4, size9: Size() === 9, size16: Size() === 16 }"
-                class="panel gridPanel">
+            <div id="valueGridPanel" data-bind="template: { name: 'grid-template', data: ValueGrid }, attr: { 'class': CssValueGrid }">
             </div>
-            <div id="availabilityGridPanel" data-bind="template: { name: 'grid-template', data: AvailabilityGrid }, css: { hide: !AvailabilityGrid.Visible(), size4: Size() === 4, size9: Size() === 9, size16: Size() === 16 }"
-                class="panel gridPanel hide">
+            <div id="availabilityGridPanel" data-bind="template: { name: 'grid-template', data: AvailabilityGrid }, attr: { 'class': CssAvailabilityGrid }">
             </div>
             <!--            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
                 class="gridPanel hide">
             </div>-->
-            <div id="idGridPanel" data-bind="template: { name: 'grid-template', data: IdGrid }, css: { hide: !IdGrid.Visible(), size4: Size() === 4, size9: Size() === 9, size16: Size() === 16 }"
-                class="panel gridPanel">
+            <div id="idGridPanel" data-bind="template: { name: 'grid-template', data: IdGrid }, attr: { 'class': CssIdGrid }">
             </div>
             <div id="hintsPanel" class="panel">
                 <strong>Hints</strong>
@@ -223,21 +216,31 @@
     <!-- Sudoku grid template -->
     <script type="text/html" id="grid-template">
         <div data-bind="foreach: Groups">
-            <div class="groupItem" data-bind="foreach: Squares, css: { size4: $parents[1].Size() === 4, size9: $parents[1].Size() === 9, size16: $parents[1].Size() === 16 }">
-                <div data-bind="click: $parents[2].SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, relatedSelected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd(), size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                    class="squareItem">
-                    <span data-bind="text: ValueFormatted, css: { hide: $parents[1].DisplayMode !== 'value', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                        class="value" />
-                    <div data-bind="foreach: Availabilities, css: { hide: $parents[1].DisplayMode !== 'availability', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                        class="availabilities">
-                        <span data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }"
-                            class="availabilityItem" />
+            <div class="groupItem" data-bind="foreach: Squares, attr: { 'class': CssClass }">
+                <!--<div data-bind="template: { name: $parents[1].SquareTemplateName, data: $data }, click: $parents[2].SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, attr: { 'class': CssClass() }">-->
+                <div data-bind="template: { name: $parents[1].SquareTemplateName, data: $data }, click: $parents[2].SetSelectedSquare, attr: { 'class': CssClass() }">
+<!--                    <span data-bind="text: ValueFormatted, css: { value: $parents[1].DisplayMode === 'value', hide: $parents[1].DisplayMode !== 'value', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
+                        class="" />-->
+<!--                    <div data-bind="foreach: Availabilities, css: { availabilities: $parents[1].DisplayMode === 'availability', hide: $parents[1].DisplayMode !== 'availability', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
+                        class="">
+                        <span data-bind="text: Value, attr: { 'class': CssClass() }" />
                     </div>
-                    <span data-bind="text: SquareId, css: { hide: $parents[1].DisplayMode !== 'id', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                        class="value" />
+                    <span data-bind="text: SquareId, css: { value: $parents[1].DisplayMode === 'id', hide: $parents[1].DisplayMode !== 'id', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
+                        class="" />-->
                 </div>
             </div>
         </div>
+    </script>
+    <script type="text/html" id="value-template">
+        <span data-bind="text: ValueFormatted, attr: { 'class': 'value ' + $parents[3].CssSize() }" />
+    </script>
+    <script type="text/html" id="availability-template">
+        <div data-bind="foreach: Availabilities" class="availabilities">
+            <span data-bind="text: Value, attr: { 'class': CssClass() }" />
+        </div>
+    </script>
+    <script type="text/html" id="id-template">
+        <span data-bind="text: SquareId, attr: { 'class': 'value ' + $parents[3].CssSize() }" />
     </script>
     <!-- Html templates End -->
     <script src="Scripts/sudokusolver.js" type="text/javascript"></script>

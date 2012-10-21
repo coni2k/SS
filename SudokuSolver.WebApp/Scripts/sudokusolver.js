@@ -215,6 +215,12 @@ function Sudoku() {
         return capitaliseFirstLetter(self.IdGrid.Visible().toString());
     });
 
+    // Classes
+    self.CssSize = ko.observable('');
+    self.CssValueGrid = ko.computed(function () { return 'panel gridPanel ' + self.CssSize(); });
+    self.CssAvailabilityGrid = ko.computed(function () { return 'panel gridPanel ' + self.CssSize() + (self.AvailabilityGrid.Visible() ? '' : ' hide'); });
+    self.CssIdGrid = ko.computed(function () { return 'panel gridPanel ' + self.CssSize() + (self.IdGrid.Visible() ? '' : ' hide'); });
+
     // Methods
     self.SetSelectedSquare = function (square) {
 
@@ -332,7 +338,7 @@ function Sudoku() {
 
             // If it's ready, check whether there are any squares that set by user, solver or hint
             return ko.utils.arrayFirst(self.Groups(), function (group) {
-                return ko.utils.arrayFirst(group.Squares(), function (square) {
+                return ko.utils.arrayFirst(group.Squares, function (square) {
                     return square.AssignType() === 1 || square.AssignType() === 2 || square.AssignType() === 3;
                 });
             }) !== null;
@@ -341,7 +347,7 @@ function Sudoku() {
 
             // If it's not ready, check whether there are any squares that have a value
             return ko.utils.arrayFirst(self.Groups(), function (group) {
-                return ko.utils.arrayFirst(group.Squares(), function (square) {
+                return ko.utils.arrayFirst(group.Squares, function (square) {
                     return square.AssignType() === 0 && square.Value() !== 0;
                 });
             }) !== null;
@@ -373,6 +379,12 @@ function Sudoku() {
     // Init + Refresh
     self.InitSudoku = function () {
 
+        // Css
+        self.CssSize(self.Size() === 4 ? 'size4' : self.Size() === 9 ? 'size9' : 'size16');
+        //self.CssValueGrid('panel gridPanel ' + self.CssSize);
+        //self.CssAvailabilityGrid('panel gridPanel ' + self.CssSize);
+        //self.CssValueGrid('panel gridPanel ' + self.CssSize);
+
         // Squares
         // Create an array for square type groups
         self.Groups([]);
@@ -381,7 +393,9 @@ function Sudoku() {
 
             // Create group
             var group = new Group(self);
-            group.GroupId(groupCounter);
+            group.IsOdd = (groupCounter % 2 === 0);
+            group.CssClass = 'groupItem ' + self.CssSize();
+            group.Squares = new Array();
 
             // Squares loop
             for (var squareCounter = 1; squareCounter <= size; squareCounter++) {
@@ -394,7 +408,7 @@ function Sudoku() {
                 for (var availabilityCounter = 0; availabilityCounter < size; availabilityCounter++) {
 
                     // Create availability item
-                    var availability = new Availability();
+                    var availability = new Availability(square);
                     availability.Value = availabilityCounter + 1;
                     square.Availabilities.push(availability);
 
@@ -417,54 +431,26 @@ function Sudoku() {
         var sqrtSize = self.SquareRootofSize();
         for (groupCounter = 1; groupCounter <= sqrtSize; groupCounter++) {
 
-            var numberGroup = new Object();
+            var numberGroup = new SudokuNumberGroup(self);
+            numberGroup.CssClass = 'groupItem ' + self.CssSize();
+            numberGroup.IsOdd = (groupCounter % 2 === 0);
             numberGroup.Numbers = new Array();
 
             for (var numberCounter = 1; numberCounter <= sqrtSize; numberCounter++) {
 
-                var sudokuNumber = new SudokuNumber(self);
+                var sudokuNumber = new SudokuNumber(numberGroup);
                 sudokuNumber.Value = numberCounter + ((groupCounter - 1) * sqrtSize);
                 numberGroup.Numbers.push(sudokuNumber);
             }
 
             self.NumberGroups.push(numberGroup);
         };
-
-        // UI calculations;
-        var minWidth = 15;
-
-        var squareWidth = minWidth * self.SquareRootofSize(); // 45
-
-        // var groupWidth = (squareWidth * self.SquareRootofSize()) + (2 * self.SquareRootofSize()); /* Border */; // 141
-
-        // var panelWidth = (groupWidth * self.SquareRootofSize()) + (2 * self.SquareRootofSize()); /* Border */; // 429
-
-        //$('.numberItem').css('width', squareWidth);
-        //$('.numberItem').css('height', squareWidth);
-        //$('.numberItem').css('line-height', squareWidth.toString() + 'px');
-
-        //$('.squareValue').css('width', squareWidth);
-        //$('.squareValue').css('height', squareWidth);
-
-        //$('.squareAvailabilities').css('width', squareWidth);
-
-        //$('.squareId').css('width', squareWidth);
-        //$('.squareId').css('line-height', squareWidth.toString() + 'px');
-
-        // $('.groupItem').css('width', groupWidth);
-
-        //$('.gridPanel').css('width', panelWidth);
-
-        // $('.numberGroupItem').css('width', groupWidth);
-
-        //$('.numberGroupContainer').css('width', panelWidth);
-
     }
 
     self.RefreshGrid = function () {
 
         ko.utils.arrayForEach(self.Groups(), function (group) {
-            ko.utils.arrayForEach(group.Squares(), function (square) {
+            ko.utils.arrayForEach(group.Squares, function (square) {
                 square.Value(0);
                 square.AssignType(0);
                 ko.utils.arrayForEach(square.Availabilities(), function (availability) {
@@ -629,7 +615,7 @@ function Sudoku() {
         ko.utils.arrayFirst(self.Groups(), function (group) {
 
             // Loop through squares
-            matchedSquare = ko.utils.arrayFirst(group.Squares(), function (square) {
+            matchedSquare = ko.utils.arrayFirst(group.Squares, function (square) {
 
                 // Return if you find the square
                 return square.SquareId === squareId;
@@ -652,7 +638,7 @@ function Sudoku() {
         ko.utils.arrayForEach(self.Groups(), function (group) {
 
             // Loop through squares
-            ko.utils.arrayForEach(group.Squares(), function (square) {
+            ko.utils.arrayForEach(group.Squares, function (square) {
 
                 // If it matches, add to the list
                 if (square.Value() === number) {
@@ -691,6 +677,7 @@ function ValueGrid(groups) {
     var self = this;
     self.Groups = ko.observableArray(groups);
     self.DisplayMode = 'value';
+    self.SquareTemplateName = 'value-template';
     // Visible = always!
 }
 
@@ -698,6 +685,7 @@ function AvailabilityGrid(groups) {
     var self = this;
     self.Groups = ko.observableArray(groups);
     self.DisplayMode = 'availability';
+    self.SquareTemplateName = 'availability-template';
     self.Visible = ko.observable(true);
 }
 
@@ -713,15 +701,16 @@ function IDGrid(groups) {
     var self = this;
     self.Groups = ko.observableArray(groups);
     self.DisplayMode = 'id';
+    self.SquareTemplateName = 'id-template';
     self.Visible = ko.observable(false);
 }
 
 function Group(sudoku) {
     var self = this;
-    //self.Sudoku = sudoku;
-    self.GroupId = ko.observable(0);
-    self.Squares = ko.observableArray([]);
-    self.IsOdd = ko.computed(function () { return self.GroupId() % 2 === 0; });
+    self.Sudoku = sudoku;
+    self.Squares = null;
+    self.IsOdd = false;
+    self.CssClass = '';
 }
 
 function Square(group, id) {
@@ -730,6 +719,9 @@ function Square(group, id) {
     self.SquareId = id;
     self.Value = ko.observable(0);
     self.AssignType = ko.observable(0);
+
+    //self.CssBase = 'squareItem';
+    //self.IdCssClassId = '';
 
     self.ValueFormatted = ko.computed({
         read: function () {
@@ -761,7 +753,7 @@ function Square(group, id) {
         self.IsActiveSelected(isActive);
 
         // Related square selected
-        ko.utils.arrayForEach(self.Group.Squares(), function (square) {
+        ko.utils.arrayForEach(self.Group.Squares, function (square) {
             if (square !== self) {
                 square.IsRelatedSelected(isActive);
             }
@@ -771,11 +763,44 @@ function Square(group, id) {
     // Related selected
     self.IsRelatedSelected = ko.observable(false);
 
+    //  css: { activeSelected: IsActiveSelected, relatedSelected: IsRelatedSelected(), passiveSelected: IsPassiveSelected(), size16: $parents[2].Size() === 16, odd: $parent.IsOdd }"
+    // class="squareItem">
+
+    self.CssAssignType = ko.computed(function () {
+        switch (self.AssignType())
+        {
+            case 0:
+                return 'initial';
+            case 1:
+                return 'user';
+            case 2:
+                return 'hint';
+            case 3:
+                return 'solver';
+        } 
+    });
+
+    self.CssClass = ko.computed(function () {
+        return 'squareItem ' + self.CssAssignType() + ' '
+            + self.Group.Sudoku.CssSize()
+            + (self.IsPassiveSelected() ? ' passiveSelected' : '')
+            + (self.IsActiveSelected() ? ' activeSelected' : '')
+            + (self.IsRelatedSelected() ? ' relatedSelected' : '')
+            + (self.Group.IsOdd ? ' odd' : '');
+    });
 }
 
-function SudokuNumber(sudoku) {
+function SudokuNumberGroup(sudoku) {
     var self = this;
     self.Sudoku = sudoku;
+    self.Numbers = null;
+    self.IsOdd = false;
+    self.CssClass = '';
+}
+
+function SudokuNumber(group) {
+    var self = this;
+    self.Group = group;
     self.Value = 0;
     self.Count = ko.observable(0);
 
@@ -789,15 +814,22 @@ function SudokuNumber(sudoku) {
     self.IsActiveSelected = ko.observable(false);
     self.SetActiveSelect = function (isActive) {
 
-        // Set IsActiveSelected property
+    // Set IsActiveSelected property
         self.IsActiveSelected(isActive);
 
         // Related square selected
-        //ko.utils.arrayForEach(self.Group.Squares(), function (square) {
+        //ko.utils.arrayForEach(self.Group.Squares, function (square) {
         //    if (square !== self)
         //        square.IsRelatedSelected(isActive);
         //});
     };
+
+    // Css
+    self.CssClass = ko.computed(function () {
+        // css: { size4: $parents[1].Size() === 4, size9: $parents[1].Size() === 9, size16: $parents[1].Size() === 16, passiveSelected: IsPassiveSelected(), activeSelected: IsActiveSelected(), odd: $parent.IsOdd
+        return 'squareItem ' + self.Group.Sudoku.CssSize() + (self.IsPassiveSelected() ? ' passiveSelected' : '') + (self.IsActiveSelected() ? ' activeSelected' : '') + (self.Group.IsOdd ? ' odd' : '');
+    });
+
 }
 
 function Hint(sudoku) {
@@ -820,10 +852,25 @@ function Hint(sudoku) {
     }
 }
 
-function Availability() {
+function Availability(square) {
     var self = this;
+    self.Square = square;
     self.Value = 0;
     self.IsAvailable = ko.observable(true);
+
+    // css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }
+    self.CssClass = ko.computed(function () {
+
+        var cssClass = 'availabilityItem';
+
+        if (!self.Square.IsAvailable())
+            cssClass += ' unavailable_self';
+
+        if (!self.IsAvailable())
+            cssClass += ' unavailable_group';
+
+        return cssClass;
+    });
 }
 
 //function Availability2() {

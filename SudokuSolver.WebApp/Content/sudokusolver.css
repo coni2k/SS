@@ -80,21 +80,24 @@ h5, h6 {
     font-size: 1em;
 }
 
+input[type=text], textarea {
+    width: 200px;
+}
 
 /* main layout
 ----------------------------------------------------------*/
 .contentContainer {
-    width: 1200px;
+    width: 1300px;
     margin: 0 auto;
 }
 
 .contentLeft {
-    width: 200px;
+    width: 250px;
     float: left;
 }
 
 .contentRight {
-    width: 1000px;
+    width: 1050px;
     float: right;
 }
 
@@ -102,7 +105,16 @@ h5, h6 {
     margin: 20px 0 0 20px;
 }
 
-/* loading message panel */
+.hide {
+    display: none;
+}
+
+.error {
+    color: #e80c4d;
+    display: block;
+}
+
+/* Loading message */
 #loadingMessagePanel {
     width: 100px;
     text-align: center;
@@ -116,21 +128,21 @@ h5, h6 {
     border: 0;
 }
 
-/* jquery-ui */
-.ui-widget {
-    font-size: 14px !important;
-    font-family: Tahoma, Geneva, sans-serif !important;
+/* New sudoku dialog */
+#newSudokuDialog tr {
+    vertical-align: top;
 }
 
-.ui-dialog-notitlebar .ui-dialog-titlebar {
-    display: none;
+#newSudokuDialog td.label {
+    text-align: right;
+    width: 100px;
 }
 
-.error {
-    color: #e80c4d;
-    display: block;
-}
+    #newSudokuDialog td.label label {
+        margin-right: 10px;
+    }
 
+/* Sudoku list */
 #sudokuListPanel {
 }
 
@@ -167,50 +179,18 @@ h5, h6 {
     }
 
     #messagePanelMessage {
-        /* color: #e80c4d;
-        font-weight: bold; */
     }
 
     #messagePanelClear {
         font-size: smaller;
         color: #e80c4d;
-        /* font-weight: bold; */
         text-decoration: none;
     }
 
-#numbersPanel {
+#numberGridPanel {
     float: left;
     clear: left;
 }
-
-#numberGridPanel {
-    /* overflow: auto; */
-}
-
-.numberGroupItem {
-    float: left;
-    width: 141px;
-    border: 1px solid gray;
-}
-
-.numberItem {
-    font-size: 1.3em;
-    font-weight: bold;
-    text-align: center;
-    float: left;
-    /*width: 45px;*/
-    /*height: 45px;*/
-    /*line-height: 45px;*/
-    border: 1px solid #efefef;
-    padding: 0;
-    margin: 0;
-    background-color: #fff;
-    overflow: hidden;
-    cursor: pointer;
-}
-
-    .numberItem .value {
-    }
 
 .gridPanel {
     border: 1px solid gray;
@@ -218,7 +198,7 @@ h5, h6 {
 }
 
     .gridPanel.size4 {
-        width: 138px;
+        width: 132px;
     }
 
     .gridPanel.size9 {
@@ -226,7 +206,7 @@ h5, h6 {
     }
 
     .gridPanel.size16 {
-        width: 990px;
+        width: 1000px;
     }
 
 #valueGridPanel {
@@ -246,7 +226,7 @@ h5, h6 {
 }
 
     .groupItem.size4 {
-        width: 66px;
+        width: 64px;
     }
 
     .groupItem.size9 {
@@ -254,7 +234,7 @@ h5, h6 {
     }
 
     .groupItem.size16 {
-        width: 246px;
+        width: 248px;
     }
 
 .squareItem {
@@ -262,7 +242,7 @@ h5, h6 {
     border: 1px solid #efefef;
     background-color: #fff;
 
-    font-size: 1.3em;
+    font-size: 18px;
     font-weight: bold;
     text-align: center;
     cursor: pointer;
@@ -283,88 +263,73 @@ h5, h6 {
         width: 60px;
     }
 
-.odd {
-    background-color: #ffff99;
-}
-
-.activeSelected {
-    background-color: #ccddff;
-    border: 1px dashed #6699ff;
-}
-
-.passiveSelected {
-    background-color: #6699ff !important;
-}
-
-.relatedSelected {
-    background-color: #ccddff;
-}
-
-.initial { /* 0 */
-    color: #000000;
-}
-
-.user { /* 1 */
-    color: Green;
-}
-
-.hint { /* 2 */
-    color: white;
-    background-color: Purple !important;
-}
-
-.solver { /* 3 */
-    color: #e80c4d;
-}
-
-.squareItem .value {
-    display: block;
-}
-
-    .squareItem .value.size4 {
-        height: 30px;
+    .squareItem .value {
+        display: block;
     }
 
-    .squareItem .value.size9 {
-        height: 45px;
+        .squareItem .value.size4 {
+            height: 30px;
+        }
+
+        .squareItem .value.size9 {
+            height: 45px;
+        }
+
+        .squareItem .value.size16 {
+            height: 60px;
+        }
+
+    .squareItem.odd {
+        background-color: #ffff99;
     }
 
-    .squareItem .value.size16 {
-        height: 60px;
+    .squareItem.activeSelected {
+        background-color: #ccddff;
+        border: 1px dashed #6699ff;
     }
 
-    .squareItem .availabilities.size4 {
-        width: 30px;
+    .squareItem.passiveSelected {
+        background-color: #6699ff !important;
     }
 
-    .squareItem .availabilities.size9 {
-        width: 45px;
+    .squareItem.relatedSelected {
+        background-color: #ccddff;
     }
 
-    .squareItem .availabilities.size16 {
-        width: 60px;
+    .squareItem.initial { /* 0 */
+        color: #000000;
     }
 
-/*.squareAvailabilities {
-    width: 45px;
-}*/
+    .squareItem.user { /* 1 */
+        color: Green;
+    }
 
-.availabilityItem {
-    float: left;
-    width: 15px;
-    line-height: 15px;
-}
+    .squareItem.hint { /* 2 */
+        color: purple;
+    }
 
-    .availabilityItem.unavailable_self {
+    .squareItem.solver { /* 3 */
         color: #e80c4d;
-        font-size: 0.9em;
     }
 
-    .availabilityItem.unavailable_group {
-        color: #e80c4d;
-        font-size: 0.9em;
-        text-decoration: line-through;
+    .squareItem .availabilityItem {
+        float: left;
+        width: 15px;
+        line-height: 15px;
+        font-weight: normal;
+        font-size: 14px;
     }
+
+        .squareItem .availabilityItem.unavailable_self {
+            font-size: 12.5px;
+            color: #e80c4d;
+        }
+
+        .squareItem .availabilityItem.unavailable_group {
+            font-size: 12.5px;
+            color: #e80c4d;
+            text-decoration: line-through;
+        }
 
 #hintsPanel {
     float: left;
@@ -377,356 +342,12 @@ h5, h6 {
     float: left;
 }
 
-#body {
-    background-color: #efeeef;
-    clear: both;
-    padding-bottom: 35px;
+/* jquery-ui */
+.ui-widget {
+    font-size: 14px !important;
+    font-family: Tahoma, Geneva, sans-serif !important;
 }
 
-.main-content {
-    background: url("../Images/accent.png") no-repeat;
-    padding-left: 10px;
-    padding-top: 30px;
-}
-
-.featured + .main-content {
-    background: url("../Images/heroAccent.png") no-repeat;
-}
-
-footer {
-    clear: both;
-    background-color: #e2e2e2;
-    font-size: .8em;
-    height: 100px;
-}
-
-.hide {
-    display: none !important;
-}
-
-
-/* site title
-----------------------------------------------------------*/
-.site-title {
-    color: #c8c8c8;
-    font-family: Rockwell, Consolas, "Courier New", Courier, monospace;
-    font-size: 2.3em;
-    margin: 20px 0;
-}
-
-    .site-title a, .site-title a:hover, .site-title a:active {
-        background: none;
-        color: #c8c8c8;
-        outline: none;
-        text-decoration: none;
-    }
-
-
-/* login
-----------------------------------------------------------*/
-#login {
-    display: block;
-    font-size: .85em;
-    margin: 20px 0 12px;
-    text-align: right;
-}
-
-    #login a {
-        background-color: #d3dce0;
-        margin-left: 10px;
-        margin-right: 3px;
-        padding: 2px 3px;
-        text-decoration: none;
-    }
-
-        #login a.username {
-            background: none;
-            margin-left: 0px;
-            text-decoration: underline;
-        }
-
-    #login ul {
-        margin: 0;
-    }
-
-    #login li {
-        display: inline;
-        list-style: none;
-    }
-
-
-/* menu
-----------------------------------------------------------*/
-ul#menu {
-    font-size: 1.3em;
-    font-weight: 600;
-    margin: 0;
-    text-align: right;
-}
-
-    ul#menu li {
-        display: inline;
-        list-style: none;
-        padding-left: 15px;
-    }
-
-        ul#menu li a {
-            background: none;
-            color: #999;
-            text-decoration: none;
-        }
-
-            ul#menu li a:hover {
-                color: #333;
-                text-decoration: none;
-            }
-
-
-/* info and errors */
-
-/* styles for validation helpers */
-.field-validation-error {
-    color: #e80c4d;
-    font-weight: bold;
-}
-
-.field-validation-valid {
+.ui-dialog-notitlebar .ui-dialog-titlebar {
     display: none;
 }
-
-input[type="text"].input-validation-error,
-input[type="password"].input-validation-error {
-    border: 1px solid #e80c4d;
-}
-
-.validation-summary-errors {
-    color: #e80c4d;
-    font-weight: bold;
-    font-size: 1.1em;
-}
-
-.validation-summary-valid {
-    display: none;
-}
-
-ul#social li {
-    display: inline;
-    list-style: none;
-}
-
-    ul#social li a {
-        color: #999;
-        text-decoration: none;
-    }
-
-a.facebook, a.twitter {
-    display: block;
-    float: left;
-    height: 24px;
-    padding-left: 17px;
-    text-indent: -9999px;
-    width: 16px;
-}
-
-a.facebook {
-    background: url("../Images/facebook.png") no-repeat;
-}
-
-a.twitter {
-    background: url("../Images/twitter.png") no-repeat;
-}
-
-
-/********************
-*   Mobile Styles   *
-********************/
-@media only screen and (max-width: 850px) {
-
-    /* header
-    ----------------------------------------------------------*/
-    header .float-left,
-    header .float-right {
-        float: none;
-    }
-
-    /* logo */
-    header .site-title {
-        margin: 10px;
-        text-align: center;
-    }
-
-    /* login */
-    #login {
-        font-size: .85em;
-        margin: 0 0 12px;
-        text-align: center;
-    }
-
-        #login ul {
-            margin: 5px 0;
-            padding: 0;
-        }
-
-        #login li {
-            display: inline;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #login a {
-            background: none;
-            color: #999;
-            font-weight: 600;
-            margin: 2px;
-            padding: 0;
-        }
-
-            #login a:hover {
-                color: #333;
-            }
-
-    /* menu */
-    nav {
-        margin-bottom: 5px;
-    }
-
-    ul#menu {
-        margin: 0;
-        padding: 0;
-        text-align: center;
-    }
-
-        ul#menu li {
-            margin: 0;
-            padding: 0;
-        }
-
-
-    /* main layout
-    ----------------------------------------------------------*/
-    .main-content,
-    .featured + .main-content {
-        background-position: 10px 0;
-    }
-
-    .content-wrapper {
-        padding-right: 10px;
-        padding-left: 10px;
-    }
-
-    .featured .content-wrapper {
-        padding: 10px;
-    }
-
-    /* page content */
-    article, aside {
-        float: none;
-        width: 100%;
-    }
-
-    /* ordered list */
-    ol.round {
-        list-style-type: none;
-        padding-left: 0;
-    }
-
-        ol.round li {
-            padding-left: 10px;
-            margin: 25px 0;
-        }
-
-            ol.round li.one,
-            ol.round li.two,
-            ol.round li.three {
-                background: none;
-            }
-
-    /* features */
-    section.feature {
-        float: none;
-        padding: 10px;
-        width: auto;
-    }
-
-        section.feature img {
-            color: #999;
-            content: attr(alt);
-            font-size: 1.5em;
-            font-weight: 600;
-        }
-
-    /* forms */
-    fieldset input[type="text"],
-    fieldset input[type="password"] {
-        width: 90%;
-    }
-
-    /* login page */
-    #loginForm {
-        border-right: none;
-        float: none;
-        width: auto;
-    }
-
-        #loginForm .validation-error {
-            display: block;
-            margin-left: 15px;
-        }
-
-    #socialLoginForm {
-        margin-left: 0;
-        float: none;
-        width: auto;
-    }
-
-    /* footer
-    ----------------------------------------------------------*/
-    footer .float-left,
-    footer .float-right {
-        float: none;
-    }
-
-    footer {
-        text-align: center;
-        height: auto;
-        padding: 10px 0;
-    }
-
-        footer p {
-            margin: 0;
-        }
-
-    ul#social {
-        padding: 0;
-        margin: 0;
-    }
-
-    a.facebook, a.twitter {
-        background: none;
-        display: inline;
-        float: none;
-        height: auto;
-        padding-left: 0;
-        text-indent: 0;
-        width: auto;
-    }
-}
-
-input[type=text], textarea {
-    width: 200px;
-}
-
-/* New sudoku dialog */
-#newSudokuDialog tr {
-    vertical-align: top;
-}
-
-#newSudokuDialog td.label {
-    text-align: right;
-    width: 100px;
-}
-
-    #newSudokuDialog td.label label {
-        margin-right: 10px;
-    }

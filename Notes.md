@@ -80,8 +80,6 @@ also hints should be a dynamic list?
 
 . work on cases - make them more clear + have proper samples for invalid cases as well
 
-. check square size calculations on different sizes - that part is not good enough
-
 . clean up; css etc. + check TODO in general!
 
 . try to have a new (initialized) sudoku on the page - try to decrease the first page load time
@@ -98,8 +96,6 @@ is it possible to map to server objects? how to extend?
 and sudoku class instead of sudokuContainer? + square class instead of squareContainer (during post operations)
 
 . server side validation for post operations (new sudoku, updatesquare)
-
-. mini-maxi size square values styling ?!
 
 . webapi.tester doesnt work at the moment (after the package updates) - check webapiclient!
 
@@ -136,19 +132,22 @@ new wrong
 it doesnt count hints when it comes to availabilities
 
 ---
-	15		square	group	panel
-	4	2	30	66	138
-	9	3	45	141	429
-	16	4	60	246	990
-
----
-ui-dialog size has a problem?
-
 continue with availabilities css
 probably we dont need availability.size4+9etc. for width
 it already takes that?
 focus on inner items?
 
-also availabilities fontsize has a problem?
+---
+attr: class + templates went well in general.. but;
+when we use square templates, passiveSelected doesn't work..
+also not sure whether it's performance ?!
 
-also check sudoku size4 at the end (also maxi)
+---
+<span data-bind="attr: { 'class': CssTest() }">test</span><br />
+handle dynamic css with class attribute..
+dynamic template
+http://www.knockmeout.net/2011/03/quick-tip-dynamically-changing.html
+
+---
+all css work is okay but the performance is terrible.. ?!
+try to use less computed and observable in css calc.. ?1
