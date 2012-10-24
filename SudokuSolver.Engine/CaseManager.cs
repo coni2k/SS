@@ -764,15 +764,39 @@ namespace SudokuSolver.Engine
             return sudoku;
         }
 
-        /// <summary>
-        /// Free-style
-        /// </summary>
-        /// <returns></returns>
         Sudoku Case18()
         {
             var sudoku = new Sudoku();
 
             sudoku.SudokuId = 18;
+            sudoku.Title = "Hint's availability bug";
+            sudoku.Description = "Because hints availabilities don't be counted..";
+
+            sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
+            sudoku.UpdateSquare(4, 4);
+            sudoku.UpdateSquare(5, 5);
+            sudoku.UpdateSquare(6, 6);
+            sudoku.UpdateSquare(7, 7);
+            sudoku.UpdateSquare(8, 8);
+
+            // Since square 9's value is known, this update should not be possible
+            // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
+            sudoku.UpdateSquare(27, 9);
+
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Free-style
+        /// </summary>
+        /// <returns></returns>
+        Sudoku Case19()
+        {
+            var sudoku = new Sudoku();
+
+            sudoku.SudokuId = 19;
             sudoku.Title = "Free-style";
 
             sudoku.ToggleReady();
@@ -805,6 +829,7 @@ namespace SudokuSolver.Engine
             list.Add(Case16());
             list.Add(Case17());
             list.Add(Case18());
+            list.Add(Case19());
 
             return list;
         }

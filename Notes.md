@@ -101,10 +101,37 @@ and sudoku class instead of sudokuContainer? + square class instead of squareCon
 
 . probably console tester doesnt work - after horizontal to square id change
 
+. try to get rid of sudokunumbergroup
+
+. mention the keys (esc, delete)
+
+. mention the links of the libraries
+
+. check the performance by comparing with a plain html
+
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 HOT STUFF;
 
-. linq for javas.
+. CONTINUE WITH KNOCKOUT PERFORMANCE GOTCHA SERIES;
+http://www.knockmeout.net/blog/archives
+CHECK KNOCKOUT BIT MORE AND THEN CONTINUE WITH HISTORY.JS
+
+. hide sudoku + sudoku list dont work, why?
+
+. KNOCKOUT
+
+http://bsatrom.github.com/Knockout.Unobtrusive/
+
+.. 5. Binding providers (and hence external bindings)
+ko.bindingConventions.conventions(".person-editor", {
+    ".person-editor"  : { 'with': myViewModel.person },
+    ".first-name"     : function(person) { return { value: person.firstName } },
+    ".last-name"      : function(person) { return { value: person.lastName } }
+});
+
+.. need throttle ?
+
+.. Now, if you do a ko.toJSON(viewModel) or ko.toJSON(selectedItem), you will just get your item and not the style object. The toJSON() method will see that selectedItem is an observable and then unwrap it. It does not look for any properties/observables attached to the observable itself (which is a function). So, this is a nice way to hide values that are not important to send back to the server.
 
 . sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
 history.js?!
@@ -121,94 +148,21 @@ dynamic hints?
 . Sudoku's last number
 
 ---
-new wrong
-12345678(9hint)
-.
-.
-.
-.
-.
-.
-.
-........9
-it doesnt count hints when it comes to availabilities
+            <!--<div data-bind="template: { name: $parents[1].SquareTemplateName, data: $data }, click: $parents[2].SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, attr: { 'class': CssClass() }">-->
 
----
-ko arrayforeach
-ko arrayfirst
-$ each
-$ grep
-$ inarray
-linq..
 
----
+                <!--                    <span data-bind="text: ValueFormatted, css: { value: $parents[1].DisplayMode === 'value', hide: $parents[1].DisplayMode !== 'value', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
+                        class="" />-->
+                <!--                    <div data-bind="foreach: Availabilities, css: { availabilities: $parents[1].DisplayMode === 'availability', hide: $parents[1].DisplayMode !== 'availability', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
+                        class="">
+                        <span data-bind="text: Value, attr: { 'class': CssClass() }" />
+                    </div>
+                    <span data-bind="text: SquareId, css: { value: $parents[1].DisplayMode === 'id', hide: $parents[1].DisplayMode !== 'id', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
+                        class="" />-->
+						
+						
+						            <!--            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
+                class="gridPanel hide">
+            </div>-->
 
-resettable
-groups
-squares
-assign type check..
-
-var jsonArray = [
-    { "user": { "id": 100, "screen_name": "d_linq" }, "text": "to objects" },
-    { "user": { "id": 130, "screen_name": "c_bill" }, "text": "g" },
-    { "user": { "id": 155, "screen_name": "b_mskk" }, "text": "kabushiki kaisha" },
-    { "user": { "id": 301, "screen_name": "a_xbox" }, "text": "halo reach" }
-]
-
-{ "group": { "id": 1,
-	"square": { "id:" 1, "value" 1 }
-	} }
-
-Enumerable.From([    { "user": { "id": 155, "screen_name": "b_mskk" }, "text": "kabushiki kaisha" },
-    { "user": { "id": 301, "screen_name": "a_xbox" }, "text": "halo reach" }])
-.toArray()
-.WriteLine("$.index + ':' + $.value")
-
-Enumerable.Range(0, 20)
-.Where("$ % 3 == 0")
-.Select("value, index => {index:index, value:value * 10}")
-.WriteLine("$.index + ':' + $.value")
-
----
-Enumerable.From([
-{ "Group": { "GroupId": 1,
-"Squares": [
-{ "Square": { "SquareId": 1, "Value": 1 } },
-{ "Square": { "SquareId": 2, "Value": 2 } }
-]}},
-{ "Group": { "GroupId": 2,
-"Squares": [
-{ "Square": { "SquareId": 3, "Value": 1 } },
-{ "Square": { "SquareId": 4, "Value": 2 } }
-]}},
-])
-.Where(function(x) { return x.Group.GroupId == 1 })
-.WriteLine(function(x) x.Group.GroupId)
-
----
-Enumerable.From([
-{ "Group": { "GroupId": 1, "Squares": [
-{ "Square": { "SquareId": 1, "Value": 1 } },
-{ "Square": { "SquareId": 2, "Value": 2 } }
-]}},
-{ "Group": { "GroupId": 2, "Squares": [
-{ "Square": { "SquareId": 3, "Value": 1 } },
-{ "Square": { "SquareId": 4, "Value": 2 } }
-]}},
-])
-.Where(function(group) { return group.Squares. })
-.WriteLine(function(x) x.Group.Squares)
-
----
-Enumerable.From([
-{ "Group": { "GroupId": 1, "Squares": [
-{ "Square": { "SquareId": 1, "Value": 1 } },
-{ "Square": { "SquareId": 2, "Value": 2 } }
-]}},
-{ "Group": { "GroupId": 2, "Squares": [
-{ "Square": { "SquareId": 3, "Value": 1 } },
-{ "Square": { "SquareId": 4, "Value": 2 } }
-]}},
-])
-.Where(function(group) { return group.Group.GroupId == 1 })
-.WriteLine(function(x) x )
+			                    <!--<div data-bind="click: $parents[1].SetSelectedNumber, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, attr: { 'class': CssClass() }">-->

@@ -18,6 +18,8 @@ It aims to solve any sudoku with the least possible steps.
 - Libraries;
   - .NET Framework 4.0 + MVC 4.0 + Web API
   - jQuery 1.8.2
+  - jQueryUI 1.9.0
   - knockout 2.1.0
+  - linq.js
   - modernizr 2.6.2 ?
-  - Others?
+  - nav.js ?

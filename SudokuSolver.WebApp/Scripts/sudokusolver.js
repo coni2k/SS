@@ -42,8 +42,12 @@ $(function () {
 function AppViewModel() {
 
     var self = this;
-    self.Sudoku = ko.observable(new Sudoku());
     self.SudokuList = ko.observableArray([]);
+    self.Sudoku = ko.observable(new Sudoku());
+
+    // Css
+    self.HasSudokuList = ko.computed(function () { return self.SudokuList().length > 0 });
+    self.HasSudoku = ko.computed(function () { return self.Sudoku().SudokuId() > 0 });
 
     // Load list
     self.LoadSudokuList = function () {
@@ -195,19 +199,13 @@ function Sudoku(size) {
     // Css
     self.CssSize = (self.Size === 4 ? 'size4' : self.Size === 9 ? 'size9' : 'size16');
 
-    // Squares
-    // Create an array for square type groups
-    //    self.Groups([]);
-    //var size = self.Size();
-
-    // Init arrays
+    // Square groups loop
     for (var groupCounter = 1; groupCounter <= self.Size; groupCounter++) {
 
         // Create group
         var group = new Group(groupCounter, self);
         // group.IsOdd = (groupCounter % 2 === 0);
         // group.CssClass = 'groupItem ' + self.CssSize;
-        // group.Squares = new Array();
 
         // Squares loop
         for (var squareCounter = 1; squareCounter <= self.Size; squareCounter++) {
@@ -239,8 +237,6 @@ function Sudoku(size) {
 
     // Numbers
     // Group the numbers, to be able to display them nicely (see numbersPanel on default.html)
-    // self.NumberGroups([]);
-    //var sqrtSize = self.SquareRootofSize;
     for (groupCounter = 1; groupCounter <= self.SquareRootofSize; groupCounter++) {
 
         var numberGroup = new SudokuNumberGroup(groupCounter, self);
@@ -383,7 +379,7 @@ function Sudoku(size) {
             // Update client
             self.Ready(!self.Ready());
         });
-    }
+    };
 
     // Toggle auto solve
     self.ToggleAutoSolve = function () {
@@ -397,7 +393,7 @@ function Sudoku(size) {
                 self.LoadDetails();
             }
         });
-    }
+    };
 
     // Solve
     self.Solve = function () {
@@ -406,36 +402,18 @@ function Sudoku(size) {
 
     // Reset
     self.Resettable = ko.computed(function () {
-        if (self.Ready()) {
-
-            //var z = $.grep(self.Groups, function (group) {
-
-            //    var  = $.grep(group.Squares, function (square) {
-            //        return square.AssignType() === 1
-            //        || square.AssignType() === 2
-            //        || square.AssignType() === 3;
-            //    });
-
-            //    return x;
-            //});
-
-            //return (z !== null);
-
-            // If it's ready, check whether there are any squares that set by user, solver or hint
-            return ko.utils.arrayFirst(self.Groups, function (group) {
-                return ko.utils.arrayFirst(group.Squares, function (square) {
+        return Enumerable.From(self.Groups).Any(function (group) {
+            return Enumerable.From(group.Squares).Any(function (square) {
+                if (self.Ready()) {
+                    // If it's ready, check whether there are any squares that set by user, solver or hint
                     return square.AssignType() === 1 || square.AssignType() === 2 || square.AssignType() === 3;
-                });
-            }) !== null;
-        }
-        else {
-            // If it's not ready, check whether there are any squares that have a value
-            return ko.utils.arrayFirst(self.Groups, function (group) {
-                return ko.utils.arrayFirst(group.Squares, function (square) {
+                }
+                else {
+                    // If it's not ready, check whether there are any squares that have a value
                     return square.AssignType() === 0 && square.Value() !== 0;
-                });
-            }) !== null;
-        }
+                }
+            });
+        });
     });
 
     self.Reset = function () {
@@ -489,19 +467,10 @@ function Sudoku(size) {
 
             Enumerable.From(squareList).ForEach(function (squareItem) {
 
-                Enumerable.From(self.Groups).ForEach(function (group) {
+                var square = self.FindSquareBySquareId(squareItem.Id);
+                square.Value(squareItem.Number.Value);
+                square.AssignType(squareItem.AssignType);
 
-                    var squares = Enumerable.From(group.Squares).Where(function (square) {
-                        return square.SquareId === squareItem.Id;
-                    }).ToArray();
-
-                    if (squares.length === 0) {
-                        return;
-                    }
-
-                    squares[0].Value(squareItem.Number.Value);
-                    squares[0].AssignType(squareItem.AssignType);
-                });
             });
         });
     }
@@ -516,13 +485,17 @@ function Sudoku(size) {
             self.SquaresLeft(zeroNumber[0].Count);
 
             // Count of other numbers
-            $.each(numberList, function (i, numberItem) {
-                $.each(self.NumberGroups, function (i, group) {
-                    $.each(group.Numbers, function (i, number) {
+            Enumerable.From(numberList).ForEach(function (numberItem) {
+
+                Enumerable.From(self.NumberGroups).ForEach(function (group) {
+
+                    Enumerable.From(group.Numbers).ForEach(function (number) {
+
                         if (number.Value === numberItem.Value) {
                             number.Count(numberItem.Count);
                             return;
                         }
+
                     });
                 });
             });
@@ -536,13 +509,13 @@ function Sudoku(size) {
             // Reset
             self.Hints([]);
 
-            $.each(hintList, function () {
+            Enumerable.From(hintList).ForEach(function (hintItem) {
 
                 // Create hint
                 var hint = new Hint(self);
-                hint.SquareId = this.Square.Id;
-                hint.HintValue = this.Number.Value;
-                hint.HintType = this.Type;
+                hint.SquareId = hintItem.Square.Id;
+                hint.HintValue = hintItem.Number.Value;
+                hint.HintType = hintItem.Type;
 
                 self.Hints.push(hint);
             });
@@ -554,23 +527,19 @@ function Sudoku(size) {
         // Get the data
         getApiData(apiUrlAvailabilities + self.SudokuId(), function (availabilityList) {
 
-            $.each(availabilityList, function (i, availabilityItem) {
+            Enumerable.From(availabilityList).ForEach(function (availabilityItem) {
 
-                $.each(self.Groups, function (i, group) {
+                // Get the square
+                var square = self.FindSquareBySquareId(availabilityItem.SquareId);
 
-                    $.each(group.Squares, function (i, square) {
-                        if (square.SquareId === availabilityItem.SquareId) {
-
-                            $.each(square.Availabilities, function (i, availability) {
-                                if (availability.Value === availabilityItem.Number.Value) {
-                                    availability.IsAvailable(availabilityItem.IsAvailable);
-                                    return;
-                                }
-                            });
-                            return;
-                        }
-                    });
+                // Get the availability
+                var availability = Enumerable.From(square.Availabilities).Single(function (availability) {
+                    return availability.Value === availabilityItem.Number.Value;
                 });
+
+                // Set IsAvailable
+                availability.IsAvailable(availabilityItem.IsAvailable);
+
             });
         });
     }
@@ -605,12 +574,14 @@ function Sudoku(size) {
 
             self.GroupNumberAvailabilities([]);
 
-            $.each(list, function () {
+            Enumerable.From(list).ForEach(function (groupNumberAvailabilityItem) {
+
                 var groupNumberAvailability = new GroupNumberAvailability();
-                groupNumberAvailability.GroupId = this.GroupId;
-                groupNumberAvailability.Number = this.Number;
-                groupNumberAvailability.Count = this.Count;
+                groupNumberAvailability.GroupId = groupNumberAvailabilityItem.GroupId;
+                groupNumberAvailability.Number = groupNumberAvailabilityItem.Number;
+                groupNumberAvailability.Count = groupNumberAvailabilityItem.Count;
                 self.GroupNumberAvailabilities.push(groupNumberAvailability);
+
             });
         });
     }
@@ -622,21 +593,20 @@ function Sudoku(size) {
         var matchedSquare = null;
 
         // Loop through groups
-        ko.utils.arrayFirst(self.Groups, function (group) {
+        Enumerable.From(self.Groups).ForEach(function (group) {
 
-            // Loop through squares
-            matchedSquare = ko.utils.arrayFirst(group.Squares, function (square) {
-
-                // Return if you find the square
+            // Search for the square with squareId
+            matchedSquare = Enumerable.From(group.Squares).SingleOrDefault(null, function (square) {
                 return square.SquareId === squareId;
             });
 
-            // Stop groups loop as well
-            return matchedSquare !== null;
+            // If there is, break the loop
+            if (matchedSquare !== null) {
+                return false;
+            }
         });
 
         return matchedSquare;
-
     };
 
     // b. Find square by number
@@ -645,17 +615,16 @@ function Sudoku(size) {
         var matchedSquares = new Array();
 
         // Loop through groups
-        $.each(self.Groups, function (i, group) {
+        Enumerable.From(self.Groups).ForEach(function (group) {
 
-            // Loop through squares
-            $.each(group.Squares, function (i, square) {
-
-                // If it matches, add to the list
-                if (square.Value() === number) {
-                    matchedSquares.push(square);
-                    return;
-                }
+            // Search for the squares with the number
+            var matchedSquare = Enumerable.From(group.Squares).SingleOrDefault(null, function (square) {
+                return square.Value() === number;
             });
+
+            // If there is, add it to the list
+            if (matchedSquare !== null)
+                matchedSquares.push(matchedSquare);
         });
 
         return matchedSquares;
@@ -666,7 +635,7 @@ function ValueGrid(groups) {
     var self = this;
     self.Groups = groups;
     self.DisplayMode = 'value';
-    self.SquareTemplateName = 'value-template';
+    self.Template = 'squareValueTemplate';
     // Visible = always!
 }
 
@@ -674,7 +643,7 @@ function AvailabilityGrid(groups) {
     var self = this;
     self.Groups = groups;
     self.DisplayMode = 'availability';
-    self.SquareTemplateName = 'availability-template';
+    self.Template = 'squareAvailabilitiesTemplate';
     self.Visible = ko.observable(true);
 }
 
@@ -690,7 +659,7 @@ function IDGrid(groups) {
     var self = this;
     self.Groups = groups;
     self.DisplayMode = 'id';
-    self.SquareTemplateName = 'id-template';
+    self.Template = 'squareIdTemplate';
     self.Visible = ko.observable(false);
 }
 
@@ -710,13 +679,8 @@ function Square(squareId, group) {
     self.Value = ko.observable(0);
     self.AssignType = ko.observable(0);
 
-    self.ValueFormatted = ko.computed({
-        read: function () {
-            return self.Value() === 0 ? '' : self.Value();
-        },
-        write: function (value) {
-            self.Value(value === '' ? 0 : value);
-        }
+    self.ValueFormatted = ko.computed(function () {
+        return self.Value() === 0 ? '&nbsp;' : self.Value();
     });
 
     self.IsAvailable = ko.computed(function () { return self.Value() === 0; });
@@ -740,10 +704,10 @@ function Square(squareId, group) {
         self.IsActiveSelected(isActive);
 
         // Related square selected
-        ko.utils.arrayForEach(self.Group.Squares, function (square) {
-            if (square !== self) {
-                square.IsRelatedSelected(isActive);
-            }
+        Enumerable.From(self.Group.Squares).Where(function (square) {
+            return square !== self
+        }).ForEach(function (square) {
+            square.IsRelatedSelected(isActive);
         });
     };
 
@@ -772,8 +736,6 @@ function Square(squareId, group) {
             + (self.IsRelatedSelected() ? ' relatedSelected' : '')
             + (self.Group.IsOdd ? ' odd' : '');
     });
-
-    // Filter
 
 }
 
@@ -806,8 +768,8 @@ function SudokuNumber(group) {
         self.IsActiveSelected(isActive);
 
         // Related square selected
-        $.each(self.Group.Sudoku.FindSquareByNumber(self.Value), function () {
-            this.IsRelatedSelected(isActive);
+        Enumerable.From(self.Group.Sudoku.FindSquareByNumber(self.Value)).ForEach(function (square) {
+            square.IsRelatedSelected(isActive);
         });
     };
 

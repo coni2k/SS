@@ -17,52 +17,52 @@
         <h1>Sudoku Solver</h1>
     </div>
     <div class="contentContainer">
-        <div class="contentLeft">
+        <div class="contentLeft hide" data-bind="css: { hide: !HasSudokuList }">
             <div id="sudokuListPanel" class="panel">
                 <strong>Sudoku List</strong>
-                <div data-bind="foreach: SudokuList">
-                    <div class="sudokuItem">
-                        <a data-bind="click: $parent.SelectSudoku" href="#">
-                            <span data-bind="text: 'Id: ' + SudokuId + ' - Title: ' + Title"></span>
-                        </a>
-                    </div>
+                <!-- ko foreach: SudokuList -->
+                <div class="sudokuItem">
+                    <a data-bind="click: $parent.SelectSudoku" href="#">
+                        <span data-bind="text: 'Id: ' + SudokuId + ' - Title: ' + Title"></span>
+                    </a>
                 </div>
+                <!-- /ko -->
                 <a data-bind="click: NewSudoku" href="#">New sudoku</a>
                 <a data-bind="click: ResetList" href="#">Reset list</a>
             </div>
         </div>
-        <div id="contentRight" class="contentRight" data-bind="with: Sudoku">
+        <div class="contentRight hide" data-bind="css: { hide: !HasSudoku }">
             <div id="detailsPanel" class="panel">
                 <strong>Details</strong>
                 <br />
-                Sudoku Id: <span data-bind="text: SudokuId"></span>
+                Sudoku Id: <span data-bind="text: Sudoku().SudokuId"></span>
                 <br />
-                Squares left: <span data-bind="text: SquaresLeft"></span>
+                Squares left: <span data-bind="text: Sudoku().SquaresLeft"></span>
                 <br />
-                Ready: <a id="toggleReady" data-bind="click: ToggleReady" href="#">
-                    <span data-bind="text: ReadyFormatted"></span>
+                Ready: <a id="toggleReady" data-bind="click: Sudoku().ToggleReady" href="#">
+                    <span data-bind="text: Sudoku().ReadyFormatted"></span>
                 </a>
                 |
-                <span id="solvePanel" data-bind="visible: Ready">Autosolve:
-                    <a id="toggleAutoSolve" data-bind="click: ToggleAutoSolve" href="#">
-                        <span data-bind="text: AutoSolveFormatted"></span>
+                <span id="solvePanel" data-bind="visible: Sudoku().Ready">Autosolve:
+                    <a id="toggleAutoSolve" data-bind="click: Sudoku().ToggleAutoSolve" href="#">
+                        <span data-bind="text: Sudoku().AutoSolveFormatted"></span>
                     </a>
-                    <span class="solve" data-bind="visible: !AutoSolve() && Hints().length > 0">- 
-                        <a data-bind="click: Solve" href="#">Solve now</a>
+                    <span class="solve" data-bind="visible: !Sudoku().AutoSolve && Sudoku().Hints().length > 0">- 
+                        <a data-bind="click: Sudoku().Solve" href="#">Solve now</a>
                     </span>
                 </span>
-                <span data-bind="visible: Resettable">- 
-                    <a data-bind="click: Reset" href="#">Reset</a>
+                <span data-bind="visible: Sudoku().Resettable">- 
+                    <a data-bind="click: Sudoku().Reset" href="#">Reset</a>
                 </span>
                 <br />
                 <span>Display: Values | Availabilities: 
-                    <a data-bind="click: ToggleDisplayAvailabilities" href="#">
-                        <span data-bind="text: DisplayAvailabilitiesFormatted"></span>
+                    <a data-bind="click: Sudoku().ToggleDisplayAvailabilities" href="#">
+                        <span data-bind="text: Sudoku().DisplayAvailabilitiesFormatted"></span>
                     </a><span>|
                     </span>
                     <span>IDs: </span>
-                    <a data-bind="click: ToggleDisplayIDs" href="#">
-                        <span data-bind="text: DisplayIDsFormatted"></span>
+                    <a data-bind="click: Sudoku().ToggleDisplayIDs" href="#">
+                        <span data-bind="text: Sudoku().DisplayIDsFormatted"></span>
                     </a>
                 </span>
             </div>
@@ -70,33 +70,32 @@
                 <strong>Selected square</strong>
                 <br />
                 <span>Square Id: </span>
-                <span data-bind="with: SelectedSquare">
-                    <span data-bind="text: SquareId"></span>
-                </span>
+                <!-- ko with: Sudoku().SelectedSquare -->
+                <span data-bind="text: SquareId"></span>
+                <!-- /ko -->
                 <br />
                 <span>Value: </span>
-                <span data-bind="with: SelectedSquare">
-                    <span data-bind="if: !IsAvailable()">
-                        <span data-bind="text: ValueFormatted"></span>
-                        <span data-bind="if: $parents[$parents.length -2].IsSelectedSquareValueRemoveable">
-                            <a data-bind="click: $parents[$parents.length - 2].RemoveSelectedSquareValue" href="#">
-                                [x]</a>
-                        </span>
-                    </span>
+                <!-- ko with: Sudoku().SelectedSquare -->
+                <span data-bind="if: !IsAvailable()">
+                    <span data-bind="html: ValueFormatted"></span>
+                    <!-- ko if: $root.Sudoku().IsSelectedSquareValueRemoveable -->
+                        <a data-bind="click: $root.Sudoku().RemoveSelectedSquareValue" href="#">[x]</a>
+                    <!-- /ko -->
                 </span>
+                <!-- /ko -->
             </div>
             <div id="selectedNumberPanel" class="panel">
                 <strong>Selected number</strong>
                 <br />
                 <span>Number: </span>
-                <span data-bind="with: SelectedNumber">
+                <!-- ko with: Sudoku().SelectedNumber -->
                     <span data-bind="text: Value"></span>
-                </span>
+                <!-- /ko -->
                 <br />
                 <span>Count: </span>
-                <span data-bind="with: SelectedNumber">
+                <!-- ko with: Sudoku().SelectedNumber -->
                     <span data-bind="text: Count"></span>
-                </span>
+                <!-- /ko -->
             </div>
             <div id="legendPanel" class="panel hide">
                 <strong>Legend</strong>
@@ -109,45 +108,39 @@
             </div>
             <div id="messagePanel" class="panel almostHide">
                 <span class="error">
-                    <span id="messagePanelMessage"></span> <a id="messagePanelClear" href="#">[x]</a>
+                    <span id="messagePanelMessage"></span><a id="messagePanelClear" href="#">[x]</a>
                 </span>
             </div>
-            <div id="numberGridPanel" data-bind="foreach: NumberGroups, attr: { 'class': CssValueGrid }">
+            <div id="numberGridPanel" data-bind="foreach: Sudoku().NumberGroups, attr: { 'class': Sudoku().CssValueGrid }">
                 <div data-bind="foreach: Numbers, attr: { 'class': CssClass }">
-                    <!--<div data-bind="click: $parents[1].SetSelectedNumber, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, attr: { 'class': CssClass() }">-->
-                    <div data-bind="click: $parents[1].SetSelectedNumber, attr: { 'class': CssClass() }">
+                    <div data-bind="click: $root.Sudoku().SetSelectedNumber, attr: { 'class': CssClass() }">
                         <span class="value" data-bind="text: Value"></span>
                     </div>
                 </div>
             </div>
-            <div id="valueGridPanel" data-bind="template: { name: 'grid-template', data: ValueGrid }, attr: { 'class': CssValueGrid }">
+            <div id="valueGridPanel" data-bind="template: { name: 'gridTemplate', data: Sudoku().ValueGrid }, attr: { 'class': Sudoku().CssValueGrid }">
             </div>
-            <div id="availabilityGridPanel" data-bind="template: { name: 'grid-template', data: AvailabilityGrid }, attr: { 'class': CssAvailabilityGrid }">
+            <div id="availabilityGridPanel" data-bind="template: { name: 'gridTemplate', data: Sudoku().AvailabilityGrid }, attr: { 'class': Sudoku().CssAvailabilityGrid }">
             </div>
-            <!--            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
-                class="gridPanel hide">
-            </div>-->
-            <div id="idGridPanel" data-bind="template: { name: 'grid-template', data: IdGrid }, attr: { 'class': CssIdGrid }">
+            <div id="idGridPanel" data-bind="template: { name: 'gridTemplate', data: Sudoku().IdGrid }, attr: { 'class': Sudoku().CssIdGrid }">
             </div>
             <div id="hintsPanel" class="panel">
                 <strong>Hints</strong>
                 <br />
-                <div data-bind="foreach: Hints">
-                    <div class="hintItem" data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { passiveSelected: IsSelected() }">
-                        <span data-bind="text: 'SquareId: ' + SquareId + ' - HintValue: ' + HintValue + ' - HintType: ' + HintType">
-                        </span>
-                    </div>
+                <!-- ko foreach: Sudoku().Hints -->
+                <div class="hintItem" data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { passiveSelected: IsSelected() }">
+                    <span data-bind="text: 'SquareId: ' + SquareId + ' - HintValue: ' + HintValue + ' - HintType: ' + HintType"></span>
                 </div>
+                <!-- /ko -->
             </div>
             <div id="groupNumberAvailabilityPanel" class="panel">
                 <strong>Group Number Availability</strong>
                 <br />
-                <div data-bind="foreach: GroupNumberAvailabilities">
-                    <div class="" data-bind="">
-                        <span data-bind="text: 'GroupId: ' + GroupId + ' - Number: ' + Number + ' - Count: ' + Count">
-                        </span>
-                    </div>
+                <!-- ko foreach: Sudoku().GroupNumberAvailabilities -->
+                <div class="" data-bind="">
+                    <span data-bind="text: 'GroupId: ' + GroupId + ' - Number: ' + Number + ' - Count: ' + Count"></span>
                 </div>
+                <!-- /ko -->
             </div>
         </div>
     </div>
@@ -215,33 +208,24 @@
     </div>
     <!--</script>-->
     <!-- Sudoku grid template -->
-    <script type="text/html" id="grid-template">
-        <div data-bind="foreach: Groups">
-            <div class="groupItem" data-bind="foreach: Squares, attr: { 'class': CssClass }">
-                <!--<div data-bind="template: { name: $parents[1].SquareTemplateName, data: $data }, click: $parents[2].SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, attr: { 'class': CssClass() }">-->
-                <div data-bind="template: { name: $parents[1].SquareTemplateName, data: $data }, click: $parents[2].SetSelectedSquare, attr: { 'class': CssClass() }">
-<!--                    <span data-bind="text: ValueFormatted, css: { value: $parents[1].DisplayMode === 'value', hide: $parents[1].DisplayMode !== 'value', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                        class="" />-->
-<!--                    <div data-bind="foreach: Availabilities, css: { availabilities: $parents[1].DisplayMode === 'availability', hide: $parents[1].DisplayMode !== 'availability', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                        class="">
-                        <span data-bind="text: Value, attr: { 'class': CssClass() }" />
-                    </div>
-                    <span data-bind="text: SquareId, css: { value: $parents[1].DisplayMode === 'id', hide: $parents[1].DisplayMode !== 'id', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                        class="" />-->
-                </div>
+    <script type="text/html" id="gridTemplate">
+        <!-- ko foreach: Groups -->
+        <div class="groupItem" data-bind="foreach: Squares, attr: { 'class': CssClass }">
+            <div data-bind="template: { name: $parents[1].Template, data: $data }, click: $root.Sudoku().SetSelectedSquare, attr: { 'class': CssClass() }">
             </div>
         </div>
+        <!-- /ko -->
     </script>
-    <script type="text/html" id="value-template">
-        <span data-bind="text: ValueFormatted, attr: { 'class': 'value ' + $parents[3].CssSize }" />
+    <script type="text/html" id="squareValueTemplate">
+        <span data-bind="html: ValueFormatted" class="value" />
     </script>
-    <script type="text/html" id="availability-template">
-        <div data-bind="foreach: Availabilities" class="availabilities">
+    <script type="text/html" id="squareAvailabilitiesTemplate">
+        <div data-bind="foreach: Availabilities">
             <span data-bind="text: Value, attr: { 'class': CssClass() }" />
         </div>
     </script>
-    <script type="text/html" id="id-template">
-        <span data-bind="text: SquareId, attr: { 'class': 'value ' + $parents[3].CssSize }" />
+    <script type="text/html" id="squareIdTemplate">
+        <span data-bind="text: SquareId" class="value" />
     </script>
     <!-- Html templates End -->
     <script src="Scripts/sudokusolver.js" type="text/javascript"></script>
