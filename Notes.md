@@ -116,8 +116,6 @@ HOT STUFF;
 http://www.knockmeout.net/blog/archives
 CHECK KNOCKOUT BIT MORE AND THEN CONTINUE WITH HISTORY.JS
 
-. hide sudoku + sudoku list dont work, why?
-
 . KNOCKOUT
 
 http://bsatrom.github.com/Knockout.Unobtrusive/

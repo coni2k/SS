@@ -17,7 +17,7 @@
         <h1>Sudoku Solver</h1>
     </div>
     <div class="contentContainer">
-        <div class="contentLeft hide" data-bind="css: { hide: !HasSudokuList }">
+        <div class="contentLeft hide" data-bind="css: { hide: !HasSudokuList() }">
             <div id="sudokuListPanel" class="panel">
                 <strong>Sudoku List</strong>
                 <!-- ko foreach: SudokuList -->
@@ -31,7 +31,7 @@
                 <a data-bind="click: ResetList" href="#">Reset list</a>
             </div>
         </div>
-        <div class="contentRight hide" data-bind="css: { hide: !HasSudoku }">
+        <div class="contentRight hide" data-bind="css: { hide: !HasSudoku() }">
             <div id="detailsPanel" class="panel">
                 <strong>Details</strong>
                 <br />
