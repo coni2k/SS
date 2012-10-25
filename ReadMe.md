@@ -22,3 +22,7 @@ It aims to solve any sudoku with the least possible steps.
   - knockout 2.1.0
   - linq.js
   - modernizr 2.6.2 ?
+
+- js validation by;
+	- WebGrease
+	- JSHint

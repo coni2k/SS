@@ -109,20 +109,33 @@ and sudoku class instead of sudokuContainer? + square class instead of squareCon
 
 . check the performance by comparing with a plain html
 
+. at the end; webgrease + jslint;
+http://www.jshint.com
+
+. use strict;
+http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
+
+. stevenson blog;
+http://blog.stevensanderson.com/
+
+. sammy.js;
+http://sammyjs.org/
+
+. history js;
+http://blog.stevensanderson.com/2011/11/04/full-height-app-layouts-navigation-and-history/
+https://github.com/balupton/History.js/
+https://gist.github.com/854622
+
+. array([]) didnt work, why?
+
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 HOT STUFF;
-
-. CONTINUE WITH KNOCKOUT PERFORMANCE GOTCHA SERIES;
-http://www.knockmeout.net/blog/archives
-CHECK KNOCKOUT BIT MORE AND THEN CONTINUE WITH HISTORY.JS
-http://blog.stevensanderson.com/category/knockout/
 
 . event delegation (for square to update sudoku - selected square);
 http://davidwalsh.name/event-delegate
 
 . KNOCKOUT
-
-http://knockoutjs.com/documentation/amd-loading.html
+http://groups.google.com/group/knockoutjs
 
 .. sessions;
 http://www.knockmeout.net/2012/08/thatconference-2012-session.html

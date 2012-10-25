@@ -1,4 +1,8 @@
-﻿
+﻿/* JSHint globals */
+/*global ko:true, Enumerable:true */
+
+"use strict";
+
 // + Variables
 
 // Base
@@ -47,8 +51,8 @@ function AppViewModel() {
     self.Sudoku = ko.observable(new Sudoku());
 
     // Css
-    self.HasSudokuList = ko.computed(function () { return self.SudokuList().length > 0 });
-    self.HasSudoku = ko.computed(function () { return self.Sudoku().SudokuId() > 0 });
+    self.HasSudokuList = ko.computed(function () { return self.SudokuList().length > 0; });
+    self.HasSudoku = ko.computed(function () { return self.Sudoku().SudokuId() > 0; });
 
     // Load list
     self.LoadSudokuList = function () {
@@ -60,7 +64,7 @@ function AppViewModel() {
     };
 
     // Select sudoku
-    self.SelectSudoku = function (selectedSudokuData) { self.LoadSudoku(selectedSudokuData); }
+    self.SelectSudoku = function (selectedSudokuData) { self.LoadSudoku(selectedSudokuData); };
 
     // Load sudoku
     self.LoadSudoku = function (sudokuData) {
@@ -91,7 +95,7 @@ function AppViewModel() {
 
         // Load details
         self.Sudoku().LoadDetails();
-    }
+    };
 
     // New
     self.NewSudoku = function () {
@@ -137,7 +141,7 @@ function AppViewModel() {
                 }
             }
         });
-    }
+    };
 
     // Reset
     self.ResetList = function () {
@@ -163,7 +167,7 @@ function AppViewModel() {
                 }
             }
         });
-    }
+    };
 }
 
 // Sudoku
@@ -253,7 +257,7 @@ function Sudoku(size) {
         }
 
         self.NumberGroups.push(numberGroup);
-    };
+    }
 
     // Grids;
     // a. Value grid
@@ -263,7 +267,7 @@ function Sudoku(size) {
     self.AvailabilityGrid = new AvailabilityGrid(self.Groups);
     self.ToggleDisplayAvailabilities = function () {
         self.AvailabilityGrid.Visible(!self.AvailabilityGrid.Visible());
-    }
+    };
     self.DisplayAvailabilitiesFormatted = ko.computed(function () {
         return capitaliseFirstLetter(self.AvailabilityGrid.Visible().toString());
     });
@@ -281,7 +285,7 @@ function Sudoku(size) {
     self.IdGrid = new IDGrid(self.Groups);
     self.ToggleDisplayIDs = function () {
         self.IdGrid.Visible(!self.IdGrid.Visible());
-    }
+    };
     self.DisplayIDsFormatted = ko.computed(function () {
         return capitaliseFirstLetter(self.IdGrid.Visible().toString());
     });
@@ -354,16 +358,19 @@ function Sudoku(size) {
     self.IsSelectedSquareValueRemoveable = ko.computed(function () {
 
         // If it's selected square is null
-        if (self.SelectedSquare() === null)
+        if (self.SelectedSquare() === null) {
             return false;
+        }
 
         // Or it has no value already (value is 0)
-        if (self.SelectedSquare().IsAvailable())
+        if (self.SelectedSquare().IsAvailable()) {
             return false;
+        }
 
         // Or the sudoku is in ready state and it has an initial value
-        if (self.Ready() && self.SelectedSquare().AssignType() === 0)
+        if (self.Ready() && self.SelectedSquare().AssignType() === 0) {
             return false;
+        }
 
         // It's removeable
         return true;
@@ -430,7 +437,7 @@ function Sudoku(size) {
             buttons: {
                 'Reset': function () {
                     $(this).dialog('close');
-                    postApi(apiUrlReset + self.SudokuId(), null, function () { self.LoadDetails() });
+                    postApi(apiUrlReset + self.SudokuId(), null, function () { self.LoadDetails(); });
                 },
                 Cancel: function () {
                     $(this).dialog('close');
@@ -460,7 +467,7 @@ function Sudoku(size) {
         // Load group number availabilities
         // self.LoadGroupNumberAvailabilities();
 
-    }
+    };
 
     self.LoadSquares = function () {
 
@@ -474,7 +481,7 @@ function Sudoku(size) {
 
             });
         });
-    }
+    };
 
     self.LoadNumbers = function () {
 
@@ -501,7 +508,7 @@ function Sudoku(size) {
                 });
             });
         });
-    }
+    };
 
     self.LoadHints = function () {
 
@@ -523,7 +530,7 @@ function Sudoku(size) {
                 self.Hints.push(hint);
             });
         });
-    }
+    };
 
     self.LoadAvailabilities = function () {
 
@@ -545,7 +552,7 @@ function Sudoku(size) {
 
             });
         });
-    }
+    };
 
     //self.LoadAvailabilities2 = function() {
 
@@ -573,7 +580,7 @@ function Sudoku(size) {
 
     self.LoadGroupNumberAvailabilities = function () {
 
-        getApi(apiUrlGroupNumberAvailabilities + self.SudokuId(), function (list) {
+        getApiData(apiUrlGroupNumberAvailabilities + self.SudokuId(), function (list) {
 
             self.GroupNumberAvailabilities([]);
 
@@ -587,7 +594,7 @@ function Sudoku(size) {
 
             });
         });
-    }
+    };
 
     // Filters
     // a. Find square by squareId
@@ -615,7 +622,7 @@ function Sudoku(size) {
     // b. Find square by number
     self.FindSquareByNumber = function (number) {
 
-        var matchedSquares = new Array();
+        var matchedSquares = new Array([]);
 
         // Loop through groups
         Enumerable.From(self.Groups).ForEach(function (group) {
@@ -626,8 +633,9 @@ function Sudoku(size) {
             });
 
             // If there is, add it to the list
-            if (matchedSquare !== null)
+            if (matchedSquare !== null) {
                 matchedSquares.push(matchedSquare);
+            }
         });
 
         return matchedSquares;
@@ -696,8 +704,8 @@ function Square(squareId, group) {
     // Passive select
     self.IsPassiveSelected = ko.observable(false);
     self.TogglePassiveSelect = function (data, event) {
-        self.IsPassiveSelected(event.type == 'mouseenter');
-    }
+        self.IsPassiveSelected(event.type === 'mouseenter');
+    };
 
     // Active select
     self.IsActiveSelected = ko.observable(false);
@@ -708,7 +716,7 @@ function Square(squareId, group) {
 
         // Related square selected
         Enumerable.From(self.Group.Squares).Where(function (square) {
-            return square !== self
+            return square !== self;
         }).ForEach(function (square) {
             square.IsRelatedSelected(isActive);
         });
@@ -762,8 +770,8 @@ function SudokuNumber(group) {
     // Passive select (for mouseenter + leave)
     self.IsPassiveSelected = ko.observable(false);
     self.TogglePassiveSelect = function (data, event) {
-        self.IsPassiveSelected(event.type == 'mouseenter');
-    }
+        self.IsPassiveSelected(event.type === 'mouseenter');
+    };
 
     // Active select
     self.IsActiveSelected = ko.observable(false);
@@ -798,14 +806,14 @@ function Hint(sudoku) {
     self.ToggleSelect = function (data, event) {
 
         // Toggle select itself
-        self.IsSelected(event.type == 'mouseenter');
+        self.IsSelected(event.type === 'mouseenter');
 
         // Find & toggle select related square as well
         var relatedSquare = data.Sudoku.FindSquareBySquareId(data.SquareId);
-        relatedSquare.Value(event.type == 'mouseenter' ? self.HintValue : 0);
-        relatedSquare.AssignType(event.type == 'mouseenter' ? 2 : 0);
+        relatedSquare.Value(event.type === 'mouseenter' ? self.HintValue : 0);
+        relatedSquare.AssignType(event.type === 'mouseenter' ? 2 : 0);
         relatedSquare.TogglePassiveSelect(relatedSquare, event);
-    }
+    };
 }
 
 function Availability(square) {
@@ -854,22 +862,24 @@ function getApiData(apiUrl, callback) {
 
     $.getJSON(apiUrl, function (data) {
 
-        if (callback !== null)
+        if (callback !== null) {
             callback(data);
+        }
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
-};
+}
 
 // Post to server
 function postApi(apiUrl, postData, callback) {
 
     $.post(apiUrl, postData, function (data) {
 
-        if (callback !== null)
+        if (callback !== null) {
             callback(data);
+        }
 
     }).fail(function (jqXHR) { handleError(jqXHR); });
-};
+}
 
 // Loading message during ajax
 $(function () {
@@ -882,7 +892,7 @@ $(function () {
 
     }).ajaxStop(function () {
         $('#loadingMessagePanel').dialog('close');
-    })
+    });
 });
 
 // Error handling
