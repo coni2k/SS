@@ -115,8 +115,28 @@ HOT STUFF;
 . CONTINUE WITH KNOCKOUT PERFORMANCE GOTCHA SERIES;
 http://www.knockmeout.net/blog/archives
 CHECK KNOCKOUT BIT MORE AND THEN CONTINUE WITH HISTORY.JS
+http://blog.stevensanderson.com/category/knockout/
+
+. event delegation (for square to update sudoku - selected square);
+http://davidwalsh.name/event-delegate
 
 . KNOCKOUT
+
+http://knockoutjs.com/documentation/amd-loading.html
+
+.. sessions;
+http://www.knockmeout.net/2012/08/thatconference-2012-session.html
+http://www.knockmeout.net/2012/10/twincitiescodecamp-2012-session.html
+
+.. extending observables ?
+http://knockoutjs.com/documentation/extenders.html
+
+ko.extenders.logChange = function(target, option) {
+    target.subscribe(function(newValue) {
+       console.log(option + ": " + newValue);
+    });
+    return target;
+};
 
 http://bsatrom.github.com/Knockout.Unobtrusive/
 

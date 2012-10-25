@@ -35,6 +35,7 @@ $(function () {
 
     // Load sudoku list
     appViewModel.LoadSudokuList();
+
 });
 
 // + Objects
@@ -64,10 +65,10 @@ function AppViewModel() {
     // Load sudoku
     self.LoadSudoku = function (sudokuData) {
 
-        // Determines whether the a new grid needs to be initialized or the existing one will be refreshed
-        var initOrRefreshSudoku = (self.Sudoku().Size !== sudokuData.Size);
+        // Determines whether a new sudoku needs to be initialized or the existing one will be refreshed
+        var needNewSudoku = (self.Sudoku().Size !== sudokuData.Size);
 
-        if (initOrRefreshSudoku) {
+        if (needNewSudoku) {
             self.Sudoku(new Sudoku(sudokuData.Size));
         }
 
@@ -504,11 +505,13 @@ function Sudoku(size) {
 
     self.LoadHints = function () {
 
+        // Get the hints from the server
         getApiData(apiUrlHints + self.SudokuId(), function (hintList) {
 
-            // Reset
+            // Reset the current list
             self.Hints([]);
 
+            // Add the new hints to the list
             Enumerable.From(hintList).ForEach(function (hintItem) {
 
                 // Create hint
@@ -715,27 +718,29 @@ function Square(squareId, group) {
     self.IsRelatedSelected = ko.observable(false);
 
     // Css
-    self.CssAssignType = ko.computed(function () {
-        switch (self.AssignType()) {
-            case 0:
-                return 'initial';
-            case 1:
-                return 'user';
-            case 2:
-                return 'hint';
-            case 3:
-                return 'solver';
-        }
-    });
+    //self.CssAssignType = ko.computed(function () {
+    //    switch (self.AssignType()) {
+    //        case 0:
+    //            return 'initial';
+    //        case 1:
+    //            return 'user';
+    //        case 2:
+    //            return 'hint';
+    //        case 3:
+    //            return 'solver';
+    //    }
+    //});
 
-    self.CssClass = ko.computed(function () {
-        return 'squareItem ' + self.CssAssignType() + ' '
-            + self.Group.Sudoku.CssSize
-            + (self.IsPassiveSelected() ? ' passiveSelected' : '')
-            + (self.IsActiveSelected() ? ' activeSelected' : '')
-            + (self.IsRelatedSelected() ? ' relatedSelected' : '')
-            + (self.Group.IsOdd ? ' odd' : '');
-    });
+    //self.CssClassOld = ko.computed(function () {
+    //    return 'squareItem ' + self.CssAssignType() + ' '
+    //        + self.Group.Sudoku.CssSize
+    //        + (self.IsPassiveSelected() ? ' passiveSelected' : '')
+    //        + (self.IsActiveSelected() ? ' activeSelected' : '')
+    //        + (self.IsRelatedSelected() ? ' relatedSelected' : '')
+    //        + (self.Group.IsOdd ? ' odd' : '');
+    //});
+
+    self.CssClass = 'squareItem ' + self.Group.Sudoku.CssSize;
 
 }
 
@@ -774,10 +779,12 @@ function SudokuNumber(group) {
     };
 
     // Css
-    self.CssClass = ko.computed(function () {
-        // css: { size4: $parents[1].Size() === 4, size9: $parents[1].Size() === 9, size16: $parents[1].Size() === 16, passiveSelected: IsPassiveSelected(), activeSelected: IsActiveSelected(), odd: $parent.IsOdd
-        return 'squareItem ' + self.Group.Sudoku.CssSize + (self.IsPassiveSelected() ? ' passiveSelected' : '') + (self.IsActiveSelected() ? ' activeSelected' : '') + (self.Group.IsOdd ? ' odd' : '');
-    });
+    //self.CssClass = ko.computed(function () {
+    //    // css: { size4: $parents[1].Size() === 4, size9: $parents[1].Size() === 9, size16: $parents[1].Size() === 16, passiveSelected: IsPassiveSelected(), activeSelected: IsActiveSelected(), odd: $parent.IsOdd
+    //    return 'squareItem ' + self.Group.Sudoku.CssSize + (self.IsPassiveSelected() ? ' passiveSelected' : '') + (self.IsActiveSelected() ? ' activeSelected' : '') + (self.Group.IsOdd ? ' odd' : '');
+    //});
+
+    self.CssClass = 'squareItem ' + self.Group.Sudoku.CssSize;
 
 }
 
@@ -808,7 +815,7 @@ function Availability(square) {
     self.IsAvailable = ko.observable(true);
 
     // css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }
-    self.CssClass = ko.computed(function () {
+    // self.CssClass = ko.computed(function () {
 
         //var cssClass = 'availabilityItem';
 
@@ -818,8 +825,8 @@ function Availability(square) {
         //if (!self.IsAvailable())
         //    cssClass += ' unavailable_group';
 
-        return 'availabilityItem' + (!self.Square.IsAvailable() ? ' unavailable_self' : '') + (!self.IsAvailable() ? ' unavailable_group' : '');
-    });
+        // return 'availabilityItem' + (!self.Square.IsAvailable() ? ' unavailable_self' : '') + (!self.IsAvailable() ? ' unavailable_group' : '');
+    // });
 }
 
 //function Availability2() {
