@@ -112,6 +112,9 @@ and sudoku class instead of sudokuContainer? + square class instead of squareCon
 . at the end; webgrease + jslint;
 http://www.jshint.com
 
+. at the end; add it to the showcase of history.js?
+https://github.com/balupton/history.js/wiki/Showcase
+
 . use strict;
 http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
 
@@ -124,12 +127,43 @@ http://sammyjs.org/
 . history js;
 http://blog.stevensanderson.com/2011/11/04/full-height-app-layouts-navigation-and-history/
 https://github.com/balupton/History.js/
-https://gist.github.com/854622
+AJAXIFY: https://gist.github.com/854622
 
-. array([]) didnt work, why?
+http://richarddingwall.name/2008/08/09/three-common-aspnet-mvc-url-routing-issues/
+http://www.4guysfromrolla.com/articles/012710-1.aspx - ROUTING IN ASP.NET 4
+URL AS UI - http://www.useit.com/alertbox/990321.html
 
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 HOT STUFF;
+
+CURRENTLY NAVIGATION GOES GOOD
+CLEAN HISTORY JS FOLDER
+CHECK THE URLS
+
+. navigation
+
+/welcome?
+- blank
+- generate new
+- load cases
+
+/sudoku/blank
+/sudoku/generated
+
+/sudoku/1
+/sudoku/2
+/sudoku/...
+
+/info + contact?
+
+/source
+
+/rest (404) ?
+
+back + forward buttons?
+
+default.aspx or default.html?
+
 
 . event delegation (for square to update sudoku - selected square);
 http://davidwalsh.name/event-delegate

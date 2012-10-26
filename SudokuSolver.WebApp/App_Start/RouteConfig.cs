@@ -8,13 +8,11 @@ namespace SudokuSolver.WebApp
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            // Default url to ignore
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            //routes.MapRoute(
-            //    name: "Default",
-            //    url: "{controller}/{action}/{id}",
-            //    defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
-            //);
+            // Default page for all urls
+            routes.MapPageRoute("Default", "{*url}", "~/default.aspx");
 
         }
     }
