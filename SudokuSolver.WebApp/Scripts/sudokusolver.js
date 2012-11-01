@@ -2,13 +2,13 @@
 /*jshint jquery:true*/
 /*global ko:true, Enumerable:true*/
 
-(function () {
+(function (window, undefined) {
     "use strict";
 
     // + Variables
 
     // Base
-    var apiUrlBase = 'api/Sudoku/';
+    var apiUrlBase = '/api/Sudoku/';
 
     // Application level
     var apiUrlSudokuList = apiUrlBase + 'sudokulist';
@@ -30,70 +30,117 @@
     var apiUrlSolve = apiUrlBase + 'solve/'; // + sudokuId
     var apiUrlReset = apiUrlBase + 'reset/'; // + sudokuId
 
-    var History = null;
-    var appViewModel = null;
+    // Load templates ?!
+    //var templates = [];
 
-    // History.js
-    (function (window, undefined) {
+    //var testTemplate = Enumerable.From(templates).SingleOrDefault(null, function (template) {
+    //    return template.Id === 'test';
+    //});
 
-        // Prepare
-        History = window.History; // Note: We are using a capital H instead of a lower h
+    //if (testTemplate === null) {
+    //    $.ajax({
+    //        url: '/Content/templates/test.htm', async: false, success: function (template) {
+    //            testTemplate = new HtmlTemplate();
+    //            testTemplate.Id = 'test';
+    //            testTemplate.Content = template;
+    //            templates.push(testTemplate);
+    //        }
+    //    });
+    //}
 
-        if (!History.enabled) {
+    //$('body').append('<script id="testTemplate4" type="text/html"><div id="testTemplate5"><h1>test content</h1></div></script>');
 
-            // History.js is disabled for this browser.
-            // This is because we can optionally choose to support HTML4 browsers or not.
-            return false;
-        }
+    // History.js + content
+    //var currentContent = 'sudoku';
 
-        // Bind to StateChange Event
-        History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
+    var History = window.History; // Note: We are using a capital H instead of a lower h
 
-            var State = History.getState(); // Note: We are using History.getState() instead of event.state
+    if (!History.enabled) {
 
-            History.log(State.data, State.title, State.url);
+        // History.js is disabled for this browser.
+        // This is because we can optionally choose to support HTML4 browsers or not.
+        return false;
+    }
 
-            //var page = State.url.splice
+    var initialState = History.getState();
 
-            // Sudoku
-            appViewModel.LoadSudoku(State.data);
+    // Bind to StateChange Event
+    History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
 
-            // Info + Contact
+        var State = History.getState(); // Note: We are using History.getState() instead of event.state
 
-            // Source
+        History.log(State.data, State.title, State.url);
 
-        });
+        //var page = State.url.splice
 
-    })(window);
+        // Sudoku
+        appViewModel.LoadSudoku(State.data);
 
-    // And start the app
-    $(function () {
+        // Info + Contact
 
-        // New model + apply ko.bindings
-        appViewModel = new AppViewModel();
-        ko.applyBindings(appViewModel);
-
-        // Load sudoku list
-        appViewModel.LoadSudokuList();
+        // Source
 
     });
+
+    // And start the app; apply the bindings and load the sudoku list
+    // var appViewModel = new AppViewModel();
+    // ko.applyBindings(appViewModel);
+
+    // TODO LOAD THE SUDOKU LIST BUT THEN CHECK THE HISTORY STATE TO UNDERSTAND WHAT TO DO NEXT ?!
+
+    // Load sudoku list
+    var appViewModel = new AppViewModel();
+    ko.applyBindings(appViewModel);
+
+    appViewModel.LoadSudokuList();
+
+    //$('body').append(testTemplate.Content);
 
     // + Objects
 
     function AppViewModel() {
 
         var self = this;
+
+        // Current state + navigate etc.
+
+        self.CurrentState = ko.observable(new ApplicationState('sudoku', null));
+
+        self.Navigate = function (selectedSudokuItem) {
+            //var appState = new ApplicationState('sudoku', [selectedSudokuItem]);
+            History.pushState(selectedSudokuItem, "Sudoku Solver - Sudoku Id: " + selectedSudokuItem.SudokuId, '/sudoku/' + selectedSudokuItem.SudokuId);
+        }
+
+        self.ChangeState = function (state) {
+
+            var url = state.url;
+
+        }
+
+        //self.LoadState = function (appState) {
+
+        //    switch (appState.View) {
+        //        case 'sudoku':
+
+        //            self.LoadSudoku(appState.Args[0]);
+        //            break;
+        //        case 'help':
+        //            break;
+        //        case 'contact':
+        //            break;
+        //        case 'source':
+        //            break;
+        //        case 'license':
+        //            break;
+        //    }
+        //}
+
         self.SudokuList = ko.observableArray([]);
         self.Sudoku = ko.observable(new Sudoku());
 
         // Css
         self.HasSudokuList = ko.computed(function () { return self.SudokuList().length > 0; });
         self.HasSudoku = ko.computed(function () { return self.Sudoku().SudokuId() > 0; });
-
-        // Navigate
-        self.Navigate = function (selectedSudokuItem) {
-            History.pushState(selectedSudokuItem, "Sudoku Solver - Sudoku Id: " + selectedSudokuItem.SudokuId, selectedSudokuItem.SudokuId);
-        }
 
         // Load list
         self.LoadSudokuList = function () {
@@ -102,6 +149,9 @@
                 self.SudokuList(sudokuList);
                 self.Navigate(sudokuList[0]);
                 //self.LoadSudoku(sudokuList[0]);
+
+                //ko.applyBindings(self);
+
             });
         };
 
@@ -219,6 +269,21 @@
                 }
             });
         };
+    }
+
+    function ApplicationState(view, args) {
+        var self = this;
+
+        self.View = view;
+        self.Args = args;
+    };
+
+    function HtmlTemplate(templateId, content) {
+        var self = this;
+
+        self.Id = templateId;
+        self.Content = content;
+        self.IsLoaded = false;
     }
 
     // Sudoku
@@ -1012,4 +1077,4 @@
         $('#messagePanel').fadeTo(200, 0.01);
     }
 
-})();
+})(window);

@@ -34,6 +34,9 @@
             </div>
         </div>
         <div class="contentRight" data-bind="css: { hide: !HasSudoku() }">
+            <div id="header">
+                <!--ko text: CurrentState().View--><!--/ko-->
+            </div>
             <div id="detailsPanel" class="panel">
                 <strong>Details</strong>
                 <br />
@@ -144,13 +147,14 @@
                 </div>
                 <!--/ko-->
             </div>
+            <%--<div data-bind="template: { name: 'testTemplate4', data: Sudoku }"></div>--%>
         </div>
     </div>
     <!-- Html templates -->
     <!-- Loading message -->
     <div id="loadingMessagePanel" class="hide">
         <span id="loadingMessageText">Loading, please wait!</span>
-        <img id="loadingMessageImage" src="Images/ajax-loader.gif" />
+        <img id="loadingMessageImage" src="/Images/ajax-loader.gif" />
     </div>
     <!-- New sudoku dialog -->
     <div id="newSudokuDialog" title="New sudoku" class="hide">
@@ -194,7 +198,7 @@
         </form>
     </div>
     <!-- Reset dialog -->
-    <!--<script type="text/html" id="resetDialog-template">-->
+    <!--<script id="resetDialog-template" type="text/html">-->
     <div id="resetDialog" title="Reset sudoku?" class="hide">
         <p>
             Are you sure you want to reset the sudoku?
@@ -202,7 +206,7 @@
     </div>
     <!--</script>-->
     <!-- Reset list dialog -->
-    <!--<script type="text/html" id="resetListDialog-template">-->
+    <!--<script id="resetListDialog-template" type="text/html">-->
     <div id="resetListDialog" title="Reset list?" class="hide">
         <p>
             Are you sure you want to reset the list?
@@ -210,7 +214,7 @@
     </div>
     <!--</script>-->
     <!-- Sudoku grid template -->
-    <script type="text/html" id="gridTemplate">
+    <script id="gridTemplate" type="text/html">
         <!--ko foreach: Groups-->
         <div class="groupItem" data-bind="foreach: Squares, css: CssClass">
             <div data-bind="template: { name: $parents[1].Template, data: $data }, click: $root.Sudoku().SetSelectedSquare, attr: { 'class': CssClass }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, passiveSelected: IsPassiveSelected(), relatedSelected: IsRelatedSelected(), odd: $parent.IsOdd }">
@@ -218,18 +222,19 @@
         </div>
         <!--/ko-->
     </script>
-    <script type="text/html" id="squareValueTemplate">
+    <script id="squareValueTemplate" type="text/html">
         <span data-bind="html: ValueFormatted" class="value" />
     </script>
-    <script type="text/html" id="squareAvailabilitiesTemplate">
+    <script id="squareAvailabilitiesTemplate" type="text/html">
         <div data-bind="foreach: Availabilities">
             <span class="availabilityItem" data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }" />
         </div>
     </script>
-    <script type="text/html" id="squareIdTemplate">
+    <script id="squareIdTemplate" type="text/html">
         <span class="value" data-bind="text: SquareId" />
     </script>
     <!-- Html templates End -->
-    <script src="Scripts/sudokusolver.js" type="text/javascript"></script>
+    <%--<script id="testTemplate" src="/Content/htm/test.htm" type="text/template"></script>--%>
+    <script src="/Scripts/sudokusolver.js" type="text/javascript"></script>
 </body>
 </html>

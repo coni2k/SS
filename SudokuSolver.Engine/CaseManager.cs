@@ -828,7 +828,7 @@ namespace SudokuSolver.Engine
             //list.Add(Case15());
             //list.Add(Case16());
             //list.Add(Case17());
-            //list.Add(Case18());
+            list.Add(Case18());
             list.Add(Case19());
 
             return list;

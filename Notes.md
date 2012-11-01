@@ -158,11 +158,20 @@ CHECK THE URLS
 
 /source
 
-/rest (404) ?
+/rest (404 + error cases) ?
 
 back + forward buttons?
 
 default.aspx or default.html?
+
+
+
+---
+CONTINUE WITH HISTORY.JS
+GET THE INITIAL STATE AND DECIDE WHAT TO DO
+ALSO HANDLE THE STATE CHANGE PROPERLY ETC.
+TRY TO CONTINUE WITH DIFF. CONTENTS (CONTACT + SOURCE ETC.)
+
 
 
 . event delegation (for square to update sudoku - selected square);
@@ -170,6 +179,10 @@ http://davidwalsh.name/event-delegate
 
 . KNOCKOUT
 http://groups.google.com/group/knockoutjs
+
+. external templates;
+http://www.knockmeout.net/2011/03/using-external-jquery-template-files.html
+http://ifandelse.com/?p=100
 
 .. sessions;
 http://www.knockmeout.net/2012/08/thatconference-2012-session.html

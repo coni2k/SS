@@ -26,3 +26,7 @@ It aims to solve any sudoku with the least possible steps.
 - js validation by;
 	- WebGrease
 	- JSHint
+
+- special thanks to stackoverflow community
+
+License?
