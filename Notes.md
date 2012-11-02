@@ -26,8 +26,6 @@ http://kenhaines.net/post/2012/06/25/How-to-use-Webgrease-Configuration-Files.as
 http://codebetter.com/howarddierking/2012/06/04/web-optimization-in-visual-studio-2012-rc/
 http://kenhaines.net/post/2012/06/09/WebGrease-As-seen-in-Visual-Studio-2012.aspx
 http://bartwullems.blogspot.nl/2012/07/minification-and-bundling-in-aspnet.html
-. nav.js: browser's history/navigation? needs sample - similar to history.js?
-http://blog.stevensanderson.com/category/knockout/
 
 ---
 BIG HINT ISSUE!
@@ -109,94 +107,63 @@ and sudoku class instead of sudokuContainer? + square class instead of squareCon
 
 . check the performance by comparing with a plain html
 
-. at the end; webgrease + jslint;
+. test history js with old browsers - how about !history.enabled + return false block?
+
+. default.aspx or default.html?
+
+. at the end;
+
+- webgrease + jslint;
 http://www.jshint.com
 
-. at the end; add it to the showcase of history.js?
+- add it to the showcase of libraries (knockout + history.js etc.)
 https://github.com/balupton/history.js/wiki/Showcase
+- refer to the global js files, instead of local ones?
 
 . use strict;
 http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
 
 . stevenson blog;
-http://blog.stevensanderson.com/
+http://blog.stevensanderson.com/2012/08/01/rich-javascript-applications-the-seven-frameworks-throne-of-js-2012/
 
 . sammy.js;
 http://sammyjs.org/
 
-. history js;
-http://blog.stevensanderson.com/2011/11/04/full-height-app-layouts-navigation-and-history/
-https://github.com/balupton/History.js/
-AJAXIFY: https://gist.github.com/854622
+. history js gist;
+https://gist.github.com/854622
 
 http://richarddingwall.name/2008/08/09/three-common-aspnet-mvc-url-routing-issues/
 http://www.4guysfromrolla.com/articles/012710-1.aspx - ROUTING IN ASP.NET 4
 URL AS UI - http://www.useit.com/alertbox/990321.html
 
---- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
-HOT STUFF;
-
-CURRENTLY NAVIGATION GOES GOOD
-CLEAN HISTORY JS FOLDER
-CHECK THE URLS
-
-. navigation
-
-/welcome?
-- blank
-- generate new
-- load cases
-
-/sudoku/blank
-/sudoku/generated
-
-/sudoku/1
-/sudoku/2
-/sudoku/...
-
-/info + contact?
-
-/source
-
-/rest (404 + error cases) ?
-
-back + forward buttons?
-
-default.aspx or default.html?
-
-
-
----
-CONTINUE WITH HISTORY.JS
-GET THE INITIAL STATE AND DECIDE WHAT TO DO
-ALSO HANDLE THE STATE CHANGE PROPERLY ETC.
-TRY TO CONTINUE WITH DIFF. CONTENTS (CONTACT + SOURCE ETC.)
-
-
-
 . event delegation (for square to update sudoku - selected square);
 http://davidwalsh.name/event-delegate
 
-. KNOCKOUT
-http://groups.google.com/group/knockoutjs
-
 . external templates;
+http://max.jsrhost.com/ - Ajaxify
 http://www.knockmeout.net/2011/03/using-external-jquery-template-files.html
 http://ifandelse.com/?p=100
 
-.. sessions;
+.. knockout sessions;
 http://www.knockmeout.net/2012/08/thatconference-2012-session.html
 http://www.knockmeout.net/2012/10/twincitiescodecamp-2012-session.html
 
-.. extending observables ?
-http://knockoutjs.com/documentation/extenders.html
+. history js doc;
+https://github.com/balupton/history.js/wiki/Intelligent-State-Handling
 
-ko.extenders.logChange = function(target, option) {
-    target.subscribe(function(newValue) {
-       console.log(option + ": " + newValue);
-    });
-    return target;
-};
+--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
+HOT STUFF;
+
+CONTINUE WITH CHECKING DYNAMIC CSS ;
+IF ITS ON HTML, IT GENERATES TO MUCH TEXT ON THE PAGE
+IF ITS GENERATED DYNAMICALLY, IT CAN BE SLOW?
+IN GENERAL CSS CHANGES ARE NOT THAT FAST? ESPECIALLY RELATED SQUARE SELECTION?
+
+THEN CONTINUE WITH;
+1. EXTERNAL HTML TEMPLATE?
+2. UNOBTRUSIVE KNOCKOUT?
+3. KO.TOJSON.. !?
+4. should we try to put all functions under appviewmodel ?!?!?
 
 http://bsatrom.github.com/Knockout.Unobtrusive/
 
@@ -211,9 +178,6 @@ ko.bindingConventions.conventions(".person-editor", {
 
 .. Now, if you do a ko.toJSON(viewModel) or ko.toJSON(selectedItem), you will just get your item and not the style object. The toJSON() method will see that selectedItem is an observable and then unwrap it. It does not look for any properties/observables attached to the observable itself (which is a function). So, this is a nice way to hide values that are not important to send back to the server.
 
-. sudokuId as querystring - and the application should listen when its loading - localhost/5 - load sudoku 5
-history.js?!
-
 . proper new/remove hint - is it possible to merge hint + square
 dynamic hints?
 
@@ -224,23 +188,3 @@ dynamic hints?
 . Group's last number
 . Sudoku's last square
 . Sudoku's last number
-
----
-            <!--<div data-bind="template: { name: $parents[1].SquareTemplateName, data: $data }, click: $parents[2].SetSelectedSquare, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, attr: { 'class': CssClass() }">-->
-
-
-                <!--                    <span data-bind="text: ValueFormatted, css: { value: $parents[1].DisplayMode === 'value', hide: $parents[1].DisplayMode !== 'value', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                        class="" />-->
-                <!--                    <div data-bind="foreach: Availabilities, css: { availabilities: $parents[1].DisplayMode === 'availability', hide: $parents[1].DisplayMode !== 'availability', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                        class="">
-                        <span data-bind="text: Value, attr: { 'class': CssClass() }" />
-                    </div>
-                    <span data-bind="text: SquareId, css: { value: $parents[1].DisplayMode === 'id', hide: $parents[1].DisplayMode !== 'id', size4: $parents[2].Size() === 4, size9: $parents[2].Size() === 9, size16: $parents[2].Size() === 16 }"
-                        class="" />-->
-						
-						
-						            <!--            <div id="availability2GridPanel" data-bind="template: { name: 'grid-template', data: Availability2Grid }, css: { hide: !Availability2Grid.Visible }"
-                class="gridPanel hide">
-            </div>-->
-
-			                    <!--<div data-bind="click: $parents[1].SetSelectedNumber, event: { mouseenter: TogglePassiveSelect, mouseleave: TogglePassiveSelect }, attr: { 'class': CssClass() }">-->

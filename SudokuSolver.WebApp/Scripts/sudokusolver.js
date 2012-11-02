@@ -2,33 +2,34 @@
 /*jshint jquery:true*/
 /*global ko:true, Enumerable:true*/
 
-(function (window, undefined) {
+(function (window, document, $, ko, Enumerable, undefined) {
     "use strict";
 
     // + Variables
+    var
+        /* WebAPI URLs */
+        /* Root */
+        apiUrlRoot = '/api/Sudoku/',
 
-    // Base
-    var apiUrlBase = '/api/Sudoku/';
+        /* Application level */
+        apiUrlSudokuList = apiUrlRoot + 'sudokulist',
+        apiUrlNewSudoku = apiUrlRoot + 'newsudoku',
+        apiUrlResetList = apiUrlRoot + 'resetlist',
 
-    // Application level
-    var apiUrlSudokuList = apiUrlBase + 'sudokulist';
-    var apiUrlNewSudoku = apiUrlBase + 'newsudoku';
-    var apiUrlResetList = apiUrlBase + 'resetlist';
+        /* Sudoku level - get */
+        apiUrlSquares = apiUrlRoot + 'squares/', // + sudokuId
+        apiUrlNumbers = apiUrlRoot + 'numbers/', // + sudokuId
+        apiUrlHints = apiUrlRoot + 'hints/', // + sudokuId
+        apiUrlAvailabilities = apiUrlRoot + 'availabilities/', // + sudokuId
+        //var apiUrlAvailabilities2 = apiUrlRoot + 'availabilities/', // + sudokuId
+        apiUrlGroupNumberAvailabilities = apiUrlRoot + 'groupnumberavailabilities/', // + sudokuId
 
-    // Sudoku level - gets
-    var apiUrlSquares = apiUrlBase + 'squares/'; // + sudokuId
-    var apiUrlNumbers = apiUrlBase + 'numbers/'; // + sudokuId
-    var apiUrlHints = apiUrlBase + 'hints/'; // + sudokuId
-    var apiUrlAvailabilities = apiUrlBase + 'availabilities/'; // + sudokuId
-    //var apiUrlAvailabilities2 = apiUrlBase + 'availabilities/'; // + sudokuId
-    var apiUrlGroupNumberAvailabilities = apiUrlBase + 'groupnumberavailabilities/'; // + sudokuId
-
-    // Sudoku level - posts
-    var apiUrlUpdateSquare = apiUrlBase + 'updatesquare/'; // + sudokuId
-    var apiUrlToggleReady = apiUrlBase + 'toggleready/'; // + sudokuId
-    var apiUrlToggleAutoSolve = apiUrlBase + 'toggleautosolve/'; // + sudokuId
-    var apiUrlSolve = apiUrlBase + 'solve/'; // + sudokuId
-    var apiUrlReset = apiUrlBase + 'reset/'; // + sudokuId
+        /* Sudoku level - post */
+        apiUrlUpdateSquare = apiUrlRoot + 'updatesquare/', // + sudokuId
+        apiUrlToggleReady = apiUrlRoot + 'toggleready/', // + sudokuId
+        apiUrlToggleAutoSolve = apiUrlRoot + 'toggleautosolve/', // + sudokuId
+        apiUrlSolve = apiUrlRoot + 'solve/', // + sudokuId
+        apiUrlReset = apiUrlRoot + 'reset/'; // + sudokuId
 
     // Load templates ?!
     //var templates = [];
@@ -48,93 +49,155 @@
     //    });
     //}
 
-    //$('body').append('<script id="testTemplate4" type="text/html"><div id="testTemplate5"><h1>test content</h1></div></script>');
-
-    // History.js + content
-    //var currentContent = 'sudoku';
-
-    var History = window.History; // Note: We are using a capital H instead of a lower h
-
-    if (!History.enabled) {
-
-        // History.js is disabled for this browser.
-        // This is because we can optionally choose to support HTML4 browsers or not.
-        return false;
-    }
-
-    var initialState = History.getState();
-
-    // Bind to StateChange Event
-    History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
-
-        var State = History.getState(); // Note: We are using History.getState() instead of event.state
-
-        History.log(State.data, State.title, State.url);
-
-        //var page = State.url.splice
-
-        // Sudoku
-        appViewModel.LoadSudoku(State.data);
-
-        // Info + Contact
-
-        // Source
-
-    });
-
-    // And start the app; apply the bindings and load the sudoku list
-    // var appViewModel = new AppViewModel();
-    // ko.applyBindings(appViewModel);
-
-    // TODO LOAD THE SUDOKU LIST BUT THEN CHECK THE HISTORY STATE TO UNDERSTAND WHAT TO DO NEXT ?!
-
-    // Load sudoku list
+    // Bind knockout
     var appViewModel = new AppViewModel();
     ko.applyBindings(appViewModel);
 
-    appViewModel.LoadSudokuList();
-
-    //$('body').append(testTemplate.Content);
-
     // + Objects
-
     function AppViewModel() {
 
         var self = this;
 
-        // Current state + navigate etc.
+        self.CurrentContent = ko.observable('');
 
-        self.CurrentState = ko.observable(new ApplicationState('sudoku', null));
+        // History.js
+        self.History = window.History;
+        if (!self.History.enabled) {
 
-        self.Navigate = function (selectedSudokuItem) {
-            //var appState = new ApplicationState('sudoku', [selectedSudokuItem]);
-            History.pushState(selectedSudokuItem, "Sudoku Solver - Sudoku Id: " + selectedSudokuItem.SudokuId, '/sudoku/' + selectedSudokuItem.SudokuId);
+            // History.js is disabled for this browser.
+            // This is because we can optionally choose to support HTML4 browsers or not.
+            return false;
         }
 
-        self.ChangeState = function (state) {
+        // Bind to StateChange Event
+        self.History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
 
-            var url = state.url;
+            //var state = self.History.getState();
+            //History.log(state.data, state.title, state.url);
+
+            self.LoadContent(self.History.getState());
+
+        });
+
+        // Navigate
+        self.Navigate = function (selectedSudokuItem, isPush) {
+
+            if (isPush) {
+                // self.History.pushState(selectedSudokuItem, "Sudoku Solver - Sudoku Id: " + selectedSudokuItem.SudokuId, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
+                self.History.pushState(null, null, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
+            }
+            else {
+                // self.History.replaceState(selectedSudokuItem, "Sudoku Solver - Sudoku Id: " + selectedSudokuItem.SudokuId, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
+                self.History.replaceState(null, null, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
+            }
 
         }
 
-        //self.LoadState = function (appState) {
+        self.LoadContent = function (state) {
 
-        //    switch (appState.View) {
-        //        case 'sudoku':
+            // Helper
+            var urlHelper = document.createElement('a');
 
-        //            self.LoadSudoku(appState.Args[0]);
-        //            break;
-        //        case 'help':
-        //            break;
-        //        case 'contact':
-        //            break;
-        //        case 'source':
-        //            break;
-        //        case 'license':
-        //            break;
-        //    }
-        //}
+            // If there is a state, get the url
+            if (state !== null) {
+                urlHelper.href = state.url;
+            }
 
+            // Content to be loaded
+            var urlContent = urlHelper.pathname.replace(/\//g, '').replace('default.aspx', '');
+
+            // Id 
+            var urlId = parseInt(urlHelper.search.replace('?id=', ''), 10);
+
+            // Initial content
+            // TODO Should be 'welcome' kind of..?
+            if (urlContent === '')
+            {
+                self.Navigate(self.SudokuList()[0], false);
+                return;
+            }
+
+            // Content
+            switch (urlContent)
+            {
+                case 'sudoku':
+                    {
+                        // Initial item; first sudoku in the list
+                        if (isNaN(urlId))
+                        {
+                            self.Navigate(self.SudokuList()[0], false);
+                            return;
+                        }
+
+                        // Search for the item
+                        var sudokuItem = Enumerable.From(self.SudokuList()).SingleOrDefault(null, function (sudokuItem) {
+                            return sudokuItem.SudokuId === urlId;
+                        });
+
+                        // There there is no sudoku with this Id
+                        if (sudokuItem === null)
+                        {
+                            // TODO Return 404 ?!
+                            self.History.log('404');
+                        }
+
+                        // Load it
+                        self.CurrentContent('Sudoku');
+                        document.title = 'Sudoku Solver - Sudoku Id: ' + sudokuItem.SudokuId;
+                        self.LoadSudoku(sudokuItem);
+
+                        break;
+                    }
+
+                case 'welcome':
+                    {
+                        ///welcome?
+
+                        //- blank
+                        //- generate new
+                        //- load cases
+
+                        ///sudoku/blank
+                        ///sudoku/generated
+
+                        break;
+                    }
+
+                case 'help':
+                    self.CurrentContent('Help');
+                    document.title = 'Sudoku Solver - Help';
+                    break;
+
+                case 'contact':
+                    self.CurrentContent('Contact');
+                    document.title = 'Sudoku Solver - Contact';
+                    break;
+
+                case 'source':
+                    self.CurrentContent('Source');
+                    document.title = 'Sudoku Solver - Source';
+                    break;
+
+                case 'license':
+                    self.CurrentContent('License');
+                    document.title = 'Sudoku Solver - License';
+                    break;
+
+                case 'error':
+                    self.CurrentContent('Error');
+                    document.title = 'Sudoku Solver - Error';
+                    break;
+
+                default:
+                    {
+                        /* TODO Return 404 ?! */
+                        self.History.log('404');
+                        break;
+                    }
+            }
+        }
+
+        // List + selected sudoku
         self.SudokuList = ko.observableArray([]);
         self.Sudoku = ko.observable(new Sudoku());
 
@@ -143,28 +206,17 @@
         self.HasSudoku = ko.computed(function () { return self.Sudoku().SudokuId() > 0; });
 
         // Load list
-        self.LoadSudokuList = function () {
+        self.LoadSudokuList = function (isReset) {
             getApiData(apiUrlSudokuList, function (sudokuList) {
+
                 self.SudokuList([]);
                 self.SudokuList(sudokuList);
-                self.Navigate(sudokuList[0]);
-                //self.LoadSudoku(sudokuList[0]);
 
-                //ko.applyBindings(self);
+                // If it loads through reset list, ignore (history) state (to prevent to load the wrong id)
+                self.LoadContent(isReset ? null : self.History.getState());
 
             });
         };
-
-        // Select sudoku
-        //self.SelectSudoku = function (selectedSudokuItem) {
-
-        //    History.pushState(null, "Sudoku Solver - Sudoku Id: " + selectedSudokuItem.SudokuId, 'sudoku/' + selectedSudokuItem.SudokuId);
-
-        //    self.LoadSudoku(selectedSudokuItem);
-
-        //    return false;
-
-        //};
 
         // Load sudoku
         self.LoadSudoku = function (sudokuData) {
@@ -233,7 +285,7 @@
 
                             // Load the sudoku
                             // self.LoadSudoku(newSudoku);
-                            self.Navigate(newSudoku);
+                            self.Navigate(newSudoku, true);
 
                         });
                     },
@@ -260,7 +312,7 @@
                         $(this).dialog('close');
 
                         // Post + load
-                        postApi(apiUrlResetList, null, function () { self.LoadSudokuList(); });
+                        postApi(apiUrlResetList, null, function () { self.LoadSudokuList(true); });
 
                     },
                     Cancel: function () {
@@ -269,14 +321,11 @@
                 }
             });
         };
+
+        // Load sudoku list
+        self.LoadSudokuList(false);
+
     }
-
-    function ApplicationState(view, args) {
-        var self = this;
-
-        self.View = view;
-        self.Args = args;
-    };
 
     function HtmlTemplate(templateId, content) {
         var self = this;
@@ -1077,4 +1126,4 @@
         $('#messagePanel').fadeTo(200, 0.01);
     }
 
-})(window);
+})(window, document, jQuery, ko, Enumerable);
