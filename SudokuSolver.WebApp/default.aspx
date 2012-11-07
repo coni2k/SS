@@ -11,7 +11,7 @@
     <script src="/Scripts/knockout-2.2.0.js" type="text/javascript"></script>
     <script src="/Scripts/knockout.mapping-latest.js" type="text/javascript"></script>
     <script src="/Scripts/linq.min.js" type="text/javascript"></script>
-    <script src="/Scripts/history/scripts/bundled/html4html5/jquery.history.js"></script>
+    <script src="/Scripts/jquery.history-1.7.1.min.js"></script>
 </head>
 <body>
     <div class="header">
@@ -139,7 +139,8 @@
                 </div>
                 <div id="numberGridPanel" data-bind="foreach: Sudoku().NumberGroups, css: Sudoku().CssValueGrid">
                     <div data-bind="foreach: Numbers, css: CssClass">
-                        <div data-bind="click: $root.Sudoku().SetSelectedNumber, attr: { 'class': CssClass }, css: { activeSelected: IsActiveSelected, passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd }">
+                        <%--<div data-bind="click: $root.Sudoku().SetSelectedNumber, attr: { 'class': CssClass }, css: { activeSelected: IsActiveSelected, passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd }">--%>
+                        <div data-bind="click: $root.Sudoku().SetSelectedNumber, css: CssClassComputed">
                             <span class="value" data-bind="text: Value"></span>
                         </div>
                     </div>
@@ -221,26 +222,23 @@
         </form>
     </div>
     <!-- Reset dialog -->
-    <!--<script id="resetDialog-template" type="text/html">-->
     <div id="resetDialog" title="Reset sudoku?" class="hide">
         <p>
             Are you sure you want to reset the sudoku?
         </p>
     </div>
-    <!--</script>-->
     <!-- Reset list dialog -->
-    <!--<script id="resetListDialog-template" type="text/html">-->
     <div id="resetListDialog" title="Reset list?" class="hide">
         <p>
             Are you sure you want to reset the list?
         </p>
     </div>
-    <!--</script>-->
     <!-- Sudoku grid template -->
     <script id="gridTemplate" type="text/html">
         <!--ko foreach: Groups-->
         <div class="groupItem" data-bind="foreach: Squares, css: CssClass">
-            <div data-bind="template: { name: $parents[1].Template, data: $data }, click: $root.Sudoku().SetSelectedSquare, attr: { 'class': CssClass }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, passiveSelected: IsPassiveSelected(), relatedSelected: IsRelatedSelected(), odd: $parent.IsOdd }">
+            <%--<div data-bind="template: { name: $parents[1].Template, data: $data }, click: $root.Sudoku().SetSelectedSquare, attr: { 'class': CssClass }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, passiveSelected: IsPassiveSelected(), relatedSelected: IsRelatedSelected(), odd: $parent.IsOdd }">--%>
+            <div data-bind="template: { name: $parents[1].Template, data: $data }, click: $root.Sudoku().SetSelectedSquare, css: CssClassComputed">
             </div>
         </div>
         <!--/ko-->
@@ -250,7 +248,8 @@
     </script>
     <script id="squareAvailabilitiesTemplate" type="text/html">
         <div data-bind="foreach: Availabilities">
-            <span class="availabilityItem" data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }" />
+            <%--<span class="availabilityItem" data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }" />--%>
+            <span data-bind="text: Value, css: CssClassComputed" />
         </div>
     </script>
     <script id="squareIdTemplate" type="text/html">

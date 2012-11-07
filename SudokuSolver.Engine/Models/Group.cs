@@ -61,12 +61,12 @@ namespace SudokuSolver.Engine
             get { return Squares.Where(s => s.IsAvailable); }
         }
 
-        internal IEnumerable<Number> UsedNumbers
+        internal IEnumerable<SudokuNumber> UsedNumbers
         {
-            get { return UsedSquares.Select(s => s.Number); }
+            get { return UsedSquares.Select(s => s.SudokuNumber); }
         }
 
-        internal IEnumerable<Number> AvailableNumbers
+        internal IEnumerable<SudokuNumber> AvailableNumbers
         {
             get { return Sudoku.GetNumbersExceptZero().Except(UsedNumbers); }
         }
@@ -113,7 +113,7 @@ namespace SudokuSolver.Engine
             //var list = Sudoku.GetHints().Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
             //Sudoku.GetHints().remmo .Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
 
-            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.Number));
+            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.SudokuNumber));
         }
 
         void Square_AvailabilityChanged(Square square)
@@ -155,7 +155,7 @@ namespace SudokuSolver.Engine
 
                     if (HintFound != null)
                     {
-                        System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.Id.ToString(), number.Value.ToString());
+                        System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.SquareId.ToString(), number.Value.ToString());
                         HintFound(new Hint(item, this, number, HintTypes.Group));
                     }
                 }
@@ -163,7 +163,7 @@ namespace SudokuSolver.Engine
         }
 
         // TODO IS THIS REALLY NECESSARY?
-        public IEnumerable<Square> GetAvailableSquaresForNumber(Number number)
+        public IEnumerable<Square> GetAvailableSquaresForNumber(SudokuNumber number)
         {
             return AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
         }

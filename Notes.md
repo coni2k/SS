@@ -3,9 +3,14 @@ Wishlist:
 . Only retrieve "changes" from the server; squares + numbers + availabilites etc. ("used" version don't work in case of removed objects)
 . Square Id Order Type - currently it's square type by default - horizontal and vertical as well?
 . Horizontal + Vertical groups for square on client-side? And use them with ToggleActiveSelected() (Is it possible to retrieve this info from the server?)
-. Database connection?
+. Handle arrow keys?
 . Unit testing?
 . Sudoku generator
+. knockout unobtrusive?
+http://bsatrom.github.com/Knockout.Unobtrusive/
+http://userinexperience.com/?p=633
+http://userinexperience.com/?p=689
+. Store in the database?
 . Better html template - vix.com?
 . Multi-language
 . Offline mode
@@ -108,8 +113,18 @@ and sudoku class instead of sudokuContainer? + square class instead of squareCon
 . check the performance by comparing with a plain html
 
 . test history js with old browsers - how about !history.enabled + return false block?
+try it with it and without it?
 
 . default.aspx or default.html?
+
+. external html templates;
+the templates should be on different htm files and should be loaded dynamically (on request)
+but since the design of the application is not clear, work on it at the end
+
+. Check Dynamic Css for Square + SudokuNumber + Availability;
+If its on html, it generates to much text on the page
+If its generated dynamically, it can be slow?
+In general css changes are not that fast? especially related square selection?
 
 . at the end;
 
@@ -122,15 +137,6 @@ https://github.com/balupton/history.js/wiki/Showcase
 
 . use strict;
 http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
-
-. stevenson blog;
-http://blog.stevensanderson.com/2012/08/01/rich-javascript-applications-the-seven-frameworks-throne-of-js-2012/
-
-. sammy.js;
-http://sammyjs.org/
-
-. history js gist;
-https://gist.github.com/854622
 
 http://richarddingwall.name/2008/08/09/three-common-aspnet-mvc-url-routing-issues/
 http://www.4guysfromrolla.com/articles/012710-1.aspx - ROUTING IN ASP.NET 4
@@ -148,35 +154,25 @@ http://ifandelse.com/?p=100
 http://www.knockmeout.net/2012/08/thatconference-2012-session.html
 http://www.knockmeout.net/2012/10/twincitiescodecamp-2012-session.html
 
-. history js doc;
+. Try to learn more about history.js;
 https://github.com/balupton/history.js/wiki/Intelligent-State-Handling
+https://gist.github.com/854622
+
+loading a new content (changing the state) doesnt look good? changes the content suddenly etc.?
+
+also check this in IE; when select a sudoku in 'help' page (is it a bug);
+/help#sudoku/?id=19
 
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 HOT STUFF;
 
-CONTINUE WITH CHECKING DYNAMIC CSS ;
-IF ITS ON HTML, IT GENERATES TO MUCH TEXT ON THE PAGE
-IF ITS GENERATED DYNAMICALLY, IT CAN BE SLOW?
-IN GENERAL CSS CHANGES ARE NOT THAT FAST? ESPECIALLY RELATED SQUARE SELECTION?
+CONTINUE WITH;
+1. KO.TOJSON + mapping ?!
+Now, if you do a ko.toJSON(viewModel) or ko.toJSON(selectedItem), you will just get your item and not the style object. The toJSON() method will see that selectedItem is an observable and then unwrap it. It does not look for any properties/observables attached to the observable itself (which is a function). So, this is a nice way to hide values that are not important to send back to the server.
 
-THEN CONTINUE WITH;
-1. EXTERNAL HTML TEMPLATE?
-2. UNOBTRUSIVE KNOCKOUT?
-3. KO.TOJSON.. !?
-4. should we try to put all functions under appviewmodel ?!?!?
-
-http://bsatrom.github.com/Knockout.Unobtrusive/
-
-.. 5. Binding providers (and hence external bindings)
-ko.bindingConventions.conventions(".person-editor", {
-    ".person-editor"  : { 'with': myViewModel.person },
-    ".first-name"     : function(person) { return { value: person.firstName } },
-    ".last-name"      : function(person) { return { value: person.lastName } }
-});
+2. should we try to put all functions under appviewmodel ?!?!?
 
 .. need throttle ?
-
-.. Now, if you do a ko.toJSON(viewModel) or ko.toJSON(selectedItem), you will just get your item and not the style object. The toJSON() method will see that selectedItem is an observable and then unwrap it. It does not look for any properties/observables attached to the observable itself (which is a function). So, this is a nice way to hide values that are not important to send back to the server.
 
 . proper new/remove hint - is it possible to merge hint + square
 dynamic hints?
@@ -188,3 +184,28 @@ dynamic hints?
 . Group's last number
 . Sudoku's last square
 . Sudoku's last number
+
+---
+CONTINUE WITH TRACING + LOGGING;
+LOG4NET OR ELMAH OR ..?
+http://www.asp.net/web-api/overview/testing-and-debugging/tracing-in-aspnet-web-api
+http://blogs.msdn.com/b/jmstall/archive/2012/04/16/how-webapi-does-parameter-binding.aspx
+http://blogs.msdn.com/b/roncain/archive/2012/04/12/tracing-in-asp-net-web-api.aspx
+http://blogs.msdn.com/b/roncain/archive/2012/08/16/asp-net-web-api-tracing-preview.aspx
+
+AND THEN (load data from server);
+http://knockoutjs.com/documentation/json-data.html
+
+ALSO DONT FORGET TO CHECK;
+. TOJSON PROTOTYPE
+. square().SudokuNumber(newValue); - square() is new, not just square
+. on server side;
+public bool IsAvailable
+{
+    get
+    {
+        if (SudokuNumber != null)
+            return SudokuNumber.IsZero;
+        return 
+    }
+}

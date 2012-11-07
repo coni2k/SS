@@ -214,7 +214,7 @@ namespace SudokuSolver.WebApp.Tester
         static void ShowAvailability()
         {
             //Get numbers first
-            var numbers = GetWebApiClient("numbers").GetItem<IEnumerable<Number>>(currentSudokuId);
+            var numbers = GetWebApiClient("numbers").GetItem<IEnumerable<SudokuNumber>>(currentSudokuId);
 
             //Remove zero
             var numbersExceptZero = numbers.Where(n => n.Value > 0);
@@ -240,7 +240,7 @@ namespace SudokuSolver.WebApp.Tester
                 foreach (var number in numbersExceptZero)
                 {
                     //TODO THIS METHOD DOESNT EXIST ANYMORE - UPDATE THIS BLOCK!
-                    var availableNumbersOfSquare = GetWebApiClient("squareavailability").GetItem<IEnumerable<Number>>(currentSudokuId, square.SquareId);
+                    var availableNumbersOfSquare = GetWebApiClient("squareavailability").GetItem<IEnumerable<SudokuNumber>>(currentSudokuId, square.SquareId);
 
                     var availableText = string.Format(" | {0}", availableNumbersOfSquare.Any(availableNumber => availableNumber.Value.Equals(number.Value)) ? "X" : ".");
                     Console.Write(availableText);
@@ -253,7 +253,7 @@ namespace SudokuSolver.WebApp.Tester
         static void ShowNumbers()
         {
             //Get
-            var numbers = GetWebApiClient("numbers").GetItem<IEnumerable<Number>>(currentSudokuId);
+            var numbers = GetWebApiClient("numbers").GetItem<IEnumerable<SudokuNumber>>(currentSudokuId);
 
             foreach (var number in numbers)
                 Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.Count.ToString()));
@@ -268,7 +268,7 @@ namespace SudokuSolver.WebApp.Tester
                 Console.WriteLine("There are no hints");
 
             foreach (var hint in hints)
-                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", hint.Square.Id.ToString("D2"), hint.SquareGroup.Id.ToString(), hint.Number.Value.ToString(), hint.Type.ToString()));
+                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", hint.Square.SquareId.ToString("D2"), hint.SquareGroup.Id.ToString(), hint.Number.Value.ToString(), hint.Type.ToString()));
         }
 
         static void ClearScreen()

@@ -75,7 +75,7 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         [ActionName("numbers")]
-        public IEnumerable<Number> GetNumbers(int id)
+        public IEnumerable<SudokuNumber> GetNumbers(int id)
         {
             var sudoku = GetSudoku(id);
 
@@ -108,13 +108,14 @@ namespace SudokuSolver.WebApp.Controllers
 
         [HttpPost]
         [ActionName("updatesquare")]
-        public void UpdateSquare(int id, SquareContainer square)
+        //public void UpdateSquare(int id, SquareContainer square)
+        public void UpdateSquare(int id, Square square)
         {
             var sudoku = GetSudoku(id);
 
             try
             {
-                sudoku.UpdateSquare(square.SquareId, square.Value);
+                sudoku.UpdateSquare(square.SquareId, square.SudokuNumber.Value);
             }
             catch (Exception ex)
             {

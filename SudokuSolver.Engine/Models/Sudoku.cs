@@ -10,7 +10,7 @@ namespace SudokuSolver.Engine
 
         private int _Size = 0;
         private ICollection<Square> _Squares = null;
-        private ICollection<Number> _Numbers = null;
+        private ICollection<SudokuNumber> _Numbers = null;
         private ICollection<Group> _SquareTypeGroups = null;
         private ICollection<Group> _HorizontalTypeGroups = null;
         private ICollection<Group> _VerticalTypeGroups = null;
@@ -98,7 +98,7 @@ namespace SudokuSolver.Engine
         /// Gets all numbers which can be used in sudoku, including zero.
         /// Count of the list equals to Size property of the sudoku + 1 (for size 9, it's 10)
         /// </summary>
-        public IEnumerable<Number> GetNumbers()
+        public IEnumerable<SudokuNumber> GetNumbers()
         {
             return _Numbers;
         }
@@ -107,7 +107,7 @@ namespace SudokuSolver.Engine
         /// Gets all usable numbers, except zero.
         /// Count of the list equals to Size property of the sudoku
         /// </summary>
-        public IEnumerable<Number> GetNumbersExceptZero()
+        public IEnumerable<SudokuNumber> GetNumbersExceptZero()
         {
             return GetNumbers().Where(n => !n.IsZero);
         }
@@ -231,10 +231,10 @@ namespace SudokuSolver.Engine
             this.Size = size;
 
             // Numbers (default 9 + zero value = 10)
-            _Numbers = new List<Number>(this.Size + 1);
-            _Numbers.Add(new Number(this, 0)); // Zero value
+            _Numbers = new List<SudokuNumber>(this.Size + 1);
+            _Numbers.Add(new SudokuNumber(this, 0)); // Zero value
             for (int i = 1; i <= Size; i++)
-                _Numbers.Add(new Number(this, i));
+                _Numbers.Add(new SudokuNumber(this, i));
 
             // Square groups
             _SquareTypeGroups = new List<Group>(Size);
@@ -311,7 +311,7 @@ namespace SudokuSolver.Engine
         public void UpdateSquare(int squareId, int value, AssignTypes type)
         {
             // Get the square
-            var square = GetSquares().Single(s => s.Id.Equals(squareId));
+            var square = GetSquares().Single(s => s.SquareId.Equals(squareId));
 
             // Get the number
             var number = GetNumbers().Single(n => n.Value.Equals(value));
@@ -320,7 +320,7 @@ namespace SudokuSolver.Engine
             UpdateSquare(square, number, type);
         }
 
-        void UpdateSquare(Square square, Number number, AssignTypes type)
+        void UpdateSquare(Square square, SudokuNumber number, AssignTypes type)
         {
             // Validations;
             //a. Square
@@ -336,7 +336,7 @@ namespace SudokuSolver.Engine
                 throw new InvalidOperationException("Not a valid assignment, initial values can not be changed in Ready state");
 
             // d. Is it available; Checks the related squares in the related groups
-            if (!number.IsZero && square.SquareGroups.Any(sg => sg.Squares.Any(s => s.Number.Equals(number))))
+            if (!number.IsZero && square.SquareGroups.Any(sg => sg.Squares.Any(s => s.SudokuNumber.Equals(number))))
                 throw new Exception("Not a valid assignment, the number is already in use in one of the related groups");
 
             // Set the number and type
@@ -432,7 +432,7 @@ namespace SudokuSolver.Engine
                     || s.AssignType == AssignTypes.Solver
                     || (s.AssignType == AssignTypes.Initial && !Ready))
                 {
-                    UpdateSquare(s.Id, 0, AssignTypes.Initial);
+                    UpdateSquare(s.SquareId, 0, AssignTypes.Initial);
                 }
             }
         }

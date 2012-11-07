@@ -2,11 +2,17 @@
 /*jshint jquery:true*/
 /*global ko:true, Enumerable:true*/
 
-(function (window, document, $, ko, Enumerable, undefined) {
+(function (window, undefined) {
     "use strict";
 
     // + Variables
     var
+        /* Globals */
+        document = window.document,
+        $ = window.jQuery,
+        ko = window.ko,
+        Enumerable = window.Enumerable,
+
         /* WebAPI URLs */
         /* Root */
         apiUrlRoot = '/api/Sudoku/',
@@ -64,6 +70,9 @@
         self.History = window.History;
         if (!self.History.enabled) {
 
+            // TODO Is there anything we should do about this block?
+            // Tell the user that the current browser is not supported or wha'.. ?!
+
             // History.js is disabled for this browser.
             // This is because we can optionally choose to support HTML4 browsers or not.
             return false;
@@ -83,11 +92,9 @@
         self.Navigate = function (selectedSudokuItem, isPush) {
 
             if (isPush) {
-                // self.History.pushState(selectedSudokuItem, "Sudoku Solver - Sudoku Id: " + selectedSudokuItem.SudokuId, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
                 self.History.pushState(null, null, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
             }
             else {
-                // self.History.replaceState(selectedSudokuItem, "Sudoku Solver - Sudoku Id: " + selectedSudokuItem.SudokuId, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
                 self.History.replaceState(null, null, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
             }
 
@@ -95,7 +102,7 @@
 
         self.LoadContent = function (state) {
 
-            // Helper
+            // Url helper to get the segments (defa
             var urlHelper = document.createElement('a');
 
             // If there is a state, get the url
@@ -111,20 +118,17 @@
 
             // Initial content
             // TODO Should be 'welcome' kind of..?
-            if (urlContent === '')
-            {
+            if (urlContent === '') {
                 self.Navigate(self.SudokuList()[0], false);
                 return;
             }
 
             // Content
-            switch (urlContent)
-            {
+            switch (urlContent) {
                 case 'sudoku':
                     {
                         // Initial item; first sudoku in the list
-                        if (isNaN(urlId))
-                        {
+                        if (isNaN(urlId)) {
                             self.Navigate(self.SudokuList()[0], false);
                             return;
                         }
@@ -135,8 +139,7 @@
                         });
 
                         // There there is no sudoku with this Id
-                        if (sudokuItem === null)
-                        {
+                        if (sudokuItem === null) {
                             // TODO Return 404 ?!
                             self.History.log('404');
                         }
@@ -148,7 +151,6 @@
 
                         break;
                     }
-
                 case 'welcome':
                     {
                         ///welcome?
@@ -162,32 +164,36 @@
 
                         break;
                     }
-
                 case 'help':
-                    self.CurrentContent('Help');
-                    document.title = 'Sudoku Solver - Help';
-                    break;
-
+                    {
+                        self.CurrentContent('Help');
+                        document.title = 'Sudoku Solver - Help';
+                        break;
+                    }
                 case 'contact':
-                    self.CurrentContent('Contact');
-                    document.title = 'Sudoku Solver - Contact';
-                    break;
-
+                    {
+                        self.CurrentContent('Contact');
+                        document.title = 'Sudoku Solver - Contact';
+                        break;
+                    }
                 case 'source':
-                    self.CurrentContent('Source');
-                    document.title = 'Sudoku Solver - Source';
-                    break;
-
+                    {
+                        self.CurrentContent('Source');
+                        document.title = 'Sudoku Solver - Source';
+                        break;
+                    }
                 case 'license':
-                    self.CurrentContent('License');
-                    document.title = 'Sudoku Solver - License';
-                    break;
-
+                    {
+                        self.CurrentContent('License');
+                        document.title = 'Sudoku Solver - License';
+                        break;
+                    }
                 case 'error':
-                    self.CurrentContent('Error');
-                    document.title = 'Sudoku Solver - Error';
-                    break;
-
+                    {
+                        self.CurrentContent('Error');
+                        document.title = 'Sudoku Solver - Error';
+                        break;
+                    }
                 default:
                     {
                         /* TODO Return 404 ?! */
@@ -361,13 +367,40 @@
         });
 
         // Arrays
-        self.Groups = [];
         self.NumberGroups = [];
+        self.Groups = [];
         self.Hints = ko.observableArray([]);
         self.GroupNumberAvailabilities = ko.observableArray([]);
 
         // Css
         self.CssSize = (self.Size === 4 ? 'size4' : self.Size === 9 ? 'size9' : 'size16');
+
+        // Zero number
+        self.ZeroNumber = new SudokuNumber(null, 0);
+
+        // Numbers
+        // Group the numbers, to be able to display them nicely (see numbersPanel on default.html)
+        for (groupCounter = 1; groupCounter <= self.SquareRootofSize; groupCounter++) {
+
+            var numberGroup = new SudokuNumberGroup(groupCounter, self);
+            // numberGroup.CssClass = 'groupItem ' + self.CssSize;
+            // numberGroup.IsOdd = (groupCounter % 2 === 0);
+            // numberGroup.Numbers = [];
+
+            for (var numberCounter = 1; numberCounter <= self.SquareRootofSize; numberCounter++) {
+
+                // Calculate the value
+                var value = numberCounter + ((groupCounter - 1) * self.SquareRootofSize);
+
+                // New number
+                var sudokuNumber = new SudokuNumber(numberGroup, value);
+
+                // Add the number
+                numberGroup.Numbers.push(sudokuNumber);
+            }
+
+            self.NumberGroups.push(numberGroup);
+        }
 
         // Square groups loop
         for (var groupCounter = 1; groupCounter <= self.Size; groupCounter++) {
@@ -403,25 +436,6 @@
             }
 
             self.Groups.push(group);
-        }
-
-        // Numbers
-        // Group the numbers, to be able to display them nicely (see numbersPanel on default.html)
-        for (groupCounter = 1; groupCounter <= self.SquareRootofSize; groupCounter++) {
-
-            var numberGroup = new SudokuNumberGroup(groupCounter, self);
-            // numberGroup.CssClass = 'groupItem ' + self.CssSize;
-            // numberGroup.IsOdd = (groupCounter % 2 === 0);
-            // numberGroup.Numbers = [];
-
-            for (var numberCounter = 1; numberCounter <= self.SquareRootofSize; numberCounter++) {
-
-                var sudokuNumber = new SudokuNumber(numberGroup);
-                sudokuNumber.Value = numberCounter + ((groupCounter - 1) * self.SquareRootofSize);
-                numberGroup.Numbers.push(sudokuNumber);
-            }
-
-            self.NumberGroups.push(numberGroup);
         }
 
         // Grids;
@@ -480,7 +494,8 @@
                 square.SetActiveSelect(true); // Then set the new square as selected
             }
             else {
-                self.UpdateSelectedSquare(square, self.SelectedNumber().Value);
+                //self.UpdateSelectedSquare(square, self.SelectedNumber().Value);
+                self.UpdateSelectedSquare(square, self.SelectedNumber);
             }
         };
 
@@ -504,7 +519,8 @@
                 sudokuNumber.SetActiveSelect(true); // Then set the new number as selected
             }
             else {
-                self.UpdateSelectedSquare(self.SelectedSquare(), sudokuNumber.Value);
+                //self.UpdateSelectedSquare(self.SelectedSquare(), sudokuNumber.Value);
+                self.UpdateSelectedSquare(self.SelectedSquare, sudokuNumber);
             }
         };
 
@@ -512,7 +528,10 @@
         self.UpdateSelectedSquare = function (square, newValue) {
 
             // Prepare the data
-            var squareContainer = JSON.stringify({ SquareId: square.SquareId, Value: newValue });
+            square().SudokuNumber(newValue);
+
+            // var squareContainer = JSON.stringify({ SquareId: square.SquareId, Value: newValue });
+            var squareContainer = ko.toJSON(square); // JSON.stringify({ SquareId: square.SquareId, Value: newValue });
 
             // Post + load
             postApi(apiUrlUpdateSquare + self.SudokuId(), squareContainer, function () { self.LoadDetails(); });
@@ -542,7 +561,8 @@
         });
 
         self.RemoveSelectedSquareValue = function () {
-            self.UpdateSelectedSquare(self.SelectedSquare(), 0);
+            //self.UpdateSelectedSquare(self.SelectedSquare(), 0);
+            self.UpdateSelectedSquare(self.SelectedSquare, self.ZeroNumber);
         };
 
         // Toggle ready
@@ -583,7 +603,8 @@
                     }
                     else {
                         // If it's not ready, check whether there are any squares that have a value
-                        return square.AssignType() === 0 && square.Value() !== 0;
+                        //return square.AssignType() === 0 && square.Value() !== 0;
+                        return square.AssignType() === 0 && square.SudokuNumber().Value !== 0;
                     }
                 });
             });
@@ -640,8 +661,9 @@
 
                 Enumerable.From(squareList).ForEach(function (squareItem) {
 
-                    var square = self.FindSquareBySquareId(squareItem.Id);
-                    square.Value(squareItem.Number.Value);
+                    var square = self.FindSquareBySquareId(squareItem.SquareId);
+                    //square.Value(squareItem.Number.Value);
+                    square.SudokuNumber(squareItem.SudokuNumber);
                     square.AssignType(squareItem.AssignType);
 
                 });
@@ -794,7 +816,8 @@
 
                 // Search for the squares with the number
                 var matchedSquare = Enumerable.From(group.Squares).SingleOrDefault(null, function (square) {
-                    return square.Value() === number;
+                    //return square.Value() === number;
+                    return square.SudokuNumber().Value === number;
                 });
 
                 // If there is, add it to the list
@@ -853,13 +876,18 @@
         self.SquareId = squareId;
         self.Group = group;
         self.Value = ko.observable(0);
+        self.SudokuNumber = ko.observable(self.Group.Sudoku.ZeroNumber);
         self.AssignType = ko.observable(0);
 
         self.ValueFormatted = ko.computed(function () {
-            return self.Value() === 0 ? '&nbsp;' : self.Value();
+            //return self.Value() === 0 ? '&nbsp;' : self.Value();
+            return self.SudokuNumber().Value === 0 ? '&nbsp;' : self.SudokuNumber().Value;
         });
 
-        self.IsAvailable = ko.computed(function () { return self.Value() === 0; });
+        self.IsAvailable = ko.computed(function () {
+            //return self.Value() === 0;
+            return self.SudokuNumber().Value === 0;
+        });
 
         // self.IsUpdateable = ko.computed(function () { return !(self.Group.Sudoku.Ready() && self.AssignType() === 0 && !self.IsAvailable()); });
 
@@ -891,29 +919,31 @@
         self.IsRelatedSelected = ko.observable(false);
 
         // Css
-        //self.CssAssignType = ko.computed(function () {
-        //    switch (self.AssignType()) {
-        //        case 0:
-        //            return 'initial';
-        //        case 1:
-        //            return 'user';
-        //        case 2:
-        //            return 'hint';
-        //        case 3:
-        //            return 'solver';
-        //    }
-        //});
+        self.CssAssignType = ko.computed(function () {
+            switch (self.AssignType()) {
+                case 0:
+                    return ' initial';
+                case 1:
+                    return ' user';
+                case 2:
+                    return ' hint';
+                case 3:
+                    return ' solver';
+            }
+        });
 
-        //self.CssClassOld = ko.computed(function () {
-        //    return 'squareItem ' + self.CssAssignType() + ' '
-        //        + self.Group.Sudoku.CssSize
-        //        + (self.IsPassiveSelected() ? ' passiveSelected' : '')
-        //        + (self.IsActiveSelected() ? ' activeSelected' : '')
-        //        + (self.IsRelatedSelected() ? ' relatedSelected' : '')
-        //        + (self.Group.IsOdd ? ' odd' : '');
-        //});
+        self.CssClassComputed = ko.computed(function () {
+            return 'squareItem '
+                + self.Group.Sudoku.CssSize
+                + self.CssAssignType()
+                + (self.IsPassiveSelected() ? ' passiveSelected' : '')
+                + (self.IsActiveSelected() ? ' activeSelected' : '')
+                + (self.IsRelatedSelected() ? ' relatedSelected' : '')
+                + (self.Group.IsOdd ? ' odd' : '');
+        });
 
-        self.CssClass = 'squareItem ' + self.Group.Sudoku.CssSize;
+        // This is an alternative to CssClassComputed; in this way, this part is static and the rest is on html (to reduce the length of the calculated part)
+        // self.CssClass = 'squareItem ' + self.Group.Sudoku.CssSize;
 
     }
 
@@ -926,10 +956,10 @@
         self.CssClass = 'groupItem ' + self.Sudoku.CssSize;
     }
 
-    function SudokuNumber(group) {
+    function SudokuNumber(group, value) {
         var self = this;
         self.Group = group;
-        self.Value = 0;
+        self.Value = value;
         self.Count = ko.observable(0);
 
         // Passive select (for mouseenter + leave)
@@ -952,12 +982,16 @@
         };
 
         // Css
-        //self.CssClass = ko.computed(function () {
-        //    // css: { size4: $parents[1].Size() === 4, size9: $parents[1].Size() === 9, size16: $parents[1].Size() === 16, passiveSelected: IsPassiveSelected(), activeSelected: IsActiveSelected(), odd: $parent.IsOdd
-        //    return 'squareItem ' + self.Group.Sudoku.CssSize + (self.IsPassiveSelected() ? ' passiveSelected' : '') + (self.IsActiveSelected() ? ' activeSelected' : '') + (self.Group.IsOdd ? ' odd' : '');
-        //});
+        self.CssClassComputed = ko.computed(function () {
+            return 'squareItem '
+                + (self.Group ? self.Group.Sudoku.CssSize : '' )
+                + (self.IsPassiveSelected() ? ' passiveSelected' : '')
+                + (self.IsActiveSelected() ? ' activeSelected' : '')
+                + (self.Group && self.Group.IsOdd ? ' odd' : '');
+        });
 
-        self.CssClass = 'squareItem ' + self.Group.Sudoku.CssSize;
+        // This is an alternative to CssClassComputed; in this way, this part is static and the rest is on html (to reduce the length of the calculated part)
+        // self.CssClass = 'squareItem ' + self.Group.Sudoku.CssSize;
 
     }
 
@@ -975,7 +1009,8 @@
 
             // Find & toggle select related square as well
             var relatedSquare = data.Sudoku.FindSquareBySquareId(data.SquareId);
-            relatedSquare.Value(event.type === 'mouseenter' ? self.HintValue : 0);
+            //relatedSquare.Value(event.type === 'mouseenter' ? self.HintValue : 0);
+            relatedSquare.SudokuNumber().Value(event.type === 'mouseenter' ? self.HintValue : 0);
             relatedSquare.AssignType(event.type === 'mouseenter' ? 2 : 0);
             relatedSquare.TogglePassiveSelect(relatedSquare, event);
         };
@@ -987,19 +1022,11 @@
         self.Value = 0;
         self.IsAvailable = ko.observable(true);
 
-        // css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }
-        // self.CssClass = ko.computed(function () {
-
-        //var cssClass = 'availabilityItem';
-
-        //if (!self.Square.IsAvailable())
-        //    cssClass += ' unavailable_self';
-
-        //if (!self.IsAvailable())
-        //    cssClass += ' unavailable_group';
-
-        // return 'availabilityItem' + (!self.Square.IsAvailable() ? ' unavailable_self' : '') + (!self.IsAvailable() ? ' unavailable_group' : '');
-        // });
+        self.CssClassComputed = ko.computed(function () {
+            return 'availabilityItem '
+                + (!self.Square.IsAvailable() ? 'unavailable_self' : '')
+                + (!self.IsAvailable() ? ' unavailable_group' : '');
+        });
     }
 
     //function Availability2() {
@@ -1070,6 +1097,30 @@
         showMessagePanel(validationResult);
     }
 
+    // TODO Handle arrow keys?
+    $(document).keydown(function (e) {
+
+        switch (e.keyCode) {
+            case 37: // Left
+                {
+                    break;
+                }
+            case 38: // Up
+                {
+                    break;
+                }
+            case 39: // Right
+                {
+                    break;
+                }
+            case 40: // Down
+                {
+                    break;
+                }
+        }
+
+    });
+
     // Handle the delete key; remove selected square's value
     $(document).keydown(function (e) {
 
@@ -1126,4 +1177,28 @@
         $('#messagePanel').fadeTo(200, 0.01);
     }
 
-})(window, document, jQuery, ko, Enumerable);
+    // toJSON
+    Square.prototype.toJSON = function () {
+        var copy = ko.toJS(this); //easy way to get a clean copy
+        delete copy.Group; //remove an extra property
+        delete copy.Value; //remove an extra property
+        delete copy.ValueFormatted; //remove an extra property
+        delete copy.Availabilities; //remove an extra property
+        delete copy.IsPassiveSelected; //remove an extra property
+        delete copy.IsActiveSelected; //remove an extra property
+        delete copy.IsRelatedSelected; //remove an extra property
+        delete copy.CssAssignType; //remove an extra property
+        delete copy.CssClassComputed; //remove an extra property
+        return copy; //return the copy to be serialized
+    };
+
+    SudokuNumber.prototype.toJSON = function () {
+        var copy = ko.toJS(this);
+        delete copy.Group;
+        delete copy.IsPassiveSelected;
+        delete copy.IsActiveSelected;
+        delete copy.CssClassComputed;
+        return copy;
+    };
+
+})(window);

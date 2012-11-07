@@ -8,7 +8,6 @@
     <file relUrl="Views/Account/Register.cshtml" publishTime="05/22/2012 09:40:14" />
     <file relUrl="Content/themes/base/images/ui-bg_flat_75_ffffff_40x100.png" publishTime="05/22/2012 09:40:13" />
     <file relUrl="bin/System.Web.Http.Data.Helpers.xml" publishTime="05/29/2012 17:51:18" />
-    <file relUrl="bin/EntityFramework.xml" publishTime="05/22/2012 09:53:36" />
     <file relUrl="Scripts/upshot.knockout.extensions.js" publishTime="05/29/2012 09:31:51" />
     <file relUrl="Scripts/nav.min.js" publishTime="05/22/2012 09:40:14" />
     <file relUrl="Content/themes/base/jquery.ui.button.css" publishTime="05/22/2012 09:40:13" />
@@ -93,7 +92,6 @@
     <file relUrl="bin/System.Web.Razor.dll" publishTime="05/22/2012 09:53:33" />
     <file relUrl="Views/Shared/_Layout.cshtml" publishTime="05/22/2012 09:40:14" />
     <file relUrl="Content/themes/base/images/ui-bg_highlight-soft_75_cccccc_1x100.png" publishTime="05/22/2012 09:40:13" />
-    <file relUrl="bin/System.Web.Providers.dll" publishTime="05/22/2012 09:53:48" />
     <file relUrl="bin/System.Web.Optimization.dll" publishTime="05/22/2012 09:53:42" />
     <file relUrl="Views/Web.config" publishTime="05/22/2012 09:40:14" />
     <file relUrl="Content/Site.css" publishTime="05/22/2012 09:40:13" />

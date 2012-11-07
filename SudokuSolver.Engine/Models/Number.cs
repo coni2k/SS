@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SudokuSolver.Engine
 {
-    public class Number
+    public class SudokuNumber
     {
 
         #region Properties
@@ -22,15 +22,15 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// This is a special flag for zero value, which will be treated differently in many cases
         /// </summary>
-        public bool IsZero { get { return Value == 0; } }
+        internal bool IsZero { get { return Value == 0; } }
 
         #endregion
 
         #region Constructors
 
-        public Number() { }
+        public SudokuNumber() { }
 
-        internal Number(Sudoku sudoku, int value)
+        internal SudokuNumber(Sudoku sudoku, int value)
         {
             Sudoku = sudoku;
             Value = value;
@@ -42,7 +42,7 @@ namespace SudokuSolver.Engine
 
         public int Count
         {
-            get { return Sudoku.GetSquares().Count(s => s.Number.Equals(this)); }
+            get { return Sudoku.GetSquares().Count(s => s.SudokuNumber.Equals(this)); }
         }
 
         public override string ToString()

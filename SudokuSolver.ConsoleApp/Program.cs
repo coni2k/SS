@@ -158,10 +158,10 @@ namespace SudokuSolver.ConsoleApp
                 foreach (var square in group.Squares)
                 {
                     //Square value
-                    string output = string.Format(" {0}", square.Number.IsZero ? "." : square.Number.Value.ToString());
+                    string output = string.Format(" {0}", square.SudokuNumber.Value == 0 ? "." : square.SudokuNumber.Value.ToString());
 
                     //Seperator for square groups; (3rd, 6th, 12th squares)
-                    if (square.Id % Sudoku.SquareRootOfSize == 0 && square.Id % Sudoku.Size != 0)
+                    if (square.SquareId % Sudoku.SquareRootOfSize == 0 && square.SquareId % Sudoku.Size != 0)
                         output += " |";
 
                     Console.Write(output);
@@ -179,7 +179,7 @@ namespace SudokuSolver.ConsoleApp
         static void ShowUsedSquares()
         {
             foreach (var usedSquare in Sudoku.GetUsedSquares())
-                Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.Id.ToString("D2"), usedSquare.Number.Value.ToString(), usedSquare.AssignType.ToString()));
+                Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.SquareId.ToString("D2"), usedSquare.SudokuNumber.Value.ToString(), usedSquare.AssignType.ToString()));
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace SudokuSolver.ConsoleApp
             foreach (var square in Sudoku.GetSquares())
             {
                 //Square text: Square id + value
-                var output = string.Format("Id {0}: {1}", square.Id.ToString("D2"), square.Number.Value.ToString());
+                var output = string.Format("Id {0}: {1}", square.SquareId.ToString("D2"), square.SudokuNumber.Value.ToString());
                 Console.Write(output);
 
                 //Availability per number; "X" for available squares, "." for non-available ones
@@ -226,9 +226,9 @@ namespace SudokuSolver.ConsoleApp
             if (Sudoku.GetHints().Count() == 0)
                 Console.WriteLine("There are no hints");
 
-            foreach (var hint in Sudoku.GetHints().OrderBy(s => s.Square.Id))
+            foreach (var hint in Sudoku.GetHints().OrderBy(s => s.Square.SquareId))
             {
-                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", hint.Square.Id.ToString("D2"), hint.Square.Number.Value.ToString(), hint.Number.Value.ToString(), hint.Type.ToString()));
+                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", hint.Square.SquareId.ToString("D2"), hint.Square.SudokuNumber.Value.ToString(), hint.Number.Value.ToString(), hint.Type.ToString()));
             }
         }
 
@@ -267,12 +267,12 @@ namespace SudokuSolver.ConsoleApp
 
         static void Sudoku_SquareNumberChanged(Square square)
         {
-            Console.WriteLine("  Id {0}: {1} - {2}", square.Id.ToString("D2"), square.Number.Value.ToString(), square.AssignType.ToString());
+            Console.WriteLine("  Id {0}: {1} - {2}", square.SquareId.ToString("D2"), square.SudokuNumber.Value.ToString(), square.AssignType.ToString());
         }
 
         static void Sudoku_HintFound(Hint hint)
         {
-            Console.WriteLine("P Id {0}: {1} - {2} - {3}", hint.Square.Id.ToString("D2"), hint.Square.Number.Value.ToString(), hint.Number.Value.ToString(), hint.Type.ToString());
+            Console.WriteLine("P Id {0}: {1} - {2} - {3}", hint.Square.SquareId.ToString("D2"), hint.Square.SudokuNumber.Value.ToString(), hint.Number.Value.ToString(), hint.Type.ToString());
         }
     }
 }

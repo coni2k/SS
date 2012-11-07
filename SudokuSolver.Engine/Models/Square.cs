@@ -27,12 +27,12 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Id of the square
         /// </summary>
-        public int Id { get; private set; }
+        public int SquareId { get; private set; }
 
         /// <summary>
         /// Value of the square
         /// </summary>
-        public Number Number { get; private set; }
+        public SudokuNumber SudokuNumber { get; private set; }
 
         /// <summary>
         /// Get the assign type of the square
@@ -54,10 +54,15 @@ namespace SudokuSolver.Engine
         /// </summary>
         public bool IsAvailable
         {
-            get { return Number.IsZero; }
+            get
+            {
+                if (SudokuNumber != null)
+                    return SudokuNumber.IsZero;
+                return false;
+            }
         }
 
-        public Hint Hint { get; set; }
+        //public Hint Hint { get; set; }
 
         /// <summary>
         /// Holds the list of available numbers
@@ -83,11 +88,13 @@ namespace SudokuSolver.Engine
 
         #region Constructors
 
+        public Square() { }
+
         internal Square(int id, Sudoku sudoku,  Group squareTypeGroup, Group horizantalTypeGroup, Group verticalTypeGroup)
         {
-            this.Id = id;
+            this.SquareId = id;
             this.Sudoku = sudoku;
-            this.Number = sudoku.GetNumbers().Single(n => n.IsZero); // Zero as initial value
+            this.SudokuNumber = sudoku.GetNumbers().Single(n => n.IsZero); // Zero as initial value
             this.AssignType = AssignTypes.Initial;
 
             // Groups
@@ -120,14 +127,14 @@ namespace SudokuSolver.Engine
 
         #region Methods
 
-        internal void Update(Number number, AssignTypes type)
+        internal void Update(SudokuNumber number, AssignTypes type)
         {
             // Raise an event to let the sudoku to handle the availability of the other squares for the old number
             if (NumberChanging != null)
                 NumberChanging(this);
 
             // Assign the new number to this square & let the number know it (there is a cross reference)
-            Number = number;
+            SudokuNumber = number;
 
             // Set the type
             AssignType = type;
@@ -142,7 +149,7 @@ namespace SudokuSolver.Engine
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public bool IsNumberAvailable(Number number)
+        public bool IsNumberAvailable(SudokuNumber number)
         {
             return GetAvailabilities().Single(a => a.Number.Equals(number)).IsAvailable;
         }
@@ -150,13 +157,13 @@ namespace SudokuSolver.Engine
         void Group_SquareNumberChanging(Group sourceGroup, Square sourceSquare)
         {
             // Make this number available again
-            SetAvailability(sourceSquare.Number, sourceGroup.GroupType, null);
+            SetAvailability(sourceSquare.SudokuNumber, sourceGroup.GroupType, null);
         }
 
         void Group_SquareNumberChanged(Group sourceGroup, Square sourceSquare)
         {
             // Make this number unavailable
-            SetAvailability(sourceSquare.Number, sourceGroup.GroupType, sourceSquare);
+            SetAvailability(sourceSquare.SudokuNumber, sourceGroup.GroupType, sourceSquare);
 
             // Tell to other square in the group that this square's availability has changed
             if (AvailabilityChanged != null)
@@ -179,7 +186,7 @@ namespace SudokuSolver.Engine
                 // If there is only one number left in the list, then we found a new hint
                 if (list.Count() != 1)
                 {
-                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a hint to be REMOVED - Id: {0} - Value: {1}", this.Id.ToString(), this.Number.Value.ToString());
+                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a hint to be REMOVED - Id: {0} - Value: {1}", this.SquareId.ToString(), this.SudokuNumber.Value.ToString());
                 }
             }
             else
@@ -211,7 +218,7 @@ namespace SudokuSolver.Engine
         /// <param name="number"></param>
         /// <param name="type"></param>
         /// <param name="source"></param>
-        void SetAvailability(Number number, GroupTypes type, Square source)
+        void SetAvailability(SudokuNumber number, GroupTypes type, Square source)
         {
             // If the old value is zero, then there is nothing to do.
             // Zero value is not used in availabilities list (always available).
@@ -236,7 +243,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("Id: {0} - Number: {1}", Id.ToString(), Number.Value.ToString());
+            return string.Format("Id: {0} - Number: {1}", SquareId.ToString(), SudokuNumber.Value.ToString());
         }
 
         #endregion
