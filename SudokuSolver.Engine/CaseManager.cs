@@ -770,7 +770,7 @@ namespace SudokuSolver.Engine
 
             sudoku.SudokuId = 18;
             sudoku.Title = "Hint's availability bug";
-            sudoku.Description = "Because hints availabilities don't be counted..";
+            sudoku.Description = "Because the availabilities of the hints are not counted";
 
             sudoku.UpdateSquare(1, 1);
             sudoku.UpdateSquare(2, 2);

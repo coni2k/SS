@@ -32,12 +32,14 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Value of the square
         /// </summary>
-        public SudokuNumber SudokuNumber { get; private set; }
+        //public SudokuNumber SudokuNumber { get; private set; }
+        public SudokuNumber SudokuNumber { get; set; }
 
         /// <summary>
         /// Get the assign type of the square
         /// </summary>
-        public AssignTypes AssignType { get; private set; }
+        //public AssignTypes AssignType { get; private set; }
+        public AssignTypes AssignType { get; set; }
 
         /// <summary>
         /// Gets the parent sudoku class

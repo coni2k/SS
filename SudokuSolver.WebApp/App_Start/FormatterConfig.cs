@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Formatting;
+﻿using Newtonsoft.Json.Converters;
+using System.Net.Http.Formatting;
 
 namespace SudokuSolver.WebApp
 {
@@ -8,6 +9,10 @@ namespace SudokuSolver.WebApp
         {
             // Remove xml formatter (at least for the moment)
             formatters.Remove(formatters.XmlFormatter);
+
+            // Json formatter
+            // formatters.JsonFormatter.Indent = true; ?
+            // formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
         }
     }
 }

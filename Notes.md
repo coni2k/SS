@@ -99,6 +99,18 @@ is it possible to map to server objects? how to extend?
 and sudoku class instead of sudokuContainer? + square class instead of squareContainer (during post operations)
 
 . server side validation for post operations (new sudoku, updatesquare)
+if (!ModelState.IsValid)
+{
+	var errors = new JsonArray();
+	foreach (var prop in ModelState.Values)
+	{
+		if (prop.Errors.Any())
+		{
+			errors.Add(prop.Errors.First().ErrorMessage);
+		}
+	}
+	return new HttpResponseMessage<JsonValue>(errors, HttpStatusCode.BadRequest);
+}
 
 . webapi.tester doesnt work at the moment (after the package updates) - check webapiclient!
 
@@ -126,9 +138,27 @@ If its on html, it generates to much text on the page
 If its generated dynamically, it can be slow?
 In general css changes are not that fast? especially related square selection?
 
+if there is no ajax call on the first load, when loading, please wait message stays.. ?!
+
+. dont forget to have "treat" to external links - currently wouldnt work
+
 . at the end;
 
-- webgrease + jslint;
+- check general API structure;
+. lower case - camel case?
+. sudokulist vs sudoku commands
+
+// We have to put action; update square and toggleautosolve
+// In this case, a GET request for “api/products/details/1” would map to the Details method.
+// This style of routing is similar to ASP.NET MVC, and may be appropriate for an RPC-style API.
+// For a RESTful API, you should avoid using verbs in the URIs, because a URI should identify a resource, not an action.
+
+normally
+GET /sudoku - for get list
+GET /sudoku/1 - for a certain sudoku
+but then how about other post operations - POST ToggleReady, AutoSolve, Reset etc.
+
+- webgrease (bundle.config) + jslint;
 http://www.jshint.com
 
 - add it to the showcase of libraries (knockout + history.js etc.)
@@ -149,19 +179,6 @@ http://davidwalsh.name/event-delegate
 http://max.jsrhost.com/ - Ajaxify
 http://www.knockmeout.net/2011/03/using-external-jquery-template-files.html
 http://ifandelse.com/?p=100
-
-.. knockout sessions;
-http://www.knockmeout.net/2012/08/thatconference-2012-session.html
-http://www.knockmeout.net/2012/10/twincitiescodecamp-2012-session.html
-
-. Try to learn more about history.js;
-https://github.com/balupton/history.js/wiki/Intelligent-State-Handling
-https://gist.github.com/854622
-
-loading a new content (changing the state) doesnt look good? changes the content suddenly etc.?
-
-also check this in IE; when select a sudoku in 'help' page (is it a bug);
-/help#sudoku/?id=19
 
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
 HOT STUFF;
@@ -197,8 +214,12 @@ AND THEN (load data from server);
 http://knockoutjs.com/documentation/json-data.html
 
 ALSO DONT FORGET TO CHECK;
+
 . TOJSON PROTOTYPE
+
 . square().SudokuNumber(newValue); - square() is new, not just square
+
+
 . on server side;
 public bool IsAvailable
 {
@@ -209,3 +230,43 @@ public bool IsAvailable
         return 
     }
 }
+
+---
+
+. square sudokunumber is readonly that why it doesnt work right now!
+how to transport the data - is it possible to use the original
+or should we use DTO or ViewModel
+if thats the case, does it matter to include Number class into Square?
+why should we send the count info every time? on the other hand, how custom should it be?
+sending and retrieving can have different DTOs?
+
+sync. the latest templates output with SS!
+
+---
+check these knockout bindings;
+
+    validate – invokes jQuery validation on an element
+    selected – selects (or unselects) a DOM element based on the bound property’s value
+    blurOnEnter – loses focus when the user clicks the ENTER key
+    placeHolder – a shim for the HTML5 placeholder for older browsers
+
+	also binding for escape?
+	I do this in my Code Camper SPA to create simple handlers like escape (which performs an action when the ESCAPE key is pressed)
+
+---
+SPA TEMPLATE QUESTIONS;
+
+how IDs are generated?
+do we really need dto? - compare dto and poco classes
+should we use data annotations? + model.state - validation in general?
+how to use put - just for update?
+script + js etc. bundled in razor page?
+
+.AsEnumerable()
+
+jsonformatter . use enum !?
+
+---
+using content class + navigate function looks a good idea
+but then, if the content will be generated from cms - how the user's links will be using Navigate function.. ?!
+types: internal links + internal commands + external links

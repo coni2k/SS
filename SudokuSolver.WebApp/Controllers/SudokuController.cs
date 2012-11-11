@@ -10,108 +10,58 @@ namespace SudokuSolver.WebApp.Controllers
 {
     public class SudokuController : ApiController
     {
-        #region + Application level commands
+        // TODO api/Sudoku/1 ?
+        // TODO api/Sudoku/Sudoku/1 ?
 
-        [ActionName("sudokulist")]
-        public ICollection<Sudoku> GetSudokuList()
+        // GET api/Sudoku/Squares/1
+        [HttpGet]
+        public IEnumerable<Square> Squares(int id)
         {
-            return CacheManager.SudokuList;
-        }
-
-        [HttpPost]
-        [ActionName("newsudoku")]
-        public HttpResponseMessage NewSudoku(SudokuContainer container)
-        {
-            // Validate
-            if (container == null)
-                throw new ArgumentNullException("container");
-
-            // Size?
-
-            // Title?
-            if (string.IsNullOrWhiteSpace(container.Title))
-                throw new ArgumentNullException("title");
-
-            //Id of the container
-            //TODO Thread safety?
-            int nextId = 1;
-            lock (this)
-            {
-                if (CacheManager.SudokuList.Count > 0)
-                    nextId = (CacheManager.SudokuList.Max(s => s.SudokuId) + 1);
-            }
-
-            // Create and add a new sudoku
-            var sudoku = new Sudoku(container.Size);
-            sudoku.SudokuId = nextId;
-            sudoku.Title = container.Title;
-            sudoku.Description = container.Description;
-            CacheManager.SudokuList.Add(sudoku);
-
-            //Response
-            var response = Request.CreateResponse<Sudoku>(HttpStatusCode.Created, sudoku);
-            string uri = Url.Link("DefaultApi", new { id = sudoku.SudokuId });
-            response.Headers.Location = new Uri(uri);
-            return response;
-        }
-
-        [HttpPost]
-        [ActionName("resetlist")]
-        public void ResetList()
-        {
-            CacheManager.LoadSamples();
-        }
-
-        #endregion
-
-        #region + Sudoku level commands
-
-        [ActionName("squares")]
-        public IEnumerable<Square> GetSquares(int id)
-        {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             return sudoku.GetSquares();
         }
 
-        [ActionName("numbers")]
-        public IEnumerable<SudokuNumber> GetNumbers(int id)
+        // GET api/Sudoku/Numbers/1
+        [HttpGet]
+        public IEnumerable<SudokuNumber> Numbers(int id)
         {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             return sudoku.GetNumbers();
         }
 
-        [ActionName("hints")]
-        public IEnumerable<Hint> GetHints(int id)
+        // GET api/Sudoku/Hints/1
+        [HttpGet]
+        public IEnumerable<Hint> Hints(int id)
         {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             return sudoku.GetHints();
         }
 
-        [ActionName("availabilities")]
-        public IEnumerable<Availability> GetAvailabilities(int id)
+        // GET api/Sudoku/Availabilities/1
+        [HttpGet]
+        public IEnumerable<Availability> Availabilities(int id)
         {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             return sudoku.GetAvailabilities();
         }
 
-        [ActionName("groupnumberavailabilities")]
-        public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities(int id)
+        // GET api/Sudoku/GroupNumberAvailabilities/1
+        [HttpGet]
+        public IEnumerable<GroupNumberAvailabilityContainer> GroupNumberAvailabilities(int id)
         {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             return sudoku.GetGroupNumberAvailabilities();
         }
 
-        [HttpPost]
-        [ActionName("updatesquare")]
-        //public void UpdateSquare(int id, SquareContainer square)
+        // POST api/Sudoku/UpdateSquare/1
         public void UpdateSquare(int id, Square square)
         {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             try
             {
@@ -124,12 +74,10 @@ namespace SudokuSolver.WebApp.Controllers
             }
         }
 
-
-        [HttpPost]
-        [ActionName("toggleready")]
+        // POST api/Sudoku/ToggleReady/1
         public void ToggleReady(int id)
         {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             try
             {
@@ -142,39 +90,31 @@ namespace SudokuSolver.WebApp.Controllers
             }
         }
 
-        //We have to put action; update square and toggleautosolve
-        //In this case, a GET request for “api/products/details/1” would map to the Details method. This style of routing is similar to ASP.NET MVC, and may be appropriate for an RPC-style API. For a RESTful API, you should avoid using verbs in the URIs, because a URI should identify a resource, not an action.
-
-        [HttpPost]
-        [ActionName("toggleautosolve")]
+        // POST api/Sudoku/ToggleAutoSolve/1
         public void ToggleAutoSolve(int id)
         {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             sudoku.ToggleAutoSolve();
         }
 
-        [HttpPost]
-        [ActionName("solve")]
+        // POST api/Sudoku/Solve/1
         public void Solve(int id)
         {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             sudoku.Solve();
         }
 
-        [HttpPost]
-        [ActionName("reset")]
+        // POST api/Sudoku/Reset/1
         public void Reset(int id)
         {
-            var sudoku = GetSudoku(id);
+            var sudoku = GetSudokuItem(id);
 
             sudoku.Reset();
         }
 
-        #endregion
-
-        Sudoku GetSudoku(int id)
+        Sudoku GetSudokuItem(int id)
         {
             //Search the container in CacheManager
             var sudoku = CacheManager.SudokuList.SingleOrDefault(s => s.SudokuId == id);

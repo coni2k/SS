@@ -15,27 +15,28 @@
 
         /* WebAPI URLs */
         /* Root */
-        apiUrlRoot = '/api/Sudoku/',
+        apiUrlSudokuRoot = '/api/Sudoku/',
+        apiUrlSudokuListRoot = '/api/SudokuList/',
 
         /* Application level */
-        apiUrlSudokuList = apiUrlRoot + 'sudokulist',
-        apiUrlNewSudoku = apiUrlRoot + 'newsudoku',
-        apiUrlResetList = apiUrlRoot + 'resetlist',
+        apiUrlSudokuList = apiUrlSudokuListRoot + 'List',
+        apiUrlNewSudoku = apiUrlSudokuListRoot + 'NewSudoku',
+        apiUrlResetList = apiUrlSudokuListRoot + 'ResetList',
 
         /* Sudoku level - get */
-        apiUrlSquares = apiUrlRoot + 'squares/', // + sudokuId
-        apiUrlNumbers = apiUrlRoot + 'numbers/', // + sudokuId
-        apiUrlHints = apiUrlRoot + 'hints/', // + sudokuId
-        apiUrlAvailabilities = apiUrlRoot + 'availabilities/', // + sudokuId
-        //var apiUrlAvailabilities2 = apiUrlRoot + 'availabilities/', // + sudokuId
-        apiUrlGroupNumberAvailabilities = apiUrlRoot + 'groupnumberavailabilities/', // + sudokuId
+        apiUrlSquares = apiUrlSudokuRoot + 'Squares/', // + sudokuId
+        apiUrlNumbers = apiUrlSudokuRoot + 'Numbers/', // + sudokuId
+        apiUrlHints = apiUrlSudokuRoot + 'Hints/', // + sudokuId
+        apiUrlAvailabilities = apiUrlSudokuRoot + 'Availabilities/', // + sudokuId
+        //var apiUrlAvailabilities2 = apiUrlSudokuRoot + 'availabilities/', // + sudokuId
+        apiUrlGroupNumberAvailabilities = apiUrlSudokuRoot + 'GroupNumberAvailabilities/', // + sudokuId
 
         /* Sudoku level - post */
-        apiUrlUpdateSquare = apiUrlRoot + 'updatesquare/', // + sudokuId
-        apiUrlToggleReady = apiUrlRoot + 'toggleready/', // + sudokuId
-        apiUrlToggleAutoSolve = apiUrlRoot + 'toggleautosolve/', // + sudokuId
-        apiUrlSolve = apiUrlRoot + 'solve/', // + sudokuId
-        apiUrlReset = apiUrlRoot + 'reset/'; // + sudokuId
+        apiUrlUpdateSquare = apiUrlSudokuRoot + 'UpdateSquare/', // + sudokuId
+        apiUrlToggleReady = apiUrlSudokuRoot + 'ToggleReady/', // + sudokuId
+        apiUrlToggleAutoSolve = apiUrlSudokuRoot + 'ToggleAutoSolve/', // + sudokuId
+        apiUrlSolve = apiUrlSudokuRoot + 'Solve/', // + sudokuId
+        apiUrlReset = apiUrlSudokuRoot + 'Reset/'; // + sudokuId
 
     // Load templates ?!
     //var templates = [];
@@ -66,6 +67,18 @@
 
         self.CurrentContent = ko.observable('');
 
+        self.HelpContent = new Content('help');
+        self.ContactContent = new Content('contact');
+        self.SourceContent = new Content('source');
+        self.LicenseContent = new Content('license');
+
+        // Internal links
+        //self.InternalLinks = [];
+        //self.InternalLinks.push(new InternalLink('help'));
+        //self.InternalLinks.push(new InternalLink('contact'));
+        //self.InternalLinks.push(new InternalLink('source'));
+        //self.InternalLinks.push(new InternalLink('license'));
+
         // History.js
         self.History = window.History;
         if (!self.History.enabled) {
@@ -89,65 +102,112 @@
         });
 
         // Navigate
-        self.Navigate = function (selectedSudokuItem, isPush) {
+        //self.NavigateClick = function (selectedSudokuItem) {
+
+        //    self.Navigate(selectedSudokuItem, true);
+
+        //};
+
+        self.NavigateSudokuItem = function (selectedSudokuItem, isPush)
+        {
+            // var newUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
+            var newUrl = '/sudoku/' + selectedSudokuItem.SudokuId;
+
+            self.Navigate(newUrl, isPush);
+        }
+
+        self.Navigate = function (newUrl, isPush) {
+
+            //var newStateUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
+            // var newStateUrl = '/sudoku/?' + selectedSudokuItem.SudokuId
+            //var newUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
 
             if (isPush) {
-                self.History.pushState(null, null, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
+                self.History.pushState(null, null, newUrl);
             }
             else {
-                self.History.replaceState(null, null, '/sudoku/?id=' + selectedSudokuItem.SudokuId);
+                self.History.replaceState(null, null, newUrl);
             }
-
-        }
+        };
 
         self.LoadContent = function (state) {
 
-            // Url helper to get the segments (defa
-            var urlHelper = document.createElement('a');
+            // Variables
+            var contentId = '',
+                sudokuId;
 
-            // If there is a state, get the url
-            if (state !== null) {
-                urlHelper.href = state.url;
+            // If there is a state (can be null if it's the first load or reset list)
+            if (state !== null)
+            {
+                // Remove the host part
+                var url = state.url.replace(History.getRootUrl(), '');
+
+                // If there is something to parse
+                if (url !== '') {
+
+                    if (url.indexOf('/') === 0) { // There is no Id, use the url itself (for Contact, License, Source pages)
+                        contentId = url; 
+                    }
+                    else { // This is one of the sudokus, get the Id as well
+                        contentId = url.split('/')[0];
+                        sudokuId = parseInt(url.split('/')[1], 10);
+                    }
+                }
             }
 
+            // Url helper to get the segments (defa
+            //var urlHelper = document.createElement('a');
+
+            // If there is a state, get the url
+            // if (state !== null) {
+                // urlHelper.href = state.url;
+            // }
+
+            // var strippedUrl = state.url.replace(History.getRootUrl(), '');
+
             // Content to be loaded
-            var urlContent = urlHelper.pathname.replace(/\//g, '').replace('default.aspx', '');
+            // var urlContent = urlHelper.pathname.replace(/\//g, '').replace('default.aspx', '');
+            //var urlContent = urlHelper.pathname.replace('default.aspx', '');
+            //var urlContent = urlHelper.pathname.replace('default.aspx', '');
 
             // Id 
-            var urlId = parseInt(urlHelper.search.replace('?id=', ''), 10);
+            // var urlId = parseInt(urlHelper.search.replace('?id=', ''), 10);
+            // var urlId = parseInt(urlHelper.search.replace('?id=', ''), 10);
+            // var urlId = parseInt(urlHelper.search.replace('?', ''), 10);
 
             // Initial content
             // TODO Should be 'welcome' kind of..?
-            if (urlContent === '') {
-                self.Navigate(self.SudokuList()[0], false);
+            if (contentId === '') {
+                self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
                 return;
             }
 
             // Content
-            switch (urlContent) {
+            switch (contentId) {
                 case 'sudoku':
                     {
                         // Initial item; first sudoku in the list
-                        if (isNaN(urlId)) {
-                            self.Navigate(self.SudokuList()[0], false);
+                        // TODO If it's NAN it can be 404 now?
+                        if (isNaN(sudokuId)) {
+                            self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
                             return;
                         }
 
                         // Search for the item
-                        var sudokuItem = Enumerable.From(self.SudokuList()).SingleOrDefault(null, function (sudokuItem) {
-                            return sudokuItem.SudokuId === urlId;
+                        var sudokuContent = Enumerable.From(self.SudokuList()).SingleOrDefault(null, function (sudokuContent) {
+                            return sudokuContent.Data.SudokuId === sudokuId;
                         });
 
                         // There there is no sudoku with this Id
-                        if (sudokuItem === null) {
+                        if (sudokuContent === null) {
                             // TODO Return 404 ?!
                             self.History.log('404');
                         }
 
                         // Load it
                         self.CurrentContent('Sudoku');
-                        document.title = 'Sudoku Solver - Sudoku Id: ' + sudokuItem.SudokuId;
-                        self.LoadSudoku(sudokuItem);
+                        document.title = 'Sudoku Solver - Sudoku Id: ' + sudokuContent.Data.SudokuId;
+                        self.LoadSudoku(sudokuContent.Data);
 
                         break;
                     }
@@ -216,9 +276,18 @@
             getApiData(apiUrlSudokuList, function (sudokuList) {
 
                 self.SudokuList([]);
-                self.SudokuList(sudokuList);
 
-                // If it loads through reset list, ignore (history) state (to prevent to load the wrong id)
+                Enumerable.From(sudokuList).ForEach(function (sudokuItem) {
+
+                    var sudokuContent = new Content('sudoku', sudokuItem);
+
+                    self.SudokuList.push(sudokuContent);
+
+                });
+
+                //self.SudokuList(sudokuList);
+
+                // If it loads through reset list, ignore (history) state (to prevent to load the wrong sudoku id)
                 self.LoadContent(isReset ? null : self.History.getState());
 
             });
@@ -287,11 +356,13 @@
                         postApi(apiUrlNewSudoku, sudokuContainer, function (newSudoku) {
 
                             // Add the item to the list
-                            self.SudokuList.push(newSudoku);
+                            var newSudokuContent = new Content('sudoku', newSudoku);
+
+                            self.SudokuList.push(newSudokuContent);
 
                             // Load the sudoku
                             // self.LoadSudoku(newSudoku);
-                            self.Navigate(newSudoku, true);
+                            self.NavigateSudokuItem(newSudoku, true);
 
                         });
                     },
@@ -332,6 +403,42 @@
         self.LoadSudokuList(false);
 
     }
+
+    // Second parameter (sudokuItem) could be more generic (like args) but we don't have any other data item anyway ?
+    function Content(contentId, sudokuItem) {
+        sudokuItem = (typeof sudokuItem === "undefined") ? null : sudokuItem;
+
+        var self = this;
+
+        self.ContentId = contentId;
+        self.Title = capitaliseFirstLetter(contentId); // enough?
+        self.Data = sudokuItem;
+
+        // Url
+        self.Url = '/' + contentId;
+
+        if (self.Data !== null)
+            self.Url = self.Url + '/' + self.Data.SudokuId;
+
+        // Bind to click event of an anchor?
+        self.Navigate = function (data, event) {
+
+            // TODO Try to implement navigate over here?
+            appViewModel.Navigate(self.Url, true);
+
+            event.preventDefault();
+            return false;
+        }
+    }
+
+    //function SudokuContent(sudokuItem) {
+        
+    //    var self = this;
+
+    //    self.InternalLink = new InternalLink('sudoku', sudokuItem.SudokuId);
+    //    self.SudokuItem = sudokuItem;
+
+    //}
 
     function HtmlTemplate(templateId, content) {
         var self = this;
@@ -1176,6 +1283,44 @@
     function hideMessagePanel() {
         $('#messagePanel').fadeTo(200, 0.01);
     }
+
+    $('.internalLink').click(function () {
+
+        appViewModel.Navigate(url, true);
+
+        event.preventDefault();
+        return false;
+
+    });
+
+    $(document).ready(function () {
+
+        $('a').click(function (event) {
+            var
+                $this = $(this),
+                url = $this.attr('href');
+            //title = $this.attr('title') || null;
+
+            // Continue as normal for cmd clicks etc;
+            // MIDDLE BUTTON OF THE MOUSE OR CONTROL (COMMAND) KEY ON THE KEYBOARD
+            // if (event.which == 2       || event.metaKey) { return true; }
+
+            // if (url = '#') { return true; }
+
+            // Ajaxify this link
+            //if (url !== '#') {
+            //    appViewModel.Navigate(url, true);
+            //    //History.pushState(null, null, url);
+            //}
+
+            appViewModel.Navigate(url, true);
+
+            event.preventDefault();
+            return false;
+
+        });
+
+    });
 
     // toJSON
     Square.prototype.toJSON = function () {

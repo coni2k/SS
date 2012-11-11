@@ -24,18 +24,24 @@
                 <!--ko foreach: SudokuList-->
                 <div class="sudokuItem">
                     <!--<a data-bind="click: $parent.SelectSudoku, attr: { href: '/sudoku/?id=' + SudokuId() }">-->
-                    <a data-bind="click: $parent.Navigate, attr: { href: '/sudoku/?id=' + SudokuId }">
-                        <!--ko text: 'Id: ' + SudokuId + ' - Title: ' + Title-->
+                    <%--<a data-bind="click: $parent.Navigate, attr: { href: '/sudoku/?id=' + SudokuId }">--%>
+                    <%--<a data-bind="click: $parent.Navigate, attr: { href: '/sudoku/?' + SudokuId }">--%>
+                    <%--<a data-bind="click: $parent.NavigateClick, attr: { href: '/sudoku/?id=' + SudokuId }">--%>
+                    <%--<a data-bind="attr: { href: '/sudoku/?id=' + SudokuId }">--%>
+                    <%--<a class="internalLink" data-bind="attr: { href: '/sudoku/' + SudokuId }">--%>
+                    <%--<a href="/contact">--%>
+                    <a data-bind="click: Navigate, attr: { href: Url }">
+                        <!--ko text: 'Id: ' + Data.SudokuId + ' - Title: ' + Data.Title-->
                         <!--/ko-->
                     </a>
                 </div>
                 <!--/ko-->
-                <a data-bind="click: NewSudoku" href="#">New sudoku</a>
-                <a data-bind="click: ResetList" href="#">Reset list</a><br />
-                <a href="/help">Help</a>
-                <a href="/contact">Contact</a><br />
-                <a href="/source">Source</a>
-                <a href="/license">License</a>
+                <a data-bind="click: NewSudoku">New sudoku</a>
+                <a data-bind="click: ResetList">Reset list</a><br />
+                <a data-bind="text: HelpContent.Title, attr: { href: HelpContent.Url }"></a>
+                <a data-bind="text: ContactContent.Title, attr: { href: ContactContent.Url }"></a>
+                <a data-bind="text: SourceContent.Title, attr: { href: SourceContent.Url }"></a>
+                <a data-bind="text: LicenseContent.Title, attr: { href: LicenseContent.Url }"></a>
             </div>
         </div>
         <div class="contentRight">
@@ -57,33 +63,33 @@
                     <!--ko text: Sudoku().SquaresLeft-->
                     <!--/ko-->
                     <br />
-                    Ready: <a id="toggleReady" data-bind="click: Sudoku().ToggleReady" href="#">
+                    Ready: <a id="toggleReady" data-bind="click: Sudoku().ToggleReady">
                         <!--ko text: Sudoku().ReadyFormatted-->
                         <!--/ko-->
                     </a>
                     |
                 <span id="solvePanel" data-bind="visible: Sudoku().Ready">Autosolve:
-                    <a id="toggleAutoSolve" data-bind="click: Sudoku().ToggleAutoSolve" href="#">
+                    <a id="toggleAutoSolve" data-bind="click: Sudoku().ToggleAutoSolve">
                         <!--ko text: Sudoku().AutoSolveFormatted-->
                         <!--/ko-->
                     </a>
                     <span class="solve" data-bind="visible: !Sudoku().AutoSolve && Sudoku().Hints().length > 0">
                         - 
-                        <a data-bind="click: Sudoku().Solve" href="#">Solve now</a>
+                        <a data-bind="click: Sudoku().Solve">Solve now</a>
                     </span>
                 </span>
                     <span data-bind="visible: Sudoku().Resettable">- 
-                    <a data-bind="click: Sudoku().Reset" href="#">Reset</a>
+                    <a data-bind="click: Sudoku().Reset">Reset</a>
                     </span>
                     <br />
                     <span>Display: Values | Availabilities: 
-                    <a data-bind="click: Sudoku().ToggleDisplayAvailabilities" href="#">
+                    <a data-bind="click: Sudoku().ToggleDisplayAvailabilities">
                         <!--ko text: Sudoku().DisplayAvailabilitiesFormatted-->
                         <!--/ko-->
                     </a><span>|
                     </span>
                         <span>IDs: </span>
-                        <a data-bind="click: Sudoku().ToggleDisplayIDs" href="#">
+                        <a data-bind="click: Sudoku().ToggleDisplayIDs">
                             <!--ko text: Sudoku().DisplayIDsFormatted-->
                             <!--/ko-->
                         </a>
@@ -103,7 +109,7 @@
                     <span data-bind="if: !IsAvailable()">
                         <span data-bind="html: ValueFormatted"></span>
                         <!--ko if: $root.Sudoku().IsSelectedSquareValueRemoveable-->
-                        <a data-bind="click: $root.Sudoku().RemoveSelectedSquareValue" href="#">[x]</a>
+                        <a data-bind="click: $root.Sudoku().RemoveSelectedSquareValue">[x]</a>
                         <!--/ko-->
                     </span>
                     <!--/ko-->
@@ -134,7 +140,7 @@
                 </div>
                 <div id="messagePanel" class="panel almostHide">
                     <span class="error">
-                        <span id="messagePanelMessage"></span><a id="messagePanelClear" href="#">[x]</a>
+                        <span id="messagePanelMessage"></span><a id="messagePanelClear">[x]</a>
                     </span>
                 </div>
                 <div id="numberGridPanel" data-bind="foreach: Sudoku().NumberGroups, css: Sudoku().CssValueGrid">
