@@ -10,7 +10,7 @@ Wishlist:
 http://bsatrom.github.com/Knockout.Unobtrusive/
 http://userinexperience.com/?p=633
 http://userinexperience.com/?p=689
-. Store in the database?
+. Store the user's sudokus? sql || sql localdb || xml || json?
 . Better html template - vix.com?
 . Multi-language
 . Offline mode
@@ -19,7 +19,7 @@ http://userinexperience.com/?p=689
 . Measure the performance (eqatec profiler + firefox net panel etc.)
 . Drag & drop the numbers?
 . Try to use web requester (needs to be included as nuget package);
-powershell start-process -WindowStyle Hidden D:\WebRequester.exe http://localhost:56107/default.html
+powershell start-process -WindowStyle Hidden D:\WebRequester.exe http://localhost:56107/default.aspx
 
 Research:
 . modernizr: currently we dont use modernizer, can there be a case that we should use it? what might not be supported?
@@ -126,8 +126,6 @@ if (!ModelState.IsValid)
 
 . test history js with old browsers - how about !history.enabled + return false block?
 try it with it and without it?
-
-. default.aspx or default.html?
 
 . external html templates;
 the templates should be on different htm files and should be loaded dynamically (on request)
@@ -270,3 +268,7 @@ jsonformatter . use enum !?
 using content class + navigate function looks a good idea
 but then, if the content will be generated from cms - how the user's links will be using Navigate function.. ?!
 types: internal links + internal commands + external links
+
+---
+think about loading message..
+gather all diff. content load blocks to default ?!

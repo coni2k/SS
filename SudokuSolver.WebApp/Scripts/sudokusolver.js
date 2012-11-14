@@ -3,7 +3,7 @@
 /*global ko:true, Enumerable:true*/
 
 (function (window, undefined) {
-    "use strict";
+    'use strict';
 
     // + Variables
     var
@@ -36,7 +36,10 @@
         apiUrlToggleReady = apiUrlSudokuRoot + 'ToggleReady/', // + sudokuId
         apiUrlToggleAutoSolve = apiUrlSudokuRoot + 'ToggleAutoSolve/', // + sudokuId
         apiUrlSolve = apiUrlSudokuRoot + 'Solve/', // + sudokuId
-        apiUrlReset = apiUrlSudokuRoot + 'Reset/'; // + sudokuId
+        apiUrlReset = apiUrlSudokuRoot + 'Reset/', // + sudokuId
+
+        /* Enums */
+        ContentTypes = { 'Normal': 0, 'Sudoku': 1 };
 
     // Load templates ?!
     //var templates = [];
@@ -65,22 +68,32 @@
 
         var self = this;
 
+        // Contents
         self.CurrentContent = ko.observable('');
+        self.Contents = ko.observableArray([]);
 
-        self.HelpContent = new Content('help');
-        self.ContactContent = new Content('contact');
-        self.SourceContent = new Content('source');
-        self.LicenseContent = new Content('license');
+        // Normal content (menu items)
+        self.Contents.push(new Content('help'));
+        self.Contents.push(new Content('contact'));
+        self.Contents.push(new Content('source'));
+        self.Contents.push(new Content('license'));
 
-        // Internal links
-        //self.InternalLinks = [];
-        //self.InternalLinks.push(new InternalLink('help'));
-        //self.InternalLinks.push(new InternalLink('contact'));
-        //self.InternalLinks.push(new InternalLink('source'));
-        //self.InternalLinks.push(new InternalLink('license'));
+        self.NormalContents = ko.computed(function () {
+            return Enumerable.From(self.Contents()).Where(function (content) {
+                return content.Type === ContentTypes.Normal;
+            }).ToArray();
+        });
+
+        // Sudoku content
+        self.SudokuContents = ko.computed(function () {
+            return Enumerable.From(self.Contents()).Where(function (content) {
+                return content.Type === ContentTypes.Sudoku;
+            }).ToArray();
+        });
 
         // History.js
         self.History = window.History;
+
         if (!self.History.enabled) {
 
             // TODO Is there anything we should do about this block?
@@ -108,39 +121,45 @@
 
         //};
 
-        self.NavigateSudokuItem = function (selectedSudokuItem, isPush)
-        {
-            // var newUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
-            var newUrl = '/sudoku/' + selectedSudokuItem.SudokuId;
+        //self.NavigateSudokuItem = function (selectedSudokuItem, isPush)
+        //{
+        //    // var newUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
+        //    var newUrl = '/sudoku/' + selectedSudokuItem.SudokuId;
 
-            self.Navigate(newUrl, isPush);
-        }
+        //    self.Navigate(newUrl, isPush);
+        //}
 
-        self.Navigate = function (newUrl, isPush) {
+        //self.Navigate = function (newUrl, isPush) {
 
-            //var newStateUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
-            // var newStateUrl = '/sudoku/?' + selectedSudokuItem.SudokuId
-            //var newUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
+        //    //var newStateUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
+        //    // var newStateUrl = '/sudoku/?' + selectedSudokuItem.SudokuId
+        //    //var newUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
 
-            if (isPush) {
-                self.History.pushState(null, null, newUrl);
-            }
-            else {
-                self.History.replaceState(null, null, newUrl);
-            }
-        };
+        //    if (isPush) {
+        //        self.History.pushState(null, null, newUrl);
+        //    }
+        //    else {
+        //        self.History.replaceState(null, null, newUrl);
+        //    }
+        //};
 
         self.LoadContent = function (state) {
 
+            // Hide previous error message
+            hideMessagePanel();
+
+            // Loading message
+            $('#loadingMessagePanel').dialog('open');
+
             // Variables
-            var contentId = '',
-                sudokuId;
+            var contentId = 'sudoku',
+                sudokuId = 0;
 
             // If there is a state (can be null if it's the first load or reset list)
             if (state !== null)
             {
                 // Remove the host part
-                var url = state.url.replace(History.getRootUrl(), '');
+                var url = state.url.replace(History.getRootUrl(), '').replace('default.aspx', '');
 
                 // If there is something to parse
                 if (url !== '') {
@@ -153,6 +172,8 @@
                         sudokuId = parseInt(url.split('/')[1], 10);
                     }
                 }
+
+                //self.History.log('url: ' + url + ' - contentId: ' + contentId + ' - sudokuId: ' + sudokuId);
             }
 
             // Url helper to get the segments (defa
@@ -177,37 +198,59 @@
 
             // Initial content
             // TODO Should be 'welcome' kind of..?
-            if (contentId === '') {
-                self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
-                return;
-            }
+            //if (contentId === '') {
+            //    self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
+            //    return;
+            //}
+
+            // Load sudoku list
+            // self.LoadSudokuList(false);
 
             // Content
             switch (contentId) {
                 case 'sudoku':
                     {
+                        if (self.SudokuContents().length === 0) {
+                            self.LoadSudokuContents();
+                        };
+
                         // Initial item; first sudoku in the list
                         // TODO If it's NAN it can be 404 now?
-                        if (isNaN(sudokuId)) {
-                            self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
+                        if (sudokuId === 0) {
+                            // sudokuId = self.SudokuContents()[0].Data.SudokuId;
+                            self.SudokuContents()[0].Navigate(false);
                             return;
+                            // self.NavigateSudokuItem(self.SudokuContents()[0].Data, false);
                         }
+                        else if (isNaN(sudokuId)) {
+                            // TODO Return 404 ?!
+                            self.History.log('404 - wrong sudoku id (nan)');
+                            return; // ?
+
+                            //self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
+                            //return;
+                        };
+
+                        //if (isNaN(sudokuId)) {
+                        //    self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
+                        //    return;
+                        //}
 
                         // Search for the item
-                        var sudokuContent = Enumerable.From(self.SudokuList()).SingleOrDefault(null, function (sudokuContent) {
+                        var content = Enumerable.From(self.SudokuContents()).SingleOrDefault(null, function (sudokuContent) {
                             return sudokuContent.Data.SudokuId === sudokuId;
                         });
 
                         // There there is no sudoku with this Id
-                        if (sudokuContent === null) {
+                        if (content === null) {
                             // TODO Return 404 ?!
-                            self.History.log('404');
+                            self.History.log('404 - wrong sudoku id (not found) - id: ' + sudokuId + ' - len: ' + self.SudokuContents().length);
                         }
 
                         // Load it
                         self.CurrentContent('Sudoku');
-                        document.title = 'Sudoku Solver - Sudoku Id: ' + sudokuContent.Data.SudokuId;
-                        self.LoadSudoku(sudokuContent.Data);
+                        document.title = 'Sudoku Solver - Sudoku Id: ' + content.Data.SudokuId;
+                        self.LoadSudoku(content.Data);
 
                         break;
                     }
@@ -257,40 +300,64 @@
                 default:
                     {
                         /* TODO Return 404 ?! */
-                        self.History.log('404');
+                        self.History.log('404 - wrong content id');
                         break;
                     }
             }
+
+            // Loading message
+            $('#loadingMessagePanel').dialog('close');
         }
 
+        //self.LoadSudokuContent = function (sudokuContent) {
+
+        //};
+
         // List + selected sudoku
-        self.SudokuList = ko.observableArray([]);
+        // self.SudokuList = ko.observableArray([]);
         self.Sudoku = ko.observable(new Sudoku());
 
         // Css
-        self.HasSudokuList = ko.computed(function () { return self.SudokuList().length > 0; });
+        self.HasSudokuContents = ko.computed(function () { return self.SudokuContents().length > 0; });
         self.HasSudoku = ko.computed(function () { return self.Sudoku().SudokuId() > 0; });
 
         // Load list
-        self.LoadSudokuList = function (isReset) {
+        self.LoadSudokuContents = function () {
+
+            //$.ajaxSetup({
+            //    async: false
+            //});
+
+            // Not async.
             getApiData(apiUrlSudokuList, function (sudokuList) {
 
-                self.SudokuList([]);
+                // self.SudokuList([]);
+
+                // Remove the sudoku items
+                self.Contents.remove(function (content) {
+                    return content.Type === ContentTypes.Sudoku;
+                });
 
                 Enumerable.From(sudokuList).ForEach(function (sudokuItem) {
 
-                    var sudokuContent = new Content('sudoku', sudokuItem);
+                    var sudokuContent = new Content('sudoku', ContentTypes.Sudoku, sudokuItem);
 
-                    self.SudokuList.push(sudokuContent);
+                    // self.SudokuList.push(sudokuContent);
+                    self.Contents.push(sudokuContent);
 
                 });
 
                 //self.SudokuList(sudokuList);
 
                 // If it loads through reset list, ignore (history) state (to prevent to load the wrong sudoku id)
-                self.LoadContent(isReset ? null : self.History.getState());
+                // self.LoadContent(isReset ? null : self.History.getState());
 
-            });
+            }, false);
+
+            //$.ajaxSetup({
+            //    async: true
+            //});
+
         };
 
         // Load sudoku
@@ -356,13 +423,16 @@
                         postApi(apiUrlNewSudoku, sudokuContainer, function (newSudoku) {
 
                             // Add the item to the list
-                            var newSudokuContent = new Content('sudoku', newSudoku);
+                            var newSudokuContent = new Content('sudoku', ContentTypes.Sudoku, newSudoku);
 
-                            self.SudokuList.push(newSudokuContent);
+                            //self.SudokuList.push(newSudokuContent);
+                            self.Contents.push(newSudokuContent);
 
                             // Load the sudoku
                             // self.LoadSudoku(newSudoku);
-                            self.NavigateSudokuItem(newSudoku, true);
+                            // self.NavigateSudokuItem(newSudoku, true);
+
+                            newSudokuContent.Navigate(true);
 
                         });
                     },
@@ -388,8 +458,10 @@
                     'Reset list': function () {
                         $(this).dialog('close');
 
+                        self.LoadContent(null);
+
                         // Post + load
-                        postApi(apiUrlResetList, null, function () { self.LoadSudokuList(true); });
+                        //postApi(apiUrlResetList, null, function () { self.LoadSudokuList(true); });
 
                     },
                     Cancel: function () {
@@ -399,36 +471,65 @@
             });
         };
 
-        // Load sudoku list
-        self.LoadSudokuList(false);
+        // Panels
+        $('#loadingMessagePanel').dialog({
+            dialogClass: 'ui-dialog-notitlebar',
+            resizable: false,
+            height: 70,
+            width: 250,
+            modal: true,
+            autoOpen: false
+        });
+
+        // Load the content..
+        self.LoadContent(self.History.getState());
 
     }
 
     // Second parameter (sudokuItem) could be more generic (like args) but we don't have any other data item anyway ?
-    function Content(contentId, sudokuItem) {
-        sudokuItem = (typeof sudokuItem === "undefined") ? null : sudokuItem;
+    function Content(contentId, type, data) {
+        type = (typeof type === 'undefined') ? ContentTypes.Normal : type;
+        data = (typeof data === 'undefined') ? null : data;
 
         var self = this;
 
+        // self.Model = model;
         self.ContentId = contentId;
+        self.Type = type;
         self.Title = capitaliseFirstLetter(contentId); // enough?
-        self.Data = sudokuItem;
+        self.Data = data;
 
         // Url
         self.Url = '/' + contentId;
 
-        if (self.Data !== null)
+        if (self.Data !== null) {
             self.Url = self.Url + '/' + self.Data.SudokuId;
+        }
 
         // Bind to click event of an anchor?
-        self.Navigate = function (data, event) {
-
-            // TODO Try to implement navigate over here?
-            appViewModel.Navigate(self.Url, true);
+        self.NavigateEvent = function (data, event) {
 
             event.preventDefault();
+            
+            // TODO Try to implement navigate over here?
+            self.Navigate(true);
+            // appViewModel.Navigate(self.Url, true);
+
             return false;
         }
+
+        self.Navigate = function (isPush) {
+            
+            // model.Navigate(self.Url, isPush);
+
+            if (isPush) {
+                History.pushState(null, null, self.Url);
+            }
+            else {
+                History.replaceState(null, null, self.Url);
+            }
+
+        };
     }
 
     //function SudokuContent(sudokuItem) {
@@ -486,7 +587,7 @@
         self.ZeroNumber = new SudokuNumber(null, 0);
 
         // Numbers
-        // Group the numbers, to be able to display them nicely (see numbersPanel on default.html)
+        // Group the numbers, to be able to display them nicely (see numbersPanel on default.aspx)
         for (groupCounter = 1; groupCounter <= self.SquareRootofSize; groupCounter++) {
 
             var numberGroup = new SudokuNumberGroup(groupCounter, self);
@@ -848,7 +949,7 @@
             });
         };
 
-        //self.LoadAvailabilities2 = function() {
+        //self.LoadAvailabilities2 = function () {
 
         //    getApiData(apiUrlAvailabilities2 + self.SudokuId(), function (list) {
 
@@ -1157,15 +1258,24 @@
     });
 
     // Get data from server
-    function getApiData(apiUrl, callback) {
+    function getApiData(apiUrl, callback, isAsync) {
+        isAsync = (typeof isAsync === 'undefined') ? true : isAsync;
 
-        $.getJSON(apiUrl, function (data) {
-
-            if (callback !== null) {
-                callback(data);
-            }
-
+        $.ajax({
+            url: apiUrl,
+            dataType: 'json',
+            async: isAsync,
+            //data: data,
+            success: callback
         }).fail(function (jqXHR) { handleError(jqXHR); });
+
+        //$.getJSON(apiUrl, function (data) {
+
+        //    if (callback !== null) {
+        //        callback(data);
+        //    }
+
+        //}).fail(function (jqXHR) { handleError(jqXHR); });
     }
 
     // Post to server
@@ -1185,12 +1295,12 @@
         $(this).ajaxStart(function () {
 
             // Hide previous error message
-            hideMessagePanel();
+            // hideMessagePanel();
 
-            $('#loadingMessagePanel').dialog('open');
+            // $('#loadingMessagePanel').dialog('open');
 
         }).ajaxStop(function () {
-            $('#loadingMessagePanel').dialog('close');
+            // $('#loadingMessagePanel').dialog('close');
         });
     });
 
@@ -1262,15 +1372,6 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    // Panels
-    $("#loadingMessagePanel").dialog({
-        dialogClass: 'ui-dialog-notitlebar',
-        resizable: false,
-        height: 70,
-        width: 250,
-        modal: true
-    });
-
     $('#messagePanelClear').live('click', function () {
         hideMessagePanel();
     });
@@ -1284,43 +1385,43 @@
         $('#messagePanel').fadeTo(200, 0.01);
     }
 
-    $('.internalLink').click(function () {
+    //$('.internalLink').click(function () {
 
-        appViewModel.Navigate(url, true);
+    //    appViewModel.Navigate(url, true);
 
-        event.preventDefault();
-        return false;
+    //    event.preventDefault();
+    //    return false;
 
-    });
+    //});
 
-    $(document).ready(function () {
+    //$(document).ready(function () {
 
-        $('a').click(function (event) {
-            var
-                $this = $(this),
-                url = $this.attr('href');
-            //title = $this.attr('title') || null;
+    //    //$('a').click(function (event) {
+    //    //    var
+    //    //        $this = $(this),
+    //    //        url = $this.attr('href');
+    //    //    //title = $this.attr('title') || null;
 
-            // Continue as normal for cmd clicks etc;
-            // MIDDLE BUTTON OF THE MOUSE OR CONTROL (COMMAND) KEY ON THE KEYBOARD
-            // if (event.which == 2       || event.metaKey) { return true; }
+    //    //    // Continue as normal for cmd clicks etc;
+    //    //    // MIDDLE BUTTON OF THE MOUSE OR CONTROL (COMMAND) KEY ON THE KEYBOARD
+    //    //    // if (event.which == 2       || event.metaKey) { return true; }
 
-            // if (url = '#') { return true; }
+    //    //    // if (url = '#') { return true; }
 
-            // Ajaxify this link
-            //if (url !== '#') {
-            //    appViewModel.Navigate(url, true);
-            //    //History.pushState(null, null, url);
-            //}
+    //    //    // Ajaxify this link
+    //    //    //if (url !== '#') {
+    //    //    //    appViewModel.Navigate(url, true);
+    //    //    //    //History.pushState(null, null, url);
+    //    //    //}
 
-            appViewModel.Navigate(url, true);
+    //    //    appViewModel.Navigate(url, true);
 
-            event.preventDefault();
-            return false;
+    //    //    event.preventDefault();
+    //    //    return false;
 
-        });
+    //    //});
 
-    });
+    //});
 
     // toJSON
     Square.prototype.toJSON = function () {

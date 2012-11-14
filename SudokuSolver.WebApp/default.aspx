@@ -18,30 +18,20 @@
         <h1>Sudoku Solver</h1>
     </div>
     <div class="contentContainer">
-        <div class="contentLeft" data-bind="css: { hide: !HasSudokuList() }">
+        <div class="contentLeft" data-bind="css: { hide: !HasSudokuContents() }">
             <div id="sudokuListPanel" class="panel">
                 <strong>Sudoku List</strong>
-                <!--ko foreach: SudokuList-->
+                <!--ko foreach: SudokuContents-->
                 <div class="sudokuItem">
-                    <!--<a data-bind="click: $parent.SelectSudoku, attr: { href: '/sudoku/?id=' + SudokuId() }">-->
-                    <%--<a data-bind="click: $parent.Navigate, attr: { href: '/sudoku/?id=' + SudokuId }">--%>
-                    <%--<a data-bind="click: $parent.Navigate, attr: { href: '/sudoku/?' + SudokuId }">--%>
-                    <%--<a data-bind="click: $parent.NavigateClick, attr: { href: '/sudoku/?id=' + SudokuId }">--%>
-                    <%--<a data-bind="attr: { href: '/sudoku/?id=' + SudokuId }">--%>
-                    <%--<a class="internalLink" data-bind="attr: { href: '/sudoku/' + SudokuId }">--%>
-                    <%--<a href="/contact">--%>
-                    <a data-bind="click: Navigate, attr: { href: Url }">
-                        <!--ko text: 'Id: ' + Data.SudokuId + ' - Title: ' + Data.Title-->
-                        <!--/ko-->
-                    </a>
+                    <a data-bind="text: 'Id: ' + Data.SudokuId + ' - Title: ' + Data.Title, click: NavigateEvent, attr: { href: Url }"></a>
                 </div>
                 <!--/ko-->
                 <a data-bind="click: NewSudoku">New sudoku</a>
                 <a data-bind="click: ResetList">Reset list</a><br />
-                <a data-bind="text: HelpContent.Title, attr: { href: HelpContent.Url }"></a>
-                <a data-bind="text: ContactContent.Title, attr: { href: ContactContent.Url }"></a>
-                <a data-bind="text: SourceContent.Title, attr: { href: SourceContent.Url }"></a>
-                <a data-bind="text: LicenseContent.Title, attr: { href: LicenseContent.Url }"></a>
+                <hr />
+                <!--ko foreach: NormalContents-->
+                <a data-bind="text: Title, click: NavigateEvent, attr: { href: Url }"></a>
+                <!--/ko-->
             </div>
         </div>
         <div class="contentRight">
@@ -73,8 +63,7 @@
                         <!--ko text: Sudoku().AutoSolveFormatted-->
                         <!--/ko-->
                     </a>
-                    <span class="solve" data-bind="visible: !Sudoku().AutoSolve && Sudoku().Hints().length > 0">
-                        - 
+                    <span class="solve" data-bind="visible: !Sudoku().AutoSolve && Sudoku().Hints().length > 0">- 
                         <a data-bind="click: Sudoku().Solve">Solve now</a>
                     </span>
                 </span>
