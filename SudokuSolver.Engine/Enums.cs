@@ -30,6 +30,7 @@
         Vertical
     }
 
+    // ?
     public enum SolvingMethods
     {
         Method1

@@ -112,9 +112,15 @@ if (!ModelState.IsValid)
 	return new HttpResponseMessage<JsonValue>(errors, HttpStatusCode.BadRequest);
 }
 
+. loading message can start and end in LoadContent() function but then how about ajax?
+
 . webapi.tester doesnt work at the moment (after the package updates) - check webapiclient!
 
 . probably console tester doesnt work - after horizontal to square id change
+
+. using content class + navigate function looks a good idea
+but then, if the content will be generated from cms - how the user's links will be using Navigate function.. ?!
+types: internal links + internal commands + external links
 
 . try to get rid of sudokunumbergroup
 
@@ -186,6 +192,8 @@ CONTINUE WITH;
 Now, if you do a ko.toJSON(viewModel) or ko.toJSON(selectedItem), you will just get your item and not the style object. The toJSON() method will see that selectedItem is an observable and then unwrap it. It does not look for any properties/observables attached to the observable itself (which is a function). So, this is a nice way to hide values that are not important to send back to the server.
 
 2. should we try to put all functions under appviewmodel ?!?!?
+
+3. web api help page - internal url doesnt work - /api/help?
 
 .. need throttle ?
 
@@ -260,15 +268,16 @@ should we use data annotations? + model.state - validation in general?
 how to use put - just for update?
 script + js etc. bundled in razor page?
 
-.AsEnumerable()
-
-jsonformatter . use enum !?
+---
+how to 404 cases?
 
 ---
-using content class + navigate function looks a good idea
-but then, if the content will be generated from cms - how the user's links will be using Navigate function.. ?!
-types: internal links + internal commands + external links
+appviewmodel should load the related content templates (sudoku + help + contact etc.)
+and every template should contain its own javascript files?
+the only problem how to work with multiple ko.applybindings.. ?!
+http://stackoverflow.com/questions/9293761/knockoutjs-multiple-view-models-in-a-single-view
+http://stackoverflow.com/questions/7342814/knockoutjs-ko-applybindings-to-partial-view
 
 ---
-think about loading message..
-gather all diff. content load blocks to default ?!
+check this out;
+http://blogs.msdn.com/b/webdev/archive/2012/11/16/capturing-unhandled-exceptions-in-asp-net-web-api-s-with-elmah.aspx

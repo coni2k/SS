@@ -15,31 +15,36 @@
 
         /* WebAPI URLs */
         /* Root */
-        apiUrlSudokuRoot = '/api/Sudoku/',
-        apiUrlSudokuListRoot = '/api/SudokuList/',
+        apiUrlSudokuRoot = '/api/sudoku/',
+        apiUrlSudokuListRoot = '/api/sudokulist/',
+        apiUrlContentRoot = '/api/content/',
 
         /* Application level */
-        apiUrlSudokuList = apiUrlSudokuListRoot + 'List',
-        apiUrlNewSudoku = apiUrlSudokuListRoot + 'NewSudoku',
-        apiUrlResetList = apiUrlSudokuListRoot + 'ResetList',
+        apiUrlSudokuList = apiUrlSudokuListRoot + 'list',
+        apiUrlNewSudoku = apiUrlSudokuListRoot + 'newsudoku',
+        apiUrlResetList = apiUrlSudokuListRoot + 'resetlist',
 
         /* Sudoku level - get */
-        apiUrlSquares = apiUrlSudokuRoot + 'Squares/', // + sudokuId
-        apiUrlNumbers = apiUrlSudokuRoot + 'Numbers/', // + sudokuId
-        apiUrlHints = apiUrlSudokuRoot + 'Hints/', // + sudokuId
-        apiUrlAvailabilities = apiUrlSudokuRoot + 'Availabilities/', // + sudokuId
-        //var apiUrlAvailabilities2 = apiUrlSudokuRoot + 'availabilities/', // + sudokuId
-        apiUrlGroupNumberAvailabilities = apiUrlSudokuRoot + 'GroupNumberAvailabilities/', // + sudokuId
+        apiUrlSquares = function (sudokuId) { return apiUrlSudokuRoot + 'squares/' + sudokuId; },
+        apiUrlNumbers = function (sudokuId) { return apiUrlSudokuRoot + 'numbers/' + sudokuId; },
+        apiUrlHints = function (sudokuId) { return apiUrlSudokuRoot + 'hints/' + sudokuId; },
+        apiUrlAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'availabilities/' + sudokuId; },
+        //var apiUrlAvailabilities2 = function (sudokuId) { return apiUrlSudokuRoot + 'availabilities/' + sudokuId; },
+        apiUrlGroupNumberAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'groupnumberavailabilities/' + sudokuId; },
 
         /* Sudoku level - post */
-        apiUrlUpdateSquare = apiUrlSudokuRoot + 'UpdateSquare/', // + sudokuId
-        apiUrlToggleReady = apiUrlSudokuRoot + 'ToggleReady/', // + sudokuId
-        apiUrlToggleAutoSolve = apiUrlSudokuRoot + 'ToggleAutoSolve/', // + sudokuId
-        apiUrlSolve = apiUrlSudokuRoot + 'Solve/', // + sudokuId
-        apiUrlReset = apiUrlSudokuRoot + 'Reset/', // + sudokuId
+        apiUrlUpdateSquare = function (sudokuId) { return apiUrlSudokuRoot + 'updatesquare/' + sudokuId; },
+        apiUrlToggleReady = function (sudokuId) { return apiUrlSudokuRoot + 'toggleready/' + sudokuId; },
+        apiUrlToggleAutoSolve = function (sudokuId) { return apiUrlSudokuRoot + 'toggleautoSolve/' + sudokuId; },
+        apiUrlSolve = function (sudokuId) { return apiUrlSudokuRoot + 'solve/' + sudokuId; },
+        apiUrlReset = function (sudokuId) { return apiUrlSudokuRoot + 'reset/' + sudokuId; },
+
+        /* Content */
+        apiUrlResourceNotFound = function (id) { return apiUrlContentRoot + 'resourcenotfound/' + id; },
 
         /* Enums */
-        ContentTypes = { 'Normal': 0, 'Sudoku': 1 };
+        ContentTypes = { 'Normal': 0, 'Sudoku': 1 },
+        AssignTypes = { 'Initial': 0, 'User': 1, 'Hint': 2, 'Solver': 3 };
 
     // Load templates ?!
     //var templates = [];
@@ -73,6 +78,15 @@
         self.Contents = ko.observableArray([]);
 
         // Normal content (menu items)
+
+        // TODO Welcome content?
+        //- blank
+        //- generate new
+        //- load cases
+
+        //sudoku/blank
+        //sudoku/generated
+
         self.Contents.push(new Content('help'));
         self.Contents.push(new Content('contact'));
         self.Contents.push(new Content('source'));
@@ -106,50 +120,14 @@
 
         // Bind to StateChange Event
         self.History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
-
-            //var state = self.History.getState();
-            //History.log(state.data, state.title, state.url);
-
             self.LoadContent(self.History.getState());
-
         });
 
-        // Navigate
-        //self.NavigateClick = function (selectedSudokuItem) {
-
-        //    self.Navigate(selectedSudokuItem, true);
-
-        //};
-
-        //self.NavigateSudokuItem = function (selectedSudokuItem, isPush)
-        //{
-        //    // var newUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
-        //    var newUrl = '/sudoku/' + selectedSudokuItem.SudokuId;
-
-        //    self.Navigate(newUrl, isPush);
-        //}
-
-        //self.Navigate = function (newUrl, isPush) {
-
-        //    //var newStateUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
-        //    // var newStateUrl = '/sudoku/?' + selectedSudokuItem.SudokuId
-        //    //var newUrl = '/sudoku/?id=' + selectedSudokuItem.SudokuId
-
-        //    if (isPush) {
-        //        self.History.pushState(null, null, newUrl);
-        //    }
-        //    else {
-        //        self.History.replaceState(null, null, newUrl);
-        //    }
-        //};
-
+        // Load content
         self.LoadContent = function (state) {
 
-            // Hide previous error message
+            // Hide previous messages
             hideMessagePanel();
-
-            // Loading message
-            $('#loadingMessagePanel').dialog('open');
 
             // Variables
             var contentId = 'sudoku',
@@ -172,161 +150,108 @@
                         sudokuId = parseInt(url.split('/')[1], 10);
                     }
                 }
-
-                //self.History.log('url: ' + url + ' - contentId: ' + contentId + ' - sudokuId: ' + sudokuId);
             }
 
-            // Url helper to get the segments (defa
-            //var urlHelper = document.createElement('a');
-
-            // If there is a state, get the url
-            // if (state !== null) {
-                // urlHelper.href = state.url;
-            // }
-
-            // var strippedUrl = state.url.replace(History.getRootUrl(), '');
-
-            // Content to be loaded
-            // var urlContent = urlHelper.pathname.replace(/\//g, '').replace('default.aspx', '');
-            //var urlContent = urlHelper.pathname.replace('default.aspx', '');
-            //var urlContent = urlHelper.pathname.replace('default.aspx', '');
-
-            // Id 
-            // var urlId = parseInt(urlHelper.search.replace('?id=', ''), 10);
-            // var urlId = parseInt(urlHelper.search.replace('?id=', ''), 10);
-            // var urlId = parseInt(urlHelper.search.replace('?', ''), 10);
-
-            // Initial content
-            // TODO Should be 'welcome' kind of..?
-            //if (contentId === '') {
-            //    self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
-            //    return;
-            //}
-
-            // Load sudoku list
-            // self.LoadSudokuList(false);
+            // Sudoku list (load it in any case)
+            if (self.SudokuContents().length === 0) {
+                self.LoadSudokuContents();
+            };
 
             // Content
-            switch (contentId) {
-                case 'sudoku':
-                    {
-                        if (self.SudokuContents().length === 0) {
-                            self.LoadSudokuContents();
-                        };
+            var content = null;
 
-                        // Initial item; first sudoku in the list
-                        // TODO If it's NAN it can be 404 now?
-                        if (sudokuId === 0) {
-                            // sudokuId = self.SudokuContents()[0].Data.SudokuId;
-                            self.SudokuContents()[0].Navigate(false);
-                            return;
-                            // self.NavigateSudokuItem(self.SudokuContents()[0].Data, false);
-                        }
-                        else if (isNaN(sudokuId)) {
-                            // TODO Return 404 ?!
-                            self.History.log('404 - wrong sudoku id (nan)');
-                            return; // ?
+            if (contentId === 'sudoku')
+            {
+                // Initial item; first sudoku in the list
+                if (sudokuId === 0) {
+                    self.SudokuContents()[0].Navigate(false);
+                    return;
+                }
+                else if (isNaN(sudokuId)) {
 
-                            //self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
-                            //return;
-                        };
+                    // TODO Return 404 ?!
 
-                        //if (isNaN(sudokuId)) {
-                        //    self.NavigateSudokuItem(self.SudokuList()[0].Data, false);
-                        //    return;
-                        //}
+                    self.History.log('404 - wrong sudoku id (nan) - ' + sudokuId);
 
-                        // Search for the item
-                        var content = Enumerable.From(self.SudokuContents()).SingleOrDefault(null, function (sudokuContent) {
-                            return sudokuContent.Data.SudokuId === sudokuId;
-                        });
+                    // Currently loading message appears automatically
+                    // but in case the content that we're trying to load is a normal page, there is nothing to get with ajax
+                    // which means the loading message stays on the screen..
+                    // TODO Make this better!
+                    $('#loadingMessagePanel').dialog('close');
 
-                        // There there is no sudoku with this Id
-                        if (content === null) {
-                            // TODO Return 404 ?!
-                            self.History.log('404 - wrong sudoku id (not found) - id: ' + sudokuId + ' - len: ' + self.SudokuContents().length);
-                        }
+                    getApiData(apiUrlResourceNotFound(sudokuId), null, false);
 
-                        // Load it
-                        self.CurrentContent('Sudoku');
-                        document.title = 'Sudoku Solver - Sudoku Id: ' + content.Data.SudokuId;
-                        self.LoadSudoku(content.Data);
+                    return false;
+                };
 
-                        break;
-                    }
-                case 'welcome':
-                    {
-                        ///welcome?
+                // Search for the item
+                var content = Enumerable.From(self.SudokuContents()).SingleOrDefault(null, function (sudokuContent) {
+                    return sudokuContent.Data.SudokuId === sudokuId;
+                });
 
-                        //- blank
-                        //- generate new
-                        //- load cases
-
-                        ///sudoku/blank
-                        ///sudoku/generated
-
-                        break;
-                    }
-                case 'help':
-                    {
-                        self.CurrentContent('Help');
-                        document.title = 'Sudoku Solver - Help';
-                        break;
-                    }
-                case 'contact':
-                    {
-                        self.CurrentContent('Contact');
-                        document.title = 'Sudoku Solver - Contact';
-                        break;
-                    }
-                case 'source':
-                    {
-                        self.CurrentContent('Source');
-                        document.title = 'Sudoku Solver - Source';
-                        break;
-                    }
-                case 'license':
-                    {
-                        self.CurrentContent('License');
-                        document.title = 'Sudoku Solver - License';
-                        break;
-                    }
-                case 'error':
-                    {
-                        self.CurrentContent('Error');
-                        document.title = 'Sudoku Solver - Error';
-                        break;
-                    }
-                default:
-                    {
-                        /* TODO Return 404 ?! */
-                        self.History.log('404 - wrong content id');
-                        break;
-                    }
             }
 
-            // Loading message
-            $('#loadingMessagePanel').dialog('close');
+                // TODO else if 'error' ?
+
+            else {
+
+                // Normal content (menu items)
+                content = Enumerable.From(self.NormalContents()).SingleOrDefault(null, function (contentItem) {
+                    return contentItem.ContentId === contentId;
+                });
+            }
+
+            // Not found
+            if (content === null)
+            {
+                // TODO Return 404 ?!
+
+                getApiData(apiUrlResourceNotFound(contentId === 'sudoku' ? sudokuId : contentId), null, false);
+
+                // Page title + header
+                self.CurrentContent('Error');
+                document.title = 'Sudoku Solver - ' + 'Resource not found';
+
+                // self.History.log('404 - wrong sudoku id (nan)');
+
+                // Currently loading message appears automatically
+                // but in case the content that we're trying to load is a normal page, there is nothing to get with ajax
+                // which means the loading message stays on the screen..
+                // TODO Make this better!
+                $('#loadingMessagePanel').dialog('close');
+
+                return false;
+            }
+
+            // Page title + header
+            self.CurrentContent(content.Title);
+            document.title = 'Sudoku Solver - ' + content.Title;
+
+            // If it's sudoku, load the data as well
+            if (content.Type === ContentTypes.Sudoku) {
+                self.LoadSudoku(content.Data);
+            }
+            else {
+
+                // Currently loading message appears automatically
+                // but in case the content that we're trying to load is a normal page, there is nothing to get with ajax
+                // which means the loading message stays on the screen..
+                // TODO Make this better!
+                $('#loadingMessagePanel').dialog('close');
+
+            }
         }
-
-        //self.LoadSudokuContent = function (sudokuContent) {
-
-        //};
 
         // List + selected sudoku
         // self.SudokuList = ko.observableArray([]);
         self.Sudoku = ko.observable(new Sudoku());
 
         // Css
-        self.HasSudokuContents = ko.computed(function () { return self.SudokuContents().length > 0; });
+        // self.HasSudokuContents = ko.computed(function () { return self.SudokuContents().length > 0; });
         self.HasSudoku = ko.computed(function () { return self.Sudoku().SudokuId() > 0; });
 
         // Load list
         self.LoadSudokuContents = function () {
-
-            //$.ajaxSetup({
-            //    async: false
-            //});
 
             // Not async.
             getApiData(apiUrlSudokuList, function (sudokuList) {
@@ -353,11 +278,6 @@
                 // self.LoadContent(isReset ? null : self.History.getState());
 
             }, false);
-
-            //$.ajaxSetup({
-            //    async: true
-            //});
-
         };
 
         // Load sudoku
@@ -378,14 +298,6 @@
             self.Sudoku().SquaresLeft(sudokuData.SquaresLeft);
             self.Sudoku().Ready(sudokuData.Ready);
             self.Sudoku().AutoSolve(sudokuData.AutoSolve);
-
-            // Grid
-            //if (initOrRefreshSudoku) {
-            //    self.Sudoku().InitSudoku();
-            //}
-            //else {
-            //    self.Sudoku().RefreshGrid();
-            //}
 
             // Load details
             self.Sudoku().LoadDetails();
@@ -472,13 +384,12 @@
         };
 
         // Panels
-        $('#loadingMessagePanel').dialog({
+        $("#loadingMessagePanel").dialog({
             dialogClass: 'ui-dialog-notitlebar',
             resizable: false,
             height: 70,
             width: 250,
-            modal: true,
-            autoOpen: false
+            modal: true
         });
 
         // Load the content..
@@ -486,7 +397,6 @@
 
     }
 
-    // Second parameter (sudokuItem) could be more generic (like args) but we don't have any other data item anyway ?
     function Content(contentId, type, data) {
         type = (typeof type === 'undefined') ? ContentTypes.Normal : type;
         data = (typeof data === 'undefined') ? null : data;
@@ -532,22 +442,13 @@
         };
     }
 
-    //function SudokuContent(sudokuItem) {
-        
+    //function HtmlTemplate(templateId, content) {
     //    var self = this;
 
-    //    self.InternalLink = new InternalLink('sudoku', sudokuItem.SudokuId);
-    //    self.SudokuItem = sudokuItem;
-
+    //    self.Id = templateId;
+    //    self.Content = content;
+    //    self.IsLoaded = false;
     //}
-
-    function HtmlTemplate(templateId, content) {
-        var self = this;
-
-        self.Id = templateId;
-        self.Content = content;
-        self.IsLoaded = false;
-    }
 
     // Sudoku
     function Sudoku(size) {
@@ -742,7 +643,7 @@
             var squareContainer = ko.toJSON(square); // JSON.stringify({ SquareId: square.SquareId, Value: newValue });
 
             // Post + load
-            postApi(apiUrlUpdateSquare + self.SudokuId(), squareContainer, function () { self.LoadDetails(); });
+            postApi(apiUrlUpdateSquare(self.SudokuId()), squareContainer, function () { self.LoadDetails(); });
         };
 
         // Remove the value of selected square
@@ -760,7 +661,7 @@
             }
 
             // Or the sudoku is in ready state and it has an initial value
-            if (self.Ready() && self.SelectedSquare().AssignType() === 0) {
+            if (self.Ready() && self.SelectedSquare().AssignType() === AssignTypes.Initial) {
                 return false;
             }
 
@@ -775,7 +676,7 @@
 
         // Toggle ready
         self.ToggleReady = function () {
-            postApi(apiUrlToggleReady + self.SudokuId(), null, function () {
+            postApi(apiUrlToggleReady(self.SudokuId()), null, function () {
 
                 // Update client
                 self.Ready(!self.Ready());
@@ -784,7 +685,7 @@
 
         // Toggle auto solve
         self.ToggleAutoSolve = function () {
-            postApi(apiUrlToggleAutoSolve + self.SudokuId(), null, function () {
+            postApi(apiUrlToggleAutoSolve(self.SudokuId()), null, function () {
 
                 // Update client
                 self.AutoSolve(!self.AutoSolve());
@@ -798,7 +699,7 @@
 
         // Solve
         self.Solve = function () {
-            postApi(apiUrlSolve + self.SudokuId(), null, function () { self.LoadDetails(); });
+            postApi(apiUrlSolve(self.SudokuId()), null, function () { self.LoadDetails(); });
         };
 
         // Reset
@@ -807,12 +708,12 @@
                 return Enumerable.From(group.Squares).Any(function (square) {
                     if (self.Ready()) {
                         // If it's ready, check whether there are any squares that set by user, solver or hint
-                        return square.AssignType() === 1 || square.AssignType() === 2 || square.AssignType() === 3;
+                        return square.AssignType() === AssignTypes.User || square.AssignType() === AssignTypes.Hint || square.AssignType() === AssignTypes.Solver;
                     }
                     else {
                         // If it's not ready, check whether there are any squares that have a value
                         //return square.AssignType() === 0 && square.Value() !== 0;
-                        return square.AssignType() === 0 && square.SudokuNumber().Value !== 0;
+                        return square.AssignType() === AssignTypes.Initial && square.SudokuNumber().Value !== 0;
                     }
                 });
             });
@@ -831,7 +732,7 @@
                 buttons: {
                     'Reset': function () {
                         $(this).dialog('close');
-                        postApi(apiUrlReset + self.SudokuId(), null, function () { self.LoadDetails(); });
+                        postApi(apiUrlReset(self.SudokuId()), null, function () { self.LoadDetails(); });
                     },
                     Cancel: function () {
                         $(this).dialog('close');
@@ -865,7 +766,7 @@
 
         self.LoadSquares = function () {
 
-            getApiData(apiUrlSquares + self.SudokuId(), function (squareList) {
+            getApiData(apiUrlSquares(self.SudokuId()), function (squareList) {
 
                 Enumerable.From(squareList).ForEach(function (squareItem) {
 
@@ -881,7 +782,7 @@
         self.LoadNumbers = function () {
 
             // Get the numbers from the server
-            getApiData(apiUrlNumbers + self.SudokuId(), function (numberList) {
+            getApiData(apiUrlNumbers(self.SudokuId()), function (numberList) {
 
                 // Zero value (SquaresLeft on detailsPanel)
                 var zeroNumber = numberList.splice(0, 1);
@@ -908,7 +809,7 @@
         self.LoadHints = function () {
 
             // Get the hints from the server
-            getApiData(apiUrlHints + self.SudokuId(), function (hintList) {
+            getApiData(apiUrlHints(self.SudokuId()), function (hintList) {
 
                 // Reset the current list
                 self.Hints([]);
@@ -930,7 +831,7 @@
         self.LoadAvailabilities = function () {
 
             // Get the data
-            getApiData(apiUrlAvailabilities + self.SudokuId(), function (availabilityList) {
+            getApiData(apiUrlAvailabilities(self.SudokuId()), function (availabilityList) {
 
                 Enumerable.From(availabilityList).ForEach(function (availabilityItem) {
 
@@ -951,7 +852,7 @@
 
         //self.LoadAvailabilities2 = function () {
 
-        //    getApiData(apiUrlAvailabilities2 + self.SudokuId(), function (list) {
+        //    getApiData(apiUrlAvailabilities2(self.SudokuId()), function (list) {
 
         //        $.each(list, function () {
 
@@ -975,7 +876,7 @@
 
         self.LoadGroupNumberAvailabilities = function () {
 
-            getApiData(apiUrlGroupNumberAvailabilities + self.SudokuId(), function (list) {
+            getApiData(apiUrlGroupNumberAvailabilities(self.SudokuId()), function (list) {
 
                 self.GroupNumberAvailabilities([]);
 
@@ -1085,7 +986,7 @@
         self.Group = group;
         self.Value = ko.observable(0);
         self.SudokuNumber = ko.observable(self.Group.Sudoku.ZeroNumber);
-        self.AssignType = ko.observable(0);
+        self.AssignType = ko.observable(AssignTypes.Initial);
 
         self.ValueFormatted = ko.computed(function () {
             //return self.Value() === 0 ? '&nbsp;' : self.Value();
@@ -1129,13 +1030,13 @@
         // Css
         self.CssAssignType = ko.computed(function () {
             switch (self.AssignType()) {
-                case 0:
+                case AssignTypes.Initial:
                     return ' initial';
-                case 1:
+                case AssignTypes.User:
                     return ' user';
-                case 2:
+                case AssignTypes.Hint:
                     return ' hint';
-                case 3:
+                case AssignTypes.Solver:
                     return ' solver';
             }
         });
@@ -1219,7 +1120,7 @@
             var relatedSquare = data.Sudoku.FindSquareBySquareId(data.SquareId);
             //relatedSquare.Value(event.type === 'mouseenter' ? self.HintValue : 0);
             relatedSquare.SudokuNumber().Value(event.type === 'mouseenter' ? self.HintValue : 0);
-            relatedSquare.AssignType(event.type === 'mouseenter' ? 2 : 0);
+            relatedSquare.AssignType(event.type === 'mouseenter' ? AssignTypes.Hint : AssignTypes.Initial);
             relatedSquare.TogglePassiveSelect(relatedSquare, event);
         };
     }
@@ -1295,12 +1196,12 @@
         $(this).ajaxStart(function () {
 
             // Hide previous error message
-            // hideMessagePanel();
+            hideMessagePanel();
 
-            // $('#loadingMessagePanel').dialog('open');
+            $('#loadingMessagePanel').dialog('open');
 
         }).ajaxStop(function () {
-            // $('#loadingMessagePanel').dialog('close');
+            $('#loadingMessagePanel').dialog('close');
         });
     });
 
@@ -1384,44 +1285,6 @@
     function hideMessagePanel() {
         $('#messagePanel').fadeTo(200, 0.01);
     }
-
-    //$('.internalLink').click(function () {
-
-    //    appViewModel.Navigate(url, true);
-
-    //    event.preventDefault();
-    //    return false;
-
-    //});
-
-    //$(document).ready(function () {
-
-    //    //$('a').click(function (event) {
-    //    //    var
-    //    //        $this = $(this),
-    //    //        url = $this.attr('href');
-    //    //    //title = $this.attr('title') || null;
-
-    //    //    // Continue as normal for cmd clicks etc;
-    //    //    // MIDDLE BUTTON OF THE MOUSE OR CONTROL (COMMAND) KEY ON THE KEYBOARD
-    //    //    // if (event.which == 2       || event.metaKey) { return true; }
-
-    //    //    // if (url = '#') { return true; }
-
-    //    //    // Ajaxify this link
-    //    //    //if (url !== '#') {
-    //    //    //    appViewModel.Navigate(url, true);
-    //    //    //    //History.pushState(null, null, url);
-    //    //    //}
-
-    //    //    appViewModel.Navigate(url, true);
-
-    //    //    event.preventDefault();
-    //    //    return false;
-
-    //    //});
-
-    //});
 
     // toJSON
     Square.prototype.toJSON = function () {

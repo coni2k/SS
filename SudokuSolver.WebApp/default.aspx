@@ -18,7 +18,8 @@
         <h1>Sudoku Solver</h1>
     </div>
     <div class="contentContainer">
-        <div class="contentLeft" data-bind="css: { hide: !HasSudokuContents() }">
+        <%--<div class="contentLeft" data-bind="css: { hide: !HasSudokuContents() }">--%>
+        <div class="contentLeft">
             <div id="sudokuListPanel" class="panel">
                 <strong>Sudoku List</strong>
                 <!--ko foreach: SudokuContents-->
@@ -40,6 +41,11 @@
                     <!--ko text: CurrentContent-->
                     <!--/ko-->
                 </h2>
+            </div>
+            <div id="messagePanel" class="panel almostHide">
+                <span class="error">
+                    <span id="messagePanelMessage"></span><a id="messagePanelClear">[x]</a>
+                </span>
             </div>
             <div id="contentPanel" data-bind="css: { hide: !HasSudoku() }">
                 <div id="detailsPanel" class="panel">
@@ -126,11 +132,6 @@
                     <span class="user">User</span>
                     <br />
                     <span class="solver">Solver</span>
-                </div>
-                <div id="messagePanel" class="panel almostHide">
-                    <span class="error">
-                        <span id="messagePanelMessage"></span><a id="messagePanelClear">[x]</a>
-                    </span>
                 </div>
                 <div id="numberGridPanel" data-bind="foreach: Sudoku().NumberGroups, css: Sudoku().CssValueGrid">
                     <div data-bind="foreach: Numbers, css: CssClass">
