@@ -308,7 +308,7 @@ namespace SudokuSolver.Engine
             UpdateSquare(squareId, value, type);
         }
 
-        public void UpdateSquare(int squareId, int value, AssignTypes type)
+        void UpdateSquare(int squareId, int value, AssignTypes type)
         {
             // Get the square
             var square = GetSquares().Single(s => s.SquareId.Equals(squareId));
@@ -337,7 +337,7 @@ namespace SudokuSolver.Engine
 
             // d. Is it available; Checks the related squares in the related groups
             if (!number.IsZero && square.SquareGroups.Any(sg => sg.Squares.Any(s => s.SudokuNumber.Equals(number))))
-                throw new Exception("Not a valid assignment, the number is already in use in one of the related groups");
+                throw new InvalidOperationException("Not a valid assignment, the number is already in use in one of the related groups");
 
             // Set the number and type
             square.Update(number, type);
@@ -426,13 +426,13 @@ namespace SudokuSolver.Engine
 
         public void Reset()
         {
-            foreach (var s in _Squares)
+            foreach (var square in _Squares)
             {
-                if (s.AssignType == AssignTypes.User
-                    || s.AssignType == AssignTypes.Solver
-                    || (s.AssignType == AssignTypes.Initial && !Ready))
+                if (square.AssignType == AssignTypes.User
+                    || square.AssignType == AssignTypes.Solver
+                    || (square.AssignType == AssignTypes.Initial && !Ready))
                 {
-                    UpdateSquare(s.SquareId, 0, AssignTypes.Initial);
+                    UpdateSquare(square.SquareId, 0, AssignTypes.Initial);
                 }
             }
         }

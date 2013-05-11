@@ -190,7 +190,7 @@ HOT STUFF;
 CONTINUE WITH;
 
 0.
-a. CONTINUE WITH CREATING TESTS
+a. create proper test (16-17-18)
 b. also work on seperate html templates
 c. try to solve headaches!
 d. try to get rid of unnecessary notes in here!

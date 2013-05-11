@@ -150,24 +150,8 @@ input[type=text], textarea {
     #sudokuListPanel.sudokuItem {
     }
 
-#detailsPanel {
-    float: left;
-    width: 350px;
-}
+#headerPanel {
 
-#selectedSquarePanel {
-    float: left;
-    width: 150px;
-}
-
-#selectedNumberPanel {
-    float: left;
-    width: 150px;
-}
-
-#legendPanel {
-    float: left;
-    clear: left;
 }
 
 #messagePanel {
@@ -187,6 +171,30 @@ input[type=text], textarea {
         color: #e80c4d;
         text-decoration: none;
     }
+
+#contentPanel {
+    clear: left;
+}
+
+#detailsPanel {
+    float: left;
+    width: 350px;
+}
+
+#selectedSquarePanel {
+    float: left;
+    width: 150px;
+}
+
+#selectedNumberPanel {
+    float: left;
+    width: 150px;
+}
+
+#legendPanel {
+    float: left;
+    clear: left;
+}
 
 #numberGridPanel {
     float: left;

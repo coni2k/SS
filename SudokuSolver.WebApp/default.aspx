@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="contentRight">
-            <div id="header">
+            <div id="headerPanel" class="panel">
                 <h2>
                     <!--ko text: CurrentContent-->
                     <!--/ko-->

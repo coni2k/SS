@@ -224,5 +224,108 @@ namespace SudokuSolver.Engine.Test
             // a. Squares left
             Assert.IsTrue(sudoku.SquaresLeft == 0);
         }
+
+        [TestMethod]
+        public void TestCase12()
+        {
+            // New sudoku
+            var sudoku = CaseManager.GetCase12();
+            
+            // Test
+            // a. Assign an invalid value
+            try
+            {
+                sudoku.UpdateSquare(25, 4);
+                Assert.Fail();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsNotInstanceOfType(ex, typeof(UnitTestAssertException));
+            }
+        }
+
+        [TestMethod]
+        public void TestCase13()
+        {
+            // New sudoku
+            var sudoku = CaseManager.GetCase13();
+
+            // Test
+            // a. Assign an invalid value
+            try
+            {
+                sudoku.UpdateSquare(27, 4);
+                Assert.Fail();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsNotInstanceOfType(ex, typeof(UnitTestAssertException));
+            }
+        }
+
+        [TestMethod]
+        public void TestCase14()
+        {
+            // Test
+            // a. Invalid sudoku
+            try
+            {
+                var sudoku = CaseManager.GetCase14();
+                Assert.Fail();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsNotInstanceOfType(ex, typeof(UnitTestAssertException));
+            }
+        }
+
+        [TestMethod]
+        public void TestCase15()
+        {
+            // Test
+            // a. Invalid sudoku
+            try
+            {
+                var sudoku = CaseManager.GetCase15();
+                Assert.Fail();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsNotInstanceOfType(ex, typeof(UnitTestAssertException));
+            }
+        }
+
+        [TestMethod]
+        public void TestCase16()
+        {
+            // New sudoku
+            var sudoku = CaseManager.GetCase16();
+
+            // Test
+            // a. ?
+            // TODO!
+        }
+
+        [TestMethod]
+        public void TestCase17()
+        {
+            // New sudoku
+            var sudoku = CaseManager.GetCase17();
+
+            // Test
+            // a. ?
+            // TODO!
+        }
+
+        [TestMethod]
+        public void TestCase18()
+        {
+            // New sudoku
+            var sudoku = CaseManager.GetCase18();
+
+            // Test
+            // a. ?
+            // TODO!
+        }
     }
 }
