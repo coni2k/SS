@@ -819,7 +819,7 @@
 
                     // Create hint
                     var hint = new Hint(self);
-                    hint.SquareId = hintItem.Square.Id;
+                    hint.SquareId = hintItem.Square.SquareId;
                     hint.HintValue = hintItem.Number.Value;
                     hint.HintType = hintItem.Type;
 

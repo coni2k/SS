@@ -188,6 +188,14 @@ http://ifandelse.com/?p=100
 HOT STUFF;
 
 CONTINUE WITH;
+
+0.
+a. CONTINUE WITH CREATING TESTS
+b. also work on seperate html templates
+c. try to solve headaches!
+d. try to get rid of unnecessary notes in here!
+e. also check the last (november) updates - it was in "not finished" state.. ?!
+
 1. KO.TOJSON + mapping ?!
 Now, if you do a ko.toJSON(viewModel) or ko.toJSON(selectedItem), you will just get your item and not the style object. The toJSON() method will see that selectedItem is an observable and then unwrap it. It does not look for any properties/observables attached to the observable itself (which is a function). So, this is a nice way to hide values that are not important to send back to the server.
 

@@ -64,16 +64,16 @@
                         <!--/ko-->
                     </a>
                     |
-                <span id="solvePanel" data-bind="visible: Sudoku().Ready">Autosolve:
+                <span id="solvePanel" data-bind="visible: Sudoku().Ready()">Autosolve:
                     <a id="toggleAutoSolve" data-bind="click: Sudoku().ToggleAutoSolve">
                         <!--ko text: Sudoku().AutoSolveFormatted-->
                         <!--/ko-->
                     </a>
-                    <span class="solve" data-bind="visible: !Sudoku().AutoSolve && Sudoku().Hints().length > 0">- 
+                    <span class="solve" data-bind="visible: !Sudoku().AutoSolve() && Sudoku().Hints().length > 0">- 
                         <a data-bind="click: Sudoku().Solve">Solve now</a>
                     </span>
                 </span>
-                    <span data-bind="visible: Sudoku().Resettable">- 
+                    <span data-bind="visible: Sudoku().Resettable()">- 
                     <a data-bind="click: Sudoku().Reset">Reset</a>
                     </span>
                     <br />
