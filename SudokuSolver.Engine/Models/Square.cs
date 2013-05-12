@@ -245,18 +245,18 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("Id: {0} - Number: {1}", SquareId.ToString(), SudokuNumber.Value.ToString());
+            return string.Format("SudokuId: {0} - Number: {1}", SquareId.ToString(), SudokuNumber.Value.ToString());
         }
 
         #endregion
     }
 
-    /// <summary>
-    /// To be used to update the square from client-side
-    /// </summary>
-    public class SquareContainer
-    {
-        public int SquareId { get; set; }
-        public int Value { get; set; }
-    }
+    ///// <summary>
+    ///// To be used to update the square from client-side
+    ///// </summary>
+    //public class SquareContainer
+    //{
+    //    public int SquareId { get; set; }
+    //    public NumberCon  { get; set; }
+    //}
 }

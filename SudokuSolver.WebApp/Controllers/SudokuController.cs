@@ -58,14 +58,30 @@ namespace SudokuSolver.WebApp.Controllers
             return sudoku.GetGroupNumberAvailabilities();
         }
 
+        //// POST api/Sudoku/UpdateSquare/1
+        //public void UpdateSquare(int id, Square square)
+        //{
+        //    var sudoku = GetSudokuItem(id);
+
+        //    try
+        //    {
+        //        sudoku.UpdateSquare(square.SquareId, square.SudokuNumber.Value);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+        //        throw new HttpResponseException(response);
+        //    }
+        //}
+
         // POST api/Sudoku/UpdateSquare/1
-        public void UpdateSquare(int id, Square square)
+        public void UpdateSquare(int id, SquareContainer squareContainer)
         {
             var sudoku = GetSudokuItem(id);
 
             try
             {
-                sudoku.UpdateSquare(square.SquareId, square.SudokuNumber.Value);
+                sudoku.UpdateSquare(squareContainer.SquareId, squareContainer.Value);
             }
             catch (Exception ex)
             {

@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="CaseManager.cs" />
     <Compile Include="Models\Availability.cs" />
+    <Compile Include="Models\SquareContainer.cs" />
     <Compile Include="Models\GroupNumberAvailabilityContainer.cs" />
     <Compile Include="Models\Hint.cs" />
     <Compile Include="Models\Group.cs" />

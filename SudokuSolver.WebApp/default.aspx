@@ -252,6 +252,6 @@
         <span class="value" data-bind="text: SquareId" />
     </script>
     <!-- Html templates End -->
-    <script src="/Scripts/sudokusolver.js" type="text/javascript"></script>
+    <script src="/Scripts/sudokusolver.js?v=20130512.14" type="text/javascript"></script>
 </body>
 </html>

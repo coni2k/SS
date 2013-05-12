@@ -218,7 +218,7 @@ namespace SudokuSolver.ConsoleApp
             //    Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.GetCount().ToString()));
 
             foreach (var number in Sudoku.GetNumbers())
-                Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.Value.ToString(), number.Count.ToString()));
+                Console.Write("Number: {0} - Counter: {1}", number.Value, number.Count);
         }
 
         static void ShowHints()

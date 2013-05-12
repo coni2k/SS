@@ -370,10 +370,15 @@
                     'Reset list': function () {
                         $(this).dialog('close');
 
-                        self.LoadContent(null);
+                        self.Contents.remove(function (content) {
+                            return content.Type === ContentTypes.Sudoku;
+                        });
+
+                        // self.LoadContent(null);
 
                         // Post + load
-                        //postApi(apiUrlResetList, null, function () { self.LoadSudokuList(true); });
+                        // postApi(apiUrlResetList, null, function () { self.LoadSudokuContents(); });
+                        postApi(apiUrlResetList, null, function () { self.LoadContent(null); });
 
                     },
                     Cancel: function () {
@@ -604,7 +609,7 @@
             }
             else {
                 //self.UpdateSelectedSquare(square, self.SelectedNumber().Value);
-                self.UpdateSelectedSquare(square, self.SelectedNumber);
+                self.UpdateSelectedSquare(square, self.SelectedNumber());
             }
         };
 
@@ -629,7 +634,7 @@
             }
             else {
                 //self.UpdateSelectedSquare(self.SelectedSquare(), sudokuNumber.Value);
-                self.UpdateSelectedSquare(self.SelectedSquare, sudokuNumber);
+                self.UpdateSelectedSquare(self.SelectedSquare(), sudokuNumber);
             }
         };
 
@@ -637,10 +642,10 @@
         self.UpdateSelectedSquare = function (square, newValue) {
 
             // Prepare the data
-            square().SudokuNumber(newValue);
+            square.SudokuNumber().Value = newValue.Value;
 
-            // var squareContainer = JSON.stringify({ SquareId: square.SquareId, Value: newValue });
-            var squareContainer = ko.toJSON(square); // JSON.stringify({ SquareId: square.SquareId, Value: newValue });
+            // var squareContainer = ko.toJSON(square);
+            var squareContainer = JSON.stringify({ SquareId: square.SquareId, Value: square.SudokuNumber().Value });
 
             // Post + load
             postApi(apiUrlUpdateSquare(self.SudokuId()), squareContainer, function () { self.LoadDetails(); });
@@ -671,7 +676,7 @@
 
         self.RemoveSelectedSquareValue = function () {
             //self.UpdateSelectedSquare(self.SelectedSquare(), 0);
-            self.UpdateSelectedSquare(self.SelectedSquare, self.ZeroNumber);
+            self.UpdateSelectedSquare(self.SelectedSquare(), self.ZeroNumber);
         };
 
         // Toggle ready
@@ -984,7 +989,7 @@
         var self = this;
         self.SquareId = squareId;
         self.Group = group;
-        self.Value = ko.observable(0);
+        // self.Value = ko.observable(0);
         self.SudokuNumber = ko.observable(self.Group.Sudoku.ZeroNumber);
         self.AssignType = ko.observable(AssignTypes.Initial);
 
