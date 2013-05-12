@@ -38,9 +38,13 @@
         <div class="contentRight">
             <div id="headerPanel" class="panel">
                 <h2>
-                    <!--ko text: CurrentContent-->
+                    <!--ko text: CurrentContentHeader-->
                     <!--/ko-->
                 </h2>
+            </div>
+            <div id="contentBody">
+                <!--ko text: CurrentContentBody-->
+                <!--/ko-->
             </div>
             <div id="messagePanel" class="panel almostHide">
                 <span class="error">
@@ -252,6 +256,6 @@
         <span class="value" data-bind="text: SquareId" />
     </script>
     <!-- Html templates End -->
-    <script src="/Scripts/sudokusolver.js?v=20130512.14" type="text/javascript"></script>
+    <script src="/Scripts/sudokusolver.js?v=20130512.17" type="text/javascript"></script>
 </body>
 </html>

@@ -74,7 +74,8 @@
         var self = this;
 
         // Contents
-        self.CurrentContent = ko.observable('');
+        self.CurrentContentHeader = ko.observable('');
+        self.CurrentContentBody = ko.observable('');
         self.Contents = ko.observableArray([]);
 
         // Normal content (menu items)
@@ -209,7 +210,7 @@
                 getApiData(apiUrlResourceNotFound(contentId === 'sudoku' ? sudokuId : contentId), null, false);
 
                 // Page title + header
-                self.CurrentContent('Error');
+                self.CurrentContentHeader('Error');
                 document.title = 'Sudoku Solver - ' + 'Resource not found';
 
                 // self.History.log('404 - wrong sudoku id (nan)');
@@ -224,7 +225,17 @@
             }
 
             // Page title + header
-            self.CurrentContent(content.Title);
+            self.CurrentContentHeader(content.Title);
+
+            // var contentBody = $().load('license.html');
+            // alert(contentBody);
+
+            getContent('Views/' + contentId + '.html', function (content) {
+                self.CurrentContentBody(content);
+            });
+
+            // self.CurrentContentBody(contentBody);
+
             document.title = 'Sudoku Solver - ' + content.Title;
 
             // If it's sudoku, load the data as well
@@ -1162,6 +1173,16 @@
     $.ajaxSetup({
         contentType: 'application/json; charset=utf-8'
     });
+
+
+    function getContent(url, callback) {
+
+        $.ajax({
+            url: url,
+            success: callback
+        }).fail(function (jqXHR) { handleError(jqXHR); });
+
+    }
 
     // Get data from server
     function getApiData(apiUrl, callback, isAsync) {
