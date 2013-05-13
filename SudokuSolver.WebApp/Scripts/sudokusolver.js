@@ -191,10 +191,7 @@
                 });
 
             }
-
-                // TODO else if 'error' ?
-
-            else {
+            else { // TODO else if 'error' ?
 
                 // Normal content (menu items)
                 content = Enumerable.From(self.NormalContents()).SingleOrDefault(null, function (contentItem) {
@@ -206,7 +203,6 @@
             if (content === null)
             {
                 // TODO Return 404 ?!
-
                 getApiData(apiUrlResourceNotFound(contentId === 'sudoku' ? sudokuId : contentId), null, false);
 
                 // Page title + header
@@ -227,14 +223,9 @@
             // Page title + header
             self.CurrentContentHeader(content.Title);
 
-            // var contentBody = $().load('license.html');
-            // alert(contentBody);
-
-            getContent('Views/' + contentId + '.html', function (content) {
+            getContent('/Views/' + contentId + '.html', function (content) {
                 self.CurrentContentBody(content);
             });
-
-            // self.CurrentContentBody(contentBody);
 
             document.title = 'Sudoku Solver - ' + content.Title;
 

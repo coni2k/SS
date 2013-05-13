@@ -235,7 +235,11 @@
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
-    <Content Include="license.html" />
+    <Content Include="Views\contact.html" />
+    <Content Include="Views\sudoku.html" />
+    <Content Include="Views\help.html" />
+    <Content Include="Views\source.html" />
+    <Content Include="Views\license.html" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
     <Content Include="Scripts\jquery-ui-1.9.0.js" />

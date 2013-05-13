@@ -15,7 +15,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Sudoku Solver</h1>
+        <h1>Sudoku Killa</h1>
     </div>
     <div class="contentContainer">
         <%--<div class="contentLeft" data-bind="css: { hide: !HasSudokuContents() }">--%>
@@ -37,15 +37,9 @@
         </div>
         <div class="contentRight">
             <div id="headerPanel" class="panel">
-                <h2>
-                    <!--ko text: CurrentContentHeader-->
-                    <!--/ko-->
-                </h2>
+                <h2 data-bind="text: CurrentContentHeader" />
             </div>
-            <div id="contentBody">
-                <!--ko text: CurrentContentBody-->
-                <!--/ko-->
-            </div>
+            <div id="contentBody" data-bind="html: CurrentContentBody"></div>
             <div id="messagePanel" class="panel almostHide">
                 <span class="error">
                     <span id="messagePanelMessage"></span><a id="messagePanelClear">[x]</a>
@@ -256,6 +250,6 @@
         <span class="value" data-bind="text: SquareId" />
     </script>
     <!-- Html templates End -->
-    <script src="/Scripts/sudokusolver.js?v=20130512.17" type="text/javascript"></script>
+    <script src="/Scripts/sudokusolver.js?v=130512.18" type="text/javascript"></script>
 </body>
 </html>

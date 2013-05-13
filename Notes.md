@@ -191,7 +191,8 @@ HOT STUFF;
 
 		0.
 		a. create proper test (16-17-18)
-		b. work on seperate html templates
+		b. work on seperate html templates;
+			nested ko.applybindings?!
 		c. try to solve headaches!
 		d. try to get rid of unnecessary notes in here!
 		e. also check the last (november) updates - it was in "not finished" state.. ?!
