@@ -191,8 +191,13 @@ HOT STUFF;
 
 		0.
 		a. create proper test (16-17-18)
-		b. work on seperate html templates;
-			nested ko.applybindings?!
+		
+									b. work on seperate html templates;
+										nested ko.applybindings?!
+										
+										default.aspx vs. sudoku.html
+										looks good but is it correct?!
+			
 		c. try to solve headaches!
 		d. try to get rid of unnecessary notes in here!
 		e. also check the last (november) updates - it was in "not finished" state.. ?!

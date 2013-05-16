@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Sudoku Solver</title>
-    <link href="/Content/sudokusolver.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/main.css?v=20130515.1" rel="stylesheet" type="text/css" />
     <link href="/Content/themes/base/minified/jquery-ui.min.css" rel="stylesheet" type="text/css" />
     <script src="/Scripts/jquery-1.8.2.min.js" type="text/javascript"></script>
     <script src="/Scripts/jquery-ui-1.9.0.min.js" type="text/javascript"></script>
@@ -18,238 +18,27 @@
         <h1>Sudoku Killa</h1>
     </div>
     <div class="contentContainer">
-        <%--<div class="contentLeft" data-bind="css: { hide: !HasSudokuContents() }">--%>
-        <div class="contentLeft">
-            <div id="sudokuListPanel" class="panel">
-                <strong>Sudoku List</strong>
-                <!--ko foreach: SudokuContents-->
-                <div class="sudokuItem">
-                    <a data-bind="text: 'Id: ' + Data.SudokuId + ' - Title: ' + Data.Title, click: NavigateEvent, attr: { href: Url }"></a>
-                </div>
-                <!--/ko-->
-                <a data-bind="click: NewSudoku">New sudoku</a>
-                <a data-bind="click: ResetList">Reset list</a><br />
-                <hr />
-                <!--ko foreach: NormalContents-->
-                <a data-bind="text: Title, click: NavigateEvent, attr: { href: Url }"></a>
-                <!--/ko-->
-            </div>
+        <div id="headerPanel" class="panel">
+            <h2 id="contentHeader" />
         </div>
-        <div class="contentRight">
-            <div id="headerPanel" class="panel">
-                <h2 data-bind="text: CurrentContentHeader" />
-            </div>
-            <div id="contentBody" data-bind="html: CurrentContentBody"></div>
-            <div id="messagePanel" class="panel almostHide">
-                <span class="error">
-                    <span id="messagePanelMessage"></span><a id="messagePanelClear">[x]</a>
-                </span>
-            </div>
-            <div id="contentPanel" data-bind="css: { hide: !HasSudoku() }">
-                <div id="detailsPanel" class="panel">
-                    <strong>Details</strong>
-                    <br />
-                    Sudoku Id:
-                    <!--ko text: Sudoku().SudokuId-->
-                    <!--/ko-->
-                    <br />
-                    Squares left:
-                    <!--ko text: Sudoku().SquaresLeft-->
-                    <!--/ko-->
-                    <br />
-                    Ready: <a id="toggleReady" data-bind="click: Sudoku().ToggleReady">
-                        <!--ko text: Sudoku().ReadyFormatted-->
-                        <!--/ko-->
-                    </a>
-                    |
-                <span id="solvePanel" data-bind="visible: Sudoku().Ready()">Autosolve:
-                    <a id="toggleAutoSolve" data-bind="click: Sudoku().ToggleAutoSolve">
-                        <!--ko text: Sudoku().AutoSolveFormatted-->
-                        <!--/ko-->
-                    </a>
-                    <span class="solve" data-bind="visible: !Sudoku().AutoSolve() && Sudoku().Hints().length > 0">- 
-                        <a data-bind="click: Sudoku().Solve">Solve now</a>
-                    </span>
-                </span>
-                    <span data-bind="visible: Sudoku().Resettable()">- 
-                    <a data-bind="click: Sudoku().Reset">Reset</a>
-                    </span>
-                    <br />
-                    <span>Display: Values | Availabilities: 
-                    <a data-bind="click: Sudoku().ToggleDisplayAvailabilities">
-                        <!--ko text: Sudoku().DisplayAvailabilitiesFormatted-->
-                        <!--/ko-->
-                    </a><span>|
-                    </span>
-                        <span>IDs: </span>
-                        <a data-bind="click: Sudoku().ToggleDisplayIDs">
-                            <!--ko text: Sudoku().DisplayIDsFormatted-->
-                            <!--/ko-->
-                        </a>
-                    </span>
-                </div>
-                <div id="selectedSquarePanel" class="panel">
-                    <strong>Selected square</strong>
-                    <br />
-                    <span>Square Id: </span>
-                    <!--ko with: Sudoku().SelectedSquare-->
-                    <!--ko text: SquareId-->
-                    <!--/ko-->
-                    <!--/ko-->
-                    <br />
-                    <span>Value: </span>
-                    <!--ko with: Sudoku().SelectedSquare-->
-                    <span data-bind="if: !IsAvailable()">
-                        <span data-bind="html: ValueFormatted"></span>
-                        <!--ko if: $root.Sudoku().IsSelectedSquareValueRemoveable-->
-                        <a data-bind="click: $root.Sudoku().RemoveSelectedSquareValue">[x]</a>
-                        <!--/ko-->
-                    </span>
-                    <!--/ko-->
-                </div>
-                <div id="selectedNumberPanel" class="panel">
-                    <strong>Selected number</strong>
-                    <br />
-                    <span>Number: </span>
-                    <!--ko with: Sudoku().SelectedNumber-->
-                    <!--ko text: Value-->
-                    <!--/ko-->
-                    <!--/ko-->
-                    <br />
-                    <span>Count: </span>
-                    <!--ko with: Sudoku().SelectedNumber-->
-                    <!--ko text: Count-->
-                    <!--/ko-->
-                    <!--/ko-->
-                </div>
-                <div id="legendPanel" class="panel hide">
-                    <strong>Legend</strong>
-                    <br />
-                    <span class="initial">Initial</span>
-                    <br />
-                    <span class="user">User</span>
-                    <br />
-                    <span class="solver">Solver</span>
-                </div>
-                <div id="numberGridPanel" data-bind="foreach: Sudoku().NumberGroups, css: Sudoku().CssValueGrid">
-                    <div data-bind="foreach: Numbers, css: CssClass">
-                        <%--<div data-bind="click: $root.Sudoku().SetSelectedNumber, attr: { 'class': CssClass }, css: { activeSelected: IsActiveSelected, passiveSelected: IsPassiveSelected(), odd: $parent.IsOdd }">--%>
-                        <div data-bind="click: $root.Sudoku().SetSelectedNumber, css: CssClassComputed">
-                            <span class="value" data-bind="text: Value"></span>
-                        </div>
-                    </div>
-                </div>
-                <div id="valueGridPanel" data-bind="template: { name: 'gridTemplate', data: Sudoku().ValueGrid }, css: Sudoku().CssValueGrid">
-                </div>
-                <div id="availabilityGridPanel" data-bind="template: { name: 'gridTemplate', data: Sudoku().AvailabilityGrid }, css: Sudoku().CssAvailabilityGrid">
-                </div>
-                <div id="idGridPanel" data-bind="template: { name: 'gridTemplate', data: Sudoku().IdGrid }, css: Sudoku().CssIdGrid">
-                </div>
-                <div id="hintsPanel" class="panel">
-                    <strong>Hints</strong>
-                    <br />
-                    <!--ko foreach: Sudoku().Hints-->
-                    <div class="hintItem" data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { passiveSelected: IsSelected() }">
-                        <!--ko text: 'SquareId: ' + SquareId + ' - HintValue: ' + HintValue + ' - HintType: ' + HintType-->
-                        <!--/ko-->
-                    </div>
-                    <!--/ko-->
-                </div>
-                <div id="groupNumberAvailabilityPanel" class="panel">
-                    <strong>Group Number Availability</strong>
-                    <br />
-                    <!--ko foreach: Sudoku().GroupNumberAvailabilities-->
-                    <div class="" data-bind="">
-                        <!--ko text: 'GroupId: ' + GroupId + ' - Number: ' + Number + ' - Count: ' + Count-->
-                        <!--/ko-->
-                    </div>
-                    <!--/ko-->
+        <div id="contentBody" class="panel">
+            <div id="contentLeft" class="contentLeft">
+                <div id="sudokuListPanel" class="panel">
+                    <a href="/contact" class="contentLink">Contact</a>
+                    <a href="/source" class="contentLink">Source</a>
+                    <a href="/faq" class="contentLink">FAQ</a>
+                    <a href="/sudoku" class="contentLink">Sudoku</a>
                 </div>
             </div>
+            <div id="contentRight" class="contentRight" />
         </div>
     </div>
-    <!-- Html templates -->
     <!-- Loading message -->
     <div id="loadingMessagePanel" class="hide">
         <span id="loadingMessageText">Loading, please wait!</span>
         <img id="loadingMessageImage" src="/Images/ajax-loader.gif" />
     </div>
-    <!-- New sudoku dialog -->
-    <div id="newSudokuDialog" title="New sudoku" class="hide">
-        <form id="newSudokuForm">
-            <table>
-                <tr>
-                    <td class="label">
-                        <label for="newSudokuSize">
-                            Size
-                        </label>
-                    </td>
-                    <td>
-                        <select id="newSudokuSize" name="newSudokuSize" class="required">
-                            <option value="4">4</option>
-                            <option value="9" selected="selected">9</option>
-                            <option value="16">16</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label">
-                        <label for="newSudokuTitle">
-                            Title
-                        </label>
-                    </td>
-                    <td>
-                        <input id="newSudokuTitle" name="newSudokuTitle" type="text" class="required" />
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label">
-                        <label for="newSudokuDescription">
-                            Description
-                        </label>
-                    </td>
-                    <td>
-                        <textarea id="newSudokuDescription" name="newSudokuDescription"></textarea>
-                    </td>
-                </tr>
-            </table>
-        </form>
-    </div>
-    <!-- Reset dialog -->
-    <div id="resetDialog" title="Reset sudoku?" class="hide">
-        <p>
-            Are you sure you want to reset the sudoku?
-        </p>
-    </div>
-    <!-- Reset list dialog -->
-    <div id="resetListDialog" title="Reset list?" class="hide">
-        <p>
-            Are you sure you want to reset the list?
-        </p>
-    </div>
-    <!-- Sudoku grid template -->
-    <script id="gridTemplate" type="text/html">
-        <!--ko foreach: Groups-->
-        <div class="groupItem" data-bind="foreach: Squares, css: CssClass">
-            <%--<div data-bind="template: { name: $parents[1].Template, data: $data }, click: $root.Sudoku().SetSelectedSquare, attr: { 'class': CssClass }, css: { initial: AssignType() === 0, user: AssignType() === 1, hint: AssignType() === 2, solver: AssignType() === 3, activeSelected: IsActiveSelected, passiveSelected: IsPassiveSelected(), relatedSelected: IsRelatedSelected(), odd: $parent.IsOdd }">--%>
-            <div data-bind="template: { name: $parents[1].Template, data: $data }, click: $root.Sudoku().SetSelectedSquare, css: CssClassComputed">
-            </div>
-        </div>
-        <!--/ko-->
-    </script>
-    <script id="squareValueTemplate" type="text/html">
-        <span data-bind="html: ValueFormatted" class="value" />
-    </script>
-    <script id="squareAvailabilitiesTemplate" type="text/html">
-        <div data-bind="foreach: Availabilities">
-            <%--<span class="availabilityItem" data-bind="text: Value, css: { unavailable_self: !$parent.IsAvailable(), unavailable_group: !IsAvailable() }" />--%>
-            <span data-bind="text: Value, css: CssClassComputed" />
-        </div>
-    </script>
-    <script id="squareIdTemplate" type="text/html">
-        <span class="value" data-bind="text: SquareId" />
-    </script>
-    <!-- Html templates End -->
-    <script src="/Scripts/sudokusolver.js?v=130512.18" type="text/javascript"></script>
+
+    <script src="/Scripts/Local/default.js?v=130515.1" type="text/javascript"></script>
 </body>
 </html>

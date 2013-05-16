@@ -46,24 +46,6 @@
         ContentTypes = { 'Normal': 0, 'Sudoku': 1 },
         AssignTypes = { 'Initial': 0, 'User': 1, 'Hint': 2, 'Solver': 3 };
 
-    // Load templates ?!
-    //var templates = [];
-
-    //var testTemplate = Enumerable.From(templates).SingleOrDefault(null, function (template) {
-    //    return template.Id === 'test';
-    //});
-
-    //if (testTemplate === null) {
-    //    $.ajax({
-    //        url: '/Content/templates/test.htm', async: false, success: function (template) {
-    //            testTemplate = new HtmlTemplate();
-    //            testTemplate.Id = 'test';
-    //            testTemplate.Content = template;
-    //            templates.push(testTemplate);
-    //        }
-    //    });
-    //}
-
     // Bind knockout
     var appViewModel = new AppViewModel();
     ko.applyBindings(appViewModel);
@@ -74,8 +56,6 @@
         var self = this;
 
         // Contents
-        self.CurrentContentHeader = ko.observable('');
-        self.CurrentContentBody = ko.observable('');
         self.Contents = ko.observableArray([]);
 
         // Normal content (menu items)
@@ -87,11 +67,6 @@
 
         //sudoku/blank
         //sudoku/generated
-
-        self.Contents.push(new Content('help'));
-        self.Contents.push(new Content('contact'));
-        self.Contents.push(new Content('source'));
-        self.Contents.push(new Content('license'));
 
         self.NormalContents = ko.computed(function () {
             return Enumerable.From(self.Contents()).Where(function (content) {
@@ -135,8 +110,7 @@
                 sudokuId = 0;
 
             // If there is a state (can be null if it's the first load or reset list)
-            if (state !== null)
-            {
+            if (state !== null) {
                 // Remove the host part
                 var url = state.url.replace(History.getRootUrl(), '').replace('default.aspx', '');
 
@@ -144,7 +118,7 @@
                 if (url !== '') {
 
                     if (url.indexOf('/') === 0) { // There is no Id, use the url itself (for Contact, License, Source pages)
-                        contentId = url; 
+                        contentId = url;
                     }
                     else { // This is one of the sudokus, get the Id as well
                         contentId = url.split('/')[0];
@@ -161,8 +135,7 @@
             // Content
             var content = null;
 
-            if (contentId === 'sudoku')
-            {
+            if (contentId === 'sudoku') {
                 // Initial item; first sudoku in the list
                 if (sudokuId === 0) {
                     self.SudokuContents()[0].Navigate(false);
@@ -200,13 +173,11 @@
             }
 
             // Not found
-            if (content === null)
-            {
+            if (content === null) {
                 // TODO Return 404 ?!
                 getApiData(apiUrlResourceNotFound(contentId === 'sudoku' ? sudokuId : contentId), null, false);
 
                 // Page title + header
-                self.CurrentContentHeader('Error');
                 document.title = 'Sudoku Solver - ' + 'Resource not found';
 
                 // self.History.log('404 - wrong sudoku id (nan)');
@@ -221,12 +192,6 @@
             }
 
             // Page title + header
-            self.CurrentContentHeader(content.Title);
-
-            getContent('/Views/' + contentId + '.html', function (content) {
-                self.CurrentContentBody(content);
-            });
-
             document.title = 'Sudoku Solver - ' + content.Title;
 
             // If it's sudoku, load the data as well
@@ -427,7 +392,7 @@
         self.NavigateEvent = function (data, event) {
 
             event.preventDefault();
-            
+
             // TODO Try to implement navigate over here?
             self.Navigate(true);
             // appViewModel.Navigate(self.Url, true);
@@ -436,7 +401,7 @@
         }
 
         self.Navigate = function (isPush) {
-            
+
             // model.Navigate(self.Url, isPush);
 
             if (isPush) {
@@ -448,14 +413,6 @@
 
         };
     }
-
-    //function HtmlTemplate(templateId, content) {
-    //    var self = this;
-
-    //    self.Id = templateId;
-    //    self.Content = content;
-    //    self.IsLoaded = false;
-    //}
 
     // Sudoku
     function Sudoku(size) {
@@ -1100,7 +1057,7 @@
         // Css
         self.CssClassComputed = ko.computed(function () {
             return 'squareItem '
-                + (self.Group ? self.Group.Sudoku.CssSize : '' )
+                + (self.Group ? self.Group.Sudoku.CssSize : '')
                 + (self.IsPassiveSelected() ? ' passiveSelected' : '')
                 + (self.IsActiveSelected() ? ' activeSelected' : '')
                 + (self.Group && self.Group.IsOdd ? ' odd' : '');
@@ -1162,18 +1119,8 @@
 
     // jQuery ajax
     $.ajaxSetup({
-        contentType: 'application/json; charset=utf-8'
+        // contentType: 'application/json; charset=utf-8'
     });
-
-
-    function getContent(url, callback) {
-
-        $.ajax({
-            url: url,
-            success: callback
-        }).fail(function (jqXHR) { handleError(jqXHR); });
-
-    }
 
     // Get data from server
     function getApiData(apiUrl, callback, isAsync) {
@@ -1181,8 +1128,9 @@
 
         $.ajax({
             url: apiUrl,
-            dataType: 'json',
             async: isAsync,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
             //data: data,
             success: callback
         }).fail(function (jqXHR) { handleError(jqXHR); });
@@ -1198,6 +1146,8 @@
 
     // Post to server
     function postApi(apiUrl, postData, callback) {
+
+        // TODO CONTENTTYPE ?!???
 
         $.post(apiUrl, postData, function (data) {
 
