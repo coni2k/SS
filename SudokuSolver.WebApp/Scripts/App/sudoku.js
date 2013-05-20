@@ -2,22 +2,17 @@
 /*jshint jquery:true*/
 /*global ko:true, Enumerable:true*/
 
-(function (window, undefined) {
+// debugger;
+
+(function (window, document, $, ko, Enumerable, History, undefined) {
     'use strict';
 
     // + Variables
     var
-        /* Globals */
-        document = window.document,
-        $ = window.jQuery,
-        ko = window.ko,
-        Enumerable = window.Enumerable,
-
         /* WebAPI URLs */
         /* Root */
-        apiUrlSudokuRoot = '/api/sudoku/',
-        apiUrlSudokuListRoot = '/api/sudokulist/',
-        apiUrlContentRoot = '/api/content/',
+        apiUrlSudokuRoot = '/sudokusolver/api/sudoku/',
+        apiUrlSudokuListRoot = '/sudokusolver/api/sudokulist/',
 
         /* Application level */
         apiUrlSudokuList = apiUrlSudokuListRoot + 'list',
@@ -43,203 +38,50 @@
         apiUrlResourceNotFound = function (id) { return apiUrlContentRoot + 'resourcenotfound/' + id; },
 
         /* Enums */
-        ContentTypes = { 'Normal': 0, 'Sudoku': 1 },
         AssignTypes = { 'Initial': 0, 'User': 1, 'Hint': 2, 'Solver': 3 };
 
     // Bind knockout
-    var appViewModel = new AppViewModel();
-    ko.applyBindings(appViewModel);
+    var sudokuViewModel = new SudokuViewModel();
+    ko.applyBindings(sudokuViewModel);
 
     // + Objects
-    function AppViewModel() {
+    function SudokuViewModel() {
 
         var self = this;
 
-        // Contents
-        self.Contents = ko.observableArray([]);
+        self.Sudokus = ko.observableArray([]);
+        self.NumberGroupsCache = [];
+        self.SquareGroupsCache = []
 
-        // Normal content (menu items)
+        // TODO History.js enabled check ?!
 
-        // TODO Welcome content?
-        //- blank
-        //- generate new
-        //- load cases
-
-        //sudoku/blank
-        //sudoku/generated
-
-        self.NormalContents = ko.computed(function () {
-            return Enumerable.From(self.Contents()).Where(function (content) {
-                return content.Type === ContentTypes.Normal;
-            }).ToArray();
+        // History - bind to StateChange Event
+        History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
+            // self.LoadCurrentSudoku(History.getState());
+            self.LoadCurrentSudoku();
         });
-
-        // Sudoku content
-        self.SudokuContents = ko.computed(function () {
-            return Enumerable.From(self.Contents()).Where(function (content) {
-                return content.Type === ContentTypes.Sudoku;
-            }).ToArray();
-        });
-
-        // History.js
-        self.History = window.History;
-
-        if (!self.History.enabled) {
-
-            // TODO Is there anything we should do about this block?
-            // Tell the user that the current browser is not supported or wha'.. ?!
-
-            // History.js is disabled for this browser.
-            // This is because we can optionally choose to support HTML4 browsers or not.
-            return false;
-        }
-
-        // Bind to StateChange Event
-        self.History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
-            self.LoadContent(self.History.getState());
-        });
-
-        // Load content
-        self.LoadContent = function (state) {
-
-            // Hide previous messages
-            hideMessagePanel();
-
-            // Variables
-            var contentId = 'sudoku',
-                sudokuId = 0;
-
-            // If there is a state (can be null if it's the first load or reset list)
-            if (state !== null) {
-                // Remove the host part
-                var url = state.url.replace(History.getRootUrl(), '').replace('default.aspx', '');
-
-                // If there is something to parse
-                if (url !== '') {
-
-                    if (url.indexOf('/') === 0) { // There is no Id, use the url itself (for Contact, License, Source pages)
-                        contentId = url;
-                    }
-                    else { // This is one of the sudokus, get the Id as well
-                        contentId = url.split('/')[0];
-                        sudokuId = parseInt(url.split('/')[1], 10);
-                    }
-                }
-            }
-
-            // Sudoku list (load it in any case)
-            if (self.SudokuContents().length === 0) {
-                self.LoadSudokuContents();
-            };
-
-            // Content
-            var content = null;
-
-            if (contentId === 'sudoku') {
-                // Initial item; first sudoku in the list
-                if (sudokuId === 0) {
-                    self.SudokuContents()[0].Navigate(false);
-                    return;
-                }
-                else if (isNaN(sudokuId)) {
-
-                    // TODO Return 404 ?!
-
-                    self.History.log('404 - wrong sudoku id (nan) - ' + sudokuId);
-
-                    // Currently loading message appears automatically
-                    // but in case the content that we're trying to load is a normal page, there is nothing to get with ajax
-                    // which means the loading message stays on the screen..
-                    // TODO Make this better!
-                    $('#loadingMessagePanel').dialog('close');
-
-                    getApiData(apiUrlResourceNotFound(sudokuId), null, false);
-
-                    return false;
-                };
-
-                // Search for the item
-                var content = Enumerable.From(self.SudokuContents()).SingleOrDefault(null, function (sudokuContent) {
-                    return sudokuContent.Data.SudokuId === sudokuId;
-                });
-
-            }
-            else { // TODO else if 'error' ?
-
-                // Normal content (menu items)
-                content = Enumerable.From(self.NormalContents()).SingleOrDefault(null, function (contentItem) {
-                    return contentItem.ContentId === contentId;
-                });
-            }
-
-            // Not found
-            if (content === null) {
-                // TODO Return 404 ?!
-                getApiData(apiUrlResourceNotFound(contentId === 'sudoku' ? sudokuId : contentId), null, false);
-
-                // Page title + header
-                document.title = 'Sudoku Solver - ' + 'Resource not found';
-
-                // self.History.log('404 - wrong sudoku id (nan)');
-
-                // Currently loading message appears automatically
-                // but in case the content that we're trying to load is a normal page, there is nothing to get with ajax
-                // which means the loading message stays on the screen..
-                // TODO Make this better!
-                $('#loadingMessagePanel').dialog('close');
-
-                return false;
-            }
-
-            // Page title + header
-            document.title = 'Sudoku Solver - ' + content.Title;
-
-            // If it's sudoku, load the data as well
-            if (content.Type === ContentTypes.Sudoku) {
-                self.LoadSudoku(content.Data);
-            }
-            else {
-
-                // Currently loading message appears automatically
-                // but in case the content that we're trying to load is a normal page, there is nothing to get with ajax
-                // which means the loading message stays on the screen..
-                // TODO Make this better!
-                $('#loadingMessagePanel').dialog('close');
-
-            }
-        }
-
-        // List + selected sudoku
-        // self.SudokuList = ko.observableArray([]);
-        self.Sudoku = ko.observable(new Sudoku());
-
-        // Css
-        // self.HasSudokuContents = ko.computed(function () { return self.SudokuContents().length > 0; });
-        self.HasSudoku = ko.computed(function () { return self.Sudoku().SudokuId() > 0; });
 
         // Load list
-        self.LoadSudokuContents = function () {
+        self.LoadSudokus = function () {
 
             // Not async.
-            getApiData(apiUrlSudokuList, function (sudokuList) {
+            getData(apiUrlSudokuList, function (sudokuList) {
 
-                // self.SudokuList([]);
-
-                // Remove the sudoku items
-                self.Contents.remove(function (content) {
-                    return content.Type === ContentTypes.Sudoku;
-                });
+                self.Sudokus([]);
 
                 Enumerable.From(sudokuList).ForEach(function (sudokuItem) {
 
-                    var sudokuContent = new Content('sudoku', ContentTypes.Sudoku, sudokuItem);
+                    var sudoku = new Sudoku(self, sudokuItem.Size);
+                    sudoku.SudokuId(sudokuItem.SudokuId),
+                    sudoku.Title(sudokuItem.Title);
+                    sudoku.Description(sudokuItem.Description);
+                    sudoku.SquaresLeft(sudokuItem.SquaresLeft);
+                    sudoku.Ready(sudokuItem.Ready);
+                    sudoku.AutoSolve(sudokuItem.AutoSolve);
 
-                    // self.SudokuList.push(sudokuContent);
-                    self.Contents.push(sudokuContent);
+                    self.Sudokus.push(sudoku);
 
                 });
-
-                //self.SudokuList(sudokuList);
 
                 // If it loads through reset list, ignore (history) state (to prevent to load the wrong sudoku id)
                 // self.LoadContent(isReset ? null : self.History.getState());
@@ -247,27 +89,22 @@
             }, false);
         };
 
-        // Load sudoku
-        self.LoadSudoku = function (sudokuData) {
+        self.NavigateEvent = function (sudokuItem, event) {
 
-            // Determines whether a new sudoku needs to be initialized or the existing one will be refreshed
-            var needNewSudoku = (self.Sudoku().Size !== sudokuData.Size);
+            self.Navigate(sudokuItem, true);
 
-            if (needNewSudoku) {
-                self.Sudoku(new Sudoku(sudokuData.Size));
+            event.preventDefault();
+            return false;
+        }
+
+        self.Navigate = function (sudokuItem, isPush) {
+
+            if (isPush) {
+                History.pushState(null, null, sudokuItem.Url());
             }
-
-            // Load sudoku
-            self.Sudoku().SudokuId(sudokuData.SudokuId);
-            self.Sudoku().Title(sudokuData.Title);
-            self.Sudoku().Description(sudokuData.Description);
-            // self.Sudoku().Size(sudokuData.Size);
-            self.Sudoku().SquaresLeft(sudokuData.SquaresLeft);
-            self.Sudoku().Ready(sudokuData.Ready);
-            self.Sudoku().AutoSolve(sudokuData.AutoSolve);
-
-            // Load details
-            self.Sudoku().LoadDetails();
+            else {
+                History.replaceState(null, null, sudokuItem.Url());
+            }
         };
 
         // New
@@ -299,19 +136,19 @@
                         var sudokuContainer = JSON.stringify({ Size: size, Title: title, Description: description });
 
                         // Post
-                        postApi(apiUrlNewSudoku, sudokuContainer, function (newSudoku) {
+                        postData(apiUrlNewSudoku, sudokuContainer, function (newSudokuItem) {
 
                             // Add the item to the list
-                            var newSudokuContent = new Content('sudoku', ContentTypes.Sudoku, newSudoku);
+                            var newSudoku = new Sudoku(self, newSudokuItem.Size);
+                            newSudoku.SudokuId(newSudokuItem.SudokuId);
+                            newSudoku.Title(newSudokuItem.Title);
+                            newSudoku.Description(newSudokuItem.Description);
+                            newSudoku.SquaresLeft(newSudokuItem.SquaresLeft);
+                            newSudoku.Ready(newSudokuItem.Ready);
+                            newSudoku.AutoSolve(newSudokuItem.AutoSolve);
 
-                            //self.SudokuList.push(newSudokuContent);
-                            self.Contents.push(newSudokuContent);
-
-                            // Load the sudoku
-                            // self.LoadSudoku(newSudoku);
-                            // self.NavigateSudokuItem(newSudoku, true);
-
-                            newSudokuContent.Navigate(true);
+                            self.Sudokus.push(newSudoku);
+                            self.Navigate(newSudoku, true);
 
                         });
                     },
@@ -337,15 +174,12 @@
                     'Reset list': function () {
                         $(this).dialog('close');
 
-                        self.Contents.remove(function (content) {
-                            return content.Type === ContentTypes.Sudoku;
+                        // Post reset + load
+                        postData(apiUrlResetList, null, function () {
+                            self.LoadSudokus(); // Async false
+                            // self.LoadCurrentSudoku(null);
+                            self.LoadCurrentSudoku();
                         });
-
-                        // self.LoadContent(null);
-
-                        // Post + load
-                        // postApi(apiUrlResetList, null, function () { self.LoadSudokuContents(); });
-                        postApi(apiUrlResetList, null, function () { self.LoadContent(null); });
 
                     },
                     Cancel: function () {
@@ -364,59 +198,197 @@
             modal: true
         });
 
-        // Load the content..
-        self.LoadContent(self.History.getState());
+        // Cache functions: Since calculating the squares + numbers take time, the results are cached in these arrays
+        // a. Numbers
+        self.GetNumberGroups = function (size) {
 
+            // Search the groups in the cache
+            var cacheItem = Enumerable.From(self.NumberGroupsCache).SingleOrDefault(null, function (item) {
+                return item.Size === size;
+            });
+
+            // If there is no item, create
+            if (cacheItem === null) {
+
+                var numberGroups = [];
+                var squareRootofSize = Math.sqrt(size);
+
+                // Group the numbers, to be able to display them nicely (see numbersPanel on default.aspx)
+                for (var groupCounter = 1; groupCounter <= squareRootofSize; groupCounter++) {
+
+                    var numberGroup = new SudokuNumberGroup(groupCounter, size);
+
+                    for (var numberCounter = 1; numberCounter <= squareRootofSize; numberCounter++) {
+
+                        // Calculate the value
+                        var value = numberCounter + ((groupCounter - 1) * squareRootofSize);
+
+                        // New number
+                        var sudokuNumber = new SudokuNumber(numberGroup, value, size);
+
+                        // Add the number
+                        numberGroup.Numbers.push(sudokuNumber);
+                    }
+
+                    numberGroups.push(numberGroup);
+                }
+
+                cacheItem = new NumberGroupsCacheItem(size, numberGroups);
+
+                self.NumberGroupsCache.push(cacheItem);
+            }
+
+            return cacheItem.NumberGroups;
+        }
+
+        // b. Squares
+        self.GetSquareGroups = function (size) {
+
+            var cacheItem = Enumerable.From(self.SquareGroupsCache).SingleOrDefault(null, function (item) {
+                return item.Size === size;
+            });
+
+            if (cacheItem === null) {
+
+                var squareGroups = [];
+                var cssSize = 'size' + size.toString(10);
+
+                // Square groups loop
+                for (var groupCounter = 1; groupCounter <= size; groupCounter++) {
+
+                    // Create group
+                    var group = new SquareGroup(groupCounter, size);
+
+                    // Squares loop
+                    for (var squareCounter = 1; squareCounter <= size; squareCounter++) {
+
+                        // Create square
+                        var squareId = squareCounter + ((groupCounter - 1) * size);
+                        var square = new Square(squareId, group, size);
+
+                        // Availability loop
+                        for (var availabilityCounter = 0; availabilityCounter < size; availabilityCounter++) {
+
+                            // Create availability item
+                            var availability = new Availability(square);
+                            availability.Value = availabilityCounter + 1;
+                            square.Availabilities.push(availability);
+
+                            // TODO NEW BLOCK!
+                            // Create availability2 item
+                            //var availability2 = new Availability2();
+                            //availability2.Value = availabilityCounter + 1;
+                            //square.Availabilities2.push(availability2);
+                        }
+
+                        group.Squares.push(square);
+                    }
+
+                    squareGroups.push(group);
+                }
+
+                cacheItem = new SquareGroupCacheItem(size, squareGroups);
+
+                self.SquareGroupsCache.push(cacheItem);
+            }
+
+            return cacheItem.SquareGroups;
+        };
+
+        // Load sudoku list + current sudoku (from current state)
+        self.SelectedSudoku = ko.observable(new Sudoku(self));
+        self.HasSelectedSudoku = ko.computed(function () { return self.SelectedSudoku().Size > 0; });
+
+        // Load sudoku (from current history state)
+        // self.LoadCurrentSudoku = function (currentState) {
+        self.LoadCurrentSudoku = function (currentState) {
+
+            // Hide previous messages
+            hideMessagePanel();
+
+            // Default sudoku
+            var currentSudokuId = 0;
+
+            var currentState = History.getState();
+
+            // If there is a state (can be null if it's the first load or reset list)
+            if (currentState !== null) {
+
+                // Remove the host part
+                var url = currentState.url.replace(History.getRootUrl() + 'sudokusolver/', '').replace('default.aspx', '');
+
+                // Try to get sudoku id
+                if (url !== '') {
+
+                    var currentContentId = url.split('/')[0];
+
+                    // If it's not sudoku page, don't handle
+                    if (currentContentId !== 'sudoku')
+                        return;
+
+                    if (url.indexOf('/') > 0) {
+                        currentSudokuId = parseInt(url.split('/')[1], 10);
+                    }
+                }
+            }
+
+            // There is no sudoku id, get the first one as the default
+            if (currentSudokuId === 0) {
+                self.Navigate(self.Sudokus()[0], true);
+                return;
+            }
+            else if (isNaN(currentSudokuId)) {
+                // TODO !
+                getData(apiUrlResourceNotFound(currentSudokuId), null, false);
+                return false;
+            };
+
+            // Search for the item
+            var selectedSudoku = Enumerable.From(self.Sudokus()).SingleOrDefault(null, function (sudoku) {
+                return sudoku.SudokuId() === currentSudokuId;
+            });
+
+            // Clear the selections
+            self.SelectedSudoku().ClearSelectedSquare();
+            self.SelectedSudoku().ClearSelectedNumber();
+
+            // Load the selected sudoku
+            self.SelectedSudoku(selectedSudoku);
+
+            // Page title + header
+            document.title = 'Sudoku Solver - Sudoku - ' + self.SelectedSudoku().SudokuId();
+
+            // Load details
+            self.SelectedSudoku().LoadDetails();
+        }
+
+        self.LoadSudokus(); // Async false
+        // self.LoadCurrentSudoku(History.getState());
+        self.LoadCurrentSudoku();
     }
 
-    function Content(contentId, type, data) {
-        type = (typeof type === 'undefined') ? ContentTypes.Normal : type;
-        data = (typeof data === 'undefined') ? null : data;
-
+    function NumberGroupsCacheItem(size, numberGroups)
+    {
         var self = this;
 
-        // self.Model = model;
-        self.ContentId = contentId;
-        self.Type = type;
-        self.Title = capitaliseFirstLetter(contentId); // enough?
-        self.Data = data;
+        self.Size = size;
+        self.NumberGroups = numberGroups;
+    }
 
-        // Url
-        self.Url = '/' + contentId;
+    function SquareGroupCacheItem(size, squareGroups)
+    {
+        var self = this;
 
-        if (self.Data !== null) {
-            self.Url = self.Url + '/' + self.Data.SudokuId;
-        }
-
-        // Bind to click event of an anchor?
-        self.NavigateEvent = function (data, event) {
-
-            event.preventDefault();
-
-            // TODO Try to implement navigate over here?
-            self.Navigate(true);
-            // appViewModel.Navigate(self.Url, true);
-
-            return false;
-        }
-
-        self.Navigate = function (isPush) {
-
-            // model.Navigate(self.Url, isPush);
-
-            if (isPush) {
-                History.pushState(null, null, self.Url);
-            }
-            else {
-                History.replaceState(null, null, self.Url);
-            }
-
-        };
+        self.Size = size;
+        self.SquareGroups = squareGroups;
     }
 
     // Sudoku
-    function Sudoku(size) {
+    function Sudoku(sudokuViewModel, size) {
+        size = (typeof size === 'undefined') ? 0 : size;
+
         var self = this;
+        self.Model = sudokuViewModel;
 
         // Variables
         self.SudokuId = ko.observable(0);
@@ -427,6 +399,9 @@
         self.SquareRootofSize = Math.sqrt(self.Size);
 
         // Dynamic properties
+        self.Url = ko.computed(function () {
+            return '/sudokusolver/sudoku/' + self.SudokuId().toString();
+        });
         self.SquaresLeft = ko.observable(0);
         self.SelectedSquare = ko.observable(null);
         self.SelectedNumber = ko.observable(null);
@@ -440,83 +415,19 @@
         });
 
         // Arrays
-        self.NumberGroups = [];
-        self.Groups = [];
+        self.NumberGroups = self.Model.GetNumberGroups(self.Size);
+        self.SquareGroups = self.Model.GetSquareGroups(self.Size);
         self.Hints = ko.observableArray([]);
         self.GroupNumberAvailabilities = ko.observableArray([]);
 
-        // Css
-        self.CssSize = (self.Size === 4 ? 'size4' : self.Size === 9 ? 'size9' : 'size16');
-
-        // Zero number
-        self.ZeroNumber = new SudokuNumber(null, 0);
-
-        // Numbers
-        // Group the numbers, to be able to display them nicely (see numbersPanel on default.aspx)
-        for (groupCounter = 1; groupCounter <= self.SquareRootofSize; groupCounter++) {
-
-            var numberGroup = new SudokuNumberGroup(groupCounter, self);
-            // numberGroup.CssClass = 'groupItem ' + self.CssSize;
-            // numberGroup.IsOdd = (groupCounter % 2 === 0);
-            // numberGroup.Numbers = [];
-
-            for (var numberCounter = 1; numberCounter <= self.SquareRootofSize; numberCounter++) {
-
-                // Calculate the value
-                var value = numberCounter + ((groupCounter - 1) * self.SquareRootofSize);
-
-                // New number
-                var sudokuNumber = new SudokuNumber(numberGroup, value);
-
-                // Add the number
-                numberGroup.Numbers.push(sudokuNumber);
-            }
-
-            self.NumberGroups.push(numberGroup);
-        }
-
-        // Square groups loop
-        for (var groupCounter = 1; groupCounter <= self.Size; groupCounter++) {
-
-            // Create group
-            var group = new Group(groupCounter, self);
-            // group.IsOdd = (groupCounter % 2 === 0);
-            // group.CssClass = 'groupItem ' + self.CssSize;
-
-            // Squares loop
-            for (var squareCounter = 1; squareCounter <= self.Size; squareCounter++) {
-
-                // Create square
-                var squareId = squareCounter + ((groupCounter - 1) * self.Size);
-                var square = new Square(squareId, group);
-
-                // Availability loop
-                for (var availabilityCounter = 0; availabilityCounter < self.Size; availabilityCounter++) {
-
-                    // Create availability item
-                    var availability = new Availability(square);
-                    availability.Value = availabilityCounter + 1;
-                    square.Availabilities.push(availability);
-
-                    // TODO NEW BLOCK!
-                    // Create availability2 item
-                    //var availability2 = new Availability2();
-                    //availability2.Value = availabilityCounter + 1;
-                    //square.Availabilities2.push(availability2);
-                }
-
-                group.Squares.push(square);
-            }
-
-            self.Groups.push(group);
-        }
-
         // Grids;
         // a. Value grid
-        self.ValueGrid = new ValueGrid(self.Groups);
+        self.ValueGrid = new ValueGrid(self.SquareGroups);
+        self.ValueGridCss = 'panel gridPanel size' + self.Size;
 
         // b. Availability grid
-        self.AvailabilityGrid = new AvailabilityGrid(self.Groups);
+        self.AvailabilityGrid = new AvailabilityGrid(self.SquareGroups);
+        self.AvailabilityGridCss = ko.computed(function () { return 'panel gridPanel size' + self.Size + (self.AvailabilityGrid.Visible() ? '' : ' hide'); });
         self.ToggleDisplayAvailabilities = function () {
             self.AvailabilityGrid.Visible(!self.AvailabilityGrid.Visible());
         };
@@ -534,7 +445,8 @@
         //});
 
         // d. Id grid
-        self.IdGrid = new IDGrid(self.Groups);
+        self.IdGrid = new IDGrid(self.SquareGroups);
+        self.IdGridCss = ko.computed(function () { return 'panel gridPanel size' + self.Size + (self.IdGrid.Visible() ? '' : ' hide'); });
         self.ToggleDisplayIDs = function () {
             self.IdGrid.Visible(!self.IdGrid.Visible());
         };
@@ -542,10 +454,72 @@
             return capitaliseFirstLetter(self.IdGrid.Visible().toString());
         });
 
-        // Classes
-        self.CssValueGrid = 'panel gridPanel ' + self.CssSize;
-        self.CssAvailabilityGrid = ko.computed(function () { return 'panel gridPanel ' + self.CssSize + (self.AvailabilityGrid.Visible() ? '' : ' hide'); });
-        self.CssIdGrid = ko.computed(function () { return 'panel gridPanel ' + self.CssSize + (self.IdGrid.Visible() ? '' : ' hide'); });
+        // Filters
+        // a. Find square by squareId
+        self.FindSquareBySquareId = function (squareId) {
+
+            var matchedSquare = null;
+
+            // Loop through groups
+            Enumerable.From(self.SquareGroups).ForEach(function (group) {
+
+                // Search for the square with squareId
+                matchedSquare = Enumerable.From(group.Squares).SingleOrDefault(null, function (square) {
+                    return square.SquareId === squareId;
+                });
+
+                // If there is, break the loop
+                if (matchedSquare !== null) {
+                    return false;
+                }
+            });
+
+            return matchedSquare;
+        };
+
+        // b. Find square by number
+        self.FindSquareByNumber = function (number) {
+
+            var matchedSquares = [];
+
+            // Loop through groups
+            Enumerable.From(self.SquareGroups).ForEach(function (squareGroup) {
+
+                // Search for the squares with the number
+                var matchedSquare = Enumerable.From(squareGroup.Squares).SingleOrDefault(null, function (square) {
+                    return square.SudokuNumber().Value === number;
+                });
+
+                // If there is, add it to the list
+                if (matchedSquare !== null) {
+                    matchedSquares.push(matchedSquare);
+                }
+            });
+
+            return matchedSquares;
+        };
+
+        // c. Find number by value
+        self.FindNumberByValue = function (value) {
+
+            var matchedNumber = null;
+            
+            // Loop through groups
+            Enumerable.From(self.NumberGroups).ForEach(function (group) {
+
+                // Search fro the number with value
+                matchedNumber = Enumerable.From(group.Numbers).SingleOrDefault(null, function (sudokuNumber) {
+                    return sudokuNumber.Value === value;
+                });
+
+                // If found, break the loop
+                if (matchedNumber !== null) {
+                    return false;
+                }
+            });
+
+            return matchedNumber;
+        };
 
         // Methods
         self.SetSelectedSquare = function (square) {
@@ -567,17 +541,25 @@
                 square.SetActiveSelect(true); // Then set the new square as selected
             }
             else {
-                //self.UpdateSelectedSquare(square, self.SelectedNumber().Value);
                 self.UpdateSelectedSquare(square, self.SelectedNumber());
             }
         };
 
+        self.ClearSelectedSquare = function () {
+            self.SetSelectedSquare(null);
+        }
+
         // Selected number
         self.SetSelectedNumber = function (sudokuNumber) {
 
-            // Remove the previous selected number
+            // Remove the selection from previous number
             if (self.SelectedNumber() !== null) {
                 self.SelectedNumber().SetActiveSelect(false);
+
+                // Remove the selection from its related squares
+                Enumerable.From(self.FindSquareByNumber(self.SelectedNumber().Value)).ForEach(function (square) {
+                    square.IsRelatedSelected(false);
+                });
             }
 
             // If the new value is null
@@ -590,24 +572,29 @@
             if (self.SelectedSquare() === null) {
                 self.SelectedNumber(sudokuNumber);
                 sudokuNumber.SetActiveSelect(true); // Then set the new number as selected
+
+                // Select its related squares
+                Enumerable.From(self.FindSquareByNumber(self.SelectedNumber().Value)).ForEach(function (square) {
+                    square.IsRelatedSelected(true);
+                });
             }
             else {
-                //self.UpdateSelectedSquare(self.SelectedSquare(), sudokuNumber.Value);
                 self.UpdateSelectedSquare(self.SelectedSquare(), sudokuNumber);
             }
+        };
+
+        self.ClearSelectedNumber = function () {
+            self.SetSelectedNumber(null);
         };
 
         // Update selected square
         self.UpdateSelectedSquare = function (square, newValue) {
 
-            // Prepare the data
-            square.SudokuNumber().Value = newValue.Value;
-
             // var squareContainer = ko.toJSON(square);
-            var squareContainer = JSON.stringify({ SquareId: square.SquareId, Value: square.SudokuNumber().Value });
+            var squareContainer = JSON.stringify({ SquareId: square.SquareId, Value: newValue.Value });
 
             // Post + load
-            postApi(apiUrlUpdateSquare(self.SudokuId()), squareContainer, function () { self.LoadDetails(); });
+            postData(apiUrlUpdateSquare(self.SudokuId()), squareContainer, function () { self.LoadDetails(); });
         };
 
         // Remove the value of selected square
@@ -634,13 +621,12 @@
         });
 
         self.RemoveSelectedSquareValue = function () {
-            //self.UpdateSelectedSquare(self.SelectedSquare(), 0);
-            self.UpdateSelectedSquare(self.SelectedSquare(), self.ZeroNumber);
+            self.UpdateSelectedSquare(self.SelectedSquare(), new SudokuNumber(null, 0, 0));
         };
 
         // Toggle ready
         self.ToggleReady = function () {
-            postApi(apiUrlToggleReady(self.SudokuId()), null, function () {
+            postData(apiUrlToggleReady(self.SudokuId()), null, function () {
 
                 // Update client
                 self.Ready(!self.Ready());
@@ -649,7 +635,7 @@
 
         // Toggle auto solve
         self.ToggleAutoSolve = function () {
-            postApi(apiUrlToggleAutoSolve(self.SudokuId()), null, function () {
+            postData(apiUrlToggleAutoSolve(self.SudokuId()), null, function () {
 
                 // Update client
                 self.AutoSolve(!self.AutoSolve());
@@ -663,20 +649,19 @@
 
         // Solve
         self.Solve = function () {
-            postApi(apiUrlSolve(self.SudokuId()), null, function () { self.LoadDetails(); });
+            postData(apiUrlSolve(self.SudokuId()), null, function () { self.LoadDetails(); });
         };
 
         // Reset
         self.Resettable = ko.computed(function () {
-            return Enumerable.From(self.Groups).Any(function (group) {
-                return Enumerable.From(group.Squares).Any(function (square) {
+            return Enumerable.From(self.SquareGroups).Any(function (squareGroup) {
+                return Enumerable.From(squareGroup.Squares).Any(function (square) {
                     if (self.Ready()) {
                         // If it's ready, check whether there are any squares that set by user, solver or hint
                         return square.AssignType() === AssignTypes.User || square.AssignType() === AssignTypes.Hint || square.AssignType() === AssignTypes.Solver;
                     }
                     else {
                         // If it's not ready, check whether there are any squares that have a value
-                        //return square.AssignType() === 0 && square.Value() !== 0;
                         return square.AssignType() === AssignTypes.Initial && square.SudokuNumber().Value !== 0;
                     }
                 });
@@ -696,7 +681,7 @@
                 buttons: {
                     'Reset': function () {
                         $(this).dialog('close');
-                        postApi(apiUrlReset(self.SudokuId()), null, function () { self.LoadDetails(); });
+                        postData(apiUrlReset(self.SudokuId()), null, function () { self.LoadDetails(); });
                     },
                     Cancel: function () {
                         $(this).dialog('close');
@@ -730,12 +715,11 @@
 
         self.LoadSquares = function () {
 
-            getApiData(apiUrlSquares(self.SudokuId()), function (squareList) {
+            getData(apiUrlSquares(self.SudokuId()), function (squareList) {
 
                 Enumerable.From(squareList).ForEach(function (squareItem) {
 
                     var square = self.FindSquareBySquareId(squareItem.SquareId);
-                    //square.Value(squareItem.Number.Value);
                     square.SudokuNumber(squareItem.SudokuNumber);
                     square.AssignType(squareItem.AssignType);
 
@@ -746,24 +730,25 @@
         self.LoadNumbers = function () {
 
             // Get the numbers from the server
-            getApiData(apiUrlNumbers(self.SudokuId()), function (numberList) {
+            getData(apiUrlNumbers(self.SudokuId()), function (numberList) {
 
                 // Zero value (SquaresLeft on detailsPanel)
                 var zeroNumber = numberList.splice(0, 1);
+
+                // TODO This is already assigned ?!
                 self.SquaresLeft(zeroNumber[0].Count);
 
                 // Count of other numbers
                 Enumerable.From(numberList).ForEach(function (numberItem) {
 
-                    Enumerable.From(self.NumberGroups).ForEach(function (group) {
+                    Enumerable.From(self.NumberGroups).ForEach(function (numberGroup) {
 
-                        Enumerable.From(group.Numbers).ForEach(function (number) {
+                        Enumerable.From(numberGroup.Numbers).ForEach(function (number) {
 
                             if (number.Value === numberItem.Value) {
                                 number.Count(numberItem.Count);
                                 return;
                             }
-
                         });
                     });
                 });
@@ -773,7 +758,7 @@
         self.LoadHints = function () {
 
             // Get the hints from the server
-            getApiData(apiUrlHints(self.SudokuId()), function (hintList) {
+            getData(apiUrlHints(self.SudokuId()), function (hintList) {
 
                 // Reset the current list
                 self.Hints([]);
@@ -783,8 +768,11 @@
 
                     // Create hint
                     var hint = new Hint(self);
+
+                    var sudokuNumber = self.FindNumberByValue(hintItem.Number.Value);
+
                     hint.SquareId = hintItem.Square.SquareId;
-                    hint.HintValue = hintItem.Number.Value;
+                    hint.HintValue(sudokuNumber);
                     hint.HintType = hintItem.Type;
 
                     self.Hints.push(hint);
@@ -795,7 +783,7 @@
         self.LoadAvailabilities = function () {
 
             // Get the data
-            getApiData(apiUrlAvailabilities(self.SudokuId()), function (availabilityList) {
+            getData(apiUrlAvailabilities(self.SudokuId()), function (availabilityList) {
 
                 Enumerable.From(availabilityList).ForEach(function (availabilityItem) {
 
@@ -816,7 +804,7 @@
 
         //self.LoadAvailabilities2 = function () {
 
-        //    getApiData(apiUrlAvailabilities2(self.SudokuId()), function (list) {
+        //    getData(apiUrlAvailabilities2(self.SudokuId()), function (list) {
 
         //        $.each(list, function () {
 
@@ -840,7 +828,7 @@
 
         self.LoadGroupNumberAvailabilities = function () {
 
-            getApiData(apiUrlGroupNumberAvailabilities(self.SudokuId()), function (list) {
+            getData(apiUrlGroupNumberAvailabilities(self.SudokuId()), function (list) {
 
                 self.GroupNumberAvailabilities([]);
 
@@ -855,65 +843,19 @@
                 });
             });
         };
-
-        // Filters
-        // a. Find square by squareId
-        self.FindSquareBySquareId = function (squareId) {
-
-            var matchedSquare = null;
-
-            // Loop through groups
-            Enumerable.From(self.Groups).ForEach(function (group) {
-
-                // Search for the square with squareId
-                matchedSquare = Enumerable.From(group.Squares).SingleOrDefault(null, function (square) {
-                    return square.SquareId === squareId;
-                });
-
-                // If there is, break the loop
-                if (matchedSquare !== null) {
-                    return false;
-                }
-            });
-
-            return matchedSquare;
-        };
-
-        // b. Find square by number
-        self.FindSquareByNumber = function (number) {
-
-            var matchedSquares = [];
-
-            // Loop through groups
-            Enumerable.From(self.Groups).ForEach(function (group) {
-
-                // Search for the squares with the number
-                var matchedSquare = Enumerable.From(group.Squares).SingleOrDefault(null, function (square) {
-                    //return square.Value() === number;
-                    return square.SudokuNumber().Value === number;
-                });
-
-                // If there is, add it to the list
-                if (matchedSquare !== null) {
-                    matchedSquares.push(matchedSquare);
-                }
-            });
-
-            return matchedSquares;
-        };
     }
 
-    function ValueGrid(groups) {
+    function ValueGrid(squareGroups) {
         var self = this;
-        self.Groups = groups;
+        self.SquareGroups = squareGroups;
         self.DisplayMode = 'value';
         self.Template = 'squareValueTemplate';
         // Visible = always!
     }
 
-    function AvailabilityGrid(groups) {
+    function AvailabilityGrid(squareGroups) {
         var self = this;
-        self.Groups = groups;
+        self.SquareGroups = squareGroups;
         self.DisplayMode = 'availability';
         self.Template = 'squareAvailabilitiesTemplate';
         self.Visible = ko.observable(true);
@@ -927,39 +869,38 @@
     //    self.Visible = true; //ko.observable(true);
     //}
 
-    function IDGrid(groups) {
+    function IDGrid(squareGroups) {
         var self = this;
-        self.Groups = groups;
+        self.SquareGroups = squareGroups;
         self.DisplayMode = 'id';
         self.Template = 'squareIdTemplate';
         self.Visible = ko.observable(false);
     }
 
-    function Group(groupId, sudoku) {
+    function SquareGroup(groupId, sudokuSize) {
         var self = this;
         self.GroupId = groupId;
-        self.Sudoku = sudoku;
         self.Squares = [];
         self.IsOdd = (self.GroupId % 2 === 0);
-        self.CssClass = 'groupItem ' + self.Sudoku.CssSize;
+        self.CssClass = 'groupItem size' + sudokuSize.toString(10);
     }
 
-    function Square(squareId, group) {
+    function Square(squareId, group, sudokuSize) {
         var self = this;
         self.SquareId = squareId;
         self.Group = group;
-        // self.Value = ko.observable(0);
-        self.SudokuNumber = ko.observable(self.Group.Sudoku.ZeroNumber);
+        // self.SudokuNumber = ko.observable(new SudokuNumber(null, 0, 0));
+        self.SudokuNumber = ko.observable(null);
+        var zeroNumber = new SudokuNumber(null, 0, 0);
+        self.SudokuNumber(zeroNumber); // = ko.observable(new SudokuNumber(null, 0, 0));
         self.AssignType = ko.observable(AssignTypes.Initial);
 
-        self.ValueFormatted = ko.computed(function () {
-            //return self.Value() === 0 ? '&nbsp;' : self.Value();
-            return self.SudokuNumber().Value === 0 ? '&nbsp;' : self.SudokuNumber().Value;
+        self.IsAvailable = ko.computed(function () {
+            return self.SudokuNumber().Value === 0;
         });
 
-        self.IsAvailable = ko.computed(function () {
-            //return self.Value() === 0;
-            return self.SudokuNumber().Value === 0;
+        self.ValueFormatted = ko.computed(function () {
+            return self.IsAvailable() ? '&nbsp;' : self.SudokuNumber().Value;
         });
 
         // self.IsUpdateable = ko.computed(function () { return !(self.Group.Sudoku.Ready() && self.AssignType() === 0 && !self.IsAvailable()); });
@@ -1007,7 +948,7 @@
 
         self.CssClassComputed = ko.computed(function () {
             return 'squareItem '
-                + self.Group.Sudoku.CssSize
+                + 'size' + sudokuSize.toString(10)
                 + self.CssAssignType()
                 + (self.IsPassiveSelected() ? ' passiveSelected' : '')
                 + (self.IsActiveSelected() ? ' activeSelected' : '')
@@ -1017,19 +958,17 @@
 
         // This is an alternative to CssClassComputed; in this way, this part is static and the rest is on html (to reduce the length of the calculated part)
         // self.CssClass = 'squareItem ' + self.Group.Sudoku.CssSize;
-
     }
 
-    function SudokuNumberGroup(numberGroupId, sudoku) {
+    function SudokuNumberGroup(numberGroupId, size) {
         var self = this;
         self.NumberGroupId = numberGroupId;
-        self.Sudoku = sudoku;
         self.Numbers = [];
         self.IsOdd = (self.NumberGroupId % 2 === 0);
-        self.CssClass = 'groupItem ' + self.Sudoku.CssSize;
+        self.CssClass = 'groupItem size' + size.toString(10);
     }
 
-    function SudokuNumber(group, value) {
+    function SudokuNumber(group, value, size) {
         var self = this;
         self.Group = group;
         self.Value = value;
@@ -1048,16 +987,12 @@
             // Set IsActiveSelected property
             self.IsActiveSelected(isActive);
 
-            // Related square selected
-            Enumerable.From(self.Group.Sudoku.FindSquareByNumber(self.Value)).ForEach(function (square) {
-                square.IsRelatedSelected(isActive);
-            });
         };
 
         // Css
         self.CssClassComputed = ko.computed(function () {
             return 'squareItem '
-                + (self.Group ? self.Group.Sudoku.CssSize : '')
+                + (self.Group ? 'size' + size.toString(10) : '') // !
                 + (self.IsPassiveSelected() ? ' passiveSelected' : '')
                 + (self.IsActiveSelected() ? ' activeSelected' : '')
                 + (self.Group && self.Group.IsOdd ? ' odd' : '');
@@ -1065,14 +1000,27 @@
 
         // This is an alternative to CssClassComputed; in this way, this part is static and the rest is on html (to reduce the length of the calculated part)
         // self.CssClass = 'squareItem ' + self.Group.Sudoku.CssSize;
-
     }
 
     function Hint(sudoku) {
+
         var self = this;
+
         self.Sudoku = sudoku;
         self.SquareId = 0;
-        self.HintValue = 0;
+        self.HintValue = ko.observable(null);
+
+        var zeroNumber = new SudokuNumber(null, 0, 0);
+        self.HintValue(zeroNumber);
+
+        self.IsAvailable = ko.computed(function () {
+            return self.HintValue().Value === 0;
+        });
+
+        self.ValueFormatted = ko.computed(function () {
+            return self.IsAvailable() ? '&nbsp;' : self.HintValue().Value;
+        });
+
         self.HintType = 0;
         self.IsSelected = ko.observable(false);
         self.ToggleSelect = function (data, event) {
@@ -1081,10 +1029,16 @@
             self.IsSelected(event.type === 'mouseenter');
 
             // Find & toggle select related square as well
-            var relatedSquare = data.Sudoku.FindSquareBySquareId(data.SquareId);
-            //relatedSquare.Value(event.type === 'mouseenter' ? self.HintValue : 0);
-            relatedSquare.SudokuNumber().Value(event.type === 'mouseenter' ? self.HintValue : 0);
+            var relatedSquare = self.Sudoku.FindSquareBySquareId(data.SquareId);
+
+            var zeroNumber = new SudokuNumber(null, 0, 0);
+
+            var newNumber = event.type === 'mouseenter' ? self.HintValue() : zeroNumber;
+
+            relatedSquare.SudokuNumber(newNumber);
+
             relatedSquare.AssignType(event.type === 'mouseenter' ? AssignTypes.Hint : AssignTypes.Initial);
+
             relatedSquare.TogglePassiveSelect(relatedSquare, event);
         };
     }
@@ -1115,15 +1069,8 @@
         self.Count = 0;
     }
 
-    // + Global methods + setup
-
-    // jQuery ajax
-    $.ajaxSetup({
-        // contentType: 'application/json; charset=utf-8'
-    });
-
     // Get data from server
-    function getApiData(apiUrl, callback, isAsync) {
+    function getData(apiUrl, callback, isAsync) {
         isAsync = (typeof isAsync === 'undefined') ? true : isAsync;
 
         $.ajax({
@@ -1131,48 +1078,30 @@
             async: isAsync,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-            //data: data,
-            success: callback
-        }).fail(function (jqXHR) { handleError(jqXHR); });
+        }).done(callback).fail(function (jqXHR) { handleError(jqXHR); });
 
-        //$.getJSON(apiUrl, function (data) {
-
-        //    if (callback !== null) {
-        //        callback(data);
-        //    }
-
-        //}).fail(function (jqXHR) { handleError(jqXHR); });
     }
 
-    // Post to server
-    function postApi(apiUrl, postData, callback) {
+    // Post data to server
+    function postData(apiUrl, postData, callback) {
 
-        // TODO CONTENTTYPE ?!???
+        $.ajax({
+            type: 'POST',
+            url: apiUrl,
+            data: postData,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8'
+        }).done(function (data) {
 
-        $.post(apiUrl, postData, function (data) {
-
-            if (callback !== null) {
-                callback(data);
-            }
-
-        }).fail(function (jqXHR) { handleError(jqXHR); });
-    }
-
-    // Loading message during ajax
-    $(function () {
-        $(this).ajaxStart(function () {
-
-            // Hide previous error message
+            // Hide the previous error messages
             hideMessagePanel();
 
-            $('#loadingMessagePanel').dialog('open');
+            // Callback func.
+            callback(data);
 
-        }).ajaxStop(function () {
-            $('#loadingMessagePanel').dialog('close');
-        });
-    });
+        }).fail(function (jqXHR) { handleError(jqXHR); });
+    }
 
-    // Error handling
     function handleError(jqXHR) {
 
         // Get the message
@@ -1203,7 +1132,6 @@
                     break;
                 }
         }
-
     });
 
     // Handle the delete key; remove selected square's value
@@ -1213,11 +1141,11 @@
             return;
         }
 
-        if (appViewModel.Sudoku().SelectedSquare() === null) {
+        if (sudokuViewModel.SelectedSudoku().SelectedSquare() === null) {
             return;
         }
 
-        appViewModel.Sudoku().RemoveSelectedSquareValue();
+        sudokuViewModel.SelectedSudoku().RemoveSelectedSquareValue();
     });
 
     // Handle the escape key; remove selected square
@@ -1227,18 +1155,15 @@
             return;
         }
 
-        if (appViewModel.Sudoku().SelectedSquare() !== null) {
-            appViewModel.Sudoku().SetSelectedSquare(null);
+        if (sudokuViewModel.SelectedSudoku().SelectedSquare() !== null) {
+            sudokuViewModel.SelectedSudoku().ClearSelectedSquare();
         }
 
-        if (appViewModel.Sudoku().SelectedNumber() !== null) {
-            appViewModel.Sudoku().SetSelectedNumber(null);
+        if (sudokuViewModel.SelectedSudoku().SelectedNumber() !== null) {
+            sudokuViewModel.SelectedSudoku().ClearSelectedNumber();
         }
+
     });
-
-    function capitaliseFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
 
     $('#messagePanelClear').live('click', function () {
         hideMessagePanel();
@@ -1253,6 +1178,7 @@
         $('#messagePanel').fadeTo(200, 0.01);
     }
 
+    // TODO Merge with the original object?
     // toJSON
     Square.prototype.toJSON = function () {
         var copy = ko.toJS(this); //easy way to get a clean copy
@@ -1277,4 +1203,4 @@
         return copy;
     };
 
-})(window);
+})(window, window.document, window.jQuery, window.ko, window.Enumerable, window.History);

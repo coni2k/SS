@@ -185,22 +185,22 @@ http://www.knockmeout.net/2011/03/using-external-jquery-template-files.html
 http://ifandelse.com/?p=100
 
 --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- 
-HOT STUFF;
 
 		CONTINUE WITH;
 
-		0.
-		a. create proper test (16-17-18)
+		a. create proper test (16-17-18) to solve the headaches!
+		b. try to merge square + hint!
+		c. try to get rid of unnecessary notes in here!
+		d. also check the last (november) updates - it was in "not finished" state.. ?!
 		
-									b. work on seperate html templates;
-										nested ko.applybindings?!
-										
-										default.aspx vs. sudoku.html
-										looks good but is it correct?!
-			
-		c. try to solve headaches!
-		d. try to get rid of unnecessary notes in here!
-		e. also check the last (november) updates - it was in "not finished" state.. ?!
+		/* TODO */
+        // TODO Welcome content?
+        //- blank
+        //- generate new
+        //- load cases
+
+        //sudoku/blank
+        //sudoku/generated		
 
 1. KO.TOJSON + mapping ?!
 Now, if you do a ko.toJSON(viewModel) or ko.toJSON(selectedItem), you will just get your item and not the style object. The toJSON() method will see that selectedItem is an observable and then unwrap it. It does not look for any properties/observables attached to the observable itself (which is a function). So, this is a nice way to hide values that are not important to send back to the server.

@@ -23,11 +23,5 @@ namespace SudokuSolver.WebApp.Controllers
             var response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, exceptionMessage);
             throw new HttpResponseException(response);
         }
-
-        //[HttpGet]
-        //public string GetContent()
-        //{
-        //    // return 
-        //}
     }
 }

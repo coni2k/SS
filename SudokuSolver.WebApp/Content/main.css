@@ -87,16 +87,35 @@ input[type=text], textarea {
 
 /* main layout
 ----------------------------------------------------------*/
-.contentContainer {
-    width: 1300px;
+#mainContainer {
+    width: 1320px;
     margin: 0 auto;
+}
+
+#mainHeaderPanel {
+    width: 1320px;
+    float: left;
+}
+
+#menuPanel {
+    width: 1320px;
+    float: left;
+}
+
+#contentHeaderPanel {
+    width: 1320px;
+    float: left;
+}
+
+#contentBodyPanel {
+    width: 1320px;
+    float: left;
 }
 
 .contentLeft {
     width: 250px;
     float: left;
 }
-
 .contentRight {
     width: 1050px;
     float: right;
@@ -150,10 +169,6 @@ input[type=text], textarea {
     #sudokuListPanel.sudokuItem {
     }
 
-#headerPanel {
-
-}
-
 #messagePanel {
     float: left;
     clear: left;
@@ -171,10 +186,6 @@ input[type=text], textarea {
         color: #e80c4d;
         text-decoration: none;
     }
-
-#contentPanel {
-    clear: left;
-}
 
 #detailsPanel {
     float: left;
