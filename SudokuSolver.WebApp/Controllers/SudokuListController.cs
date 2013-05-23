@@ -10,28 +10,26 @@ namespace SudokuSolver.WebApp.Controllers
 {
     public class SudokuListController : ApiController
     {
-        // GET api/SudokuList/List
-        [HttpGet]
-        public IEnumerable<Sudoku> List()
+        // GET api/SudokuList
+        public IEnumerable<Sudoku> GetSudokuList()
         {
             return CacheManager.SudokuList;
         }
 
-        // POST api/SudokuList/NewSudoku
-        public HttpResponseMessage NewSudoku(SudokuContainer container)
+        // GET api/SudokuList/1
+        public Sudoku GetSudoku(int id)
         {
-            // Validate
-            if (container == null)
-                throw new ArgumentNullException("container");
+            return GetSudokuItem(id);
+        }
 
-            // Size?
+        // POST api/SudokuList/PostSudoku
+        public HttpResponseMessage PostSudoku(SudokuDto sudokuDto)
+        {
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid model state"));
 
-            // Title?
-            if (string.IsNullOrWhiteSpace(container.Title))
-                throw new ArgumentNullException("title");
-
-            //Id of the container
-            //TODO Thread safety?
+            // Id of the container
+            // TODO Thread safety?
             int nextId = 1;
             lock (this)
             {
@@ -40,25 +38,44 @@ namespace SudokuSolver.WebApp.Controllers
             }
 
             // Create and add a new sudoku
-            var sudoku = new Sudoku(container.Size);
-            sudoku.SudokuId = nextId;
-            sudoku.Title = container.Title;
-            sudoku.Description = container.Description;
+            var sudoku = new Sudoku(sudokuDto.Size)
+            {
+                SudokuId = nextId,
+                Title = sudokuDto.Title,
+                Description = sudokuDto.Description
+            };
             CacheManager.SudokuList.Add(sudoku);
 
-            //Response
+            // Response
             var response = Request.CreateResponse<Sudoku>(HttpStatusCode.Created, sudoku);
-            string uri = Url.Link(WebApiConfig.RouteNameControllerAction, new { id = sudoku.SudokuId });
+            string uri = Url.Link(WebApiConfig.RouteNameControllerActionId, new { action = "GetSudoku", id = sudoku.SudokuId });
             response.Headers.Location = new Uri(uri);
             return response;
         }
 
-        // POST api/SudokuList/ResetList
-        public HttpResponseMessage ResetList()
+        // POST api/SudokuList/Reset
+        public HttpResponseMessage Reset()
         {
             CacheManager.LoadSamples();
 
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        Sudoku GetSudokuItem(int id)
+        {
+            // Search in CacheManager
+            var sudoku = CacheManager.SudokuList.SingleOrDefault(s => s.SudokuId == id);
+
+            // If there is no, throw an exception
+            if (sudoku == null)
+            {
+                var message = string.Format("Sudoku with Id = {0} not found", id.ToString());
+                var response = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
+                throw new HttpResponseException(response);
+            }
+
+            //Return
+            return sudoku;
         }
     }
 }

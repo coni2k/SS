@@ -7,7 +7,7 @@ namespace SudokuSolver.Engine
 {
     public class Square
     {
-        private ICollection<Availability> _Availabilities = null;
+        private ICollection<Availability> availabilities = null;
 
         #region Events
 
@@ -32,13 +32,11 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Value of the square
         /// </summary>
-        //public SudokuNumber SudokuNumber { get; private set; }
         public SudokuNumber SudokuNumber { get; set; }
 
         /// <summary>
         /// Get the assign type of the square
         /// </summary>
-        //public AssignTypes AssignType { get; private set; }
         public AssignTypes AssignType { get; set; }
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace SudokuSolver.Engine
         /// </summary>
         public IEnumerable<Availability> GetAvailabilities()
         {
-            return _Availabilities;
+            return availabilities;
         }
 
         /// <summary>
@@ -94,17 +92,17 @@ namespace SudokuSolver.Engine
 
         internal Square(int id, Sudoku sudoku,  Group squareTypeGroup, Group horizantalTypeGroup, Group verticalTypeGroup)
         {
-            this.SquareId = id;
-            this.Sudoku = sudoku;
-            this.SudokuNumber = sudoku.GetNumbers().Single(n => n.IsZero); // Zero as initial value
-            this.AssignType = AssignTypes.Initial;
+            SquareId = id;
+            Sudoku = sudoku;
+            SudokuNumber = sudoku.GetNumbers().Single(n => n.IsZero); // Zero as initial value
+            AssignType = AssignTypes.Initial;
 
             // Groups
             var groups = new List<Group>(3);
             groups.Add(squareTypeGroup);
             groups.Add(horizantalTypeGroup);
             groups.Add(verticalTypeGroup);
-            this.SquareGroups = groups;
+            SquareGroups = groups;
 
             // Set the square to the groups too (cross)
             squareTypeGroup.SetSquare(this);
@@ -120,9 +118,9 @@ namespace SudokuSolver.Engine
             }
 
             // Available numbers; assign all numbers, except zero
-            _Availabilities = new List<Availability>(this.Sudoku.Size);
-            foreach (var sudokuNumber in this.Sudoku.GetNumbersExceptZero())
-                _Availabilities.Add(new Availability(this, sudokuNumber));
+            availabilities = new List<Availability>(this.Sudoku.Size);
+            foreach (var sudokuNumber in Sudoku.GetNumbersExceptZero())
+                availabilities.Add(new Availability(this, sudokuNumber));
         }
 
         #endregion
@@ -175,7 +173,7 @@ namespace SudokuSolver.Engine
         void Group_SquareAvailabilityChanged(Group sourceGroup, Square sourceSquare)
         {
             // If it's not available, nothing to check
-            if (!this.IsAvailable)
+            if (!IsAvailable)
                 return;
 
             // TODO !!!
@@ -188,7 +186,7 @@ namespace SudokuSolver.Engine
                 // If there is only one number left in the list, then we found a new hint
                 if (list.Count() != 1)
                 {
-                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a hint to be REMOVED - Id: {0} - Value: {1}", this.SquareId.ToString(), this.SudokuNumber.Value.ToString());
+                    System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a hint to be REMOVED - Id: {0} - Value: {1}", SquareId.ToString(), SudokuNumber.Value.ToString());
                 }
             }
             else
@@ -200,8 +198,8 @@ namespace SudokuSolver.Engine
                 if (list.Count() == 1)
                 {
                     // TODO NEW HINT CODE HERE
-                    // this.Update(item.Number., AssignTypes.Hint);
-                    // this.Hint_SquareGroup = null;
+                    // Update(item.Number., AssignTypes.Hint);
+                    // Hint_SquareGroup = null;
 
                     // Get the item from the list
                     var item = list.Single();
@@ -230,16 +228,20 @@ namespace SudokuSolver.Engine
             switch (type)
             {
                 case GroupTypes.Square:
-                    GetAvailabilities().Single(a => a.Number.Equals(number)).SquareTypeSource = source;
-                    break;
-
+                    {
+                        GetAvailabilities().Single(a => a.Number.Equals(number)).SquareTypeSource = source;
+                        break;
+                    }
                 case GroupTypes.Horizontal:
-                    GetAvailabilities().Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
-                    break;
-
+                    {
+                        GetAvailabilities().Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
+                        break;
+                    }
                 case GroupTypes.Vertical:
-                    GetAvailabilities().Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
-                    break;
+                    {
+                        GetAvailabilities().Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
+                        break;
+                    }
             }
         }
 

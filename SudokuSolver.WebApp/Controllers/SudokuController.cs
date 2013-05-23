@@ -74,14 +74,17 @@ namespace SudokuSolver.WebApp.Controllers
         //    }
         //}
 
-        // POST api/Sudoku/UpdateSquare/1
-        public void UpdateSquare(int id, SquareContainer squareContainer)
+        // PUT api/Sudoku/UpdateSquare/1/1
+        public void PutSquare(int id, int squareId, SquareDto squareDto)
         {
+            if (!ModelState.IsValid || id != squareDto.SudokuId)
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid model state"));
+
             var sudoku = GetSudokuItem(id);
 
             try
             {
-                sudoku.UpdateSquare(squareContainer.SquareId, squareContainer.Value);
+                sudoku.UpdateSquare(squareDto.SquareId, squareDto.Value);
             }
             catch (Exception ex)
             {
@@ -132,10 +135,10 @@ namespace SudokuSolver.WebApp.Controllers
 
         Sudoku GetSudokuItem(int id)
         {
-            //Search the container in CacheManager
+            // Search in CacheManager
             var sudoku = CacheManager.SudokuList.SingleOrDefault(s => s.SudokuId == id);
 
-            //If there is no, throw an exception
+            // If there is no, throw an exception
             if (sudoku == null)
             {
                 var message = string.Format("Sudoku with Id = {0} not found", id.ToString());

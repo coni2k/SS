@@ -85,7 +85,7 @@ namespace SudokuSolver.WebApp.Tester
         static void ShowList()
         {
             //Get the list
-            var list = GetWebApiClient("list").GetList<List<SudokuContainer>>();
+            var list = GetWebApiClient("list").GetList<List<SudokuDto>>();
 
             Console.WriteLine("Sudoku list;");
             foreach (var container in list)
@@ -95,33 +95,33 @@ namespace SudokuSolver.WebApp.Tester
         static void NewSudoku()
         {
             //Create a sudoku
-            GetWebApiClient("newsudoku").Post<SudokuContainer>(null);
+            GetWebApiClient("newsudoku").Post<SudokuDto>(null);
         }
 
         static void ToggleAutoSolve()
         {
-            //Toggle
+            // Toggle
             var result = GetWebApiClient("toggleautosolve").Post<string>(currentSudokuId, "");
 
-            //Get the item
-            var container = GetWebApiClient("item").GetItem<SudokuContainer>(currentSudokuId);
+            // Get the item
+            var container = GetWebApiClient("item").GetItem<SudokuDto>(currentSudokuId);
 
-            //Message
+            // Message
             Console.WriteLine("autosolve - Currently: " + (container.AutoSolve ? "on" : "off"));
         }
 
         static void UpdateSquare(string parameters)
         {
-            //Get square id & number
+            // Get square id & number
             int id = int.Parse(parameters.Split(',')[0]);
             int number = int.Parse(parameters.Split(',')[1]);
 
-            var squareContainer = new SquareContainer();
-            squareContainer.SquareId = id;
-            squareContainer.Value = number;
+            var squareDto = new SquareDto();
+            squareDto.SquareId = id;
+            squareDto.Value = number;
 
             //Update
-            GetWebApiClient("updatesquare").Post<SquareContainer>(currentSudokuId, squareContainer);
+            GetWebApiClient("updatesquare").Post<SquareDto>(currentSudokuId, squareDto);
         }
 
         static void Solve()
@@ -140,10 +140,10 @@ namespace SudokuSolver.WebApp.Tester
         static void LoadCase(int id)
         {
             //Get the item
-            SudokuContainer container = null;
+            SudokuDto container = null;
             try
             {
-                container = GetWebApiClient("item").GetItem<SudokuContainer>(id);
+                container = GetWebApiClient("item").GetItem<SudokuDto>(id);
             }
             catch (Exception ex)
             {
@@ -202,7 +202,7 @@ namespace SudokuSolver.WebApp.Tester
         static void ShowUsed()
         {
             //Get
-            var squares = GetWebApiClient("used").GetItem<IEnumerable<SquareContainer>>(currentSudokuId);
+            var squares = GetWebApiClient("used").GetItem<IEnumerable<SquareDto>>(currentSudokuId);
 
             foreach (var usedSquare in squares)
                 Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.SquareId.ToString("D2"), usedSquare.Value.ToString(), usedSquare.AssignType.ToString()));
@@ -228,7 +228,7 @@ namespace SudokuSolver.WebApp.Tester
             //Details
 
             //Get the item
-            var squares = GetWebApiClient("squares").GetItem<IEnumerable<SquareContainer>>(currentSudokuId);
+            var squares = GetWebApiClient("squares").GetItem<IEnumerable<SquareDto>>(currentSudokuId);
 
             foreach (var square in squares)
             {
@@ -280,7 +280,7 @@ namespace SudokuSolver.WebApp.Tester
         {
             //Get current item
 
-            var container = GetWebApiClient("item").GetItem<SudokuContainer>(currentSudokuId);
+            var container = GetWebApiClient("item").GetItem<SudokuDto>(currentSudokuId);
 
             var sbOutput = new System.Text.StringBuilder();
             sbOutput.AppendLine("General Commands");

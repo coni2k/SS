@@ -72,7 +72,7 @@
                 console.log(state.url);
                 console.log(History.getRootUrl());
 
-                var url = state.url.replace(History.getRootUrl() + 'sudokusolver/', '').replace('default.aspx', '');
+                var url = state.url.replace(History.getRootUrl(), '').replace('default.aspx', '');
 
                 // If there is something to parse
                 if (url !== '') {
@@ -86,7 +86,7 @@
                 self.CurrentContentId = contentId;
 
                 // Get the content from server
-                getData('/sudokusolver/Views/' + contentId + '.html', function (contentData) {
+                getData('/Views/' + contentId + '.html', function (contentData) {
                     document.title = 'Sudoku Solver - ' + capitaliseFirstLetter(contentId);
                     $('#contentHeader').html(capitaliseFirstLetter(contentId));
                     $('#contentBody').html(contentData);

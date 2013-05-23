@@ -439,14 +439,4 @@ namespace SudokuSolver.Engine
 
         #endregion
     }
-
-    /// <summary>
-    /// To be used to post a new sudoku from client-side
-    /// </summary>
-    public class SudokuContainer
-    {
-        public int Size { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-    }
 }

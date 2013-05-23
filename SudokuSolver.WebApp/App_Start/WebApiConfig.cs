@@ -4,8 +4,7 @@ namespace SudokuSolver.WebApp
 {
     public class WebApiConfig
     {
-        //public static string RouteNameController = "Controller";
-        public static string RouteNameControllerAction = "ControllerAction";
+        public static string RouteNameControllerActionId = "ControllerActionId";
 
         public static void Register(HttpConfiguration config)
         {
@@ -22,11 +21,25 @@ namespace SudokuSolver.WebApp
 
             //);
 
+            //// Controller
+            //config.Routes.MapHttpRoute(
+            //    name: RouteNameControllerId,
+            //    routeTemplate: "api/{controller}/{id}",
+            //    defaults: new { controller = "SudokuList", id = RouteParameter.Optional }
+            //);
+
+            //// Controller
+            //config.Routes.MapHttpRoute(
+            //    name: RouteNameControllerAction,
+            //    routeTemplate: "api/{controller}/{action}",
+            //    defaults: new { controller = "SudokuList", action = "Reset" }
+            //);
+
             // Controller + Action
             config.Routes.MapHttpRoute(
-                name: RouteNameControllerAction,
-                routeTemplate: "api/{controller}/{action}/{id}",
-                defaults: new { controller = "SudokuList", action = "List", id = RouteParameter.Optional }
+                name: RouteNameControllerActionId,
+                routeTemplate: "api/{controller}/{action}/{id}/{squareId}",
+                defaults: new { controller = "SudokuList", action = RouteParameter.Optional, id = RouteParameter.Optional, squareId = RouteParameter.Optional }
 
             );
         }

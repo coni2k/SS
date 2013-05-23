@@ -11,13 +11,12 @@
     var
         /* WebAPI URLs */
         /* Root */
-        apiUrlSudokuRoot = '/sudokusolver/api/sudoku/',
-        apiUrlSudokuListRoot = '/sudokusolver/api/sudokulist/',
+        apiUrlSudokuListRoot = '/api/sudokulist/',
+        apiUrlSudokuRoot = '/api/sudoku/',
 
         /* Application level */
-        apiUrlSudokuList = apiUrlSudokuListRoot + 'list',
-        apiUrlNewSudoku = apiUrlSudokuListRoot + 'newsudoku',
-        apiUrlResetList = apiUrlSudokuListRoot + 'resetlist',
+        apiUrlSudokuListPostSudoku = apiUrlSudokuListRoot + 'PostSudoku',
+        apiUrlSudokuListReset = apiUrlSudokuListRoot + 'Reset',
 
         /* Sudoku level - get */
         apiUrlSquares = function (sudokuId) { return apiUrlSudokuRoot + 'squares/' + sudokuId; },
@@ -28,7 +27,7 @@
         apiUrlGroupNumberAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'groupnumberavailabilities/' + sudokuId; },
 
         /* Sudoku level - post */
-        apiUrlUpdateSquare = function (sudokuId) { return apiUrlSudokuRoot + 'updatesquare/' + sudokuId; },
+        apiUrlPutSquare = function (sudokuId, squareId) { return apiUrlSudokuRoot + 'putsquare/' + sudokuId + '/' + squareId; },
         apiUrlToggleReady = function (sudokuId) { return apiUrlSudokuRoot + 'toggleready/' + sudokuId; },
         apiUrlToggleAutoSolve = function (sudokuId) { return apiUrlSudokuRoot + 'toggleautoSolve/' + sudokuId; },
         apiUrlSolve = function (sudokuId) { return apiUrlSudokuRoot + 'solve/' + sudokuId; },
@@ -65,7 +64,7 @@
         self.LoadSudokus = function () {
 
             // Not async.
-            getData(apiUrlSudokuList, function (sudokuList) {
+            getData(apiUrlSudokuListRoot, function (sudokuList) {
 
                 self.Sudokus([]);
 
@@ -136,7 +135,7 @@
                         var sudokuContainer = JSON.stringify({ Size: size, Title: title, Description: description });
 
                         // Post
-                        postData(apiUrlNewSudoku, sudokuContainer, function (newSudokuItem) {
+                        postData(apiUrlSudokuListPostSudoku, sudokuContainer, function (newSudokuItem) {
 
                             // Add the item to the list
                             var newSudoku = new Sudoku(self, newSudokuItem.Size);
@@ -175,9 +174,8 @@
                         $(this).dialog('close');
 
                         // Post reset + load
-                        postData(apiUrlResetList, null, function () {
+                        postData(apiUrlSudokuListReset, null, function () {
                             self.LoadSudokus(); // Async false
-                            // self.LoadCurrentSudoku(null);
                             self.LoadCurrentSudoku();
                         });
 
@@ -315,7 +313,7 @@
             if (currentState !== null) {
 
                 // Remove the host part
-                var url = currentState.url.replace(History.getRootUrl() + 'sudokusolver/', '').replace('default.aspx', '');
+                var url = currentState.url.replace(History.getRootUrl(), '').replace('default.aspx', '');
 
                 // Try to get sudoku id
                 if (url !== '') {
@@ -332,21 +330,17 @@
                 }
             }
 
-            // There is no sudoku id, get the first one as the default
-            if (currentSudokuId === 0) {
-                self.Navigate(self.Sudokus()[0], true);
-                return;
-            }
-            else if (isNaN(currentSudokuId)) {
-                // TODO !
-                getData(apiUrlResourceNotFound(currentSudokuId), null, false);
-                return false;
-            };
-
             // Search for the item
             var selectedSudoku = Enumerable.From(self.Sudokus()).SingleOrDefault(null, function (sudoku) {
                 return sudoku.SudokuId() === currentSudokuId;
             });
+
+            // There is no sudoku with the current id, get the first one as the default
+            // Doesn't raise 404, is it correct?
+            if (selectedSudoku === null) {
+                self.Navigate(self.Sudokus()[0], true);
+                return;
+            };
 
             // Clear the selections
             self.SelectedSudoku().ClearSelectedSquare();
@@ -400,7 +394,7 @@
 
         // Dynamic properties
         self.Url = ko.computed(function () {
-            return '/sudokusolver/sudoku/' + self.SudokuId().toString();
+            return '/sudoku/' + self.SudokuId().toString();
         });
         self.SquaresLeft = ko.observable(0);
         self.SelectedSquare = ko.observable(null);
@@ -591,10 +585,12 @@
         self.UpdateSelectedSquare = function (square, newValue) {
 
             // var squareContainer = ko.toJSON(square);
-            var squareContainer = JSON.stringify({ SquareId: square.SquareId, Value: newValue.Value });
+            var squareDto = JSON.stringify({ SudokuId: self.SudokuId(), SquareId: square.SquareId, Value: newValue.Value });
 
-            // Post + load
-            postData(apiUrlUpdateSquare(self.SudokuId()), squareContainer, function () { self.LoadDetails(); });
+            var apiUrl = apiUrlPutSquare(self.SudokuId(), square.SquareId);
+            
+            // Put + load
+            putData(apiUrl, squareDto, function () { self.LoadDetails(); });
         };
 
         // Remove the value of selected square
@@ -1101,6 +1097,27 @@
 
         }).fail(function (jqXHR) { handleError(jqXHR); });
     }
+
+    // Put data to server
+    function putData(apiUrl, postData, callback) {
+
+        $.ajax({
+            type: 'PUT',
+            url: apiUrl,
+            data: postData,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8'
+        }).done(function (data) {
+
+            // Hide the previous error messages
+            hideMessagePanel();
+
+            // Callback func.
+            callback(data);
+
+        }).fail(function (jqXHR) { handleError(jqXHR); });
+    }
+
 
     function handleError(jqXHR) {
 

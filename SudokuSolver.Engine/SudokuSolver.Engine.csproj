@@ -53,11 +53,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CaseManager.cs" />
     <Compile Include="Models\Availability.cs" />
-    <Compile Include="Models\SquareContainer.cs" />
+    <Compile Include="Models\SudokuDto.cs" />
+    <Compile Include="Models\SquareDto.cs" />
     <Compile Include="Models\GroupNumberAvailabilityContainer.cs" />
     <Compile Include="Models\Hint.cs" />
     <Compile Include="Models\Group.cs" />

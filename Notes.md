@@ -79,11 +79,9 @@ also hints should be a dynamic list?
 
 . merge the branches!
 
-. check helpers + clean + add to the solution?
+. Check + clean Helpers folder
 
-. work on cases - make them more clear + have proper samples for invalid cases as well
-
-. clean up; css etc. + check TODO in general!
+. Work on cases - make them more clear + have proper samples for invalid cases as well
 
 . try to have a new (initialized) sudoku on the page - try to decrease the first page load time
 
@@ -133,18 +131,12 @@ types: internal links + internal commands + external links
 . test history js with old browsers - how about !history.enabled + return false block?
 try it with it and without it?
 
-. external html templates;
-the templates should be on different htm files and should be loaded dynamically (on request)
-but since the design of the application is not clear, work on it at the end
-
 . Check Dynamic Css for Square + SudokuNumber + Availability;
 If its on html, it generates to much text on the page
 If its generated dynamically, it can be slow?
 In general css changes are not that fast? especially related square selection?
 
-if there is no ajax call on the first load, when loading, please wait message stays.. ?!
-
-. dont forget to have "treat" to external links - currently wouldnt work
+. dont forget to have "treat" to external links - currently wouldnt work (because of history.js ?!)
 
 . at the end;
 
@@ -190,7 +182,6 @@ http://ifandelse.com/?p=100
 
 		a. create proper test (16-17-18) to solve the headaches!
 		b. try to merge square + hint!
-		c. try to get rid of unnecessary notes in here!
 		d. also check the last (november) updates - it was in "not finished" state.. ?!
 		
 		/* TODO */
@@ -223,13 +214,6 @@ dynamic hints?
 . Sudoku's last number
 
 ---
-CONTINUE WITH TRACING + LOGGING;
-LOG4NET OR ELMAH OR ..?
-http://www.asp.net/web-api/overview/testing-and-debugging/tracing-in-aspnet-web-api
-http://blogs.msdn.com/b/jmstall/archive/2012/04/16/how-webapi-does-parameter-binding.aspx
-http://blogs.msdn.com/b/roncain/archive/2012/04/12/tracing-in-asp-net-web-api.aspx
-http://blogs.msdn.com/b/roncain/archive/2012/08/16/asp-net-web-api-tracing-preview.aspx
-
 AND THEN (load data from server);
 http://knockoutjs.com/documentation/json-data.html
 
@@ -252,6 +236,7 @@ public bool IsAvailable
 }
 
 ---
+. 404 cases?
 
 . square sudokunumber is readonly that why it doesnt work right now!
 how to transport the data - is it possible to use the original
@@ -260,7 +245,7 @@ if thats the case, does it matter to include Number class into Square?
 why should we send the count info every time? on the other hand, how custom should it be?
 sending and retrieving can have different DTOs?
 
-sync. the latest templates output with SS!
+sync. the latest vs templates with SS!
 
 ---
 check these knockout bindings;
@@ -281,17 +266,3 @@ do we really need dto? - compare dto and poco classes
 should we use data annotations? + model.state - validation in general?
 how to use put - just for update?
 script + js etc. bundled in razor page?
-
----
-how to 404 cases?
-
----
-appviewmodel should load the related content templates (sudoku + help + contact etc.)
-and every template should contain its own javascript files?
-the only problem how to work with multiple ko.applybindings.. ?!
-http://stackoverflow.com/questions/9293761/knockoutjs-multiple-view-models-in-a-single-view
-http://stackoverflow.com/questions/7342814/knockoutjs-ko-applybindings-to-partial-view
-
----
-check this out;
-http://blogs.msdn.com/b/webdev/archive/2012/11/16/capturing-unhandled-exceptions-in-asp-net-web-api-s-with-elmah.aspx
