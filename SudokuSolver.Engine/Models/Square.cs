@@ -54,12 +54,7 @@ namespace SudokuSolver.Engine
         /// </summary>
         public bool IsAvailable
         {
-            get
-            {
-                if (SudokuNumber != null)
-                    return SudokuNumber.IsZero;
-                return false;
-            }
+            get { return SudokuNumber != null && SudokuNumber.IsZero; }
         }
 
         //public Hint Hint { get; set; }

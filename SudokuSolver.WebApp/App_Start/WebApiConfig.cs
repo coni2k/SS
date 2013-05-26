@@ -2,45 +2,25 @@
 
 namespace SudokuSolver.WebApp
 {
-    public class WebApiConfig
+    public class WebApiRouteConfig
     {
-        public static string RouteNameControllerActionId = "ControllerActionId";
+        public static string SudokuRouteName = "SudokuRoute";
+        public static string DefaultRoute = "DefaultRoute";
 
-        public static void Register(HttpConfiguration config)
+        public static void RegisterRoutes(HttpRouteCollection routes)
         {
+            // Sudoku route
+            routes.MapHttpRoute(
+                name: SudokuRouteName,
+                routeTemplate: "api/Sudoku/{action}/{sudokuId}/{squareId}",
+                defaults: new { controller = "Sudoku", action = RouteParameter.Optional, sudokuId = RouteParameter.Optional, squareId = RouteParameter.Optional }
+            );
 
-            //config.Routes.MapHttpRoute(
-            //    name: "DefaultApi",
-            //    routeTemplate: "api/{controller}/{action}/{id}/{squareid}",
-            //    defaults: new { controller = "Sudoku", action = "list", id = RouteParameter.Optional, squareId = RouteParameter.Optional }
-
-            //config.Routes.MapHttpRoute(
-            //    name: RouteNameController,
-            //    routeTemplate: "api/{controller}/{id}",
-            //    defaults: new { controller = "SudokuList", id = RouteParameter.Optional }
-
-            //);
-
-            //// Controller
-            //config.Routes.MapHttpRoute(
-            //    name: RouteNameControllerId,
-            //    routeTemplate: "api/{controller}/{id}",
-            //    defaults: new { controller = "SudokuList", id = RouteParameter.Optional }
-            //);
-
-            //// Controller
-            //config.Routes.MapHttpRoute(
-            //    name: RouteNameControllerAction,
-            //    routeTemplate: "api/{controller}/{action}",
-            //    defaults: new { controller = "SudokuList", action = "Reset" }
-            //);
-
-            // Controller + Action
-            config.Routes.MapHttpRoute(
-                name: RouteNameControllerActionId,
-                routeTemplate: "api/{controller}/{action}/{id}/{squareId}",
-                defaults: new { controller = "SudokuList", action = RouteParameter.Optional, id = RouteParameter.Optional, squareId = RouteParameter.Optional }
-
+            // Default route
+            routes.MapHttpRoute(
+                name: DefaultRoute,
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { controller = "Content", id = RouteParameter.Optional }
             );
         }
     }

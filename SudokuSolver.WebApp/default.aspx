@@ -24,20 +24,19 @@
         <div id="menuPanel" class="panel">
             <div class="contentLeft">&nbsp;</div>
             <div class="contentRight">
-                <a href="/contact" class="contentLink">Contact</a>
-                <a href="/source" class="contentLink">Source</a>
-                <a href="/faq" class="contentLink">FAQ</a>
-                <a href="/sudoku" class="contentLink">Sudoku</a>
+                <div id="contentLinks" />
             </div>
         </div>
-        <div id="contentHeaderPanel" class="panel">
-            <div class="contentLeft">&nbsp;</div>
-            <div class="contentRight">
-                <h2 id="contentHeader" />
+        <div id="contentContainer">
+            <div id="contentHeaderPanel" class="panel">
+                <div class="contentLeft">&nbsp;</div>
+                <div class="contentRight">
+                    <h2 id="contentHeader" />
+                </div>
             </div>
-        </div>
-        <div id="contentBodyPanel" class="panel">
-            <div id="contentBody" />
+            <div id="contentBodyPanel" class="panel">
+                <div id="contentBody" />
+            </div>
         </div>
     </div>
     <div id="loadingMessagePanel" class="hide">

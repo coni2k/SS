@@ -5,23 +5,34 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using SudokuSolver.WebApp.Models;
 
 namespace SudokuSolver.WebApp.Controllers
 {
-    public class ContentController : ApiController
+    public class ContentController : BaseController
     {
-        /// <summary>
-        /// Currently all the content pages are already stored on the client side and routing can be done over there.
-        /// In case if it can't find the content in it's list, then it calls the server to get a Not Found error.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public string ResourceNotFound(string id)
+        // GET api/Content
+        public IEnumerable<Content> GetContentList()
         {
-            var exceptionMessage = string.Format("Content / sudoku not found: {0}", id);
-            var response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, exceptionMessage);
-            throw new HttpResponseException(response);
+            return Cache.Contents;
+        }
+
+        // GET api/Content/1
+        public Content GetContent(string id)
+        {
+            // Search in Cache
+            var content = Cache.Contents.SingleOrDefault(c => c.InternalId == id);
+
+            // If there is none, throw an exception
+            if (content == null)
+            {
+                var message = string.Format("Content not found - Id: {0}", id.ToString());
+                var response = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
+                throw new HttpResponseException(response);
+            }
+
+            //Return
+            return content;
         }
     }
 }

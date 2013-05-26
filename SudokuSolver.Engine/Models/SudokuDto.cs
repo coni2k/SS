@@ -10,6 +10,9 @@ namespace SudokuSolver.Engine
     /// </summary>
     public class SudokuDto
     {
+        // TODO More validation rules?
+
+        [Required]
         public int Size { get; set; }
 
         [Required]

@@ -1,14 +1,23 @@
 ﻿/* JSHint Configuration */
 /*jshint jquery:true*/
+/*global ko:true, Enumerable:true*/
 
-(function (window, document, $, History, undefined) {
+(function (window, document, $, Enumerable, History, undefined) {
     'use strict';
+
+    // + Variables
+    var
+        /* WebAPI URLs */
+        /* Root */
+        apiUrlContentRoot = '/api/Content/',
+        apiUrlGetContent = function (contentInternalId) { return apiUrlContentRoot + contentInternalId; };
 
     $(function () {
 
         // App view model
         var self = this;
-        self.CurrentContentId = '';
+        self.Contents = [];
+        self.CurrentContent = null;
 
         // History
         if (!History.enabled) {
@@ -28,24 +37,9 @@
             $('#loadingMessagePanel').dialog('close');
         });
 
-        // History - bind to StateChange Event
+        // History - Bind StateChange Event
         History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
-            self.LoadContent(History);
-        });
-
-        // Links - bind to click event of an anchor
-        $('.contentLink').on('click', function (event) {
-
-            // Get the url
-            var url = $(this).attr('href');
-
-            // Push the state
-            History.pushState(null, null, url);
-
-            // Cancel the default action
-            event.preventDefault();
-            return false;
-
+            self.LoadContent();
         });
 
         // Loading message modal
@@ -56,6 +50,48 @@
             width: 250,
             modal: true
         });
+
+        // Load list
+        self.LoadContents = function () {
+
+            // Not async.
+            getData(apiUrlContentRoot, function (contents) {
+                
+                self.Contents = contents;
+
+                var contentLinksHtml = [];
+                Enumerable.From(self.Contents).ForEach(function (content) {
+
+                    var contentLinkHtml = '<a href="' + content.Url + '"';
+
+                    if (!content.IsExternal) {
+                        contentLinkHtml += ' class="internalLink"';
+                    };
+
+                    contentLinkHtml += '>' + content.Title + '</a>';
+
+                    contentLinksHtml.push(contentLinkHtml);
+                });
+
+                $('#contentLinks').html(contentLinksHtml.join(''));
+
+                // Links - Bind anchor click event
+                $('.internalLink').on('click', function (event) {
+
+                    // Get the url
+                    var url = $(this).attr('href');
+
+                    // Push the state
+                    History.pushState(null, null, url);
+
+                    // Cancel the default action
+                    event.preventDefault();
+                    return false;
+
+                });
+
+            }, false);
+        };
 
         self.LoadContent = function () {
 
@@ -69,48 +105,59 @@
             if (state !== null) {
 
                 // Remove the host + default.aspx
-                console.log(state.url);
-                console.log(History.getRootUrl());
-
                 var url = state.url.replace(History.getRootUrl(), '').replace('default.aspx', '');
 
                 // If there is something to parse
                 if (url !== '') {
                     contentId = url.split('/')[0];
                 }
-            }
+            };
+
+            // Search for the item
+            var currentContent = Enumerable.From(self.Contents).SingleOrDefault(null, function (content) {
+                return content.InternalId === contentId;
+            });
+
+            // There is no content with the current id, get the first one as the default
+            // Navigate to 404 ?
+            if (currentContent === null) {
+                return;
+            };
 
             // If it's a new content, load
-            if (self.CurrentContentId != contentId) {
+            if (self.CurrentContent !== currentContent) {
 
-                self.CurrentContentId = contentId;
+                self.CurrentContent = currentContent;
 
-                // Get the content from server
-                getData('/Views/' + contentId + '.html', function (contentData) {
-                    document.title = 'Sudoku Solver - ' + capitaliseFirstLetter(contentId);
-                    $('#contentHeader').html(capitaliseFirstLetter(contentId));
-                    $('#contentBody').html(contentData);
-                });
+                $('#contentContainer').fadeOut('fast', function () {
+
+                    document.title = 'Sudoku Solver - ' + currentContent.Title;
+                    $('#contentHeader').html(currentContent.Title);
+                    $('#contentBody').html(currentContent.Body);
+
+                    $('#contentContainer').fadeIn('fast');
+                });                
             };
         };
 
         // Load the current content
-        self.LoadContent(History);
+        self.LoadContents(); // Async false
+        self.LoadContent();
 
     });
 
-})(window, window.document, window.jQuery, window.History);
+})(window, window.document, window.jQuery, window.Enumerable, window.History);
 
-function capitaliseFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function getData(url, callback) {
+// Get data from server
+function getData(apiUrl, callback, isAsync) {
+    isAsync = (typeof isAsync === 'undefined') ? true : isAsync;
 
     $.ajax({
-        url: url,
-        success: callback
-    }).fail(function (jqXHR) { handleError(jqXHR); });
+        url: apiUrl,
+        async: isAsync,
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+    }).done(callback).fail(function (jqXHR) { handleError(jqXHR); });
 
 }
 

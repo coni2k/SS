@@ -7,13 +7,15 @@ namespace SudokuSolver.Engine
     /// </summary>
     public class SquareDto
     {
-        // [Required] ?!
+        // TODO More validation rules?
+
+        [Required]
         public int SudokuId { get; set; }
 
-        // [Required] ?!
+        [Required]
         public int SquareId { get; set; }
 
-        // [Required] ?!
+        [Required]
         public int Value { get; set; }
     }
 }

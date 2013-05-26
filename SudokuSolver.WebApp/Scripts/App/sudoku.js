@@ -2,8 +2,6 @@
 /*jshint jquery:true*/
 /*global ko:true, Enumerable:true*/
 
-// debugger;
-
 (function (window, document, $, ko, Enumerable, History, undefined) {
     'use strict';
 
@@ -11,30 +9,26 @@
     var
         /* WebAPI URLs */
         /* Root */
-        apiUrlSudokuListRoot = '/api/sudokulist/',
-        apiUrlSudokuRoot = '/api/sudoku/',
+        apiUrlSudokuRoot = '/api/Sudoku/',
 
         /* Application level */
-        apiUrlSudokuListPostSudoku = apiUrlSudokuListRoot + 'PostSudoku',
-        apiUrlSudokuListReset = apiUrlSudokuListRoot + 'Reset',
+        apiUrlPostSudoku = apiUrlSudokuRoot + 'PostSudoku',
+        apiUrlResetList = apiUrlSudokuRoot + 'ResetList',
 
         /* Sudoku level - get */
-        apiUrlSquares = function (sudokuId) { return apiUrlSudokuRoot + 'squares/' + sudokuId; },
-        apiUrlNumbers = function (sudokuId) { return apiUrlSudokuRoot + 'numbers/' + sudokuId; },
-        apiUrlHints = function (sudokuId) { return apiUrlSudokuRoot + 'hints/' + sudokuId; },
-        apiUrlAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'availabilities/' + sudokuId; },
+        apiUrlSquares = function (sudokuId) { return apiUrlSudokuRoot + 'GetSquares/' + sudokuId; },
+        apiUrlNumbers = function (sudokuId) { return apiUrlSudokuRoot + 'GetNumbers/' + sudokuId; },
+        apiUrlHints = function (sudokuId) { return apiUrlSudokuRoot + 'GetHints/' + sudokuId; },
+        apiUrlAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetAvailabilities/' + sudokuId; },
         //var apiUrlAvailabilities2 = function (sudokuId) { return apiUrlSudokuRoot + 'availabilities/' + sudokuId; },
-        apiUrlGroupNumberAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'groupnumberavailabilities/' + sudokuId; },
+        apiUrlGroupNumberAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetGroupNumberAvailabilities/' + sudokuId; },
 
         /* Sudoku level - post */
-        apiUrlPutSquare = function (sudokuId, squareId) { return apiUrlSudokuRoot + 'putsquare/' + sudokuId + '/' + squareId; },
-        apiUrlToggleReady = function (sudokuId) { return apiUrlSudokuRoot + 'toggleready/' + sudokuId; },
-        apiUrlToggleAutoSolve = function (sudokuId) { return apiUrlSudokuRoot + 'toggleautoSolve/' + sudokuId; },
-        apiUrlSolve = function (sudokuId) { return apiUrlSudokuRoot + 'solve/' + sudokuId; },
-        apiUrlReset = function (sudokuId) { return apiUrlSudokuRoot + 'reset/' + sudokuId; },
-
-        /* Content */
-        apiUrlResourceNotFound = function (id) { return apiUrlContentRoot + 'resourcenotfound/' + id; },
+        apiUrlPutSquare = function (sudokuId, squareId) { return apiUrlSudokuRoot + 'PutSquare/' + sudokuId + '/' + squareId; },
+        apiUrlToggleReady = function (sudokuId) { return apiUrlSudokuRoot + 'ToggleReady/' + sudokuId; },
+        apiUrlToggleAutoSolve = function (sudokuId) { return apiUrlSudokuRoot + 'ToggleAutoSolve/' + sudokuId; },
+        apiUrlSolve = function (sudokuId) { return apiUrlSudokuRoot + 'Solve/' + sudokuId; },
+        apiUrlReset = function (sudokuId) { return apiUrlSudokuRoot + 'Reset/' + sudokuId; },
 
         /* Enums */
         AssignTypes = { 'Initial': 0, 'User': 1, 'Hint': 2, 'Solver': 3 };
@@ -56,7 +50,6 @@
 
         // History - bind to StateChange Event
         History.Adapter.bind(window, 'statechange', function () { // Note: We are using statechange instead of popstate
-            // self.LoadCurrentSudoku(History.getState());
             self.LoadCurrentSudoku();
         });
 
@@ -64,7 +57,7 @@
         self.LoadSudokus = function () {
 
             // Not async.
-            getData(apiUrlSudokuListRoot, function (sudokuList) {
+            getData(apiUrlSudokuRoot, function (sudokuList) {
 
                 self.Sudokus([]);
 
@@ -81,9 +74,6 @@
                     self.Sudokus.push(sudoku);
 
                 });
-
-                // If it loads through reset list, ignore (history) state (to prevent to load the wrong sudoku id)
-                // self.LoadContent(isReset ? null : self.History.getState());
 
             }, false);
         };
@@ -132,10 +122,10 @@
                         var description = $('#newSudokuDescription').val();
 
                         // Prepare the data
-                        var sudokuContainer = JSON.stringify({ Size: size, Title: title, Description: description });
+                        var sudokuDto = JSON.stringify({ Size: size, Title: title, Description: description });
 
                         // Post
-                        postData(apiUrlSudokuListPostSudoku, sudokuContainer, function (newSudokuItem) {
+                        postData(apiUrlPostSudoku, sudokuDto, function (newSudokuItem) {
 
                             // Add the item to the list
                             var newSudoku = new Sudoku(self, newSudokuItem.Size);
@@ -174,7 +164,7 @@
                         $(this).dialog('close');
 
                         // Post reset + load
-                        postData(apiUrlSudokuListReset, null, function () {
+                        postData(apiUrlResetList, null, function () {
                             self.LoadSudokus(); // Async false
                             self.LoadCurrentSudoku();
                         });
@@ -205,7 +195,7 @@
                 return item.Size === size;
             });
 
-            // If there is no item, create
+            // If there is none, create
             if (cacheItem === null) {
 
                 var numberGroups = [];
@@ -336,7 +326,7 @@
             });
 
             // There is no sudoku with the current id, get the first one as the default
-            // Doesn't raise 404, is it correct?
+            // Navigate to 404 ?
             if (selectedSudoku === null) {
                 self.Navigate(self.Sudokus()[0], true);
                 return;
@@ -584,13 +574,11 @@
         // Update selected square
         self.UpdateSelectedSquare = function (square, newValue) {
 
-            // var squareContainer = ko.toJSON(square);
+            // var squareDto = ko.toJSON(square);
             var squareDto = JSON.stringify({ SudokuId: self.SudokuId(), SquareId: square.SquareId, Value: newValue.Value });
 
-            var apiUrl = apiUrlPutSquare(self.SudokuId(), square.SquareId);
-            
             // Put + load
-            putData(apiUrl, squareDto, function () { self.LoadDetails(); });
+            putData(apiUrlPutSquare(self.SudokuId(), square.SquareId), squareDto, function () { self.LoadDetails(); });
         };
 
         // Remove the value of selected square
@@ -1193,6 +1181,10 @@
 
     function hideMessagePanel() {
         $('#messagePanel').fadeTo(200, 0.01);
+    }
+
+    function capitaliseFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
     // TODO Merge with the original object?

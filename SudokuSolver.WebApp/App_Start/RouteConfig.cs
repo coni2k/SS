@@ -13,7 +13,6 @@ namespace SudokuSolver.WebApp
 
             // Default page for all urls
             routes.MapPageRoute("Default", "{*url}", "~/default.aspx");
-
         }
     }
 }

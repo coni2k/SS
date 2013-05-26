@@ -8,79 +8,106 @@ using System.Web.Http;
 
 namespace SudokuSolver.WebApp.Controllers
 {
-    public class SudokuController : ApiController
+    public class SudokuController : BaseController
     {
-        // TODO api/Sudoku/1 ?
-        // TODO api/Sudoku/Sudoku/1 ?
+        // GET api/Sudoku
+        public IEnumerable<Sudoku> GetSudokuList()
+        {
+            return Cache.SudokuCases;
+        }
+
+        // GET api/Sudoku/1
+        public Sudoku GetSudoku(int sudokuId)
+        {
+            return GetSudokuItem(sudokuId);
+        }
+
+        // POST api/Sudoku/PostSudoku
+        public HttpResponseMessage PostSudoku(SudokuDto sudokuDto)
+        {
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid sudoku"));
+
+            // Id of the container
+            // TODO Thread safety?
+            int nextId = 1;
+            lock (this)
+            {
+                if (Cache.SudokuCases.Count > 0)
+                    nextId = (Cache.SudokuCases.Max(s => s.SudokuId) + 1);
+            }
+
+            // Create and add a new sudoku
+            var sudoku = new Sudoku(sudokuDto.Size)
+            {
+                SudokuId = nextId,
+                Title = sudokuDto.Title,
+                Description = sudokuDto.Description
+            };
+            Cache.SudokuCases.Add(sudoku);
+
+            // Response
+            var response = Request.CreateResponse<Sudoku>(HttpStatusCode.Created, sudoku);
+            string uri = Url.Link(WebApiRouteConfig.SudokuRouteName, new { action = "GetSudoku", id = sudoku.SudokuId });
+            response.Headers.Location = new Uri(uri);
+            return response;
+        }
+
+        // POST api/Sudoku/ResetList
+        public HttpResponseMessage ResetList()
+        {
+            Cache.InitSudokuCases();
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
 
         // GET api/Sudoku/Squares/1
-        [HttpGet]
-        public IEnumerable<Square> Squares(int id)
+        public IEnumerable<Square> GetSquares(int sudokuId)
         {
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             return sudoku.GetSquares();
         }
 
         // GET api/Sudoku/Numbers/1
-        [HttpGet]
-        public IEnumerable<SudokuNumber> Numbers(int id)
+        public IEnumerable<SudokuNumber> GetNumbers(int sudokuId)
         {
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             return sudoku.GetNumbers();
         }
 
         // GET api/Sudoku/Hints/1
-        [HttpGet]
-        public IEnumerable<Hint> Hints(int id)
+        public IEnumerable<Hint> GetHints(int sudokuId)
         {
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             return sudoku.GetHints();
         }
 
         // GET api/Sudoku/Availabilities/1
-        [HttpGet]
-        public IEnumerable<Availability> Availabilities(int id)
+        public IEnumerable<Availability> GetAvailabilities(int sudokuId)
         {
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             return sudoku.GetAvailabilities();
         }
 
         // GET api/Sudoku/GroupNumberAvailabilities/1
-        [HttpGet]
-        public IEnumerable<GroupNumberAvailabilityContainer> GroupNumberAvailabilities(int id)
+        public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities(int sudokuId)
         {
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             return sudoku.GetGroupNumberAvailabilities();
         }
 
-        //// POST api/Sudoku/UpdateSquare/1
-        //public void UpdateSquare(int id, Square square)
-        //{
-        //    var sudoku = GetSudokuItem(id);
-
-        //    try
-        //    {
-        //        sudoku.UpdateSquare(square.SquareId, square.SudokuNumber.Value);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
-        //        throw new HttpResponseException(response);
-        //    }
-        //}
-
         // PUT api/Sudoku/UpdateSquare/1/1
-        public void PutSquare(int id, int squareId, SquareDto squareDto)
+        public void PutSquare(int sudokuId, int squareId, SquareDto squareDto)
         {
-            if (!ModelState.IsValid || id != squareDto.SudokuId)
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid model state"));
+            if (!ModelState.IsValid || sudokuId != squareDto.SudokuId)
+                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid square"));
 
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             try
             {
@@ -94,9 +121,9 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         // POST api/Sudoku/ToggleReady/1
-        public void ToggleReady(int id)
+        public void ToggleReady(int sudokuId)
         {
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             try
             {
@@ -110,38 +137,38 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         // POST api/Sudoku/ToggleAutoSolve/1
-        public void ToggleAutoSolve(int id)
+        public void ToggleAutoSolve(int sudokuId)
         {
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             sudoku.ToggleAutoSolve();
         }
 
         // POST api/Sudoku/Solve/1
-        public void Solve(int id)
+        public void Solve(int sudokuId)
         {
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             sudoku.Solve();
         }
 
         // POST api/Sudoku/Reset/1
-        public void Reset(int id)
+        public void Reset(int sudokuId)
         {
-            var sudoku = GetSudokuItem(id);
+            var sudoku = GetSudokuItem(sudokuId);
 
             sudoku.Reset();
         }
 
-        Sudoku GetSudokuItem(int id)
+        Sudoku GetSudokuItem(int sudokuId)
         {
             // Search in CacheManager
-            var sudoku = CacheManager.SudokuList.SingleOrDefault(s => s.SudokuId == id);
+            var sudoku = Cache.SudokuCases.SingleOrDefault(s => s.SudokuId == sudokuId);
 
-            // If there is no, throw an exception
+            // If there is none, throw an exception
             if (sudoku == null)
             {
-                var message = string.Format("Sudoku with Id = {0} not found", id.ToString());
+                var message = string.Format("Sudoku not found - Id: {0}", sudokuId.ToString());
                 var response = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
                 throw new HttpResponseException(response);
             }
