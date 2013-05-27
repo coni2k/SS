@@ -110,6 +110,7 @@ check these knockout bindings;
 . change the repository name
 . merge the branches!
 . Social media + google analytics + google adsense?
+. SEO ?!
 . add it to the showcase of libraries (knockout + history.js etc.)
 https://github.com/balupton/history.js/wiki/Showcase
 . use CDN?
@@ -190,3 +191,5 @@ merge square + hint
 update consoleapp + webapp tester ?!
 
 github diff. problem + git ignore + git attr file examples?
+
+Note: cache manager - contents cant get updates ?!
