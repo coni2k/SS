@@ -110,7 +110,9 @@ check these knockout bindings;
 . change the repository name
 . merge the branches!
 . Social media + google analytics + google adsense?
-. SEO ?!
+. SEO;
+http://support.google.com/webmasters/bin/answer.py?hl=en&answer=182072
+https://www.google.com/webmasters/tools/home
 . add it to the showcase of libraries (knockout + history.js etc.)
 https://github.com/balupton/history.js/wiki/Showcase
 . use CDN?
