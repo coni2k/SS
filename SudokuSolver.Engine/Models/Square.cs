@@ -242,7 +242,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("SudokuId: {0} - Number: {1}", SquareId.ToString(), SudokuNumber.Value.ToString());
+            return string.Format("SudokuId: {0} - Number: {1}", SquareId, SudokuNumber.Value);
         }
 
         #endregion

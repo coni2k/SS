@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SudokuSolver.Engine;
+using System.Collections.ObjectModel;
 
 namespace SudokuSolver.ConsoleApp
 {
@@ -110,15 +112,19 @@ namespace SudokuSolver.ConsoleApp
         {
             ClearScreen();
 
-            Sudoku = Cases.SingleOrDefault(s => s.SudokuId == caseNo);
+            var sudoku = Cases.SingleOrDefault(s => s.SudokuId == caseNo);
 
-            if (Sudoku == null)
-                throw new ArgumentException("Invalid case no");
+            if (sudoku == null)
+            {
+                Console.WriteLine("Case {0} not found!", caseNo);
+                return;
+            }
 
+            Sudoku = sudoku;
             Sudoku.SquareNumberChanged += new Square.SquareEventHandler(Sudoku_SquareNumberChanged);
             Sudoku.HintFound += new Hint.FoundEventHandler(Sudoku_HintFound);
 
-            Console.WriteLine("Case {0} is ready!", caseNo.ToString());
+            Console.WriteLine("Case {0} is ready!", caseNo);
         }
 
         static void ToggleAutoSolve()
@@ -153,16 +159,45 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowSudoku()
         {
+            var ex = "";
+
+            // var smallerGroup = new ArrayList(Sudoku.SquareRootOfSize);
+            var smallerGroup = new int[Sudoku.SquareRootOfSize]; //();
+
             foreach (var group in Sudoku.GetHorizontalTypeGroups())
             {
+                // for (var i = 0; i < Sudoku.SquareRootOfSize; i++)
+                    // smallerGroup[i] = group.Squares.Skip(i * Sudoku.SquareRootOfSize).Take(Sudoku.SquareRootOfSize).Select(s => s.SudokuNumber.Value).ToList();
+
+                // var x = string.Join("|", smallerGroup);
+
                 foreach (var square in group.Squares)
                 {
                     //Square value
-                    string output = string.Format(" {0}", square.SudokuNumber.Value == 0 ? "." : square.SudokuNumber.Value.ToString());
+                    var output = string.Format(" {0:#;;'.'}", square.SudokuNumber.Value);
 
                     //Seperator for square groups; (3rd, 6th, 12th squares)
-                    if (square.SquareId % Sudoku.SquareRootOfSize == 0 && square.SquareId % Sudoku.Size != 0)
+                    // if (square.SquareId % Sudoku.SquareRootOfSize == 0 && square.SquareId % Sudoku.Size != 0)
+                    if (square.SquareId % Sudoku.SquareRootOfSize == 0)
+                    {
                         output += " |";
+
+                        ex += string.Format("{0:00} - {1} - {2} - {3} - {4} - {5} - {6} - {7} - {8} - {9} - {10} - {11} - {12}{13}",
+                            square.SquareId, // 0
+                            Sudoku.SquareRootOfSize, // 1
+                            Sudoku.Size, // 2
+                            (square.SquareId % Sudoku.SquareRootOfSize), // 3
+                            (square.SquareId % Sudoku.Size), // 4
+                            (square.SquareId / Sudoku.SquareRootOfSize), // 5
+                            (square.SquareId / Sudoku.Size), // 6
+                            ((square.SquareId / Sudoku.SquareRootOfSize) % Sudoku.Size), // 7
+                            ((square.SquareId / Sudoku.Size) % Sudoku.SquareRootOfSize), // 8
+                            ((square.SquareId % Sudoku.SquareRootOfSize) / Sudoku.Size), // 9
+                            ((square.SquareId % Sudoku.Size) / Sudoku.SquareRootOfSize), // 10
+                            ((square.SquareId % Sudoku.SquareRootOfSize) / Sudoku.SquareRootOfSize), // 11
+                            ((square.SquareId / Sudoku.SquareRootOfSize) % Sudoku.SquareRootOfSize), // 12
+                            Environment.NewLine); // 13
+                    }
 
                     Console.Write(output);
                 }
@@ -174,12 +209,14 @@ namespace SudokuSolver.ConsoleApp
                 if ((group.Id % Sudoku.SquareRootOfSize) == 0)
                     Console.WriteLine();
             }
+
+            // Console.WriteLine(ex);
         }
 
         static void ShowUsedSquares()
         {
             foreach (var usedSquare in Sudoku.GetUsedSquares())
-                Console.WriteLine(string.Format("  Id {0}: {1} - {2}", usedSquare.SquareId.ToString("D2"), usedSquare.SudokuNumber.Value.ToString(), usedSquare.AssignType.ToString()));
+                Console.WriteLine(string.Format("  Id {0:D2}: {1} - {2}", usedSquare.SquareId, usedSquare.SudokuNumber.Value, usedSquare.AssignType));
         }
 
         /// <summary>
@@ -190,23 +227,18 @@ namespace SudokuSolver.ConsoleApp
             //Header; display the sudoku numbers
             Console.Write("        "); //Necessary to make the starting points equal - TODO This should check the length of the squareText?
             foreach (var number in Sudoku.GetNumbersExceptZero())
-                Console.Write(string.Format(" | {0}", number.Value.ToString()));
+                Console.Write(" | {0}", number.Value);
             Console.WriteLine();
 
             //Details
             foreach (var square in Sudoku.GetSquares())
             {
                 //Square text: Square id + value
-                var output = string.Format("Id {0}: {1}", square.SquareId.ToString("D2"), square.SudokuNumber.Value.ToString());
-                Console.Write(output);
+                Console.Write("Id {0:D2}: {1}", square.SquareId, square.SudokuNumber.Value);
 
                 //Availability per number; "X" for available squares, "." for non-available ones
                 foreach (var number in Sudoku.GetNumbersExceptZero())
-                {
-                    //var availableText = string.Format(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
-                    var availableText = string.Format(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
-                    Console.Write(availableText);
-                }
+                    Console.Write(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
 
                 Console.WriteLine();
             }
@@ -214,11 +246,8 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowNumbers()
         {
-            //foreach (var number in Sudoku.Numbers)
-            //    Console.WriteLine(string.Format("Number: {0} - Counter: {1}", number.ToString(), number.GetCount().ToString()));
-
             foreach (var number in Sudoku.GetNumbers())
-                Console.Write("Number: {0} - Counter: {1}", number.Value, number.Count);
+                Console.WriteLine("Number: {0} - Counter: {1}", number.Value, number.Count);
         }
 
         static void ShowHints()
@@ -227,9 +256,7 @@ namespace SudokuSolver.ConsoleApp
                 Console.WriteLine("There are no hints");
 
             foreach (var hint in Sudoku.GetHints().OrderBy(s => s.Square.SquareId))
-            {
-                Console.WriteLine(string.Format("P Id {0}: {1} - {2} - {3}", hint.Square.SquareId.ToString("D2"), hint.Square.SudokuNumber.Value.ToString(), hint.Number.Value.ToString(), hint.Type.ToString()));
-            }
+                Console.WriteLine("P Id {0:D2}: {1} - {2} - {3}", hint.Square.SquareId, hint.Square.SudokuNumber.Value, hint.Number.Value, hint.Type);
         }
 
         static void ClearScreen()
@@ -267,12 +294,12 @@ namespace SudokuSolver.ConsoleApp
 
         static void Sudoku_SquareNumberChanged(Square square)
         {
-            Console.WriteLine("  Id {0}: {1} - {2}", square.SquareId.ToString("D2"), square.SudokuNumber.Value.ToString(), square.AssignType.ToString());
+            Console.WriteLine("  Id {0:D2}: {1} - {2}", square.SquareId, square.SudokuNumber.Value, square.AssignType);
         }
 
         static void Sudoku_HintFound(Hint hint)
         {
-            Console.WriteLine("P Id {0}: {1} - {2} - {3}", hint.Square.SquareId.ToString("D2"), hint.Square.SudokuNumber.Value.ToString(), hint.Number.Value.ToString(), hint.Type.ToString());
+            Console.WriteLine("P Id {0:D2}: {1} - {2} - {3}", hint.Square.SquareId, hint.Square.SudokuNumber.Value, hint.Number.Value, hint.Type);
         }
     }
 }

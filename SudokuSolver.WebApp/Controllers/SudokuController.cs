@@ -168,7 +168,7 @@ namespace SudokuSolver.WebApp.Controllers
             // If there is none, throw an exception
             if (sudoku == null)
             {
-                var message = string.Format("Sudoku not found - Id: {0}", sudokuId.ToString());
+                var message = string.Format("Sudoku not found - Id: {0}", sudokuId);
                 var response = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
                 throw new HttpResponseException(response);
             }

@@ -170,7 +170,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("Id: {0} - Type: {1}", Id.ToString(), GroupType.ToString());
+            return string.Format("Id: {0} - Type: {1}", Id, GroupType);
         }
 
         #endregion

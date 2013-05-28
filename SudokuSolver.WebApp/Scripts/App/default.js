@@ -62,15 +62,17 @@
                 var contentLinksHtml = [];
                 Enumerable.From(self.Contents).ForEach(function (content) {
 
-                    var contentLinkHtml = '<a href="' + content.Url + '"';
+                    var linkHtml = '';
 
-                    if (!content.IsExternal) {
-                        contentLinkHtml += ' class="internalLink"';
+                    if (content.IsExternal) {
+                        linkHtml = $('#externalLinkTemplate').html().trim();
+                    } else {
+                        linkHtml = $('#internalLinkTemplate').html().trim();
                     };
 
-                    contentLinkHtml += '>' + content.Title + '</a>';
+                    linkHtml = linkHtml.replace('[Url]', content.Url).replace('[Title]', content.Title);
 
-                    contentLinksHtml.push(contentLinkHtml);
+                    contentLinksHtml.push(linkHtml);
                 });
 
                 $('#contentLinks').html(contentLinksHtml.join(''));

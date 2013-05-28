@@ -26,7 +26,7 @@ namespace SudokuSolver.WebApp.Controllers
             // If there is none, throw an exception
             if (content == null)
             {
-                var message = string.Format("Content not found - Id: {0}", id.ToString());
+                var message = string.Format("Content not found - Id: {0}", id);
                 var response = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
                 throw new HttpResponseException(response);
             }

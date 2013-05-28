@@ -47,7 +47,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("Value: {0}", Value.ToString());
+            return string.Format("Value: {0}", Value);
         }
 
         #endregion

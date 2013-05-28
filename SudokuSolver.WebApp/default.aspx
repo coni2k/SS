@@ -44,6 +44,15 @@
         <img id="loadingMessageImage" src="/Images/ajax-loader.gif" />
     </div>
 
+    <!-- Html Templates -->
+    <script id="internalLinkTemplate" type="text/html">
+        <a href="[Url]" class="internalLink">[Title]</a>
+    </script>
+    <script id="externalLinkTemplate" type="text/html">
+        <a href="[Url]">[Title]</a>
+    </script>
+    <!-- Html templates end -->
+
     <script src="/Scripts/App/default.js" type="text/javascript"></script>
 </body>
 </html>

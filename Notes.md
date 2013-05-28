@@ -119,7 +119,8 @@ https://github.com/balupton/history.js/wiki/Showcase
 . Check + clean Helpers folder
 . clear web.config
 . do we need 404?
-. knockout on default.js as well?
+. knockout on default.js + content as well?
+but then how to call ko.applybindings after content load ?!
 
 . Work on cases - make them more clear + have proper samples for invalid cases as well
 
@@ -171,26 +172,16 @@ check this (last item); http://stackoverflow.com/questions/9569270/custom-method
 - webgrease (bundle.config) + jslint;
 http://www.jshint.com
 
-. use strict;
-http://ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
-
-http://richarddingwall.name/2008/08/09/three-common-aspnet-mvc-url-routing-issues/
-http://www.4guysfromrolla.com/articles/012710-1.aspx - ROUTING IN ASP.NET 4
-URL AS UI - http://www.useit.com/alertbox/990321.html
-
-. event delegation (for square to update sudoku - selected square);
-http://davidwalsh.name/event-delegate
-
 . external templates;
-http://max.jsrhost.com/ - Ajaxify
 http://www.knockmeout.net/2011/03/using-external-jquery-template-files.html
-http://ifandelse.com/?p=100
 
 . CONTINUE WITH;
 cleaning up this file
 try to remove stringify
 merge square + hint
 update consoleapp + webapp tester ?!
+
+try to get rid of last separator of console.app "|"
 
 github diff. problem + git ignore + git attr file examples?
 

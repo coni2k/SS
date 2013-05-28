@@ -573,7 +573,7 @@ namespace SudokuSolver.Engine
         {
             var list = new Collection<Sudoku>();
 
-            //list.Add(GetCase1());
+            list.Add(GetCase1());
             //list.Add(GetCase2());
             //list.Add(GetCase3());
             //list.Add(GetCase4());
