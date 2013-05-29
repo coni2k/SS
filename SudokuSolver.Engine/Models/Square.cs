@@ -9,7 +9,7 @@ namespace SudokuSolver.Engine
     {
         private ICollection<Availability> availabilities = null;
 
-        #region Events
+        #region - Events -
 
         public delegate void SquareEventHandler(Square square);
 
@@ -22,7 +22,12 @@ namespace SudokuSolver.Engine
 
         #endregion
 
-        #region Properties
+        #region - Properties -
+
+        /// <summary>
+        /// Gets the parent sudoku class
+        /// </summary>
+        public Sudoku Sudoku { get; set; }
 
         /// <summary>
         /// Id of the square
@@ -40,11 +45,6 @@ namespace SudokuSolver.Engine
         public AssignTypes AssignType { get; set; }
 
         /// <summary>
-        /// Gets the parent sudoku class
-        /// </summary>
-        private Sudoku Sudoku { get; set; }
-
-        /// <summary>
         /// Gets the groups that this square assigned to
         /// </summary>
         internal IEnumerable<Group> SquareGroups { get; private set; }
@@ -56,8 +56,6 @@ namespace SudokuSolver.Engine
         {
             get { return SudokuNumber != null && SudokuNumber.IsZero; }
         }
-
-        //public Hint Hint { get; set; }
 
         /// <summary>
         /// Holds the list of available numbers
@@ -81,9 +79,7 @@ namespace SudokuSolver.Engine
 
         #endregion
 
-        #region Constructors
-
-        public Square() { }
+        #region - Constructors -
 
         internal Square(int id, Sudoku sudoku,  Group squareTypeGroup, Group horizantalTypeGroup, Group verticalTypeGroup)
         {
@@ -113,14 +109,14 @@ namespace SudokuSolver.Engine
             }
 
             // Available numbers; assign all numbers, except zero
-            availabilities = new List<Availability>(this.Sudoku.Size);
+            availabilities = new List<Availability>(Sudoku.Size);
             foreach (var sudokuNumber in Sudoku.GetNumbersExceptZero())
                 availabilities.Add(new Availability(this, sudokuNumber));
         }
 
         #endregion
 
-        #region Methods
+        #region - Methods -
 
         internal void Update(SudokuNumber number, AssignTypes type)
         {
@@ -146,7 +142,7 @@ namespace SudokuSolver.Engine
         /// <returns></returns>
         public bool IsNumberAvailable(SudokuNumber number)
         {
-            return GetAvailabilities().Single(a => a.Number.Equals(number)).IsAvailable;
+            return GetAvailabilities().Single(availability => availability.Number.Equals(number)).IsAvailable;
         }
 
         void Group_SquareNumberChanging(Group sourceGroup, Square sourceSquare)
@@ -247,13 +243,4 @@ namespace SudokuSolver.Engine
 
         #endregion
     }
-
-    ///// <summary>
-    ///// To be used to update the square from client-side
-    ///// </summary>
-    //public class SquareContainer
-    //{
-    //    public int SquareId { get; set; }
-    //    public NumberCon  { get; set; }
-    //}
 }

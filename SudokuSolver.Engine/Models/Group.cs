@@ -8,13 +8,13 @@ namespace SudokuSolver.Engine
     /// </summary>
     public class Group
     {
-        #region Members
+        #region - Members -
 
         private ICollection<Square> _Squares = null;
 
         #endregion
 
-        #region Events
+        #region - Events -
 
         internal delegate void GroupSquareEventHandler(Group group, Square square);
 
@@ -26,7 +26,7 @@ namespace SudokuSolver.Engine
 
         #endregion
 
-        #region Properties
+        #region - Properties -
 
         /// <summary>
         /// Id of the group
@@ -73,7 +73,7 @@ namespace SudokuSolver.Engine
 
         #endregion
 
-        #region Constructors
+        #region - Constructors -
 
         internal Group(int id, GroupTypes type, Sudoku sudoku)
         {
@@ -85,7 +85,7 @@ namespace SudokuSolver.Engine
 
         #endregion
 
-        #region Methods
+        #region - Methods -
 
         internal void SetSquare(Square square)
         {
@@ -147,8 +147,8 @@ namespace SudokuSolver.Engine
                 if (list.Count() == 1)
                 {
                     // TODO NEW HINT CODE HERE
-                    // this.Update(item.Number., AssignTypes.Hint);
-                    // this.Hint_SquareGroup = this;
+                    // Update(item.Number., AssignTypes.Hint);
+                    // Hint_SquareGroup = this;
 
                     // Get the item from the list
                     var item = list.Single();

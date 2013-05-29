@@ -5,8 +5,7 @@ namespace SudokuSolver.Engine
 {
     public class SudokuNumber
     {
-
-        #region Properties
+        #region - Properties -
 
         /// <summary>
         /// Value of the number
@@ -22,13 +21,11 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// This is a special flag for zero value, which will be treated differently in many cases
         /// </summary>
-        internal bool IsZero { get { return Value == 0; } }
+        internal bool IsZero { get { return this == Sudoku.ZeroNumber; } }
 
         #endregion
 
-        #region Constructors
-
-        public SudokuNumber() { }
+        #region - Constructors -
 
         internal SudokuNumber(Sudoku sudoku, int value)
         {
@@ -38,7 +35,7 @@ namespace SudokuSolver.Engine
 
         #endregion
 
-        #region Methods
+        #region - Methods -
 
         public int Count
         {

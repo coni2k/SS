@@ -122,7 +122,7 @@
                         var description = $('#newSudokuDescription').val();
 
                         // Prepare the data
-                        var sudokuDto = JSON.stringify({ Size: size, Title: title, Description: description });
+                        var sudokuDto = JSON.stringify({ Title: title, Description: description, Size: size });
 
                         // Post
                         postData(apiUrlPostSudoku, sudokuDto, function (newSudokuItem) {
@@ -694,7 +694,6 @@
 
             // Load group number availabilities
             // self.LoadGroupNumberAvailabilities();
-
         };
 
         self.LoadSquares = function () {
@@ -704,9 +703,9 @@
                 Enumerable.From(squareList).ForEach(function (squareItem) {
 
                     var square = self.FindSquareBySquareId(squareItem.SquareId);
-                    square.SudokuNumber(squareItem.SudokuNumber);
+                    var sudokuNumber = new SudokuNumber(null, squareItem.Value, 0);
+                    square.SudokuNumber(sudokuNumber);
                     square.AssignType(squareItem.AssignType);
-
                 });
             });
         };
@@ -720,7 +719,7 @@
                 var zeroNumber = numberList.splice(0, 1);
 
                 // TODO This is already assigned ?!
-                self.SquaresLeft(zeroNumber[0].Count);
+                // self.SquaresLeft(zeroNumber[0].Count);
 
                 // Count of other numbers
                 Enumerable.From(numberList).ForEach(function (numberItem) {
@@ -776,7 +775,7 @@
 
                     // Get the availability
                     var availability = Enumerable.From(square.Availabilities).Single(function (availability) {
-                        return availability.Value === availabilityItem.Number.Value;
+                        return availability.Value === availabilityItem.Value;
                     });
 
                     // Set IsAvailable

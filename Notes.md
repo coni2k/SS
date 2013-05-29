@@ -178,11 +178,17 @@ http://www.knockmeout.net/2011/03/using-external-jquery-template-files.html
 . CONTINUE WITH;
 cleaning up this file
 try to remove stringify
-merge square + hint
-update consoleapp + webapp tester ?!
-
-try to get rid of last separator of console.app "|"
+update webapp tester ?!
 
 github diff. problem + git ignore + git attr file examples?
 
 Note: cache manager - contents cant get updates ?!
+
+---
+dto classes ?!
+numberdto ?!
+square + availabilities?
+
+square + hint merge!
+
+check todoList.dataAccess.js - leuk programming

@@ -9,13 +9,22 @@ namespace SudokuSolver.Engine
     {
         // TODO More validation rules?
 
-        [Required]
-        public int SudokuId { get; set; }
-
-        [Required]
         public int SquareId { get; set; }
 
         [Required]
         public int Value { get; set; }
+
+        public AssignTypes AssignType { get; set; }
+
+        // TODO Availabilities?
+
+        public SquareDto() { }
+
+        public SquareDto(Square square)
+        {
+            SquareId = square.SquareId;
+            Value = square.SudokuNumber.Value;
+            AssignType = square.AssignType;
+        }
     }
 }

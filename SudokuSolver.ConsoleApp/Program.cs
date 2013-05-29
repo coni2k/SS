@@ -54,8 +54,8 @@ namespace SudokuSolver.ConsoleApp
                     args = new string[0] { };
                 }
 
-                //TODO Invalid parameter is only for update + case?
-                //Try to apply to the other commands?
+                // TODO Invalid parameter is only for update + case?
+                // Try to apply to the other commands?
                 if (commandLine.StartsWith("update") || commandLine.StartsWith("case"))
                 {
                     if (commandLine.IndexOf(" ") > 0)
@@ -130,25 +130,23 @@ namespace SudokuSolver.ConsoleApp
         static void ToggleAutoSolve()
         {
             Sudoku.AutoSolve = !Sudoku.AutoSolve;
-            Console.WriteLine("autosolve - Currently: " + (Sudoku.AutoSolve ? "on" : "off"));
+            Console.WriteLine("autosolve - Currently: {0}", Sudoku.AutoSolve ? "on" : "off");
         }
 
         static void UpdateSquare(string parameters)
         {
             try
             {
-                //Get square id & number
+                // Get square id & number
                 int id = int.Parse(parameters.Split(',')[0]);
                 int number = int.Parse(parameters.Split(',')[1]);
 
-                //Update
+                // Update
                 Sudoku.UpdateSquare(id, number);
             }
-            catch (Exception ex) //TODO Can be removed later?
+            catch (Exception ex)
             {
-                //Console.WriteLine("Exception");
-                Console.WriteLine("Message: " + ex.Message);
-                //Console.WriteLine("Stacktrace: " + ex.StackTrace);
+                Console.WriteLine("Error: {0}", ex.Message);
             }
         }
 
@@ -159,64 +157,32 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowSudoku()
         {
-            var ex = "";
-
-            // var smallerGroup = new ArrayList(Sudoku.SquareRootOfSize);
-            var smallerGroup = new int[Sudoku.SquareRootOfSize]; //();
-
+            // Loop through horizontal squares
             foreach (var group in Sudoku.GetHorizontalTypeGroups())
             {
-                // for (var i = 0; i < Sudoku.SquareRootOfSize; i++)
-                    // smallerGroup[i] = group.Squares.Skip(i * Sudoku.SquareRootOfSize).Take(Sudoku.SquareRootOfSize).Select(s => s.SudokuNumber.Value).ToList();
+                // Divide the groups into square root sized groups
+                var squareRootGroups = new Collection<IEnumerable<Square>>();
 
-                // var x = string.Join("|", smallerGroup);
+                for (var i = 0; i < Sudoku.SquareRootOfSize; i++)
+                    squareRootGroups.Add(group.Squares.Skip(i * Sudoku.SquareRootOfSize).Take(Sudoku.SquareRootOfSize));
 
-                foreach (var square in group.Squares)
-                {
-                    //Square value
-                    var output = string.Format(" {0:#;;'.'}", square.SudokuNumber.Value);
+                // Prepare & give the output
+                var output = string.Join(" | ",
+                    squareRootGroups.Select(squareRootGroup =>
+                        string.Join(" ", squareRootGroup.Select(square => square.SudokuNumber.Value.ToString("#;;'.'")))));
 
-                    //Seperator for square groups; (3rd, 6th, 12th squares)
-                    // if (square.SquareId % Sudoku.SquareRootOfSize == 0 && square.SquareId % Sudoku.Size != 0)
-                    if (square.SquareId % Sudoku.SquareRootOfSize == 0)
-                    {
-                        output += " |";
+                Console.WriteLine(output);
 
-                        ex += string.Format("{0:00} - {1} - {2} - {3} - {4} - {5} - {6} - {7} - {8} - {9} - {10} - {11} - {12}{13}",
-                            square.SquareId, // 0
-                            Sudoku.SquareRootOfSize, // 1
-                            Sudoku.Size, // 2
-                            (square.SquareId % Sudoku.SquareRootOfSize), // 3
-                            (square.SquareId % Sudoku.Size), // 4
-                            (square.SquareId / Sudoku.SquareRootOfSize), // 5
-                            (square.SquareId / Sudoku.Size), // 6
-                            ((square.SquareId / Sudoku.SquareRootOfSize) % Sudoku.Size), // 7
-                            ((square.SquareId / Sudoku.Size) % Sudoku.SquareRootOfSize), // 8
-                            ((square.SquareId % Sudoku.SquareRootOfSize) / Sudoku.Size), // 9
-                            ((square.SquareId % Sudoku.Size) / Sudoku.SquareRootOfSize), // 10
-                            ((square.SquareId % Sudoku.SquareRootOfSize) / Sudoku.SquareRootOfSize), // 11
-                            ((square.SquareId / Sudoku.SquareRootOfSize) % Sudoku.SquareRootOfSize), // 12
-                            Environment.NewLine); // 13
-                    }
-
-                    Console.Write(output);
-                }
-
-                //Line break after every row (9th, 18th, 27th etc. squares)
-                Console.WriteLine();
-
-                //Extra line break after every 3. horizontal group (27th, 54th squares)
-                if ((group.Id % Sudoku.SquareRootOfSize) == 0)
+                // Extra line break after every 3. horizontal group
+                if (group.Id % Sudoku.SquareRootOfSize == 0)
                     Console.WriteLine();
             }
-
-            // Console.WriteLine(ex);
         }
 
         static void ShowUsedSquares()
         {
             foreach (var usedSquare in Sudoku.GetUsedSquares())
-                Console.WriteLine(string.Format("  Id {0:D2}: {1} - {2}", usedSquare.SquareId, usedSquare.SudokuNumber.Value, usedSquare.AssignType));
+                Console.WriteLine("  Id {0:D2}: {1} - {2}", usedSquare.SquareId, usedSquare.SudokuNumber.Value, usedSquare.AssignType);
         }
 
         /// <summary>
@@ -224,19 +190,19 @@ namespace SudokuSolver.ConsoleApp
         /// </summary>
         static void ShowAvailability()
         {
-            //Header; display the sudoku numbers
-            Console.Write("        "); //Necessary to make the starting points equal - TODO This should check the length of the squareText?
+            // Header; display the sudoku numbers
+            Console.Write("        "); // Necessary to make the starting points equal - TODO This should check the length of the squareText?
             foreach (var number in Sudoku.GetNumbersExceptZero())
                 Console.Write(" | {0}", number.Value);
             Console.WriteLine();
 
-            //Details
+            // Details
             foreach (var square in Sudoku.GetSquares())
             {
-                //Square text: Square id + value
+                // Square text: Square id + value
                 Console.Write("Id {0:D2}: {1}", square.SquareId, square.SudokuNumber.Value);
 
-                //Availability per number; "X" for available squares, "." for non-available ones
+                // Availability per number; "X" for available squares, "." for non-available ones
                 foreach (var number in Sudoku.GetNumbersExceptZero())
                     Console.Write(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
 

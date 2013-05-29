@@ -4,13 +4,13 @@ namespace SudokuSolver.Engine
 {
     public class Hint
     {
-        #region Events
+        #region - Events -
 
         public delegate void FoundEventHandler(Hint hint);
 
         #endregion
 
-        #region Properties
+        #region - Properties -
 
         /// <summary>
         /// Source square
@@ -34,16 +34,16 @@ namespace SudokuSolver.Engine
 
         #endregion
 
-        #region Constructors
+        #region - Constructors -
 
         public Hint() {}
 
         internal Hint(Square square, Group group, SudokuNumber number,HintTypes type)
         {
-            this.Square = square;
-            this.SquareGroup = group;
-            this.Number = number;
-            this.Type = type;
+            Square = square;
+            SquareGroup = group;
+            Number = number;
+            Type = type;
         }
 
         #endregion

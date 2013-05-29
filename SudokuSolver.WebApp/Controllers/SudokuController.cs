@@ -11,15 +11,15 @@ namespace SudokuSolver.WebApp.Controllers
     public class SudokuController : BaseController
     {
         // GET api/Sudoku
-        public IEnumerable<Sudoku> GetSudokuList()
+        public IEnumerable<SudokuDto> GetSudokuList()
         {
-            return Cache.SudokuCases;
+            return Cache.SudokuCases.Select(sudoku => new SudokuDto(sudoku));
         }
 
         // GET api/Sudoku/1
-        public Sudoku GetSudoku(int sudokuId)
+        public SudokuDto GetSudoku(int sudokuId)
         {
-            return GetSudokuItem(sudokuId);
+            return new SudokuDto(GetSudokuItem(sudokuId));
         }
 
         // POST api/Sudoku/PostSudoku
@@ -62,11 +62,11 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         // GET api/Sudoku/Squares/1
-        public IEnumerable<Square> GetSquares(int sudokuId)
+        public IEnumerable<SquareDto> GetSquares(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.GetSquares();
+            return sudoku.GetSquares().Select(square => new SquareDto(square));
         }
 
         // GET api/Sudoku/Numbers/1
@@ -86,11 +86,11 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         // GET api/Sudoku/Availabilities/1
-        public IEnumerable<Availability> GetAvailabilities(int sudokuId)
+        public IEnumerable<AvailabilityDto> GetAvailabilities(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.GetAvailabilities();
+            return sudoku.GetAvailabilities().Select(availability => new AvailabilityDto(availability));
         }
 
         // GET api/Sudoku/GroupNumberAvailabilities/1
@@ -104,7 +104,7 @@ namespace SudokuSolver.WebApp.Controllers
         // PUT api/Sudoku/UpdateSquare/1/1
         public void PutSquare(int sudokuId, int squareId, SquareDto squareDto)
         {
-            if (!ModelState.IsValid || sudokuId != squareDto.SudokuId)
+            if (!ModelState.IsValid)
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid square"));
 
             var sudoku = GetSudokuItem(sudokuId);
