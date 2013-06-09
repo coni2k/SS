@@ -158,14 +158,13 @@ In general css changes are not that fast? especially related square selection?
 // For a RESTful API, you should avoid using verbs in the URIs, because a URI should identify a resource, not an action.
 check this (last item); http://stackoverflow.com/questions/9569270/custom-method-names-in-asp-net-web-api?lq=1
 
-- webgrease (bundle.config) + jslint
-
-github diff. problem + git ignore + git attr file examples?
+. webgrease (bundle.config) + jslint
 
 . cache manager - contents cant get updates ?!
 
-square + availabilities?
-check todoList.dataAccess.js - leuk programming
+. square + availabilities?
+
+. check todoList.dataAccess.js - leuk programming
 
 ---
 square + hint merge;
@@ -179,4 +178,23 @@ square + hint merge;
 
 try to create good test cases!!!
 
+---
+REMOVAL OF THE HINTS ?
 
+IF THERE IS AN EXISTING NUMBER - FIRST REMOVE THAT ONA AND RELATED HINTS..
+THEN ASSIGN THE NEW NUMBER!!!
+
+write this part from scracth!
+
+assign and removal of the squares and the hints..
+
+need 3 lists ?!
+real hints
+hints to be assigned
+hints to be removed
+
+in updatesquare, if the square has an existing number;
+assign 0 first?
+collect the hints to be removed
+
+before assigning the number, call remove hints method?

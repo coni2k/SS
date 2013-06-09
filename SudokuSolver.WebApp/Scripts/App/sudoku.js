@@ -753,9 +753,9 @@
                     var hint = new Hint(self);
 
                     // var sudokuNumber = self.FindNumberByValue(hintItem.Number.Value);
-                    var sudokuNumber = new SudokuNumber(null, hintItem.Number.Value, 0);
+                    var sudokuNumber = new SudokuNumber(null, hintItem.Value, 0);
 
-                    hint.SquareId = hintItem.Square.SquareId;
+                    hint.SquareId = hintItem.SquareId;
                     hint.HintValue(sudokuNumber);
                     hint.HintType = hintItem.Type;
 

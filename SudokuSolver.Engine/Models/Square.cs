@@ -15,8 +15,9 @@ namespace SudokuSolver.Engine
         public delegate void SquareEventHandler(Square square);
 
         internal event SquareEventHandler NumberChanging;
+        // internal event SquareEventHandler AvailabilityRemoved;
         internal event SquareEventHandler NumberChanged;
-        internal event SquareEventHandler AvailabilityChanged;
+        internal event SquareEventHandler AvailabilityAssigned;
 
         // TODO We will come back ye, mi friend!
         internal event Hint.FoundEventHandler HintFound;
@@ -28,7 +29,7 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets the parent sudoku class
         /// </summary>
-        public Sudoku Sudoku { get; set; }
+        public Sudoku Sudoku { get; private set; }
 
         /// <summary>
         /// Id of the square
@@ -38,12 +39,12 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Value of the square
         /// </summary>
-        public SudokuNumber SudokuNumber { get; set; }
+        public SudokuNumber SudokuNumber { get; private set; }
 
         /// <summary>
         /// Get the assign type of the square
         /// </summary>
-        public AssignTypes AssignType { get; set; }
+        public AssignTypes AssignType { get; internal set; }
 
         public Group SquareTypeGroup { get; private set; }
         public Group HorizantalTypeGroup { get; private set; }
@@ -114,17 +115,6 @@ namespace SudokuSolver.Engine
             HorizantalTypeGroup = horizantalTypeGroup;
             VerticalTypeGroup = verticalTypeGroup;
 
-            //var groups = new Collection<Group>();
-            //groups.Add(squareTypeGroup);
-            //groups.Add(horizantalTypeGroup);
-            //groups.Add(verticalTypeGroup);
-            //SquareGroups = groups;
-
-            //// Set the square to the groups too (cross)
-            //squareTypeGroup.SetSquare(this);
-            //horizantalTypeGroup.SetSquare(this);
-            //verticalTypeGroup.SetSquare(this);
-
             // Available numbers; assign all numbers, except zero
             availabilities = new Collection<Availability>();
             foreach (var sudokuNumber in Sudoku.GetNumbersExceptZero())
@@ -137,6 +127,7 @@ namespace SudokuSolver.Engine
             foreach (var group in SquareGroups)
             {
                 group.SquareNumberChanging += Group_SquareNumberChanging;
+                // group.SquareAvailabilityRemoved += Group_SquareAvailabilityChanged;
                 group.SquareNumberChanged += Group_SquareNumberChanged;
                 group.SquareAvailabilityChanged += Group_SquareAvailabilityChanged;
             }        
@@ -151,6 +142,10 @@ namespace SudokuSolver.Engine
             // Raise an event to let the sudoku to handle the availability of the other squares for the old number
             if (NumberChanging != null)
                 NumberChanging(this);
+
+            //// d. Is it available; Checks the related squares in the related groups
+            //if (!number.IsZero && SquareGroups.Any(squareGroup => squareGroup.Squares.Any(square => square.SudokuNumber.Equals(number))))
+            //    throw new InvalidOperationException("Not a valid assignment, the number is already in use in one of the related groups");
 
             // Assign the new number to this square & let the number know it (there is a cross reference)
             SudokuNumber = number;
@@ -177,6 +172,9 @@ namespace SudokuSolver.Engine
         {
             // Make this number available again
             SetAvailability(sourceSquare.SudokuNumber, sourceGroup.GroupType, null);
+
+            //if (AvailabilityRemoved != null)
+            //    AvailabilityRemoved(this);
         }
 
         void Group_SquareNumberChanged(Group sourceGroup, Square sourceSquare)
@@ -184,9 +182,9 @@ namespace SudokuSolver.Engine
             // Make this number unavailable
             SetAvailability(sourceSquare.SudokuNumber, sourceGroup.GroupType, sourceSquare);
 
-            // Tell to other square in the group that this square's availability has changed
-            if (AvailabilityChanged != null)
-                AvailabilityChanged(this);
+            // Tell to other squares in the group that this square's availability has changed
+            if (AvailabilityAssigned != null)
+                AvailabilityAssigned(this);
         }
 
         void Group_SquareAvailabilityChanged(Group sourceGroup, Square sourceSquare)
@@ -197,7 +195,7 @@ namespace SudokuSolver.Engine
 
             // TODO !!!
 
-            if (Sudoku.GetHintSquares().Any(hintSquare => hintSquare.Equals(this)))
+            if (Sudoku.GetHints().Any(hint => hint.Square.Equals(this) && hint.Type == HintTypes.Square))
             {
                 // Get the available numbers
                 var list = GetAvailabilities().Where(availability => availability.IsAvailable);

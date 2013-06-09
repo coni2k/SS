@@ -12,7 +12,6 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
-        // private ICollection<Square> squares = null;
         private IEnumerable<Square> squares = null;
 
         #endregion
@@ -22,6 +21,7 @@ namespace SudokuSolver.Engine
         internal delegate void GroupSquareEventHandler(Group group, Square square);
 
         internal event GroupSquareEventHandler SquareNumberChanging;
+        // internal event GroupSquareEventHandler SquareAvailabilityRemoved;
         internal event GroupSquareEventHandler SquareNumberChanged;
         internal event GroupSquareEventHandler SquareAvailabilityChanged;
 
@@ -66,7 +66,7 @@ namespace SudokuSolver.Engine
                 {
                     square.NumberChanging += new Square.SquareEventHandler(Square_NumberChanging);
                     square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
-                    square.AvailabilityChanged += new Square.SquareEventHandler(Square_AvailabilityChanged);
+                    square.AvailabilityAssigned += new Square.SquareEventHandler(Square_AvailabilityChanged);
                 }
             }
         }
@@ -126,21 +126,66 @@ namespace SudokuSolver.Engine
         {
             if (SquareNumberChanging != null)
                 SquareNumberChanging(this, square);
+
+            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.SudokuNumber));
         }
+
+        //void Square_AvailabilityRemoved(Square square)
+        //{
+        //    if (SquareAvailabilityChanged != null)
+        //        SquareAvailabilityChanged(this, square);
+
+        //    // Check for hint removal
+        //    Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && AvailableSquares.Count(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable)) != 1);
+
+        //    //var hintList = Sudoku.GetHints().Where(p => (p.SquareGroup != null && p.SquareGroup.Equals(this)) && p.Type == HintTypes.Group);
+
+        //    //if (hintList.Count() > 0)
+        //    //{
+        //    //    foreach (var p in hintList)
+        //    //    {
+        //    //        var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable));
+        //    //        if (list.Count() != 1)
+        //    //        {
+        //    //            System.Diagnostics.Debug.WriteLine("P (Remove found) - Id: {0} - Value: {1} - Type: Group", p.Square.Id.ToString(), p.Number.Value.ToString());
+        //    //        }
+        //    //    }
+        //    //}
+
+        //    // Check for hint
+
+        //    foreach (var number in AvailableNumbers)
+        //    {
+        //        var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
+
+        //        if (list.Count() == 1)
+        //        {
+        //            // TODO NEW HINT CODE HERE
+        //            // Update(item.Number., AssignTypes.Hint);
+        //            // Hint_SquareGroup = this;
+
+        //            // Get the item from the list
+        //            var item = list.Single();
+
+        //            if (HintFound != null)
+        //            {
+        //                System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.SquareId.ToString(), number.Value.ToString());
+        //                HintFound(new Hint(item, this, number, HintTypes.Group));
+        //            }
+        //        }
+        //    }
+        //}
+
 
         void Square_NumberChanged(Square square)
         {
             if (SquareNumberChanged != null)
                 SquareNumberChanged(this, square);
 
-            // Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.SudokuNumber));
+            //var list = Sudoku.GetHints().Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
+            //Sudoku.GetHints().remmo .Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
 
-            // TODO ?!
-            var hintSquares = Sudoku.GetHintSquares().ToList();
-            foreach (var hintSquare in hintSquares)
-            {
-                // hintSquare.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
-            }
+            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.SudokuNumber));
         }
 
         void Square_AvailabilityChanged(Square square)
@@ -149,33 +194,42 @@ namespace SudokuSolver.Engine
                 SquareAvailabilityChanged(this, square);
 
             // Check for hint removal
-            // Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && AvailableSquares.Count(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable)) != 1);
-            
-            // TODO !?
-            var hintSquares = Sudoku.GetHintSquares().ToList();
-            foreach (var hintSquare in hintSquares)
-            {
-                // hintSquare.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
-            }
+            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && AvailableSquares.Count(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable)) != 1);
+
+            //var hintList = Sudoku.GetHints().Where(p => (p.SquareGroup != null && p.SquareGroup.Equals(this)) && p.Type == HintTypes.Group);
+
+            //if (hintList.Count() > 0)
+            //{
+            //    foreach (var p in hintList)
+            //    {
+            //        var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable));
+            //        if (list.Count() != 1)
+            //        {
+            //            System.Diagnostics.Debug.WriteLine("P (Remove found) - Id: {0} - Value: {1} - Type: Group", p.Square.Id.ToString(), p.Number.Value.ToString());
+            //        }
+            //    }
+            //}
 
             // Check for hint
+
             foreach (var number in AvailableNumbers)
             {
-                var possibleSquares = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
+                var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
 
-                // If there is only one, we found a new hint
-                if (possibleSquares.Count() == 1)
+                if (list.Count() == 1)
                 {
-                    // Get the square to be updated
-                    var hintSquare = possibleSquares.Single();
+                    // TODO NEW HINT CODE HERE
+                    // Update(item.Number., AssignTypes.Hint);
+                    // Hint_SquareGroup = this;
+
+                    // Get the item from the list
+                    var item = list.Single();
 
                     if (HintFound != null)
                     {
-                        System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", hintSquare.SquareId.ToString(), number.Value.ToString());
-                        HintFound(new Hint(hintSquare, this, number, HintTypes.Group));
+                        System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.SquareId.ToString(), number.Value.ToString());
+                        HintFound(new Hint(item, this, number, HintTypes.Group));
                     }
-
-                    hintSquare.Update(number, AssignTypes.Hint);
                 }
             }
         }

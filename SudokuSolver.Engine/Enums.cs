@@ -33,6 +33,7 @@
     // ?
     public enum SolvingMethods
     {
-        Method1
+        Method1,
+        Method2
     }
 }

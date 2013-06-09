@@ -78,13 +78,11 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         // GET api/Sudoku/Hints/1
-        public IEnumerable<Hint> GetHints(int sudokuId)
+        public IEnumerable<HintDto> GetHints(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            // return sudoku.GetHints();
-
-            return new List<Hint>();
+            return sudoku.GetHints().Select(hint => new HintDto(hint));
         }
 
         // GET api/Sudoku/Availabilities/1

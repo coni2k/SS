@@ -13,7 +13,7 @@ namespace SudokuSolver.ConsoleApp
     /// </summary>
     class Program
     {
-        static Sudoku Sudoku { get; set; }
+        static Sudoku CurrentSudoku { get; set; }
         static IEnumerable<Sudoku> Cases { get; set; }
 
         static void Main(string[] args)
@@ -94,13 +94,7 @@ namespace SudokuSolver.ConsoleApp
 
         static void NewSudoku()
         {
-            ClearScreen();
-
-            Sudoku = new Sudoku();
-            Sudoku.SquareNumberChanged += new Square.SquareEventHandler(Sudoku_SquareNumberChanged);
-            Sudoku.HintFound += new Hint.FoundEventHandler(Sudoku_HintFound);
-
-            Console.WriteLine("New sudoku is ready!");
+            LoadSudoku(new Sudoku());
         }
 
         /// <summary>
@@ -110,8 +104,6 @@ namespace SudokuSolver.ConsoleApp
         /// <param name="caseNo"></param>
         static void LoadCase(int caseNo)
         {
-            ClearScreen();
-
             var sudoku = Cases.SingleOrDefault(s => s.SudokuId == caseNo);
 
             if (sudoku == null)
@@ -120,17 +112,24 @@ namespace SudokuSolver.ConsoleApp
                 return;
             }
 
-            Sudoku = sudoku;
-            Sudoku.SquareNumberChanged += new Square.SquareEventHandler(Sudoku_SquareNumberChanged);
-            Sudoku.HintFound += new Hint.FoundEventHandler(Sudoku_HintFound);
+            LoadSudoku(sudoku);
+        }
 
-            Console.WriteLine("Case {0} is ready!", caseNo);
+        static void LoadSudoku(Sudoku sudoku)
+        {
+            ClearScreen();
+
+            CurrentSudoku = sudoku;
+            CurrentSudoku.SquareNumberChanged += new Square.SquareEventHandler(Sudoku_SquareNumberChanged);
+            CurrentSudoku.HintFound += new Hint.FoundEventHandler(Sudoku_HintFound);
+
+            Console.WriteLine("New sudoku is loaded!");
         }
 
         static void ToggleAutoSolve()
         {
-            Sudoku.AutoSolve = !Sudoku.AutoSolve;
-            Console.WriteLine("autosolve - Currently: {0}", Sudoku.AutoSolve ? "on" : "off");
+            CurrentSudoku.AutoSolve = !CurrentSudoku.AutoSolve;
+            Console.WriteLine("autosolve - Currently: {0}", CurrentSudoku.AutoSolve ? "on" : "off");
         }
 
         static void UpdateSquare(string parameters)
@@ -142,7 +141,7 @@ namespace SudokuSolver.ConsoleApp
                 int number = int.Parse(parameters.Split(',')[1]);
 
                 // Update
-                Sudoku.UpdateSquare(id, number);
+                CurrentSudoku.UpdateSquare(id, number);
             }
             catch (Exception ex)
             {
@@ -152,19 +151,19 @@ namespace SudokuSolver.ConsoleApp
 
         static void Solve()
         {
-            Sudoku.Solve();
+            CurrentSudoku.Solve();
         }
 
         static void ShowSudoku()
         {
             // Loop through horizontal squares
-            foreach (var group in Sudoku.GetHorizontalTypeGroups())
+            foreach (var group in CurrentSudoku.GetHorizontalTypeGroups())
             {
                 // Divide the groups into square root sized groups
                 var squareRootGroups = new Collection<IEnumerable<Square>>();
 
-                for (var i = 0; i < Sudoku.SquareRootOfSize; i++)
-                    squareRootGroups.Add(group.Squares.Skip(i * Sudoku.SquareRootOfSize).Take(Sudoku.SquareRootOfSize));
+                for (var i = 0; i < CurrentSudoku.SquareRootOfSize; i++)
+                    squareRootGroups.Add(group.Squares.Skip(i * CurrentSudoku.SquareRootOfSize).Take(CurrentSudoku.SquareRootOfSize));
 
                 // Prepare & give the output
                 var output = string.Join(" | ",
@@ -174,14 +173,14 @@ namespace SudokuSolver.ConsoleApp
                 Console.WriteLine(output);
 
                 // Extra line break after every 3. horizontal group
-                if (group.Id % Sudoku.SquareRootOfSize == 0)
+                if (group.Id % CurrentSudoku.SquareRootOfSize == 0)
                     Console.WriteLine();
             }
         }
 
         static void ShowUsedSquares()
         {
-            foreach (var usedSquare in Sudoku.GetUsedSquares())
+            foreach (var usedSquare in CurrentSudoku.GetUsedSquares())
                 Console.WriteLine("  Id {0:D2}: {1} - {2}", usedSquare.SquareId, usedSquare.SudokuNumber.Value, usedSquare.AssignType);
         }
 
@@ -192,18 +191,18 @@ namespace SudokuSolver.ConsoleApp
         {
             // Header; display the sudoku numbers
             Console.Write("        "); // Necessary to make the starting points equal - TODO This should check the length of the squareText?
-            foreach (var number in Sudoku.GetNumbersExceptZero())
+            foreach (var number in CurrentSudoku.GetNumbersExceptZero())
                 Console.Write(" | {0}", number.Value);
             Console.WriteLine();
 
             // Details
-            foreach (var square in Sudoku.GetSquares())
+            foreach (var square in CurrentSudoku.GetSquares())
             {
                 // Square text: Square id + value
                 Console.Write("Id {0:D2}: {1}", square.SquareId, square.SudokuNumber.Value);
 
                 // Availability per number; "X" for available squares, "." for non-available ones
-                foreach (var number in Sudoku.GetNumbersExceptZero())
+                foreach (var number in CurrentSudoku.GetNumbersExceptZero())
                     Console.Write(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
 
                 Console.WriteLine();
@@ -212,17 +211,17 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowNumbers()
         {
-            foreach (var number in Sudoku.GetNumbers())
+            foreach (var number in CurrentSudoku.GetNumbers())
                 Console.WriteLine("Number: {0} - Counter: {1}", number.Value, number.Count);
         }
 
         static void ShowHints()
         {
-            if (Sudoku.GetHintSquares().Count() == 0)
+            if (CurrentSudoku.GetHints().Count() == 0)
                 Console.WriteLine("There are no hints");
 
-            foreach (var hintSquare in Sudoku.GetHintSquares().OrderBy(hintSquare => hintSquare.SquareId))
-                Console.WriteLine("P Id {0:D2}: {1}", hintSquare.SquareId, hintSquare.SudokuNumber.Value);
+            foreach (var hintSquare in CurrentSudoku.GetHints().OrderBy(hintSquare => hintSquare.Square.SquareId))
+                Console.WriteLine("P Id {0:D2}: {1}", hintSquare.Square.SquareId, hintSquare.Number.Value);
         }
 
         static void ClearScreen()
@@ -236,7 +235,7 @@ namespace SudokuSolver.ConsoleApp
 
             sbOutput.AppendLine("General Commands");
             sbOutput.AppendLine(". new");
-            sbOutput.AppendFormat(". autosolve - Currently: {0}", Sudoku.AutoSolve ? "on" : "off").AppendLine();
+            sbOutput.AppendFormat(". autosolve - Currently: {0}", CurrentSudoku.AutoSolve ? "on" : "off").AppendLine();
             sbOutput.AppendLine(". update [square], [number]");
             sbOutput.AppendLine(". solve");
             sbOutput.AppendFormat(". case [case no] - {0}", GetCaseIds()).AppendLine();
