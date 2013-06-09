@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7BFB50
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.WebApp", "SudokuSolver.WebApp\SudokuSolver.WebApp.csproj", "{FC42F20E-D9C3-4E73-805D-D1326D5F6612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.WebApp.Tester", "SudokuSolver.WebApp.Tester\SudokuSolver.WebApp.Tester.csproj", "{4428D1E3-C5CB-41BB-955F-E0213DEDE413}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B8162A95-5225-42E7-B2D8-0DA0B020E550}"
 	ProjectSection(SolutionItems) = preProject
 		Notes.md = Notes.md
@@ -37,8 +35,6 @@ Global
 		{FC42F20E-D9C3-4E73-805D-D1326D5F6612}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC42F20E-D9C3-4E73-805D-D1326D5F6612}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC42F20E-D9C3-4E73-805D-D1326D5F6612}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4428D1E3-C5CB-41BB-955F-E0213DEDE413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4428D1E3-C5CB-41BB-955F-E0213DEDE413}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B788FA24-3EAE-4157-B36B-A32D7F0922F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B788FA24-3EAE-4157-B36B-A32D7F0922F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B788FA24-3EAE-4157-B36B-A32D7F0922F0}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -525,7 +525,7 @@
                 square.SetActiveSelect(true); // Then set the new square as selected
             }
             else {
-                self.UpdateSelectedSquare(square, self.SelectedNumber());
+                self.UpdateSelectedSquare(square, self.SelectedNumber().Value);
             }
         };
 
@@ -563,7 +563,7 @@
                 });
             }
             else {
-                self.UpdateSelectedSquare(self.SelectedSquare(), sudokuNumber);
+                self.UpdateSelectedSquare(self.SelectedSquare(), sudokuNumber.Value);
             }
         };
 
@@ -574,8 +574,8 @@
         // Update selected square
         self.UpdateSelectedSquare = function (square, newValue) {
 
-            // var squareDto = ko.toJSON(square);
-            var squareDto = JSON.stringify({ SudokuId: self.SudokuId(), SquareId: square.SquareId, Value: newValue.Value });
+            // Prepare dto
+            var squareDto = JSON.stringify({ SudokuId: self.SudokuId(), SquareId: square.SquareId, Value: newValue });
 
             // Put + load
             putData(apiUrlPutSquare(self.SudokuId(), square.SquareId), squareDto, function () { self.LoadDetails(); });
@@ -605,7 +605,7 @@
         });
 
         self.RemoveSelectedSquareValue = function () {
-            self.UpdateSelectedSquare(self.SelectedSquare(), new SudokuNumber(null, 0, 0));
+            self.UpdateSelectedSquare(self.SelectedSquare(), 0);
         };
 
         // Toggle ready
@@ -752,7 +752,8 @@
                     // Create hint
                     var hint = new Hint(self);
 
-                    var sudokuNumber = self.FindNumberByValue(hintItem.Number.Value);
+                    // var sudokuNumber = self.FindNumberByValue(hintItem.Number.Value);
+                    var sudokuNumber = new SudokuNumber(null, hintItem.Number.Value, 0);
 
                     hint.SquareId = hintItem.Square.SquareId;
                     hint.HintValue(sudokuNumber);
@@ -1105,7 +1106,6 @@
         }).fail(function (jqXHR) { handleError(jqXHR); });
     }
 
-
     function handleError(jqXHR) {
 
         // Get the message
@@ -1116,6 +1116,7 @@
     }
 
     // TODO Handle arrow keys?
+    // TODO Make this as function of sudoku object?
     $(document).keydown(function (e) {
 
         switch (e.keyCode) {
@@ -1185,30 +1186,5 @@
     function capitaliseFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
-
-    // TODO Merge with the original object?
-    // toJSON
-    Square.prototype.toJSON = function () {
-        var copy = ko.toJS(this); //easy way to get a clean copy
-        delete copy.Group; //remove an extra property
-        delete copy.Value; //remove an extra property
-        delete copy.ValueFormatted; //remove an extra property
-        delete copy.Availabilities; //remove an extra property
-        delete copy.IsPassiveSelected; //remove an extra property
-        delete copy.IsActiveSelected; //remove an extra property
-        delete copy.IsRelatedSelected; //remove an extra property
-        delete copy.CssAssignType; //remove an extra property
-        delete copy.CssClassComputed; //remove an extra property
-        return copy; //return the copy to be serialized
-    };
-
-    SudokuNumber.prototype.toJSON = function () {
-        var copy = ko.toJS(this);
-        delete copy.Group;
-        delete copy.IsPassiveSelected;
-        delete copy.IsActiveSelected;
-        delete copy.CssClassComputed;
-        return copy;
-    };
 
 })(window, window.document, window.jQuery, window.ko, window.Enumerable, window.History);

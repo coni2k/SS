@@ -8,15 +8,15 @@ namespace SudokuSolver.Engine
         #region - Properties -
 
         /// <summary>
+        /// Gets the parent sudoku class
+        /// </summary>
+        private Sudoku Sudoku { get; set; }
+
+        /// <summary>
         /// Value of the number
         /// TODO Try to ensure that every number will be used once (one instance per value)
         /// </summary>
         public int Value { get; set; }
-
-        /// <summary>
-        /// Gets the parent sudoku class
-        /// </summary>
-        private Sudoku Sudoku { get; set; }
 
         /// <summary>
         /// This is a special flag for zero value, which will be treated differently in many cases

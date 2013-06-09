@@ -7,6 +7,7 @@ namespace SudokuSolver.Engine
 {
     public class Square
     {
+        private ICollection<Group> squareGroups = null;
         private ICollection<Availability> availabilities = null;
 
         #region - Events -
@@ -44,17 +45,37 @@ namespace SudokuSolver.Engine
         /// </summary>
         public AssignTypes AssignType { get; set; }
 
+        public Group SquareTypeGroup { get; private set; }
+        public Group HorizantalTypeGroup { get; private set; }
+        public Group VerticalTypeGroup { get; private set; }
+
         /// <summary>
         /// Gets the groups that this square assigned to
         /// </summary>
-        internal IEnumerable<Group> SquareGroups { get; private set; }
+
+        internal IEnumerable<Group> SquareGroups
+        {
+            get
+            {
+                if (squareGroups == null)
+                {
+                    squareGroups = new Collection<Group>();
+                    squareGroups.Add(SquareTypeGroup);
+                    squareGroups.Add(HorizantalTypeGroup);
+                    squareGroups.Add(VerticalTypeGroup);
+                }
+
+                return squareGroups;
+            }
+        }
 
         /// <summary>
         /// Gets whether the square is available or not; if the number of the square is ZERO, it's an available one
         /// </summary>
         public bool IsAvailable
         {
-            get { return SudokuNumber != null && SudokuNumber.IsZero; }
+            // get { return SudokuNumber != null && SudokuNumber.IsZero; }
+            get { return SudokuNumber.IsZero; }
         }
 
         /// <summary>
@@ -73,7 +94,7 @@ namespace SudokuSolver.Engine
         /// </summary>
         public IEnumerable<Availability> GetUsedAvailabilities()
         {
-            return GetAvailabilities().Where(x => !x.IsAvailable);
+            return GetAvailabilities().Where(availability => !availability.IsAvailable);
             //get { return GetAvailabilities().Where(x => !x.IsAvailable); }
         }
 
@@ -85,33 +106,40 @@ namespace SudokuSolver.Engine
         {
             SquareId = id;
             Sudoku = sudoku;
-            SudokuNumber = sudoku.GetNumbers().Single(n => n.IsZero); // Zero as initial value
+            SudokuNumber = sudoku.ZeroNumber; // Zero as initial value
             AssignType = AssignTypes.Initial;
 
             // Groups
-            var groups = new List<Group>(3);
-            groups.Add(squareTypeGroup);
-            groups.Add(horizantalTypeGroup);
-            groups.Add(verticalTypeGroup);
-            SquareGroups = groups;
+            SquareTypeGroup = squareTypeGroup;
+            HorizantalTypeGroup = horizantalTypeGroup;
+            VerticalTypeGroup = verticalTypeGroup;
 
-            // Set the square to the groups too (cross)
-            squareTypeGroup.SetSquare(this);
-            horizantalTypeGroup.SetSquare(this);
-            verticalTypeGroup.SetSquare(this);
+            //var groups = new Collection<Group>();
+            //groups.Add(squareTypeGroup);
+            //groups.Add(horizantalTypeGroup);
+            //groups.Add(verticalTypeGroup);
+            //SquareGroups = groups;
 
+            //// Set the square to the groups too (cross)
+            //squareTypeGroup.SetSquare(this);
+            //horizantalTypeGroup.SetSquare(this);
+            //verticalTypeGroup.SetSquare(this);
+
+            // Available numbers; assign all numbers, except zero
+            availabilities = new Collection<Availability>();
+            foreach (var sudokuNumber in Sudoku.GetNumbersExceptZero())
+                availabilities.Add(new Availability(this, sudokuNumber));
+        }
+
+        internal void RegisterEvents()
+        {
             // Register the groups' events
             foreach (var group in SquareGroups)
             {
                 group.SquareNumberChanging += Group_SquareNumberChanging;
                 group.SquareNumberChanged += Group_SquareNumberChanged;
                 group.SquareAvailabilityChanged += Group_SquareAvailabilityChanged;
-            }
-
-            // Available numbers; assign all numbers, except zero
-            availabilities = new List<Availability>(Sudoku.Size);
-            foreach (var sudokuNumber in Sudoku.GetNumbersExceptZero())
-                availabilities.Add(new Availability(this, sudokuNumber));
+            }        
         }
 
         #endregion
@@ -169,10 +197,10 @@ namespace SudokuSolver.Engine
 
             // TODO !!!
 
-            if (Sudoku.GetHints().Any(p => p.Square.Equals(this) && p.Type == HintTypes.Square))
+            if (Sudoku.GetHintSquares().Any(hintSquare => hintSquare.Equals(this)))
             {
                 // Get the available numbers
-                var list = GetAvailabilities().Where(a => a.IsAvailable);
+                var list = GetAvailabilities().Where(availability => availability.IsAvailable);
 
                 // If there is only one number left in the list, then we found a new hint
                 if (list.Count() != 1)

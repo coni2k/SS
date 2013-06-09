@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace SudokuSolver.Engine
 {
@@ -10,7 +12,8 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
-        private ICollection<Square> _Squares = null;
+        // private ICollection<Square> squares = null;
+        private IEnumerable<Square> squares = null;
 
         #endregion
 
@@ -46,7 +49,27 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// List of squares that group contains
         /// </summary>
-        public IEnumerable<Square> Squares { get { return _Squares; } }
+        public IEnumerable<Square> Squares
+        {
+            get
+            {
+                return squares;
+            }
+            internal set
+            {
+                if (squares != null)
+                    throw new InvalidOperationException("Squares already initialized");
+
+                squares = value;
+
+                foreach (var square in squares)
+                {
+                    square.NumberChanging += new Square.SquareEventHandler(Square_NumberChanging);
+                    square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
+                    square.AvailabilityChanged += new Square.SquareEventHandler(Square_AvailabilityChanged);
+                }
+            }
+        }
 
         /// <summary>
         /// List of used (with a value) squares
@@ -80,20 +103,20 @@ namespace SudokuSolver.Engine
             Id = id;
             GroupType = type;
             Sudoku = sudoku;
-            _Squares = new List<Square>(Sudoku.Size);
+            // squares = new Collection<Square>();
         }
 
         #endregion
 
         #region - Methods -
 
-        internal void SetSquare(Square square)
-        {
-            square.NumberChanging += new Square.SquareEventHandler(Square_NumberChanging);
-            square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
-            square.AvailabilityChanged += new Square.SquareEventHandler(Square_AvailabilityChanged);
-            _Squares.Add(square);
-        }
+        //internal void SetSquare(Square square)
+        //{
+        //    square.NumberChanging += new Square.SquareEventHandler(Square_NumberChanging);
+        //    square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
+        //    square.AvailabilityChanged += new Square.SquareEventHandler(Square_AvailabilityChanged);
+        //    squares.Add(square);
+        //}
 
         /// <summary>
         /// Makes the old number of the changing square available in the related squares in the group
@@ -110,10 +133,14 @@ namespace SudokuSolver.Engine
             if (SquareNumberChanged != null)
                 SquareNumberChanged(this, square);
 
-            //var list = Sudoku.GetHints().Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
-            //Sudoku.GetHints().remmo .Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
+            // Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.SudokuNumber));
 
-            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.SudokuNumber));
+            // TODO ?!
+            var hintSquares = Sudoku.GetHintSquares().ToList();
+            foreach (var hintSquare in hintSquares)
+            {
+                // hintSquare.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+            }
         }
 
         void Square_AvailabilityChanged(Square square)
@@ -122,42 +149,33 @@ namespace SudokuSolver.Engine
                 SquareAvailabilityChanged(this, square);
 
             // Check for hint removal
-            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && AvailableSquares.Count(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable)) != 1);
-
-            //var hintList = Sudoku.GetHints().Where(p => (p.SquareGroup != null && p.SquareGroup.Equals(this)) && p.Type == HintTypes.Group);
-
-            //if (hintList.Count() > 0)
-            //{
-            //    foreach (var p in hintList)
-            //    {
-            //        var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable));
-            //        if (list.Count() != 1)
-            //        {
-            //            System.Diagnostics.Debug.WriteLine("P (Remove found) - Id: {0} - Value: {1} - Type: Group", p.Square.Id.ToString(), p.Number.Value.ToString());
-            //        }
-            //    }
-            //}
+            // Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && AvailableSquares.Count(s => s.GetAvailabilities().Any(a => a.Number.Equals(p.Number) && a.IsAvailable)) != 1);
+            
+            // TODO !?
+            var hintSquares = Sudoku.GetHintSquares().ToList();
+            foreach (var hintSquare in hintSquares)
+            {
+                // hintSquare.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+            }
 
             // Check for hint
-
             foreach (var number in AvailableNumbers)
             {
-                var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
+                var possibleSquares = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
 
-                if (list.Count() == 1)
+                // If there is only one, we found a new hint
+                if (possibleSquares.Count() == 1)
                 {
-                    // TODO NEW HINT CODE HERE
-                    // Update(item.Number., AssignTypes.Hint);
-                    // Hint_SquareGroup = this;
-
-                    // Get the item from the list
-                    var item = list.Single();
+                    // Get the square to be updated
+                    var hintSquare = possibleSquares.Single();
 
                     if (HintFound != null)
                     {
-                        System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.SquareId.ToString(), number.Value.ToString());
-                        HintFound(new Hint(item, this, number, HintTypes.Group));
+                        System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", hintSquare.SquareId.ToString(), number.Value.ToString());
+                        HintFound(new Hint(hintSquare, this, number, HintTypes.Group));
                     }
+
+                    hintSquare.Update(number, AssignTypes.Hint);
                 }
             }
         }

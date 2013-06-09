@@ -128,13 +128,8 @@ but then how to call ko.applybindings after content load ?!
 
 . how about; public class Square + internal (or private) class Availability() + internal UpdateAvailability()
 
-. relatives instead of related?
-
 . pass squares to group constructor - to make square property readonly and remove setsquare method
 not that easy, first it generates the groups and then squares.. ?!
-
-. can sudokuDto + squareDto object be the same on both sides?
-try to use ko.toJSON instead of JSON.stringify
 
 . all javascript functions should be under an object ?!
 
@@ -143,15 +138,9 @@ try to use ko.toJSON instead of JSON.stringify
 . proper new/remove hint - is it possible to merge hint + square
 dynamic hints?
 
-. webapi.tester doesnt work at the moment (after the package updates) - check webapiclient!
-
-. probably console tester doesnt work - after horizontal to square id change
-
 . using content class + navigate function looks a good idea
 but then, if the content will be generated from cms - how the user's links will be using Navigate function.. ?!
 types: internal links + internal commands + external links
-
-. try to get rid of sudokunumbergroup?
 
 . check the performance by comparing with a plain html
 
@@ -169,26 +158,25 @@ In general css changes are not that fast? especially related square selection?
 // For a RESTful API, you should avoid using verbs in the URIs, because a URI should identify a resource, not an action.
 check this (last item); http://stackoverflow.com/questions/9569270/custom-method-names-in-asp-net-web-api?lq=1
 
-- webgrease (bundle.config) + jslint;
-http://www.jshint.com
-
-. external templates;
-http://www.knockmeout.net/2011/03/using-external-jquery-template-files.html
-
-. CONTINUE WITH;
-cleaning up this file
-try to remove stringify
-update webapp tester ?!
+- webgrease (bundle.config) + jslint
 
 github diff. problem + git ignore + git attr file examples?
 
-Note: cache manager - contents cant get updates ?!
+. cache manager - contents cant get updates ?!
+
+square + availabilities?
+check todoList.dataAccess.js - leuk programming
 
 ---
-dto classes ?!
-numberdto ?!
-square + availabilities?
+square + hint merge;
+. init;
+.. first constructors (square + groups)
+.. second cross bind
+.. third event registrations!
 
-square + hint merge!
+. number changing + number changed + set availiability parts look good
+. find hint + remove hint parts need to be updated ?!
 
-check todoList.dataAccess.js - leuk programming
+try to create good test cases!!!
+
+

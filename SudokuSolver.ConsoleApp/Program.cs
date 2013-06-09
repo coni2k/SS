@@ -169,7 +169,7 @@ namespace SudokuSolver.ConsoleApp
                 // Prepare & give the output
                 var output = string.Join(" | ",
                     squareRootGroups.Select(squareRootGroup =>
-                        string.Join(" ", squareRootGroup.Select(square => square.SudokuNumber.Value.ToString("#;;'.'")))));
+                        string.Join(" ", squareRootGroup.Select(square => square.AssignType == AssignTypes.Hint ? "." : square.SudokuNumber.Value.ToString("#;;'.'")))));
 
                 Console.WriteLine(output);
 
@@ -218,11 +218,11 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowHints()
         {
-            if (Sudoku.GetHints().Count() == 0)
+            if (Sudoku.GetHintSquares().Count() == 0)
                 Console.WriteLine("There are no hints");
 
-            foreach (var hint in Sudoku.GetHints().OrderBy(s => s.Square.SquareId))
-                Console.WriteLine("P Id {0:D2}: {1} - {2} - {3}", hint.Square.SquareId, hint.Square.SudokuNumber.Value, hint.Number.Value, hint.Type);
+            foreach (var hintSquare in Sudoku.GetHintSquares().OrderBy(hintSquare => hintSquare.SquareId))
+                Console.WriteLine("P Id {0:D2}: {1}", hintSquare.SquareId, hintSquare.SudokuNumber.Value);
         }
 
         static void ClearScreen()

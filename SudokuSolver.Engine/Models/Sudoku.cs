@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace SudokuSolver.Engine
@@ -12,10 +13,10 @@ namespace SudokuSolver.Engine
         private ICollection<Square> squares = null;
         private ICollection<SudokuNumber> numbers = null;
         private SudokuNumber zeroNumber = null;
-        private ICollection<Group> squareTypeGroups = null;
-        private ICollection<Group> horizontalTypeGroups = null;
-        private ICollection<Group> verticalTypeGroups = null;
-        private List<Hint> hints = new List<Hint>();
+        private IList<Group> squareTypeGroups = null;
+        private IList<Group> horizontalTypeGroups = null;
+        private IList<Group> verticalTypeGroups = null;
+        // private List<Hint> hints = new List<Hint>();
         private List<Availability> availabilities = new List<Availability>();
         private bool ready = false;
         private bool autoSolve = false;
@@ -151,7 +152,11 @@ namespace SudokuSolver.Engine
         /// When Solve() method called, this list will be checked and if the hint has still the same conditions, then the square will be update with the value.
         /// </summary>
         //public IEnumerable<Hint> GetHints() { return _Hints; }
-        public List<Hint> GetHints() { return hints; }
+        // Availabilitypublic List<Hint> GetHints() { return hints; }
+        public IEnumerable<Square> GetHintSquares()
+        {
+            return GetSquares().Where(square => square.AssignType == AssignTypes.Hint);
+        }
 
         public IEnumerable<Availability> GetAvailabilities() { return availabilities; }
 
@@ -196,7 +201,6 @@ namespace SudokuSolver.Engine
                     Solve();
             }
         }
-
 
         public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities()
         {
@@ -278,14 +282,14 @@ namespace SudokuSolver.Engine
                 // Square type
                 int squareGroupId = (int) Decimal.Ceiling(Decimal.Divide(squareId, Size));
 
-                // Horizontal type
+                // Horizontal group id calculation
                 int h1 = (int) Decimal.Ceiling(Decimal.Divide(squareId, Size * SquareRootOfSize)) - 1; // = ( Ceiling ( Id / 27 ) ) - 1
                 int h2 = (int) Decimal.Ceiling(Decimal.Divide(squareId, SquareRootOfSize)); // = Ceiling ( Id / 3 )
                 int h3 = h2 % SquareRootOfSize == 0 ? SquareRootOfSize : h2 % SquareRootOfSize; // = If ( h2 Mod 3 ) = 0 ; 3 ; h2 Mod 3
 
                 int horizontalGroupId = h3 + (h1 * SquareRootOfSize);
 
-                // Vertical type
+                // Vertical group id calculation
                 int v1 = squareId % SquareRootOfSize == 0 ? SquareRootOfSize : squareId % SquareRootOfSize; // = If ( Id Mod 3 ) = 0 ; 3 ; Id Mod 3
                 int v2 =  (int) Decimal.Ceiling(Decimal.Divide(squareId, Size)); // = Id / 9
                 int v3 = (v2 - 1) % SquareRootOfSize; // = (v2 - 1) Mod 3
@@ -299,12 +303,27 @@ namespace SudokuSolver.Engine
 
                 // Generate the squares
                 var square = new Square(squareId, this, squareTypeGroup, horizontalTypeGroup, verticalTypeGroup);
-                square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
-                square.HintFound += new Hint.FoundEventHandler(Hint_Found);
                 squares.Add(square);
 
                 // Get the squares availabilities
                 availabilities.AddRange(square.GetAvailabilities());
+            }
+
+            // Register squares to square groups
+            foreach (var group in squareTypeGroups)
+                group.Squares = squares.Where(square => square.SquareTypeGroup == group);
+            foreach (var group in horizontalTypeGroups)
+                group.Squares = squares.Where(square => square.HorizantalTypeGroup == group);
+            foreach (var group in verticalTypeGroups)
+                group.Squares = squares.Where(square => square.VerticalTypeGroup == group);
+
+            // Register square's events
+            foreach (var square in squares)
+            {
+                square.RegisterEvents();
+
+                square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
+                square.HintFound += new Hint.FoundEventHandler(Hint_Found);
             }
         }
 
@@ -362,12 +381,22 @@ namespace SudokuSolver.Engine
         /// <param name="square"></param>
         void Square_NumberChanged(Square square)
         {
-            // Update hints!
-            // Is it correct place to do this?
-            // And how about zero case?
+            //// Update hints!
+            //// Is it correct place to do this?
+            //// And how about zero case?
+            //if (!square.IsAvailable)
+            //{
+            //    hints.RemoveAll(p => p.Square.Equals(square));
+            //}
+
             if (!square.IsAvailable)
             {
-                hints.RemoveAll(p => p.Square.Equals(square));
+                // TODO ?!
+                var hintSquares = GetHintSquares().ToList();
+                foreach (var hintSquare in hintSquares)
+                {
+                    // hintSquare.Update(ZeroNumber, AssignTypes.Initial);
+                }
             }
 
             if (SquareNumberChanged != null)
@@ -381,13 +410,13 @@ namespace SudokuSolver.Engine
         /// <param name="hint"></param>
         void Hint_Found(Hint hint)
         {
-            if (!hints.Any(p => p.Square.Equals(hint.Square)))
-            {
-                hints.Add(hint);
+            //if (!GetHintSquares.Any(hintSquare => hintSquare.Equals(hint.Square)))
+            //{
+                // hints.Add(hint);
 
                 if (HintFound != null)
                     HintFound(hint);
-            }
+            //}
         }
 
         public void ToggleReady()
@@ -410,27 +439,30 @@ namespace SudokuSolver.Engine
                 throw new InvalidOperationException("Sudoku cannot be Solved if it's not in Ready state");
 
             // Is there anything to do?
-            if (GetHints().Count() == 0)
+            if (GetHintSquares().Count() == 0)
                 return;
 
             // Copy to a new list; since the Hints can take new values during this operation, it's not possible to use that one directly
-            var hints = GetHints().ToList();
+            // var hints = GetHintSquares().ToList();
 
-            foreach (var hint in hints)
-            {
-                if (hint.Type != HintTypes.None)
-                {
-                    UpdateSquare(hint.Square, hint.Number, AssignTypes.Solver);
-                }
-                hint.Type = HintTypes.None;
-            }
+            foreach (var hintSquare in GetHintSquares())
+                hintSquare.AssignType = AssignTypes.Solver;
 
-            // Remove the processed ones
-            hints.RemoveAll(s => s.Type.Equals(HintTypes.None));
+            //foreach (var hint in hints)
+            //{
+            //    if (hint.Type != HintTypes.None)
+            //    {
+            //        UpdateSquare(hint.Square, hint.Number, AssignTypes.Solver);
+            //    }
+            //    hint.Type = HintTypes.None;
+            //}
+
+            //// Remove the processed ones
+            //hints.RemoveAll(s => s.Type.Equals(HintTypes.None));
 
             // Again; since it could spot more squares during this method, run it again
             // If there are no hint, it will quit anyway
-            Solve();
+            // Solve();
         }
 
         public void Reset()

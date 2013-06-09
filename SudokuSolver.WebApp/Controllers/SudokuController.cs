@@ -82,7 +82,9 @@ namespace SudokuSolver.WebApp.Controllers
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.GetHints();
+            // return sudoku.GetHints();
+
+            return new List<Hint>();
         }
 
         // GET api/Sudoku/Availabilities/1
