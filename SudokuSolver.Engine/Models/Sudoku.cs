@@ -9,6 +9,9 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
+        public static int Method2Counter = 0;
+        public static int Method1Counter = 0;
+
         private int size = 0;
         private ICollection<Square> squares = null;
         private ICollection<SudokuNumber> numbers = null;
@@ -351,6 +354,9 @@ namespace SudokuSolver.Engine
 
         void UpdateSquare(Square selectedSquare, SudokuNumber newNumber, AssignTypes type)
         {
+            Method2Counter = 0;
+            Method1Counter = 0;
+
             // Validations;
             //a. Square
             if (selectedSquare == null)
@@ -382,6 +388,9 @@ namespace SudokuSolver.Engine
             if (AutoSolve)
                 Solve();
             // Solve(AutoSolve ? AssignTypes.Solver : AssignTypes.Hint );
+
+            Console.WriteLine("Group_Square_AvailabilityChangedCounter: {0}", Sudoku.Method2Counter);
+            Console.WriteLine("Square_Group_SquareAvailabilityChangedCounter: {0}", Sudoku.Method1Counter);
         }
 
         /// <summary>

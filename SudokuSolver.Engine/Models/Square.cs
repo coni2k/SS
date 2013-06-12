@@ -129,7 +129,7 @@ namespace SudokuSolver.Engine
                 group.SquareNumberChanging += Group_SquareNumberChanging;
                 // group.SquareAvailabilityRemoved += Group_SquareAvailabilityChanged;
                 group.SquareNumberChanged += Group_SquareNumberChanged;
-                group.SquareAvailabilityChanged += Group_SquareAvailabilityChanged;
+                group.SquareAvailabilityChanged += CheckMethod1;
             }        
         }
 
@@ -154,8 +154,30 @@ namespace SudokuSolver.Engine
             AssignType = type;
 
             // Raise an event to let the sudoku to handle the availability of the other squares for the new number
-            if (NumberChanged != null)
-                NumberChanged(this);
+            //if (NumberChanged != null)
+            //    NumberChanged(this);
+
+            // ... new way
+            foreach (var group in SquareGroups)
+                foreach (var square in group.Squares)
+                    square.SetAvailability(this.SudokuNumber, group.GroupType, this);
+
+            var affectedGroups = SquareGroups.SelectMany(group => group.Squares.SelectMany(square => square.SquareGroups)).Distinct(); // .OrderBy(group => group.Id).ThenBy(group => (int)group.GroupType);
+            foreach (var group in affectedGroups)
+                group.CheckMethod2();
+                //group.Square_AvailabilityChanged(this); // Method 2
+
+            foreach (var group in affectedGroups)
+                Console.WriteLine(group);
+            Console.WriteLine("Type: {0} - Count: {1}", "", affectedGroups.Count());
+
+            var squaresNeedToBeChecked = affectedGroups.SelectMany(group => group.Squares).Distinct().OrderBy(square => square.SquareId);
+            foreach (var square in squaresNeedToBeChecked)
+                square.CheckMethod1(null, null); // Method 1
+
+            foreach (var square in squaresNeedToBeChecked)
+                Console.WriteLine(square);
+            Console.WriteLine("Count: {0}", squaresNeedToBeChecked.Count());
         }
 
         /// <summary>
@@ -187,8 +209,10 @@ namespace SudokuSolver.Engine
                 AvailabilityAssigned(this);
         }
 
-        void Group_SquareAvailabilityChanged(Group sourceGroup, Square sourceSquare)
+        internal void CheckMethod1(Group sourceGroup, Square sourceSquare)
         {
+            Sudoku.Method1Counter++;
+
             // If it's not available, nothing to check
             if (!IsAvailable)
                 return;
@@ -209,20 +233,20 @@ namespace SudokuSolver.Engine
             else
             {
                 // Get the available numbers
-                var list = GetAvailabilities().Where(a => a.IsAvailable);
+                var availabilities = GetAvailabilities().Where(availability => availability.IsAvailable);
 
                 // If there is only one number left in the list, then we found a new hint
-                if (list.Count() == 1)
+                if (availabilities.Count() == 1)
                 {
                     // TODO NEW HINT CODE HERE
                     // Update(item.Number., AssignTypes.Hint);
                     // Hint_SquareGroup = null;
 
                     // Get the item from the list
-                    var item = list.Single();
+                    var availability = availabilities.Single();
 
                     if (HintFound != null)
-                        HintFound(new Hint(this, null, item.Number, HintTypes.Square));
+                        HintFound(new Hint(this, null, availability.Number, HintTypes.Square));
                 }
             }
         }
@@ -235,7 +259,7 @@ namespace SudokuSolver.Engine
         /// <param name="number"></param>
         /// <param name="type"></param>
         /// <param name="source"></param>
-        void SetAvailability(SudokuNumber number, GroupTypes type, Square source)
+        internal void SetAvailability(SudokuNumber number, GroupTypes type, Square source)
         {
             // If the old value is zero, then there is nothing to do.
             // Zero value is not used in availabilities list (always available).
@@ -246,17 +270,17 @@ namespace SudokuSolver.Engine
             {
                 case GroupTypes.Square:
                     {
-                        GetAvailabilities().Single(a => a.Number.Equals(number)).SquareTypeSource = source;
+                        GetAvailabilities().Single(availability => availability.Number.Equals(number)).SquareTypeSource = source;
                         break;
                     }
                 case GroupTypes.Horizontal:
                     {
-                        GetAvailabilities().Single(a => a.Number.Equals(number)).HorizontalTypeSource = source;
+                        GetAvailabilities().Single(availability => availability.Number.Equals(number)).HorizontalTypeSource = source;
                         break;
                     }
                 case GroupTypes.Vertical:
                     {
-                        GetAvailabilities().Single(a => a.Number.Equals(number)).VerticalTypeSource = source;
+                        GetAvailabilities().Single(availability => availability.Number.Equals(number)).VerticalTypeSource = source;
                         break;
                     }
             }

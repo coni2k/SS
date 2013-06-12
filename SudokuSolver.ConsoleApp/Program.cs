@@ -13,6 +13,7 @@ namespace SudokuSolver.ConsoleApp
     /// </summary>
     class Program
     {
+        static int LineCounter { get; set; }
         static Sudoku CurrentSudoku { get; set; }
         static IEnumerable<Sudoku> Cases { get; set; }
 
@@ -20,7 +21,11 @@ namespace SudokuSolver.ConsoleApp
         {
             LoadCases();
 
-            NewSudoku();
+            // NewSudoku();
+
+            LoadCase(19);
+
+            ShowHints();
 
             ShowCommands(args);
         }
@@ -117,7 +122,7 @@ namespace SudokuSolver.ConsoleApp
 
         static void LoadSudoku(Sudoku sudoku)
         {
-            ClearScreen();
+            // ClearScreen();
 
             CurrentSudoku = sudoku;
             CurrentSudoku.SquareNumberChanged += new Square.SquareEventHandler(Sudoku_SquareNumberChanged);

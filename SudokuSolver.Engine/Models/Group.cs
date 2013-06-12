@@ -127,7 +127,7 @@ namespace SudokuSolver.Engine
             if (SquareNumberChanging != null)
                 SquareNumberChanging(this, square);
 
-            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.SudokuNumber));
+            // Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.SudokuNumber));
         }
 
         //void Square_AvailabilityRemoved(Square square)
@@ -176,19 +176,42 @@ namespace SudokuSolver.Engine
         //    }
         //}
 
-
-        void Square_NumberChanged(Square square)
+        void Square_NumberChanged(Square changedSquare)
         {
             if (SquareNumberChanged != null)
-                SquareNumberChanged(this, square);
+                SquareNumberChanged(this, changedSquare);
+
+            foreach (var square in Squares)
+            {
+                square.SetAvailability(changedSquare.SudokuNumber, this.GroupType, changedSquare);
+            }
+
+            var affectedGroups = Squares.SelectMany(square => square.SquareGroups); //.Distinct().OrderBy(group => group.Id).ThenBy(group => (int)group.GroupType);
+            affectedGroups = affectedGroups.Distinct();
+            affectedGroups = affectedGroups.OrderBy(group => group.Id);
+            //affectedGroups.ToList().Sort(group => new Comparison<int>( group => group.Id, );
+
+            foreach (var group in affectedGroups)
+            {
+                Console.WriteLine(group);
+                // Console.WriteLine("-");
+            }
+            Console.WriteLine("Type: {0} - Count: {1}", GroupType, affectedGroups.Count());
+
+            //changedSquare.SquareTypeGroup.Square_AvailabilityChanged(null);
+            //changedSquare.HorizantalTypeGroup.Square_AvailabilityChanged(null);
+            //changedSquare.VerticalTypeGroup.Square_AvailabilityChanged(null);
+
+            // Availability change completed
+            // CheckMethod2();
 
             //var list = Sudoku.GetHints().Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
             //Sudoku.GetHints().remmo .Where(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this));
 
-            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(square.SudokuNumber));
+            Sudoku.GetHints().RemoveAll(p => p.Type == HintTypes.Group && p.SquareGroup.Equals(this) && p.Number.Equals(changedSquare.SudokuNumber));
         }
 
-        void Square_AvailabilityChanged(Square square)
+        internal void Square_AvailabilityChanged(Square square)
         {
             if (SquareAvailabilityChanged != null)
                 SquareAvailabilityChanged(this, square);
@@ -211,6 +234,37 @@ namespace SudokuSolver.Engine
             //}
 
             // Check for hint
+
+            //foreach (var number in AvailableNumbers)
+            //{
+            //    var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
+
+            //    if (list.Count() == 1)
+            //    {
+            //        // TODO NEW HINT CODE HERE
+            //        // Update(item.Number., AssignTypes.Hint);
+            //        // Hint_SquareGroup = this;
+
+            //        // Get the item from the list
+            //        var item = list.Single();
+
+            //        if (HintFound != null)
+            //        {
+            //            System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.SquareId.ToString(), number.Value.ToString());
+            //            HintFound(new Hint(item, this, number, HintTypes.Group));
+            //        }
+            //    }
+            //}
+
+            // Console.WriteLine("CheckMethod2");
+            CheckMethod2();
+
+            // Sudoku.Group_Square_AvailabilityChangedCounter++;
+        }
+
+        internal void CheckMethod2()
+        {
+            Sudoku.Method2Counter++;
 
             foreach (var number in AvailableNumbers)
             {

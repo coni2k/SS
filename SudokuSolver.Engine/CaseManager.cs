@@ -18,7 +18,7 @@ namespace SudokuSolver.Engine
             var sudoku = new Sudoku()
             {
                 SudokuId = 1,
-                Title = "1. Type - Horizontal - 8"
+                Title = "METHOD 1 - Horizontal - 8"
             };
 
             // Update
@@ -47,7 +47,7 @@ namespace SudokuSolver.Engine
             var sudoku = new Sudoku();
 
             sudoku.SudokuId = 2;
-            sudoku.Title = "1. Type - Vertical - 8";
+            sudoku.Title = "METHOD 1 - Vertical - 8";
 
             // Square ID version
             sudoku.UpdateSquare(1, 1);
@@ -73,7 +73,7 @@ namespace SudokuSolver.Engine
             var sudoku = new Sudoku();
 
             sudoku.SudokuId = 3;
-            sudoku.Title = "1. Type - Square - 8";
+            sudoku.Title = "METHOD 1 - Square - 8";
 
             // Square ID version
             sudoku.UpdateSquare(1, 1);
@@ -99,17 +99,17 @@ namespace SudokuSolver.Engine
             var sudoku = new Sudoku();
 
             sudoku.SudokuId = 4;
-            sudoku.Title = "1. Type - Mixed - 8";
+            sudoku.Title = "METHOD 1 - Mixed - 8";
 
             // Square ID version
-            sudoku.UpdateSquare(1, 1);
-            sudoku.UpdateSquare(2, 2);
-            sudoku.UpdateSquare(3, 3);
-            sudoku.UpdateSquare(20, 7);
-            sudoku.UpdateSquare(24, 8);
-            sudoku.UpdateSquare(48, 4);
-            sudoku.UpdateSquare(51, 5);
-            sudoku.UpdateSquare(54, 6);
+            sudoku.UpdateSquare(10, 1);
+            sudoku.UpdateSquare(11, 2);
+            sudoku.UpdateSquare(12, 3);
+            sudoku.UpdateSquare(28, 4);
+            sudoku.UpdateSquare(31, 5);
+            sudoku.UpdateSquare(34, 6);
+            sudoku.UpdateSquare(2, 7);
+            sudoku.UpdateSquare(4, 8);
 
             sudoku.ToggleReady();
 
@@ -125,7 +125,7 @@ namespace SudokuSolver.Engine
             var sudoku = new Sudoku();
 
             sudoku.SudokuId = 5;
-            sudoku.Title = "2. Type - Straight 1";
+            sudoku.Title = "METHOD 2 - Straight 1";
 
             // Square ID version
             sudoku.UpdateSquare(13, 1);
@@ -564,7 +564,7 @@ namespace SudokuSolver.Engine
             sudoku.ToggleReady();
 
             // Square ID version
-            // sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(41, 1);
 
             return sudoku;
         }
@@ -573,24 +573,24 @@ namespace SudokuSolver.Engine
         {
             var list = new Collection<Sudoku>();
 
-            list.Add(GetCase1());
-            list.Add(GetCase2());
-            list.Add(GetCase3());
+            //list.Add(GetCase1());
+            //list.Add(GetCase2());
+            //list.Add(GetCase3());
             list.Add(GetCase4());
             list.Add(GetCase5());
-            list.Add(GetCase6());
-            list.Add(GetCase7());
-            list.Add(GetCase8());
-            list.Add(GetCase9());
-            list.Add(GetCase10());
-            list.Add(GetCase11());
-            list.Add(GetCase12());
-            list.Add(GetCase13());
-            list.Add(GetCase14());
-            list.Add(GetCase15());
-            // list.Add(GetCase16());
-            list.Add(GetCase17());
-            list.Add(GetCase18());
+            //list.Add(GetCase6());
+            //list.Add(GetCase7());
+            //list.Add(GetCase8());
+            //list.Add(GetCase9());
+            //list.Add(GetCase10());
+            //list.Add(GetCase11());
+            //list.Add(GetCase12());
+            //list.Add(GetCase13());
+            //list.Add(GetCase14());
+            //list.Add(GetCase15());
+            //// list.Add(GetCase16());
+            //list.Add(GetCase17());
+            //list.Add(GetCase18());
             list.Add(GetCase19());
 
             return list;

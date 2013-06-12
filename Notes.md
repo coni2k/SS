@@ -198,3 +198,31 @@ assign 0 first?
 collect the hints to be removed
 
 before assigning the number, call remove hints method?
+
+---
+first of all, we are calling some methods too much ?!?!?!
+
+source square + changed -> group-square + changed -> related squares + availability changed -> related squares groups 
+
+
+Stats:
+Group_Square_AvailabilityChangedCounter: 81
+Square_Group_SquareAvailabilityChangedCounter: 729
+
+23
+81
+
+checkmethod2 runs on affectedgroups
+checkmethod1 runs on all squares? - make it on sudoku level?
+
+hint removal is gone!! - be careful
+
+do we need groupavailability? and squareavailability?
+
+affectedsquares from this operation ?!
+
+clearsquare() just to put zeronumber
+and use this, if there is an existing number on the square
+and then we dont need square_numberchanging probably..
+
+after these, continue with hints..
