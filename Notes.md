@@ -231,3 +231,27 @@ after these, continue with hints..
 CHECK METHOD 1I KISALLTIK, BIR KONTROL ET BAKALIM, 81 YERINE SADECE AVAILABILITYLERI DEGISMIS OLANLAR DURTULUYOR SIMDI ?!?!?!?!?
 
 AYNI SEYI GROUP AVAILABILITY OLARAK TERKAR ET VE UYGULAMAYA BAK.. AMA KONTROLLERI NASIL YAPACAN, ONA DIKKAT ET!
+
+---
+groupavailability guzel oldu gibi..
+simdi kontrollerin tam olarak nerde olmasi gerektigine bak, misal direk bunun icinde olabilir mi - yoksa illa bu islem bittikten sonra mi olmasi lazim ? - burda olabiliyorsa zaten direk setavailability icine yerlestirsek te olur;
+            // New way
+            // Set availabilities of the related squares
+            foreach (var group in SquareGroups)
+            {
+                foreach (var square in group.Squares)
+                {
+                    square.SetAvailability(SudokuNumber, group.GroupType, this);
+
+                    foreach (var squareGroup in square.SquareGroups)
+                    {
+                        squareGroup.SetAvailability(SudokuNumber, square);
+                    }
+                }
+            }
+			
+uygulamayi temizle
+
+sonra da hintlerle devam et
+
+clear number() - clear availability() vs.

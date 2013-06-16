@@ -89,14 +89,14 @@ namespace SudokuSolver.Engine
             return availabilities;
         }
 
-        /// <summary>
-        /// Unavailable ones
-        /// </summary>
-        public IEnumerable<Availability> GetUsedAvailabilities()
-        {
-            return GetAvailabilities().Where(availability => !availability.IsAvailable);
-            //get { return GetAvailabilities().Where(x => !x.IsAvailable); }
-        }
+        ///// <summary>
+        ///// Unavailable ones
+        ///// </summary>
+        //public IEnumerable<Availability> GetUsedAvailabilities()
+        //{
+        //    return GetAvailabilities().Where(availability => !availability.IsAvailable);
+        //    //get { return GetAvailabilities().Where(x => !x.IsAvailable); }
+        //}
 
         #endregion
 
@@ -159,13 +159,20 @@ namespace SudokuSolver.Engine
             // New way
             // Set availabilities of the related squares
             foreach (var group in SquareGroups)
+            {
                 foreach (var square in group.Squares)
+                {
                     square.SetAvailability(SudokuNumber, group.GroupType, this);
 
-            // Get the affected groups
-            var affectedGroups = SquareGroups.SelectMany(group => group.Squares.SelectMany(square => square.SquareGroups)).Distinct(); // .OrderBy(group => group.Id).ThenBy(group => (int)group.GroupType);
+                    foreach (var squareGroup in square.SquareGroups)
+                    {
+                        squareGroup.SetAvailability(SudokuNumber, square);
+                    }
+                }
+            }
 
-            //// Method 1; Check whether there is any square that has only one availability left
+            // Method 1; Check whether there is any square that has only one availability left
+            
             //var squaresNeedToBeChecked = affectedGroups.SelectMany(group => group.Squares).Distinct().OrderBy(square => square.SquareId);
             //foreach (var square in squaresNeedToBeChecked)
             //    square.CheckMethod1(null, null); // Method 1
@@ -173,19 +180,33 @@ namespace SudokuSolver.Engine
             //foreach (var square in squaresNeedToBeChecked)
             //    Console.WriteLine(square);
             // Console.WriteLine("Count: {0}", squaresNeedToBeChecked.Count());
-
+            
             var sqrs = SquareGroups.SelectMany(group => group.Squares).Distinct();
             foreach (var sqr in sqrs)
                 sqr.CheckMethod1(null, null);
 
+            foreach (var group in SquareGroups)
+            {
+                group.SetAvailabilityObsolete(SudokuNumber, this);
+            }
+
+            // Get the affected groups
+            var affectedGroups = SquareGroups.SelectMany(group => group.Squares.SelectMany(square => square.SquareGroups)).Distinct(); // .OrderBy(group => group.Id).ThenBy(group => (int)group.GroupType);
+
             // Method 2; Check whether there is any group that has only one square left for any number
             foreach (var group in affectedGroups)
-                group.CheckMethod2();
-                //group.Square_AvailabilityChanged(this); // Method 2
+            {
+                // group.CheckMethod2();
+                
+                // group.CheckMethod2Obsolete2();
 
-            foreach (var group in affectedGroups)
-                Console.WriteLine(group);
-            Console.WriteLine("Type: {0} - Count: {1}", "", affectedGroups.Count());
+                group.CheckMethod2New();
+                //group.Square_AvailabilityChanged(this); // Method 2
+            }
+
+            //foreach (var group in affectedGroups)
+            //    Console.WriteLine(group);
+            // Console.WriteLine("Type: {0} - Count: {1}", "", affectedGroups.Count());
         }
 
         /// <summary>

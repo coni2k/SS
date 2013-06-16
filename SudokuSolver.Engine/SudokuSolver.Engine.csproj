@@ -59,6 +59,7 @@
     <Compile Include="CaseManager.cs" />
     <Compile Include="Models\Availability.cs" />
     <Compile Include="Models\AvailabilityDto.cs" />
+    <Compile Include="Models\GroupAvailability.cs" />
     <Compile Include="Models\HintDto.cs" />
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\SudokuDto.cs" />

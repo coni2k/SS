@@ -21,13 +21,13 @@ namespace SudokuSolver.ConsoleApp
         {
             LoadCases();
 
-            // NewSudoku();
+            NewSudoku();
 
-            LoadCase(19);
+            LoadCase(5);
 
             ShowHints();
 
-            ShowCommands(args);
+            ProcessCommand(args);
         }
 
         static void LoadCases()
@@ -39,7 +39,7 @@ namespace SudokuSolver.ConsoleApp
         /// Show available commands
         /// </summary>
         /// <param name="args"></param>
-        static void ShowCommands(string[] args)
+        static void ProcessCommand(string[] args)
         {
             string commandLine = "", parameters = "";
 
@@ -86,12 +86,14 @@ namespace SudokuSolver.ConsoleApp
 
                     case "sudoku": ShowSudoku(); break;
                     case "used": ShowUsedSquares(); break;
-                    case "availability": ShowAvailability(); break;
                     case "numbers": ShowNumbers(); break;
+                    case "availability": ShowAvailability(); break;
+                    case "groupavail": ShowGroupAvailabilities(); break;
+                    case "groupnumberavail": ShowGroupNumberAvailabilities(); break;
                     case "hints": ShowHints(); break;
                     case "clear": ClearScreen(); break;
 
-                    default: Help(); break;
+                    default: ShowHelp(); break;
                 }
 
             } while (true);
@@ -183,6 +185,12 @@ namespace SudokuSolver.ConsoleApp
             }
         }
 
+        static void ShowNumbers()
+        {
+            foreach (var number in CurrentSudoku.GetNumbers())
+                Console.WriteLine("Number: {0} - Counter: {1}", number.Value, number.Count);
+        }
+
         static void ShowUsedSquares()
         {
             foreach (var usedSquare in CurrentSudoku.GetUsedSquares())
@@ -214,10 +222,50 @@ namespace SudokuSolver.ConsoleApp
             }
         }
 
-        static void ShowNumbers()
+        /// <summary>
+        /// Show the availibility per group, per number
+        /// </summary>
+        static void ShowGroupAvailabilities()
         {
-            foreach (var number in CurrentSudoku.GetNumbers())
-                Console.WriteLine("Number: {0} - Counter: {1}", number.Value, number.Count);
+            foreach (var group in CurrentSudoku.Groups)
+            {
+                Console.Write("Id {0:D2} - Type {1}: ", group.Id, group.GroupType.ToString()[0]);
+                
+                var availabilityOutput = string.Join(" - ",
+                    group.AvailabilitiesObsolete.Select(availability =>
+                        string.Format("{0:D2}: {1}",
+                        availability.Number.Value, // 0
+                        availability.IsAvailable ? "X" : "."))); // 1
+                
+                Console.Write(availabilityOutput);
+
+                Console.WriteLine();
+            }
+        }
+
+        /// <summary>
+        /// Show the availibility per group, per number
+        /// </summary>
+        static void ShowGroupNumberAvailabilities()
+        {
+            foreach (var group in CurrentSudoku.Groups)
+            {
+                foreach (var availability in group.Availabilities)
+                {
+                    Console.Write("Id {0:D2} - Type {1}: ", group.Id, group.GroupType.ToString()[0]);
+
+                    var availabilityOutput = string.Join(" - ",
+                        availability.SquareAvailabilities.Select(squareAvailability =>
+                            string.Format("{0:D2} - {1:D2} - {2}",
+                            availability.Number.Value, // 0
+                            squareAvailability.Square.SquareId, // 1
+                            squareAvailability.IsAvailable ? "X" : "."))); // 2
+
+                    Console.Write(availabilityOutput);
+
+                    Console.WriteLine();
+                }
+            }
         }
 
         static void ShowHints()
@@ -234,7 +282,7 @@ namespace SudokuSolver.ConsoleApp
             Console.Clear();
         }
 
-        static void Help()
+        static void ShowHelp()
         {
             var sbOutput = new StringBuilder();
 
@@ -249,8 +297,10 @@ namespace SudokuSolver.ConsoleApp
             sbOutput.AppendLine().AppendLine("Display Commands");
             sbOutput.AppendLine(". sudoku");
             sbOutput.AppendLine(". used");
-            sbOutput.AppendLine(". availability");
             sbOutput.AppendLine(". numbers");
+            sbOutput.AppendLine(". availability");
+            sbOutput.AppendLine(". groupavail");
+            sbOutput.AppendLine(". groupnumberavail");
             sbOutput.AppendLine(". hints");
             sbOutput.AppendLine(". clear");
 

@@ -21,7 +21,7 @@ namespace SudokuSolver.Engine
 
         public AvailabilityDto(Availability availability)
         {
-            SquareId = availability.SquareId;
+            SquareId = availability.Square.SquareId;
             Value = availability.Number.Value;
             IsAvailable = availability.IsAvailable;
         }

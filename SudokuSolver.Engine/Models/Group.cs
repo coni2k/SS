@@ -8,11 +8,13 @@ namespace SudokuSolver.Engine
     /// <summary>
     /// Group of squares (for square, horizontal, vertical type)
     /// </summary>
-    public class Group
+    public partial class Group
     {
         #region - Members -
 
         private IEnumerable<Square> squares = null;
+        private ICollection<GroupAvailabilityObsolete> availabilitiesObsolete = null;
+        private ICollection<GroupAvailability> availabilities;
 
         #endregion
 
@@ -32,6 +34,11 @@ namespace SudokuSolver.Engine
         #region - Properties -
 
         /// <summary>
+        /// Parent sudoku class
+        /// </summary>
+        private Sudoku Sudoku { get; set; }
+
+        /// <summary>
         /// Id of the group
         /// </summary>
         public int Id { get; private set; }
@@ -40,11 +47,6 @@ namespace SudokuSolver.Engine
         /// Type of the group
         /// </summary>
         public GroupTypes GroupType { get; private set; }
-
-        /// <summary>
-        /// Parent sudoku class
-        /// </summary>
-        private Sudoku Sudoku { get; set; }
 
         /// <summary>
         /// List of squares that group contains
@@ -67,6 +69,15 @@ namespace SudokuSolver.Engine
                     square.NumberChanging += new Square.SquareEventHandler(Square_NumberChanging);
                     square.NumberChanged += new Square.SquareEventHandler(Square_NumberChanged);
                     square.AvailabilityAssigned += new Square.SquareEventHandler(Square_AvailabilityChanged);
+                }
+
+                // Availabilities
+                availabilitiesObsolete = new Collection<GroupAvailabilityObsolete>();
+                availabilities = new Collection<GroupAvailability>();
+                foreach (var number in Sudoku.GetNumbersExceptZero())
+                {
+                    availabilitiesObsolete.Add(new GroupAvailabilityObsolete(this, number));
+                    availabilities.Add(new GroupAvailability(this, number));
                 }
             }
         }
@@ -94,15 +105,25 @@ namespace SudokuSolver.Engine
             get { return Sudoku.GetNumbersExceptZero().Except(UsedNumbers); }
         }
 
+        public IEnumerable<GroupAvailabilityObsolete> AvailabilitiesObsolete
+        {
+            get { return availabilitiesObsolete; }
+        }
+
+        public IEnumerable<GroupAvailability> Availabilities
+        {
+            get { return availabilities; }
+        }
+
         #endregion
 
         #region - Constructors -
 
-        internal Group(int id, GroupTypes type, Sudoku sudoku)
+        internal Group(Sudoku sudoku, int id, GroupTypes type)
         {
+            Sudoku = sudoku;
             Id = id;
             GroupType = type;
-            Sudoku = sudoku;
             // squares = new Collection<Square>();
         }
 
@@ -257,41 +278,89 @@ namespace SudokuSolver.Engine
             //}
 
             // Console.WriteLine("CheckMethod2");
-            CheckMethod2();
+            // CheckMethod2();
 
             // Sudoku.Group_Square_AvailabilityChangedCounter++;
         }
 
-        internal void CheckMethod2()
+        //internal void CheckMethod2()
+        //{
+        //    Sudoku.Method2Counter++;
+
+        //    foreach (var number in AvailableNumbers)
+        //    {
+        //        var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
+
+        //        if (list.Count() == 1)
+        //        {
+        //            // TODO NEW HINT CODE HERE
+        //            // Update(item.Number., AssignTypes.Hint);
+        //            // Hint_SquareGroup = this;
+
+        //            // Get the item from the list
+        //            var item = list.Single();
+
+        //            if (HintFound != null)
+        //            {
+        //                System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.SquareId.ToString(), number.Value.ToString());
+        //                HintFound(new Hint(item, this, number, HintTypes.Group));
+        //            }
+        //        }
+        //    }
+        //}
+
+        internal void CheckMethod2Obsolete2()
         {
-            Sudoku.Method2Counter++;
-
-            foreach (var number in AvailableNumbers)
+            if (AvailabilitiesObsolete.Count(availability => availability.IsAvailable) == 1)
             {
-                var list = AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
-
-                if (list.Count() == 1)
+                if (HintFound != null)
                 {
-                    // TODO NEW HINT CODE HERE
-                    // Update(item.Number., AssignTypes.Hint);
-                    // Hint_SquareGroup = this;
+                    var lastAvailability = AvailabilitiesObsolete.Single(availability => availability.IsAvailable);
+                    var lastSquare = Squares.Single(square => square.IsAvailable);
 
-                    // Get the item from the list
-                    var item = list.Single();
+                    Console.WriteLine("P - Id: {0} - Value: {1} - Type: Group",  lastSquare.SquareId, lastAvailability.Number.Value);
+                    // System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.SquareId.ToString(), number.Value.ToString());
+                    // HintFound(new Hint(item, this, number, HintTypes.Group));
+                }           
+            }
+        }
+
+        internal void CheckMethod2New()
+        {
+            if (Availabilities.Count(availability => availability.AvailableSquareAvailabilities.Count() == 1) == 1)
+            {
+                if (HintFound != null)
+                {
+                    var lastAvailability = Availabilities.Single(availability => availability.AvailableSquareAvailabilities.Count() == 1);
+                    var lastSquareAvailability = lastAvailability.SquareAvailabilities.Single(squareAvailability => squareAvailability.IsAvailable);
+
+                    Console.WriteLine("P - Id: {0} - Value: {1} - Type: Group", lastSquareAvailability.Square.SquareId, lastAvailability.Number.Value);
 
                     if (HintFound != null)
-                    {
-                        System.Diagnostics.Debug.WriteLine("P - Id: {0} - Value: {1} - Type: Group", item.SquareId.ToString(), number.Value.ToString());
-                        HintFound(new Hint(item, this, number, HintTypes.Group));
-                    }
+                        HintFound(new Hint(lastSquareAvailability.Square, this, lastAvailability.Number, HintTypes.Group));
                 }
-            }
+            }        
         }
 
         // TODO IS THIS REALLY NECESSARY?
         public IEnumerable<Square> GetAvailableSquaresForNumber(SudokuNumber number)
         {
             return AvailableSquares.Where(s => s.GetAvailabilities().Any(a => a.Number.Equals(number) && a.IsAvailable));
+        }
+
+        internal void SetAvailabilityObsolete(SudokuNumber number, Square sourceSquare)
+        {
+            availabilitiesObsolete.Single(availability => availability.Number.Equals(number)).SourceSquare = sourceSquare;
+        }
+
+        internal void SetAvailability(SudokuNumber number, Square square)
+        {
+            availabilities
+                .Single(availability =>
+                    availability.Number.Equals(number))
+                .SquareAvailabilities
+                .Single(squareAvailability =>
+                    squareAvailability.Square.Equals(square)).Availability = false;
         }
 
         public override string ToString()

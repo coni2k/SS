@@ -7,8 +7,8 @@ namespace SudokuSolver.Engine
 {
     public class Availability
     {
-        private Square Square { get; set; }
-        public SudokuNumber Number { get; private set; }
+        internal Square Square { get; private set; }
+        internal SudokuNumber Number { get; private set; }
         internal Square SquareTypeSource { get; set; }
         internal Square HorizontalTypeSource { get; set; }
         internal Square VerticalTypeSource { get; set; }
@@ -17,11 +17,6 @@ namespace SudokuSolver.Engine
         {
             Square = square;
             Number = number;
-        }
-
-        public int SquareId
-        {
-            get { return Square.SquareId; }
         }
 
         public bool IsAvailable
