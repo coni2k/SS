@@ -53,7 +53,6 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets the groups that this square assigned to
         /// </summary>
-
         internal IEnumerable<Group> SquareGroups
         {
             get
@@ -157,12 +156,29 @@ namespace SudokuSolver.Engine
             //if (NumberChanged != null)
             //    NumberChanged(this);
 
-            // ... new way
+            // New way
+            // Set availabilities of the related squares
             foreach (var group in SquareGroups)
                 foreach (var square in group.Squares)
-                    square.SetAvailability(this.SudokuNumber, group.GroupType, this);
+                    square.SetAvailability(SudokuNumber, group.GroupType, this);
 
+            // Get the affected groups
             var affectedGroups = SquareGroups.SelectMany(group => group.Squares.SelectMany(square => square.SquareGroups)).Distinct(); // .OrderBy(group => group.Id).ThenBy(group => (int)group.GroupType);
+
+            //// Method 1; Check whether there is any square that has only one availability left
+            //var squaresNeedToBeChecked = affectedGroups.SelectMany(group => group.Squares).Distinct().OrderBy(square => square.SquareId);
+            //foreach (var square in squaresNeedToBeChecked)
+            //    square.CheckMethod1(null, null); // Method 1
+
+            //foreach (var square in squaresNeedToBeChecked)
+            //    Console.WriteLine(square);
+            // Console.WriteLine("Count: {0}", squaresNeedToBeChecked.Count());
+
+            var sqrs = SquareGroups.SelectMany(group => group.Squares).Distinct();
+            foreach (var sqr in sqrs)
+                sqr.CheckMethod1(null, null);
+
+            // Method 2; Check whether there is any group that has only one square left for any number
             foreach (var group in affectedGroups)
                 group.CheckMethod2();
                 //group.Square_AvailabilityChanged(this); // Method 2
@@ -170,14 +186,6 @@ namespace SudokuSolver.Engine
             foreach (var group in affectedGroups)
                 Console.WriteLine(group);
             Console.WriteLine("Type: {0} - Count: {1}", "", affectedGroups.Count());
-
-            var squaresNeedToBeChecked = affectedGroups.SelectMany(group => group.Squares).Distinct().OrderBy(square => square.SquareId);
-            foreach (var square in squaresNeedToBeChecked)
-                square.CheckMethod1(null, null); // Method 1
-
-            foreach (var square in squaresNeedToBeChecked)
-                Console.WriteLine(square);
-            Console.WriteLine("Count: {0}", squaresNeedToBeChecked.Count());
         }
 
         /// <summary>

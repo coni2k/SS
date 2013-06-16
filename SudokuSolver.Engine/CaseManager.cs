@@ -573,24 +573,24 @@ namespace SudokuSolver.Engine
         {
             var list = new Collection<Sudoku>();
 
-            //list.Add(GetCase1());
-            //list.Add(GetCase2());
-            //list.Add(GetCase3());
-            list.Add(GetCase4());
-            list.Add(GetCase5());
-            //list.Add(GetCase6());
-            //list.Add(GetCase7());
-            //list.Add(GetCase8());
-            //list.Add(GetCase9());
-            //list.Add(GetCase10());
-            //list.Add(GetCase11());
-            //list.Add(GetCase12());
-            //list.Add(GetCase13());
-            //list.Add(GetCase14());
-            //list.Add(GetCase15());
-            //// list.Add(GetCase16());
-            //list.Add(GetCase17());
-            //list.Add(GetCase18());
+            list.Add(GetCase1());
+            list.Add(GetCase2());
+            list.Add(GetCase3());
+            list.Add(GetCase4()); // Sample case for Method 1
+            list.Add(GetCase5()); // Sample case for Method 2
+            list.Add(GetCase6());
+            list.Add(GetCase7());
+            list.Add(GetCase8());
+            list.Add(GetCase9());
+            list.Add(GetCase10());
+            list.Add(GetCase11());
+            list.Add(GetCase12());
+            list.Add(GetCase13());
+            list.Add(GetCase14());
+            list.Add(GetCase15());
+            // list.Add(GetCase16());
+            list.Add(GetCase17());
+            list.Add(GetCase18());
             list.Add(GetCase19());
 
             return list;

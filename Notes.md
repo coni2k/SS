@@ -226,3 +226,8 @@ and use this, if there is an existing number on the square
 and then we dont need square_numberchanging probably..
 
 after these, continue with hints..
+
+---
+CHECK METHOD 1I KISALLTIK, BIR KONTROL ET BAKALIM, 81 YERINE SADECE AVAILABILITYLERI DEGISMIS OLANLAR DURTULUYOR SIMDI ?!?!?!?!?
+
+AYNI SEYI GROUP AVAILABILITY OLARAK TERKAR ET VE UYGULAMAYA BAK.. AMA KONTROLLERI NASIL YAPACAN, ONA DIKKAT ET!
