@@ -8,13 +8,14 @@ namespace SudokuSolver.Engine
     public class SquareDto
     {
         // TODO More validation rules?
-
+        
+        [Required]
         public int SquareId { get; set; }
 
         [Required]
         public int Value { get; set; }
 
-        public AssignTypes AssignType { get; set; }
+        public AssignTypes AssignType { get; private set; }
 
         // TODO Availabilities?
 

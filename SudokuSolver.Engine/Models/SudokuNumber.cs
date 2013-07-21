@@ -39,7 +39,7 @@ namespace SudokuSolver.Engine
 
         public int Count
         {
-            get { return Sudoku.GetSquares().Count(s => s.SudokuNumber.Equals(this)); }
+            get { return Sudoku.Squares.Count(s => s.SudokuNumber.Equals(this)); }
         }
 
         public override string ToString()

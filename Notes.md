@@ -255,3 +255,54 @@ uygulamayi temizle
 sonra da hintlerle devam et
 
 clear number() - clear availability() vs.
+
+---
+new set availabilityler calisiyor - sadece kontrollerin tam olarak nerede olmasi gerektigine bakiyoruz
+check1 iyi gibi ama check2 yi setavailabilitysi icine koyunca cok yamuk sonuclar verdi - nedir ne degildir bakmak lazim ama once guzel bir test ortami gerekiyor..
+
+bir de, o yamuk sonuclar icerisinde hint olmasi mumkun olmayan durumlar vardi. hemen yan tarafi dolu olan bir kareyi hint olarak gosteriyor?
+hint found demeden once diger availabilityleri de mi kontrol etmek gerekir?!
+
+---
+group availabilitylerle ilgili;
+aslinda ayni availability caselerini 3 farkli grup turunda tutuyor gibiyiz.
+square type, hor. vert. typelarinin hepsi aslinda ayni olasiliklari tutuyor gibi gorunuyor.
+haliyle eger birinde hint bulunacak olursa, diger 2 tipte de ayni hinti buluyor olacagiz.
+1. bunu teke dusurmenin bir faydasi var midir?
+2. ya da bu similarity aslinda baska bir duruma mi isaret ediyor? (bu availabilityleri aslinda sudoku seviyesinde tutuluyor olmasi gibi?)
+
+---
+hint removal
+
+square clear doesnt work
+
+group - check availability'yi simdilik set availability icinden cikaracagiz.
+orada kaldigi zaman soyle bir case olusuyor. bir rakami set ettigimizde, tek tek grup icinden availabilityleri set ederken,
+8. set sonrasinda, 9. kare hintmis gibi gorunuyor (tek bir square ile deneme yapildiginda acikca goruluyor).
+bu aslinda yanlis bir hint, sadece set etme isi bitmemis oldugu icin ortaya cikiyor.
+eger check isini set icinde yapacaksak, bu durumda, 9. kare icin availability set edildiginde, bu "yanlis hint"i de kaldirabiliyor olmamiz lazim.
+simdilik bununla ugrasmayi istemedigimizden dolayi simdilik check isini, setten sonra yapacagiz.
+her ihtimalde hint removal isleminin temiz olmasi lazim ve sonraki asamalarda bununla ilgileniyor olacagiz.
+hallolursa tekrar check + set group availability birlestirilebilir (bu arada square set + checkte benzer bir sorun yok - umarim ilerde de neden buna gerek olmadigini kolaylikla gorebiliyor olurum).
+
+square hintlerini tutma ile ilgil - her square hint type 1 ve hint type 2 sekilde iki olasi hinti de tutuyor olmali gibi?
+eger hintlerden biri gitse bile, digeri duruyorsa (ki sadece iki mi olabilir yoksa daha fazla da olabilir mi, bakmak lazim) hala hint olarak sayilmasi lazim.
+
+---
+clear availability ile devam ediyor olmamiz lazim..
+eskide numberchanging kullaniyorduk ama bunu da yine update square altindan digerlerine eriserek yapabiliriz..
+setavailability methodlarini mi kullanmali, yoksa clearavailability gibi farkli bir method mu yaratmali?
+
+---
+clear availability kismi da tamam gibi - numberchanging eventi yerine yeni yolu (direk) kullaniyoruz.
+tek sorun, square set availability icinde check availability var ve hint ariyor.. oysa bu sefer hint remove deniyor olmasi gerekiyordu..
+ozetle hint removal ile devam et! su anda yuksek ihtimalle duzgun calismiyor
+
+ayrica sudoku classi uzerinde biraz daha temizlik yapiyor olabiliriz
+
+bunlar da henuz kullanilmiyor;
+        public bool UseGroupSolvingMethod { get; set; }
+        public bool UseSquareSolvingMethod { get; set; }
+
+bir de, groupnumberavailabilityleri web tarafindan gostermek icin;
+[squareId'ler] karelere sirali - kare sirasi hep 1-9 - is avail degilse ustu cizili gibi dene bakalim ?!?!?

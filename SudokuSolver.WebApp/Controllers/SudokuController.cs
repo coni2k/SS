@@ -66,15 +66,15 @@ namespace SudokuSolver.WebApp.Controllers
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.GetSquares().Select(square => new SquareDto(square));
+            return sudoku.Squares.Select(square => new SquareDto(square));
         }
 
         // GET api/Sudoku/Numbers/1
-        public IEnumerable<SudokuNumber> GetNumbers(int sudokuId)
+        public IEnumerable<SudokuNumberDto> GetNumbers(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.GetNumbers();
+            return sudoku.Numbers.Select(sudokuNumber => new SudokuNumberDto(sudokuNumber));
         }
 
         // GET api/Sudoku/Hints/1
@@ -82,23 +82,23 @@ namespace SudokuSolver.WebApp.Controllers
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.GetHints().Select(hint => new HintDto(hint));
+            return sudoku.Hints.Select(hint => new HintDto(hint));
         }
 
         // GET api/Sudoku/Availabilities/1
-        public IEnumerable<AvailabilityDto> GetAvailabilities(int sudokuId)
+        public IEnumerable<SquareAvailabilityDto> GetSquareAvailabilities(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.GetAvailabilities().Select(availability => new AvailabilityDto(availability));
+            return sudoku.SquareAvailabilities.Select(availability => new SquareAvailabilityDto(availability));
         }
 
-        // GET api/Sudoku/GroupNumberAvailabilities/1
-        public IEnumerable<GroupNumberAvailabilityContainer> GetGroupNumberAvailabilities(int sudokuId)
+        // GET api/Sudoku/GetGroupNumberAvailabilities/1
+        public IEnumerable<GroupNumberAvailabilityDto> GetGroupNumberAvailabilities(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.GetGroupNumberAvailabilities();
+            return sudoku.GroupNumberAvailabilities.Select(availability => new GroupNumberAvailabilityDto(availability));
         }
 
         // PUT api/Sudoku/UpdateSquare/1/1

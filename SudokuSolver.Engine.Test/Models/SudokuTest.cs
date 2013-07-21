@@ -23,7 +23,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // Get the control square
-            var controlSquare = sudoku.GetSquares().Single(square => square.SquareId == 21);
+            var controlSquare = sudoku.Squares.Single(square => square.SquareId == 21);
             
             // Test
             // a. Control square's value
@@ -43,7 +43,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // Get the control square
-            var controlSquare = sudoku.GetSquares().Single(square => square.SquareId == 61);
+            var controlSquare = sudoku.Squares.Single(square => square.SquareId == 61);
 
             // Test
             // a. Control square's value
@@ -63,7 +63,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // Get the control square
-            var controlSquare = sudoku.GetSquares().Single(square => square.SquareId == 9);
+            var controlSquare = sudoku.Squares.Single(square => square.SquareId == 9);
 
             // Test
             // a. Control square's value
@@ -83,7 +83,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // Get the control square
-            var controlSquare = sudoku.GetSquares().Single(square => square.SquareId == 21);
+            var controlSquare = sudoku.Squares.Single(square => square.SquareId == 21);
 
             // Test
             // a. Control square's value
@@ -103,7 +103,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // Get the control square
-            var controlSquare = sudoku.GetSquares().Single(square => square.SquareId == 1);
+            var controlSquare = sudoku.Squares.Single(square => square.SquareId == 1);
 
             // Test
             // a. Control square's value
@@ -123,7 +123,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // Get the control square
-            var controlSquare = sudoku.GetSquares().Single(square => square.SquareId == 81);
+            var controlSquare = sudoku.Squares.Single(square => square.SquareId == 81);
 
             // Test
             // a. Control square's value
@@ -143,9 +143,9 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // Get the control squares
-            var controlSquare1 = sudoku.GetSquares().Single(square => square.SquareId == 1);
-            var controlSquare2 = sudoku.GetSquares().Single(square => square.SquareId == 31);
-            var controlSquare3 = sudoku.GetSquares().Single(square => square.SquareId == 54);
+            var controlSquare1 = sudoku.Squares.Single(square => square.SquareId == 1);
+            var controlSquare2 = sudoku.Squares.Single(square => square.SquareId == 31);
+            var controlSquare3 = sudoku.Squares.Single(square => square.SquareId == 54);
 
             // Test
             // a. Control squares values
@@ -167,10 +167,10 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // Get the control squares
-            var controlSquare1 = sudoku.GetSquares().Single(square => square.SquareId == 1);
-            var controlSquare2 = sudoku.GetSquares().Single(square => square.SquareId == 3);
-            var controlSquare3 = sudoku.GetSquares().Single(square => square.SquareId == 7);
-            var controlSquare4 = sudoku.GetSquares().Single(square => square.SquareId == 9);
+            var controlSquare1 = sudoku.Squares.Single(square => square.SquareId == 1);
+            var controlSquare2 = sudoku.Squares.Single(square => square.SquareId == 3);
+            var controlSquare3 = sudoku.Squares.Single(square => square.SquareId == 7);
+            var controlSquare4 = sudoku.Squares.Single(square => square.SquareId == 9);
 
             // Test
             // a. Control squares values

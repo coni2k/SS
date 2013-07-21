@@ -19,7 +19,7 @@
         apiUrlSquares = function (sudokuId) { return apiUrlSudokuRoot + 'GetSquares/' + sudokuId; },
         apiUrlNumbers = function (sudokuId) { return apiUrlSudokuRoot + 'GetNumbers/' + sudokuId; },
         apiUrlHints = function (sudokuId) { return apiUrlSudokuRoot + 'GetHints/' + sudokuId; },
-        apiUrlAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetAvailabilities/' + sudokuId; },
+        apiUrlAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetSquareAvailabilities/' + sudokuId; },
         //var apiUrlAvailabilities2 = function (sudokuId) { return apiUrlSudokuRoot + 'availabilities/' + sudokuId; },
         apiUrlGroupNumberAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetGroupNumberAvailabilities/' + sudokuId; },
 

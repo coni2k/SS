@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace SudokuSolver.Engine
 {
@@ -22,13 +19,13 @@ namespace SudokuSolver.Engine
         [Required]
         public int Size { get; set; }
 
-        public int SquaresLeft { get; set; }
+        public int SquaresLeft { get; private set; }
+        
+        public bool Ready { get; private set; }
+        
+        public bool AutoSolve { get; private set; }
 
-        public bool Ready { get; set; }
-
-        public bool AutoSolve { get; set; }
-
-        public SudokuDto() { }
+        public SudokuDto() {}
 
         public SudokuDto(Sudoku sudoku)
         {

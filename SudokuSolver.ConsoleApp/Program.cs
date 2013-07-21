@@ -87,9 +87,8 @@ namespace SudokuSolver.ConsoleApp
                     case "sudoku": ShowSudoku(); break;
                     case "used": ShowUsedSquares(); break;
                     case "numbers": ShowNumbers(); break;
-                    case "availability": ShowAvailability(); break;
-                    case "groupavail": ShowGroupAvailabilities(); break;
-                    case "groupnumberavail": ShowGroupNumberAvailabilities(); break;
+                    case "avail1": ShowSquareAvailabilities(); break;
+                    case "avail2": ShowGroupNumberAvailabilities(); break;
                     case "hints": ShowHints(); break;
                     case "clear": ClearScreen(); break;
 
@@ -164,7 +163,7 @@ namespace SudokuSolver.ConsoleApp
         static void ShowSudoku()
         {
             // Loop through horizontal squares
-            foreach (var group in CurrentSudoku.GetHorizontalTypeGroups())
+            foreach (var group in CurrentSudoku.HorizontalTypeGroups)
             {
                 // Divide the groups into square root sized groups
                 var squareRootGroups = new Collection<IEnumerable<Square>>();
@@ -187,57 +186,36 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowNumbers()
         {
-            foreach (var number in CurrentSudoku.GetNumbers())
+            foreach (var number in CurrentSudoku.Numbers)
                 Console.WriteLine("Number: {0} - Counter: {1}", number.Value, number.Count);
         }
 
         static void ShowUsedSquares()
         {
-            foreach (var usedSquare in CurrentSudoku.GetUsedSquares())
+            foreach (var usedSquare in CurrentSudoku.UsedSquares)
                 Console.WriteLine("  Id {0:D2}: {1} - {2}", usedSquare.SquareId, usedSquare.SudokuNumber.Value, usedSquare.AssignType);
         }
 
         /// <summary>
         /// Show the availibility per square, per number
         /// </summary>
-        static void ShowAvailability()
+        static void ShowSquareAvailabilities()
         {
             // Header; display the sudoku numbers
             Console.Write("        "); // Necessary to make the starting points equal - TODO This should check the length of the squareText?
-            foreach (var number in CurrentSudoku.GetNumbersExceptZero())
+            foreach (var number in CurrentSudoku.NumbersExceptZero)
                 Console.Write(" | {0}", number.Value);
             Console.WriteLine();
 
             // Details
-            foreach (var square in CurrentSudoku.GetSquares())
+            foreach (var square in CurrentSudoku.Squares)
             {
                 // Square text: Square id + value
                 Console.Write("Id {0:D2}: {1}", square.SquareId, square.SudokuNumber.Value);
 
                 // Availability per number; "X" for available squares, "." for non-available ones
-                foreach (var number in CurrentSudoku.GetNumbersExceptZero())
+                foreach (var number in CurrentSudoku.NumbersExceptZero)
                     Console.Write(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
-
-                Console.WriteLine();
-            }
-        }
-
-        /// <summary>
-        /// Show the availibility per group, per number
-        /// </summary>
-        static void ShowGroupAvailabilities()
-        {
-            foreach (var group in CurrentSudoku.Groups)
-            {
-                Console.Write("Id {0:D2} - Type {1}: ", group.Id, group.GroupType.ToString()[0]);
-                
-                var availabilityOutput = string.Join(" - ",
-                    group.AvailabilitiesObsolete.Select(availability =>
-                        string.Format("{0:D2}: {1}",
-                        availability.Number.Value, // 0
-                        availability.IsAvailable ? "X" : "."))); // 1
-                
-                Console.Write(availabilityOutput);
 
                 Console.WriteLine();
             }
@@ -250,14 +228,14 @@ namespace SudokuSolver.ConsoleApp
         {
             foreach (var group in CurrentSudoku.Groups)
             {
-                foreach (var availability in group.Availabilities)
+                foreach (var groupNumber in group.GroupNumbers)
                 {
                     Console.Write("Id {0:D2} - Type {1}: ", group.Id, group.GroupType.ToString()[0]);
 
                     var availabilityOutput = string.Join(" - ",
-                        availability.SquareAvailabilities.Select(squareAvailability =>
+                        groupNumber.Availabilities.Select(squareAvailability =>
                             string.Format("{0:D2} - {1:D2} - {2}",
-                            availability.Number.Value, // 0
+                            groupNumber.Number.Value, // 0
                             squareAvailability.Square.SquareId, // 1
                             squareAvailability.IsAvailable ? "X" : "."))); // 2
 
@@ -270,10 +248,10 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowHints()
         {
-            if (CurrentSudoku.GetHints().Count() == 0)
+            if (CurrentSudoku.Hints.Count() == 0)
                 Console.WriteLine("There are no hints");
 
-            foreach (var hintSquare in CurrentSudoku.GetHints().OrderBy(hintSquare => hintSquare.Square.SquareId))
+            foreach (var hintSquare in CurrentSudoku.Hints.OrderBy(hintSquare => hintSquare.Square.SquareId))
                 Console.WriteLine("P Id {0:D2}: {1}", hintSquare.Square.SquareId, hintSquare.Number.Value);
         }
 
@@ -298,9 +276,8 @@ namespace SudokuSolver.ConsoleApp
             sbOutput.AppendLine(". sudoku");
             sbOutput.AppendLine(". used");
             sbOutput.AppendLine(". numbers");
-            sbOutput.AppendLine(". availability");
-            sbOutput.AppendLine(". groupavail");
-            sbOutput.AppendLine(". groupnumberavail");
+            sbOutput.AppendLine(". avail1");
+            sbOutput.AppendLine(". avail2");
             sbOutput.AppendLine(". hints");
             sbOutput.AppendLine(". clear");
 

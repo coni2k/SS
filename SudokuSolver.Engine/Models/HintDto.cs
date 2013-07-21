@@ -1,22 +1,18 @@
-﻿using System.Collections.Generic;
-
-namespace SudokuSolver.Engine
+﻿namespace SudokuSolver.Engine
 {
     public class HintDto
     {
         #region - Properties -
 
-        public int SquareId { get; set; }
+        public int SquareId { get; private set; }
 
-        public int Value { get; set; }
+        public int Value { get; private set; }
 
-        public HintTypes Type { get; set; }
+        public HintTypes Type { get; private set; }
 
         #endregion
 
         #region - Constructors -
-
-        public HintDto() { }
 
         public HintDto(Hint hint)
         {
