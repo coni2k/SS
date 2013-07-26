@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SudokuSolver.Engine
 {
-    public class SudokuNumber
+    public partial class SudokuNumber
     {
         #region - Properties -
 
@@ -22,6 +22,11 @@ namespace SudokuSolver.Engine
         /// This is a special flag for zero value, which will be treated differently in many cases
         /// </summary>
         internal bool IsZero { get { return this == Sudoku.ZeroNumber; } }
+
+        /// <summary>
+        /// Determines whether the square value or it's availabilities were updated since the last UpdateSquare method call.
+        /// </summary>
+        internal bool Updated { get; set; }
 
         #endregion
 

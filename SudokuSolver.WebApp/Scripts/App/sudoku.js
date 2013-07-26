@@ -16,12 +16,19 @@
         apiUrlResetList = apiUrlSudokuRoot + 'ResetList',
 
         /* Sudoku level - get */
-        apiUrlSquares = function (sudokuId) { return apiUrlSudokuRoot + 'GetSquares/' + sudokuId; },
-        apiUrlNumbers = function (sudokuId) { return apiUrlSudokuRoot + 'GetNumbers/' + sudokuId; },
+        apiUrlAllNumbers = function (sudokuId) { return apiUrlSudokuRoot + 'GetNumbers/' + sudokuId; },
+        apiUrlUpdatedNumbers = function (sudokuId) { return apiUrlSudokuRoot + 'GetUpdatedNumbers/' + sudokuId; },
+
+        apiUrlAllSquares = function (sudokuId) { return apiUrlSudokuRoot + 'GetSquares/' + sudokuId; },
+        apiUrlUpdatedSquares = function (sudokuId) { return apiUrlSudokuRoot + 'GetUpdatedSquares/' + sudokuId; },
+
+        apiUrlAllSquareAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetSquareAvailabilities/' + sudokuId; },
+        apiUrlUpdatedSquareAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetUpdatedSquareAvailabilities/' + sudokuId; },
+
+        apiUrlAllGroupNumberAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetGroupNumberAvailabilities/' + sudokuId; },
+        apiUrlUpdatedGroupNumberAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetUpdatedGroupNumberAvailabilities/' + sudokuId; },
+
         apiUrlHints = function (sudokuId) { return apiUrlSudokuRoot + 'GetHints/' + sudokuId; },
-        apiUrlAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetSquareAvailabilities/' + sudokuId; },
-        //var apiUrlAvailabilities2 = function (sudokuId) { return apiUrlSudokuRoot + 'availabilities/' + sudokuId; },
-        apiUrlGroupNumberAvailabilities = function (sudokuId) { return apiUrlSudokuRoot + 'GetGroupNumberAvailabilities/' + sudokuId; },
 
         /* Sudoku level - post */
         apiUrlPutSquare = function (sudokuId, squareId) { return apiUrlSudokuRoot + 'PutSquare/' + sudokuId + '/' + squareId; },
@@ -31,7 +38,8 @@
         apiUrlReset = function (sudokuId) { return apiUrlSudokuRoot + 'Reset/' + sudokuId; },
 
         /* Enums */
-        AssignTypes = { 'Initial': 0, 'User': 1, 'Hint': 2, 'Solver': 3 };
+        AssignTypes = { 'Initial': 0, 'User': 1, 'Hint': 2, 'Solver': 3 },
+        DataRequestTypes = { 'All': 0, 'Updated': 1 };
 
     // Bind knockout
     var sudokuViewModel = new SudokuViewModel();
@@ -261,12 +269,6 @@
                             var availability = new Availability(square);
                             availability.Value = availabilityCounter + 1;
                             square.Availabilities.push(availability);
-
-                            // TODO NEW BLOCK!
-                            // Create availability2 item
-                            //var availability2 = new Availability2();
-                            //availability2.Value = availabilityCounter + 1;
-                            //square.Availabilities2.push(availability2);
                         }
 
                         group.Squares.push(square);
@@ -343,7 +345,7 @@
             document.title = 'Sudoku Solver - Sudoku - ' + self.SelectedSudoku().SudokuId();
 
             // Load details
-            self.SelectedSudoku().LoadDetails();
+            self.SelectedSudoku().LoadDetails(DataRequestTypes.All);
         }
 
         self.LoadSudokus(); // Async false
@@ -578,7 +580,7 @@
             var squareDto = JSON.stringify({ SudokuId: self.SudokuId(), SquareId: square.SquareId, Value: newValue });
 
             // Put + load
-            putData(apiUrlPutSquare(self.SudokuId(), square.SquareId), squareDto, function () { self.LoadDetails(); });
+            putData(apiUrlPutSquare(self.SudokuId(), square.SquareId), squareDto, function () { self.LoadDetails(DataRequestTypes.Updated); });
         };
 
         // Remove the value of selected square
@@ -626,14 +628,14 @@
 
                 // If autosolve, load details
                 if (self.AutoSolve()) {
-                    self.LoadDetails();
+                    self.LoadDetails(DataRequestTypes.Updated);
                 }
             });
         };
 
         // Solve
         self.Solve = function () {
-            postData(apiUrlSolve(self.SudokuId()), null, function () { self.LoadDetails(); });
+            postData(apiUrlSolve(self.SudokuId()), null, function () { self.LoadDetails(DataRequestTypes.Updated); });
         };
 
         // Reset
@@ -665,7 +667,7 @@
                 buttons: {
                     'Reset': function () {
                         $(this).dialog('close');
-                        postData(apiUrlReset(self.SudokuId()), null, function () { self.LoadDetails(); });
+                        postData(apiUrlReset(self.SudokuId()), null, function () { self.LoadDetails(DataRequestTypes.All); });
                     },
                     Cancel: function () {
                         $(this).dialog('close');
@@ -675,30 +677,33 @@
         };
 
         // Load methods
-        self.LoadDetails = function () {
-
-            // Load squares
-            self.LoadSquares();
+        self.LoadDetails = function (type) {
 
             // Load numbers
-            self.LoadNumbers();
+            self.LoadNumbers(type);
+
+            // Load squares
+            self.LoadSquares(type);
+
+            // Load square availabilities
+            self.LoadSquareAvailabilities(type);
+
+            // Load group number availabilities
+            // self.LoadGroupNumberAvailabilities(type);
 
             // Load hints
             self.LoadHints();
-
-            // Load availabilities
-            self.LoadAvailabilities();
-
-            // Load availabilities
-            // self.LoadAvailabilities2();
-
-            // Load group number availabilities
-            // self.LoadGroupNumberAvailabilities();
         };
 
-        self.LoadSquares = function () {
+        self.LoadSquares = function (type) {
 
-            getData(apiUrlSquares(self.SudokuId()), function (squareList) {
+            // Determine the url based on the type
+            var apiUrl = type === DataRequestTypes.All
+                ? apiUrlAllSquares(self.SudokuId())
+                : apiUrlUpdatedSquares(self.SudokuId());
+
+            // Get the squares
+            getData(apiUrl, function (squareList) {
 
                 Enumerable.From(squareList).ForEach(function (squareItem) {
 
@@ -710,16 +715,21 @@
             });
         };
 
-        self.LoadNumbers = function () {
+        self.LoadNumbers = function (type) {
 
-            // Get the numbers from the server
-            getData(apiUrlNumbers(self.SudokuId()), function (numberList) {
+            // Determine the url based on the type
+            var apiUrl = type === DataRequestTypes.All
+                ? apiUrlAllNumbers(self.SudokuId())
+                : apiUrlUpdatedNumbers(self.SudokuId());
+
+            // Get the numbers
+            getData(apiUrl, function (numberList) {
 
                 // Zero value (SquaresLeft on detailsPanel)
                 var zeroNumber = numberList.splice(0, 1);
 
                 // TODO This is already assigned ?!
-                // self.SquaresLeft(zeroNumber[0].Count);
+                self.SquaresLeft(zeroNumber[0].Count);
 
                 // Count of other numbers
                 Enumerable.From(numberList).ForEach(function (numberItem) {
@@ -734,6 +744,57 @@
                             }
                         });
                     });
+                });
+            });
+        };
+
+        self.LoadSquareAvailabilities = function (type) {
+
+            // Determine the url based on the type
+            var apiUrl = type === DataRequestTypes.All
+                ? apiUrlAllSquareAvailabilities(self.SudokuId())
+                : apiUrlUpdatedSquareAvailabilities(self.SudokuId());
+
+            // Get the availabilities
+            getData(apiUrl, function (availabilityList) {
+
+                Enumerable.From(availabilityList).ForEach(function (availabilityItem) {
+
+                    // Get the square
+                    var square = self.FindSquareBySquareId(availabilityItem.SquareId);
+
+                    // Get the availability
+                    var availability = Enumerable.From(square.Availabilities).Single(function (availability) {
+                        return availability.Value === availabilityItem.Value;
+                    });
+
+                    // Set IsAvailable
+                    availability.IsAvailable(availabilityItem.IsAvailable);
+
+                });
+            });
+        };
+
+        self.LoadGroupNumberAvailabilities = function () {
+
+            // Determine the url based on the type
+            var apiUrl = type === DataRequestTypes.All
+                ? apiUrlAllGroupNumberAvailabilities(self.SudokuId())
+                : apiUrlUpdatedGroupNumberAvailabilities(self.SudokuId());
+            
+            // Get the availabilities
+            getData(apiUrl, function (list) {
+
+                self.GroupNumberAvailabilities([]);
+
+                Enumerable.From(list).ForEach(function (groupNumberAvailabilityItem) {
+
+                    var groupNumberAvailability = new GroupNumberAvailability();
+                    groupNumberAvailability.GroupId = groupNumberAvailabilityItem.GroupId;
+                    groupNumberAvailability.Number = groupNumberAvailabilityItem.Number;
+                    groupNumberAvailability.Count = groupNumberAvailabilityItem.Count;
+                    self.GroupNumberAvailabilities.push(groupNumberAvailability);
+
                 });
             });
         };
@@ -763,70 +824,6 @@
                 });
             });
         };
-
-        self.LoadAvailabilities = function () {
-
-            // Get the data
-            getData(apiUrlAvailabilities(self.SudokuId()), function (availabilityList) {
-
-                Enumerable.From(availabilityList).ForEach(function (availabilityItem) {
-
-                    // Get the square
-                    var square = self.FindSquareBySquareId(availabilityItem.SquareId);
-
-                    // Get the availability
-                    var availability = Enumerable.From(square.Availabilities).Single(function (availability) {
-                        return availability.Value === availabilityItem.Value;
-                    });
-
-                    // Set IsAvailable
-                    availability.IsAvailable(availabilityItem.IsAvailable);
-
-                });
-            });
-        };
-
-        //self.LoadAvailabilities2 = function () {
-
-        //    getData(apiUrlAvailabilities2(self.SudokuId()), function (list) {
-
-        //        $.each(list, function () {
-
-        //            //Number
-        //            var number = this.Number;
-
-        //            //Find the square
-        //            var matchedSquare = self.FindSquareBySquareId(this.SquareId);
-
-        //            //Find the availability
-        //            var matched = ko.utils.arrayFirst(matchedSquare.Availabilities2(), function (availability2) {
-        //                return availability2.Value === number;
-        //            });
-
-        //            //Update
-        //            matched.IsAvailable(this.IsAvailable);
-
-        //        });
-        //    });
-        //}
-
-        self.LoadGroupNumberAvailabilities = function () {
-
-            getData(apiUrlGroupNumberAvailabilities(self.SudokuId()), function (list) {
-
-                self.GroupNumberAvailabilities([]);
-
-                Enumerable.From(list).ForEach(function (groupNumberAvailabilityItem) {
-
-                    var groupNumberAvailability = new GroupNumberAvailability();
-                    groupNumberAvailability.GroupId = groupNumberAvailabilityItem.GroupId;
-                    groupNumberAvailability.Number = groupNumberAvailabilityItem.Number;
-                    groupNumberAvailability.Count = groupNumberAvailabilityItem.Count;
-                    self.GroupNumberAvailabilities.push(groupNumberAvailability);
-
-                });
-            });
-        };
     }
 
     function ValueGrid(squareGroups) {
@@ -844,14 +841,6 @@
         self.Template = 'squareAvailabilitiesTemplate';
         self.Visible = ko.observable(true);
     }
-
-    //function Availability2Grid(groups) {
-    //    var self = this;
-    //    self.Groups = ko.observableArray(groups);
-    //    self.DisplayMode = 'availability2';
-    //    //self.Visible = ko.observable(true);
-    //    self.Visible = true; //ko.observable(true);
-    //}
 
     function IDGrid(squareGroups) {
         var self = this;
@@ -890,7 +879,6 @@
         // self.IsUpdateable = ko.computed(function () { return !(self.Group.Sudoku.Ready() && self.AssignType() === 0 && !self.IsAvailable()); });
 
         self.Availabilities = [];
-        //self.Availabilities2 = ko.observableArray([]);
 
         // Passive select
         self.IsPassiveSelected = ko.observable(false);
@@ -1039,12 +1027,6 @@
                 + (!self.IsAvailable() ? ' unavailable_group' : '');
         });
     }
-
-    //function Availability2() {
-    //    var self = this;
-    //    self.Value = 0;
-    //    self.IsAvailable = ko.observable(true);
-    //}
 
     function GroupNumberAvailability() {
         var self = this;

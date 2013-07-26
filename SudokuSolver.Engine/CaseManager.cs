@@ -564,7 +564,7 @@ namespace SudokuSolver.Engine
             // sudoku.ToggleReady();
 
             // Square ID version
-            // sudoku.UpdateSquare(13, 1);
+            sudoku.UpdateSquare(13, 1);
 
             return sudoku;
         }

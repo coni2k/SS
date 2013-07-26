@@ -306,3 +306,15 @@ bunlar da henuz kullanilmiyor;
 
 bir de, groupnumberavailabilityleri web tarafindan gostermek icin;
 [squareId'ler] karelere sirali - kare sirasi hep 1-9 - is avail degilse ustu cizili gibi dene bakalim ?!?!?
+
+check test case 14 + 15;
+. these cases were wrong till we start holding hint on the square - after that change these cases were fixed.
+on the other hand, we dont hold the hint on the square at the moment
+
+CONTINUE WITH;
+hint remove!
+update square method optimization!
+draw groupnumberavailabilities on the client!
+
+usings;
+http://stackoverflow.com/questions/125319/should-usings-be-inside-or-outside-the-namespace

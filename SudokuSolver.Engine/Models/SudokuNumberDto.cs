@@ -1,19 +1,22 @@
 ﻿namespace SudokuSolver.Engine
 {
-    public class SudokuNumberDto
+    public partial class SudokuNumber
     {
-        #region - Properties -
-
-        public int Value { get; private set; }
-        
-        public int Count { get; private set; }
-
-        #endregion
-
-        public SudokuNumberDto(SudokuNumber sudokuNumber)
+        public class SudokuNumberDto
         {
-            Value = sudokuNumber.Value;
-            Count = sudokuNumber.Count;
+            #region - Properties -
+
+            public int Value { get; private set; }
+
+            public int Count { get; private set; }
+
+            #endregion
+
+            public SudokuNumberDto(SudokuNumber sudokuNumber)
+            {
+                Value = sudokuNumber.Value;
+                Count = sudokuNumber.Count;
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace SudokuSolver.Engine
 {
-    public class Hint
+    public partial class Hint
     {
         #region - Events -
 

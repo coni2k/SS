@@ -7,8 +7,8 @@ namespace SudokuSolver.Engine
 {
     public partial class Square
     {
-        private ICollection<Group> squareGroups = null;
-        private ICollection<SquareAvailability> availabilities = null;
+        private ICollection<Group> squareGroups;
+        private ICollection<SquareAvailability> availabilities;
 
         #region - Events -
 
@@ -69,7 +69,6 @@ namespace SudokuSolver.Engine
         /// </summary>
         public bool IsAvailable
         {
-            // get { return SudokuNumber != null && SudokuNumber.IsZero; }
             get { return SudokuNumber.IsZero; }
         }
 
@@ -83,6 +82,11 @@ namespace SudokuSolver.Engine
         {
             get { return availabilities; }
         }
+
+        /// <summary>
+        /// Determines whether the square value or it's availabilities were updated since the last UpdateSquare method call.
+        /// </summary>
+        internal bool Updated { get; set; }
 
         #endregion
 
@@ -165,6 +169,9 @@ namespace SudokuSolver.Engine
             // Method 2; Check whether there is any group that has only one square left for any number
             foreach (var group in affectedGroups)
                 group.CheckGroupNumberAvailabilities();
+
+            // Set is dirty
+            Updated = true;
         }
 
         /// <summary>
@@ -192,24 +199,8 @@ namespace SudokuSolver.Engine
             if (number.IsZero)
                 return;
 
-            switch (type)
-            {
-                case GroupTypes.Square:
-                    {
-                        Availabilities.Single(availability => availability.Number.Equals(number)).SquareTypeSource = source;
-                        break;
-                    }
-                case GroupTypes.Horizontal:
-                    {
-                        Availabilities.Single(availability => availability.Number.Equals(number)).HorizontalTypeSource = source;
-                        break;
-                    }
-                case GroupTypes.Vertical:
-                    {
-                        Availabilities.Single(availability => availability.Number.Equals(number)).VerticalTypeSource = source;
-                        break;
-                    }
-            }
+            // Set the availability
+            Availabilities.Single(availability => availability.Number.Equals(number)).SetAvailability(type, source);
 
             // Search for hint
             CheckSquareAvailabilities();
@@ -217,7 +208,7 @@ namespace SudokuSolver.Engine
 
         internal void CheckSquareAvailabilities()
         {
-            Sudoku.Method1Counter++;
+            Sudoku.SquareAvailabilityChangedCounter++;
 
             // If it's not available, nothing to check
             if (!IsAvailable)

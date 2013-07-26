@@ -275,7 +275,7 @@ namespace SudokuSolver.Engine.Test
             }
             catch (Exception ex)
             {
-                Assert.IsNotInstanceOfType(ex, typeof(UnitTestAssertException));
+                Assert.IsInstanceOfType(ex, typeof(AssertFailedException));
             }
         }
 
@@ -291,7 +291,7 @@ namespace SudokuSolver.Engine.Test
             }
             catch (Exception ex)
             {
-                Assert.IsNotInstanceOfType(ex, typeof(UnitTestAssertException));
+                Assert.IsInstanceOfType(ex, typeof(AssertFailedException));
             }
         }
 

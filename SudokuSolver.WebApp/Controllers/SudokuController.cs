@@ -11,19 +11,19 @@ namespace SudokuSolver.WebApp.Controllers
     public class SudokuController : BaseController
     {
         // GET api/Sudoku
-        public IEnumerable<SudokuDto> GetSudokuList()
+        public IEnumerable<Sudoku.SudokuDto> GetSudokuList()
         {
-            return Cache.SudokuCases.Select(sudoku => new SudokuDto(sudoku));
+            return Cache.SudokuCases.Select(sudoku => new Sudoku.SudokuDto(sudoku));
         }
 
         // GET api/Sudoku/1
-        public SudokuDto GetSudoku(int sudokuId)
+        public Sudoku.SudokuDto GetSudoku(int sudokuId)
         {
-            return new SudokuDto(GetSudokuItem(sudokuId));
+            return new Sudoku.SudokuDto(GetSudokuItem(sudokuId));
         }
 
         // POST api/Sudoku/PostSudoku
-        public HttpResponseMessage PostSudoku(SudokuDto sudokuDto)
+        public HttpResponseMessage PostSudoku(Sudoku.SudokuDto sudokuDto)
         {
             if (!ModelState.IsValid)
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid sudoku"));
@@ -61,36 +61,52 @@ namespace SudokuSolver.WebApp.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        // GET api/Sudoku/Squares/1
-        public IEnumerable<SquareDto> GetSquares(int sudokuId)
+        // GET api/Sudoku/GetNumbers/1
+        public IEnumerable<SudokuNumber.SudokuNumberDto> GetNumbers(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.Squares.Select(square => new SquareDto(square));
+            return sudoku.Numbers.Select(sudokuNumber => new SudokuNumber.SudokuNumberDto(sudokuNumber));
         }
 
-        // GET api/Sudoku/Numbers/1
-        public IEnumerable<SudokuNumberDto> GetNumbers(int sudokuId)
+        // GET api/Sudoku/GetUpdatedNumbers/1
+        public IEnumerable<SudokuNumber.SudokuNumberDto> GetUpdatedNumbers(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.Numbers.Select(sudokuNumber => new SudokuNumberDto(sudokuNumber));
+            return sudoku.UpdatedNumbers.Select(sudokuNumber => new SudokuNumber.SudokuNumberDto(sudokuNumber));
         }
 
-        // GET api/Sudoku/Hints/1
-        public IEnumerable<HintDto> GetHints(int sudokuId)
+        // GET api/Sudoku/GetSquares/1
+        public IEnumerable<Square.SquareDto> GetSquares(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.Hints.Select(hint => new HintDto(hint));
+            return sudoku.Squares.Select(square => new Square.SquareDto(square));
         }
 
-        // GET api/Sudoku/Availabilities/1
+        // GET api/Sudoku/GetUpdatedSquares/1
+        public IEnumerable<Square.SquareDto> GetUpdatedSquares(int sudokuId)
+        {
+            var sudoku = GetSudokuItem(sudokuId);
+
+            return sudoku.UpdatedSquares.Select(square => new Square.SquareDto(square));
+        }
+
+        // GET api/Sudoku/GetSquareAvailabilities/1
         public IEnumerable<SquareAvailabilityDto> GetSquareAvailabilities(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
             return sudoku.SquareAvailabilities.Select(availability => new SquareAvailabilityDto(availability));
+        }
+
+        // GET api/Sudoku/GetUpdatedSquareAvailabilities/1
+        public IEnumerable<SquareAvailabilityDto> GetUpdatedSquareAvailabilities(int sudokuId)
+        {
+            var sudoku = GetSudokuItem(sudokuId);
+
+            return sudoku.UpdatedSquareAvailabilities.Select(availability => new SquareAvailabilityDto(availability));
         }
 
         // GET api/Sudoku/GetGroupNumberAvailabilities/1
@@ -101,8 +117,24 @@ namespace SudokuSolver.WebApp.Controllers
             return sudoku.GroupNumberAvailabilities.Select(availability => new GroupNumberAvailabilityDto(availability));
         }
 
+        // GET api/Sudoku/GetUpdatedGroupNumberAvailabilities/1
+        public IEnumerable<GroupNumberAvailabilityDto> GetUpdatedGroupNumberAvailabilities(int sudokuId)
+        {
+            var sudoku = GetSudokuItem(sudokuId);
+
+            return sudoku.UpdatedGroupNumberAvailabilities.Select(availability => new GroupNumberAvailabilityDto(availability));
+        }
+
+        // GET api/Sudoku/GetHints/1
+        public IEnumerable<Hint.HintDto> GetHints(int sudokuId)
+        {
+            var sudoku = GetSudokuItem(sudokuId);
+
+            return sudoku.Hints.Select(hint => new Hint.HintDto(hint));
+        }
+
         // PUT api/Sudoku/UpdateSquare/1/1
-        public void PutSquare(int sudokuId, int squareId, SquareDto squareDto)
+        public void PutSquare(int sudokuId, int squareId, Square.SquareDto squareDto)
         {
             if (!ModelState.IsValid)
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid square"));

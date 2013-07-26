@@ -11,14 +11,27 @@ namespace SudokuSolver.Engine
         {
             internal Square Square { get; private set; }
             internal SudokuNumber Number { get; private set; }
-            internal Square SquareTypeSource { get; set; }
-            internal Square HorizontalTypeSource { get; set; }
-            internal Square VerticalTypeSource { get; set; }
+            internal Square SquareTypeSource { get; private set; }
+            internal Square HorizontalTypeSource { get; private set; }
+            internal Square VerticalTypeSource { get; private set; }
+            internal bool Updated { get; set; }
 
             internal SquareAvailability(Square square, SudokuNumber number)
             {
                 Square = square;
                 Number = number;
+            }
+
+            internal void SetAvailability(GroupTypes type, Square source)
+            {
+                switch (type)
+                {
+                    case GroupTypes.Square: SquareTypeSource = source; break;
+                    case GroupTypes.Horizontal: HorizontalTypeSource = source; break;
+                    case GroupTypes.Vertical: VerticalTypeSource = source; break;
+                }
+
+                Updated = true;
             }
 
             public bool IsAvailable

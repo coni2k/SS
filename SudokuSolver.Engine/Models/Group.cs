@@ -97,7 +97,7 @@ namespace SudokuSolver.Engine
                     groupNumber.Number.Equals(number))
                 .Availabilities
                 .Single(squareAvailability =>
-                    squareAvailability.Square.Equals(square)).Availability = isAvailable;
+                    squareAvailability.Square.Equals(square)).SetAvailability(isAvailable);
 
             // CheckGroupNumberAvailabilities();
         }

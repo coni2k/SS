@@ -126,7 +126,6 @@ namespace SudokuSolver.ConsoleApp
             // ClearScreen();
 
             CurrentSudoku = sudoku;
-            CurrentSudoku.SquareNumberChanged += new Square.SquareEventHandler(Sudoku_SquareNumberChanged);
             CurrentSudoku.HintFound += new Hint.FoundEventHandler(Sudoku_HintFound);
 
             Console.WriteLine("New sudoku is loaded!");
@@ -287,11 +286,6 @@ namespace SudokuSolver.ConsoleApp
         static string GetCaseIds()
         {
             return string.Join(", ", Cases.Select(s => s.SudokuId.ToString()));
-        }
-
-        static void Sudoku_SquareNumberChanged(Square square)
-        {
-            Console.WriteLine("  Id {0:D2}: {1} - {2}", square.SquareId, square.SudokuNumber.Value, square.AssignType);
         }
 
         static void Sudoku_HintFound(Hint hint)
