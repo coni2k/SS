@@ -112,6 +112,15 @@ input[type=text], textarea {
     float: left;
 }
 
+#contentFooterPanel {
+    width: 1320px;
+    float: left;
+}
+
+#contentVersionPanel {
+    font-size: 0.7em;
+}
+
 .contentLeft {
     width: 250px;
     float: left;
@@ -233,7 +242,10 @@ input[type=text], textarea {
     clear: left;
 }
 
-#availabilityGridPanel {
+#squareAvailabilityGridPanel {
+}
+
+#groupNumberAvailabilityGridPanel {
 }
 
 #idGridPanel {
@@ -356,10 +368,6 @@ input[type=text], textarea {
 }
 
 .hintItem {
-}
-
-#groupNumberAvailabilityPanel {
-    float: left;
 }
 
 /* jquery-ui */

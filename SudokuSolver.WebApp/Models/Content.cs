@@ -22,6 +22,8 @@ namespace SudokuSolver.WebApp.Models
 
         public string Body { get; private set; }
 
+        public DateTime Version { get; set; }
+
         public Content() { }
 
         public Content(string internalId)
@@ -29,11 +31,24 @@ namespace SudokuSolver.WebApp.Models
             InternalId = internalId;
             IsExternal = false;
 
-            Url = string.Format("/{0}", internalId);
+            Url = string.Format("/{0}", InternalId);
+
+            var contentFileName = string.Format("{0}.html", internalId);
 
             // Read the content body from Views folder
-            var contentFileName = string.Format("{0}.html", internalId);
             Body = ContentManager.ReadContentFile(contentFileName);
+
+            Version = ContentManager.GetContentFileLastWriteTime(contentFileName);
+        }
+
+        public void CheckUpdates()
+        {
+            var contentFileName = string.Format("{0}.html", InternalId);
+
+            var lastVersion = ContentManager.GetContentFileLastWriteTime(contentFileName);
+
+            if (Version != lastVersion)
+                Body = ContentManager.ReadContentFile(contentFileName);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace SudokuSolver.Engine
             ICollection<GroupNumberAvailability> availabilities;
 
             public Group Group { get; private set; }
-            public SudokuNumber Number { get; private set; }
+            public SudokuNumber SudokuNumber { get; private set; }
             public ICollection<GroupNumberAvailability> Availabilities { get { return availabilities; } }
 
             public IEnumerable<GroupNumberAvailability> AvailableSquareAvailabilities
@@ -24,7 +24,7 @@ namespace SudokuSolver.Engine
             internal GroupNumber(Group group, SudokuNumber number)
             {
                 Group = group;
-                Number = number;
+                SudokuNumber = number;
 
                 availabilities = new Collection<GroupNumberAvailability>();
                 foreach (var square in group.Squares)

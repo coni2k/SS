@@ -37,8 +37,16 @@ namespace SudokuSolver.WebApp.Managers
 
         public static string ReadContentFile(string fileName)
         {
-            var filePath = HttpContext.Current.Server.MapPath(string.Format(@"Views\{0}", fileName));
+            // var filePath = HttpContext.Current.Server.MapPath(string.Format(@"Views\{0}", fileName));
+            var filePath = string.Format(@"{0}Views\{1}", HttpRuntime.AppDomainAppPath, fileName);
             return File.ReadAllText(filePath);
+        }
+
+        public static System.DateTime GetContentFileLastWriteTime(string fileName)
+        {
+            // var filePath =   HttpContext.Current.Server.MapPath(string.Format(@"Views\{0}", fileName));
+            var filePath = string.Format(@"{0}Views\{1}", HttpRuntime.AppDomainAppPath, fileName);
+            return File.GetLastWriteTime(filePath);        
         }
     }
 }

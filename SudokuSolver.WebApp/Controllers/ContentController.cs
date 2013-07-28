@@ -14,6 +14,9 @@ namespace SudokuSolver.WebApp.Controllers
         // GET api/Content
         public IEnumerable<Content> GetContentList()
         {
+            foreach (var content in Cache.InternalContents)
+                content.CheckUpdates();
+
             return Cache.Contents;
         }
 
@@ -22,6 +25,9 @@ namespace SudokuSolver.WebApp.Controllers
         {
             // Search in Cache
             var content = Cache.Contents.SingleOrDefault(c => c.InternalId == id);
+
+            // Check updates
+            content.CheckUpdates();
 
             // If there is none, throw an exception
             if (content == null)

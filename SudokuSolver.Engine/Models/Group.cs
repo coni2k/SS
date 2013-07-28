@@ -94,7 +94,7 @@ namespace SudokuSolver.Engine
         {
             groupNumbers
                 .Single(groupNumber =>
-                    groupNumber.Number.Equals(number))
+                    groupNumber.SudokuNumber.Equals(number))
                 .Availabilities
                 .Single(squareAvailability =>
                     squareAvailability.Square.Equals(square)).SetAvailability(isAvailable);
@@ -112,10 +112,10 @@ namespace SudokuSolver.Engine
                     var lastGroupNumber = GroupNumbers.Single(groupNumber => groupNumber.AvailableSquareAvailabilities.Count() == 1);
                     var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable);
 
-                    Console.WriteLine("P - Id: {0} - Value: {1} - Type: Group", lastAvailability.Square.SquareId, lastGroupNumber.Number.Value);
+                    Console.WriteLine("P - Id: {0} - Value: {1} - Type: Group", lastAvailability.Square.SquareId, lastGroupNumber.SudokuNumber.Value);
 
                     if (HintFound != null)
-                        HintFound(new Hint(lastAvailability.Square, this, lastGroupNumber.Number, HintTypes.Group));
+                        HintFound(new Hint(lastAvailability.Square, this, lastGroupNumber.SudokuNumber, HintTypes.Group));
                 }
             }
         }

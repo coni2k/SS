@@ -160,7 +160,8 @@ check this (last item); http://stackoverflow.com/questions/9569270/custom-method
 
 . webgrease (bundle.config) + jslint
 
-. cache manager - contents cant get updates ?!
+. content manager can be better - with all external internal read file checkupdates etc. stuff
+but do it at the end. probably will not have external content ?!
 
 . square + availabilities?
 
@@ -318,3 +319,16 @@ draw groupnumberavailabilities on the client!
 
 usings;
 http://stackoverflow.com/questions/125319/should-usings-be-inside-or-outside-the-namespace
+
+---
+group number availabilities i draw etmeye calisiyoruz ama cok yamuk gidiyor!!!
+groups yok hata mesaji var su anda..
+
+genel olarak guzel bir grid templateimiz olsa, statik, guzel olabilirdi.. biz ona data source versek te o da ne geliyorsa ona doldursa vs. ?!
+
+groupsnumbergrid ile ilgili, sadece square type group number availabilityleri alacagiz.. ve onlari, numara sirasina gore, square id leri yazarak cizecegiz..
+
+diger taraftan.. set selected square calismayacak misal, cunku o square classi ile birlikte calisiyor, oysa burda number kullaniyoruz ana obje olarak - hatta bu number bile uygun degil, cunku uzerinde availabilities gibi bir array yok - sonradan ekleyecegiz gibi duruyor..
+
+---
+group number availabilityleri generate ediyoruz ama find kisminda sorun var - oradan devam et!

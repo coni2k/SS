@@ -234,7 +234,7 @@ namespace SudokuSolver.ConsoleApp
                     var availabilityOutput = string.Join(" - ",
                         groupNumber.Availabilities.Select(squareAvailability =>
                             string.Format("{0:D2} - {1:D2} - {2}",
-                            groupNumber.Number.Value, // 0
+                            groupNumber.SudokuNumber.Value, // 0
                             squareAvailability.Square.SquareId, // 1
                             squareAvailability.IsAvailable ? "X" : "."))); // 2
 

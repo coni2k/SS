@@ -114,7 +114,10 @@ namespace SudokuSolver.WebApp.Controllers
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.GroupNumberAvailabilities.Select(availability => new GroupNumberAvailabilityDto(availability));
+            return sudoku.GroupNumberAvailabilities
+                //.OrderBy(a => a.GroupNumber.Group.Id)
+                //.ThenBy(a => a.GroupNumber.SudokuNumber.Value)
+                .Where(a => a.GroupNumber.Group.GroupType == GroupTypes.Square).Select(availability => new GroupNumberAvailabilityDto(availability));
         }
 
         // GET api/Sudoku/GetUpdatedGroupNumberAvailabilities/1
@@ -122,7 +125,10 @@ namespace SudokuSolver.WebApp.Controllers
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.UpdatedGroupNumberAvailabilities.Select(availability => new GroupNumberAvailabilityDto(availability));
+            return sudoku.UpdatedGroupNumberAvailabilities
+                //.OrderBy(a => a.GroupNumber.Group.Id)
+                //.ThenBy(a => a.GroupNumber.SudokuNumber.Value)
+                .Where(a => a.GroupNumber.Group.GroupType == GroupTypes.Square).Select(availability => new GroupNumberAvailabilityDto(availability));
         }
 
         // GET api/Sudoku/GetHints/1

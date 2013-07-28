@@ -43,12 +43,17 @@
                     <a data-bind="click: SelectedSudoku().Reset">Reset</a>
             </span>
             <br />
-            <span>Display: Values | Availabilities: 
-                    <a data-bind="click: SelectedSudoku().ToggleDisplayAvailabilities">
-                        <!--ko text: SelectedSudoku().DisplayAvailabilitiesFormatted-->
+            <span>Display: Values | Square availabilities: 
+                    <a data-bind="click: SelectedSudoku().ToggleDisplaySquareAvailabilities">
+                        <!--ko text: SelectedSudoku().DisplaySquareAvailabilitiesFormatted-->
                         <!--/ko-->
                     </a><span>|
                     </span>
+                <span>Group number availabilities: </span>
+                <a data-bind="click: SelectedSudoku().ToggleDisplayGroupNumberAvailabilities">
+                    <!--ko text: SelectedSudoku().DisplayGroupNumberAvailabilitiesFormatted-->
+                    <!--/ko-->
+                </a>
                 <span>IDs: </span>
                 <a data-bind="click: SelectedSudoku().ToggleDisplayIDs">
                     <!--ko text: SelectedSudoku().DisplayIDsFormatted-->
@@ -119,7 +124,9 @@
         </div>
         <div id="valueGridPanel" data-bind="template: { name: 'gridTemplate', data: SelectedSudoku().ValueGrid }, css: SelectedSudoku().ValueGridCss">
         </div>
-        <div id="availabilityGridPanel" data-bind="template: { name: 'gridTemplate', data: SelectedSudoku().AvailabilityGrid }, css: SelectedSudoku().AvailabilityGridCss">
+        <div id="squareAvailabilityGridPanel" data-bind="template: { name: 'gridTemplate', data: SelectedSudoku().SquareAvailabilityGrid }, css: SelectedSudoku().SquareAvailabilityGridCss">
+        </div>
+        <div id="groupNumberAvailabilityGridPanel" data-bind="template: { name: 'availabilityGridTemplate', data: SelectedSudoku().GroupNumberAvailabilityGrid }, css: SelectedSudoku().GroupNumberAvailabilityGridCss">
         </div>
         <div id="idGridPanel" data-bind="template: { name: 'gridTemplate', data: SelectedSudoku().IdGrid }, css: SelectedSudoku().IdGridCss">
         </div>
@@ -129,16 +136,6 @@
             <!--ko foreach: SelectedSudoku().Hints-->
             <div class="hintItem" data-bind="event: { mouseenter: ToggleSelect, mouseleave: ToggleSelect }, css: { passiveSelected: IsSelected() }">
                 <!--ko text: 'SquareId: ' + SquareId + ' - HintValue: ' + ValueFormatted() + ' - HintType: ' + HintType-->
-                <!--/ko-->
-            </div>
-            <!--/ko-->
-        </div>
-        <div id="groupNumberAvailabilityPanel" class="panel">
-            <strong>Group Number Availability</strong>
-            <br />
-            <!--ko foreach: SelectedSudoku().GroupNumberAvailabilities-->
-            <div class="" data-bind="">
-                <!--ko text: 'GroupId: ' + GroupId + ' - Number: ' + Number + ' - Count: ' + Count-->
                 <!--/ko-->
             </div>
             <!--/ko-->
@@ -209,10 +206,26 @@
     </div>
     <!--/ko-->
 </script>
+<script id="availabilityGridTemplate" type="text/html">
+    <!--ko foreach: Groups-->
+    <div class="groupItem" data-bind="foreach: GroupNumbers, css: CssClass">
+        <div>
+            <div data-bind="foreach: GroupNumberAvailabilities">
+                <span data-bind="text: SquareId, css: CssClassComputed" />
+            </div>
+        </div>
+    </div>
+    <!--/ko-->
+</script>
 <script id="squareValueTemplate" type="text/html">
     <span data-bind="html: ValueFormatted" class="value" />
 </script>
 <script id="squareAvailabilitiesTemplate" type="text/html">
+    <div data-bind="foreach: Availabilities">
+        <span data-bind="text: Value, css: CssClassComputed" />
+    </div>
+</script>
+<script id="groupNumberAvailabilitiesTemplate" type="text/html">
     <div data-bind="foreach: Availabilities">
         <span data-bind="text: Value, css: CssClassComputed" />
     </div>

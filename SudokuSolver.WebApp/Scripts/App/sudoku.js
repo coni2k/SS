@@ -53,6 +53,7 @@
         self.Sudokus = ko.observableArray([]);
         self.NumberGroupsCache = [];
         self.SquareGroupsCache = []
+        self.GroupsCache = [];
 
         // TODO History.js enabled check ?!
 
@@ -266,7 +267,7 @@
                         for (var availabilityCounter = 0; availabilityCounter < size; availabilityCounter++) {
 
                             // Create availability item
-                            var availability = new Availability(square);
+                            var availability = new SquareAvailability(square);
                             availability.Value = availabilityCounter + 1;
                             square.Availabilities.push(availability);
                         }
@@ -283,6 +284,53 @@
             }
 
             return cacheItem.SquareGroups;
+        };
+
+        // b. Group number availabilities
+        self.GetGroups = function (size) {
+
+            var cacheItem = Enumerable.From(self.GroupsCache).SingleOrDefault(null, function (item) {
+                return item.Size === size;
+            });
+
+            if (cacheItem === null) {
+
+                var groups = [];
+                var cssSize = 'size' + size.toString(10);
+
+                // Square groups loop
+                for (var groupCounter = 1; groupCounter <= size; groupCounter++) {
+
+                    // Create group
+                    var group = new Group(groupCounter, size);
+
+                    // Squares loop
+                    for (var squareCounter = 1; squareCounter <= size; squareCounter++) {
+
+                        // Create square
+                        var squareId = squareCounter + ((groupCounter - 1) * size);
+                        var groupNumber = new GroupNumber(squareCounter, group, size);
+
+                        // Availability loop
+                        for (var availabilityCounter = 0; availabilityCounter < size; availabilityCounter++) {
+
+                            // Create availability item
+                            var availability = new GroupNumberAvailability(squareId);
+                            groupNumber.GroupNumberAvailabilities.push(availability);
+                        }
+
+                        group.GroupNumbers.push(groupNumber);
+                    }
+
+                    groups.push(group);
+                }
+
+                cacheItem = new GroupCacheItem(size, groups);
+
+                self.GroupsCache.push(cacheItem);
+            }
+
+            return cacheItem.Groups;
         };
 
         // Load sudoku list + current sudoku (from current state)
@@ -369,6 +417,13 @@
         self.SquareGroups = squareGroups;
     }
 
+    function GroupCacheItem(size, groups) {
+        var self = this;
+
+        self.Size = size;
+        self.Groups = groups;
+    }
+
     // Sudoku
     function Sudoku(sudokuViewModel, size) {
         size = (typeof size === 'undefined') ? 0 : size;
@@ -403,32 +458,33 @@
         // Arrays
         self.NumberGroups = self.Model.GetNumberGroups(self.Size);
         self.SquareGroups = self.Model.GetSquareGroups(self.Size);
+        self.Groups = self.Model.GetGroups(self.Size);
         self.Hints = ko.observableArray([]);
-        self.GroupNumberAvailabilities = ko.observableArray([]);
 
         // Grids;
         // a. Value grid
         self.ValueGrid = new ValueGrid(self.SquareGroups);
         self.ValueGridCss = 'panel gridPanel size' + self.Size;
 
-        // b. Availability grid
-        self.AvailabilityGrid = new AvailabilityGrid(self.SquareGroups);
-        self.AvailabilityGridCss = ko.computed(function () { return 'panel gridPanel size' + self.Size + (self.AvailabilityGrid.Visible() ? '' : ' hide'); });
-        self.ToggleDisplayAvailabilities = function () {
-            self.AvailabilityGrid.Visible(!self.AvailabilityGrid.Visible());
+        // b. Square availability grid
+        self.SquareAvailabilityGrid = new SquareAvailabilityGrid(self.SquareGroups);
+        self.SquareAvailabilityGridCss = ko.computed(function () { return 'panel gridPanel size' + self.Size + (self.SquareAvailabilityGrid.Visible() ? '' : ' hide'); });
+        self.ToggleDisplaySquareAvailabilities = function () {
+            self.SquareAvailabilityGrid.Visible(!self.SquareAvailabilityGrid.Visible());
         };
-        self.DisplayAvailabilitiesFormatted = ko.computed(function () {
-            return capitaliseFirstLetter(self.AvailabilityGrid.Visible().toString());
+        self.DisplaySquareAvailabilitiesFormatted = ko.computed(function () {
+            return capitaliseFirstLetter(self.SquareAvailabilityGrid.Visible().toString());
         });
 
-        // c. Availability2 grid
-        //self.Availability2Grid = new Availability2Grid(self.Groups);
-        //self.ToggleDisplayAvailabilities = function () {
-        //    self.AvailabilityGrid.Visible(!self.AvailabilityGrid.Visible());
-        //}
-        //self.DisplayAvailabilitiesFormatted = ko.computed(function () {
-        //    return capitaliseFirstLetter(self.AvailabilityGrid.Visible().toString());
-        //});
+        // c. Group number availability grid
+        self.GroupNumberAvailabilityGrid = new GroupNumberAvailabilityGrid(self.Groups);
+        self.GroupNumberAvailabilityGridCss = ko.computed(function () { return 'panel gridPanel size' + self.Size + (self.GroupNumberAvailabilityGrid.Visible() ? '' : ' hide'); });
+        self.ToggleDisplayGroupNumberAvailabilities = function () {
+            self.GroupNumberAvailabilityGrid.Visible(!self.GroupNumberAvailabilityGrid.Visible());
+        };
+        self.DisplayGroupNumberAvailabilitiesFormatted = ko.computed(function () {
+            return capitaliseFirstLetter(self.GroupNumberAvailabilityGrid.Visible().toString());
+        });
 
         // d. Id grid
         self.IdGrid = new IDGrid(self.SquareGroups);
@@ -505,6 +561,28 @@
             });
 
             return matchedNumber;
+        };
+
+        // Filters
+        // d. Find group number by number value
+        self.FindGroupNumberAvailability = function (groupId, numberValue, squareId) {
+
+            alert('ok 1');
+            var matchedGroup = Enumerable.From(self.Groups).Single(function (group) {
+                return group.GroupId === groupId;
+            });
+
+            alert('ok 2');
+            var matchedGroupNumber = Enumerable.From(matchedGroup.GroupNumbers).Single(function (groupNumber) {
+                return groupNumber.NumberValue === numberValue;
+            });
+
+            alert('ok 3');
+            var matchedAvailability = Enumerable.From(matchedGroupNumber.GroupNumberAvailabilities).Single(function (availability) {
+                return availability.SquareId === squareId;
+            });
+
+            return matchedAvailability;
         };
 
         // Methods
@@ -689,7 +767,7 @@
             self.LoadSquareAvailabilities(type);
 
             // Load group number availabilities
-            // self.LoadGroupNumberAvailabilities(type);
+            self.LoadGroupNumberAvailabilities(type);
 
             // Load hints
             self.LoadHints();
@@ -775,7 +853,7 @@
             });
         };
 
-        self.LoadGroupNumberAvailabilities = function () {
+        self.LoadGroupNumberAvailabilities = function (type) {
 
             // Determine the url based on the type
             var apiUrl = type === DataRequestTypes.All
@@ -783,17 +861,13 @@
                 : apiUrlUpdatedGroupNumberAvailabilities(self.SudokuId());
             
             // Get the availabilities
-            getData(apiUrl, function (list) {
+            getData(apiUrl, function (availabilityList) {
 
-                self.GroupNumberAvailabilities([]);
+                Enumerable.From(availabilityList).ForEach(function (availabilityItem) {
 
-                Enumerable.From(list).ForEach(function (groupNumberAvailabilityItem) {
+                    var availability = self.FindGroupNumberAvailability(availabilityItem.GroupId, availabilityItem.SudokuNumber, availabilityItem.SquareId);
 
-                    var groupNumberAvailability = new GroupNumberAvailability();
-                    groupNumberAvailability.GroupId = groupNumberAvailabilityItem.GroupId;
-                    groupNumberAvailability.Number = groupNumberAvailabilityItem.Number;
-                    groupNumberAvailability.Count = groupNumberAvailabilityItem.Count;
-                    self.GroupNumberAvailabilities.push(groupNumberAvailability);
+                    availability.IsAvailable(availabilityItem.IsAvailable);
 
                 });
             });
@@ -829,23 +903,27 @@
     function ValueGrid(squareGroups) {
         var self = this;
         self.SquareGroups = squareGroups;
-        self.DisplayMode = 'value';
         self.Template = 'squareValueTemplate';
         // Visible = always!
     }
 
-    function AvailabilityGrid(squareGroups) {
+    function SquareAvailabilityGrid(squareGroups) {
         var self = this;
         self.SquareGroups = squareGroups;
-        self.DisplayMode = 'availability';
         self.Template = 'squareAvailabilitiesTemplate';
+        self.Visible = ko.observable(true);
+    }
+
+    function GroupNumberAvailabilityGrid(groups) {
+        var self = this;
+        self.Groups = groups;
+        self.Template = 'groupNumberAvailabilitiesTemplate';
         self.Visible = ko.observable(true);
     }
 
     function IDGrid(squareGroups) {
         var self = this;
         self.SquareGroups = squareGroups;
-        self.DisplayMode = 'id';
         self.Template = 'squareIdTemplate';
         self.Visible = ko.observable(false);
     }
@@ -1015,7 +1093,7 @@
         };
     }
 
-    function Availability(square) {
+    function SquareAvailability(square) {
         var self = this;
         self.Square = square;
         self.Value = 0;
@@ -1028,11 +1106,38 @@
         });
     }
 
-    function GroupNumberAvailability() {
+    function Group(groupId, sudokuSize) {
         var self = this;
-        self.GroupId = 0;
-        self.Number = 0;
-        self.Count = 0;
+        self.GroupId = groupId;
+        self.GroupNumbers = [];
+        self.IsOdd = (self.GroupId % 2 === 0);
+        self.CssClass = 'groupItem size' + sudokuSize.toString(10);
+    }
+
+    function GroupNumber(numberValue, group, sudokuSize) {
+        var self = this;
+
+        self.Group = group;
+        self.NumberValue = numberValue;
+        self.GroupNumberAvailabilities = [];
+
+        self.CssClassComputed = ko.computed(function () {
+            return 'squareItem '
+                + 'size' + sudokuSize.toString(10)
+                + (self.Group.IsOdd ? ' odd' : '');
+        });
+    }
+
+    function GroupNumberAvailability(squareId) {
+        var self = this;
+
+        self.SquareId = squareId;
+        self.IsAvailable = ko.observable(true);
+
+        self.CssClassComputed = ko.computed(function () {
+            return 'availabilityItem '
+                + (!self.IsAvailable() ? ' unavailable_group' : '');
+        });
     }
 
     // Get data from server

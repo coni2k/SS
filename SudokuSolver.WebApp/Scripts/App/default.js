@@ -135,7 +135,8 @@
 
                     document.title = 'Sudoku Solver - ' + currentContent.Title;
                     $('#contentHeader').html(currentContent.Title);
-                    $('#contentBody').html(currentContent.Body);
+                    $('#contentBodyPanel').html(currentContent.Body);
+                    $('#contentVersion').html(currentContent.Version);
 
                     $('#contentContainer').fadeIn('fast');
                 });                

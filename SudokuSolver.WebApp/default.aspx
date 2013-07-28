@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Sudoku Solver</title>
-    <link href="/Content/main.css?v=20130515.1" rel="stylesheet" type="text/css" />
+    <link href="/Content/main.css?v=20130727.1" rel="stylesheet" type="text/css" />
     <link href="/Content/themes/base/minified/jquery-ui.min.css" rel="stylesheet" type="text/css" />
     <script src="/Scripts/jquery-1.8.2.min.js" type="text/javascript"></script>
     <script src="/Scripts/jquery-ui-1.9.0.min.js" type="text/javascript"></script>
@@ -24,7 +24,7 @@
         <div id="menuPanel" class="panel">
             <div class="contentLeft">&nbsp;</div>
             <div class="contentRight">
-                <div id="contentLinks" />
+                <div id="contentLinks"></div>
             </div>
         </div>
         <div id="contentContainer">
@@ -34,8 +34,14 @@
                     <h2 id="contentHeader" />
                 </div>
             </div>
-            <div id="contentBodyPanel" class="panel">
-                <div id="contentBody" />
+            <div id="contentBodyPanel" class="panel"></div>
+            <div id="contentFooterPanel" class="panel">
+                <div class="contentLeft">&nbsp;</div>
+                <div class="contentRight">
+                    <div id="contentVersionPanel">
+                        Ver: <span id="contentVersion" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>

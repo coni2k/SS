@@ -34,7 +34,7 @@ namespace SudokuSolver.Engine
 
                 public override string ToString()
                 {
-                    return string.Format("Number: {0:D2} - Square: {1:D2} - IsAvailable: {3}", GroupNumber.Number.Value, Square.SquareId, IsAvailable);
+                    return string.Format("Number: {0:D2} - Square: {1:D2} - IsAvailable: {3}", GroupNumber.SudokuNumber.Value, Square.SquareId, IsAvailable);
                 }
             }
         }
