@@ -584,14 +584,14 @@ namespace SudokuSolver.Engine
             //list.Add(GetCase9());
             //list.Add(GetCase10());
             //list.Add(GetCase11());
-            //list.Add(GetCase12());
+            list.Add(GetCase12());
             //list.Add(GetCase13());
             //list.Add(GetCase14());
             //list.Add(GetCase15());
             //// list.Add(GetCase16());
             //list.Add(GetCase17());
             //list.Add(GetCase18());
-            list.Add(GetCase19());
+            // list.Add(GetCase19());
 
             return list;
         }

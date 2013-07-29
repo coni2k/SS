@@ -90,14 +90,14 @@ namespace SudokuSolver.Engine
 
         #region - Methods -
 
-        internal void SetAvailability(SudokuNumber number, Square square, bool isAvailable)
+        internal void UpdateAvailability(SudokuNumber number, Square square, bool isAvailable)
         {
             groupNumbers
                 .Single(groupNumber =>
                     groupNumber.SudokuNumber.Equals(number))
                 .Availabilities
                 .Single(squareAvailability =>
-                    squareAvailability.Square.Equals(square)).SetAvailability(isAvailable);
+                    squareAvailability.Square.Equals(square)).UpdateAvailability(isAvailable);
 
             // CheckGroupNumberAvailabilities();
         }

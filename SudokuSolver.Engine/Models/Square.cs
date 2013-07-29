@@ -125,11 +125,11 @@ namespace SudokuSolver.Engine
                     foreach (var square in group.Squares)
                     {
                         // TODO This also calls Check(), which is not necessary in this case?!
-                        square.SetAvailability(SudokuNumber, group.GroupType, null);
+                        square.UpdateAvailability(SudokuNumber, group.GroupType, null);
 
                         foreach (var squareGroup in square.SquareGroups)
                         {
-                            squareGroup.SetAvailability(SudokuNumber, square, true);
+                            squareGroup.UpdateAvailability(SudokuNumber, square, true);
                         }
                     }
                 }
@@ -153,11 +153,11 @@ namespace SudokuSolver.Engine
                 {
                     foreach (var square in group.Squares)
                     {
-                        square.SetAvailability(SudokuNumber, group.GroupType, this);
+                        square.UpdateAvailability(SudokuNumber, group.GroupType, this);
 
                         foreach (var squareGroup in square.SquareGroups)
                         {
-                            squareGroup.SetAvailability(SudokuNumber, square, false);
+                            squareGroup.UpdateAvailability(SudokuNumber, square, false);
                         }
                     }
                 }
@@ -192,7 +192,7 @@ namespace SudokuSolver.Engine
         /// <param name="number"></param>
         /// <param name="type"></param>
         /// <param name="source"></param>
-        internal void SetAvailability(SudokuNumber number, GroupTypes type, Square source)
+        internal void UpdateAvailability(SudokuNumber number, GroupTypes type, Square source)
         {
             // If the old value is zero, then there is nothing to do.
             // Zero value is not used in availabilities list (always available).
@@ -200,7 +200,7 @@ namespace SudokuSolver.Engine
                 return;
 
             // Set the availability
-            Availabilities.Single(availability => availability.Number.Equals(number)).SetAvailability(type, source);
+            Availabilities.Single(availability => availability.Number.Equals(number)).UpdateAvailability(type, source);
 
             // Search for hint
             CheckSquareAvailabilities();

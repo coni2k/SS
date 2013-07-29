@@ -4,16 +4,19 @@ Wishlist:
 . Square Id Order Type - currently it's square type by default - horizontal and vertical as well?
 . Horizontal + Vertical groups for square on client-side? And use them with ToggleActiveSelected() (Is it possible to retrieve this info from the server?)
 . Handle arrow keys?
-. Unit testing?
+. Improve unit testing with proper cases
 . Sudoku generator
-. knockout unobtrusive?
+. knockout
+.. unobtrusive?
 http://bsatrom.github.com/Knockout.Unobtrusive/
 http://userinexperience.com/?p=633
 http://userinexperience.com/?p=689
+.. throttle for css calculation - necessary?
+.. Knockout-ES5 ?
 . Store the user's sudokus? sql || sql localdb || xml || json?
-. Better html template - vix.com?
+. Better html template - bootstrap || vix.com
 . Multi-language
-. Offline mode
+. "Offline mode" messages
 . Mobile application
 . Add "number of actions" counter
 . Measure the performance (eqatec profiler + firefox net panel etc.)
@@ -58,25 +61,13 @@ atanabýlecek 8 numara kaldýysa, kalan numaralar dýþýndakilerin hiçbiri atanamaz
 
 . bir availability assign edildiginde (false) oldugunda, gruptaki diger squarelerin yeni availability listelerine o rakam ekleniyor olabilir..? ama sonra nasýl çýkaracaðýz?
 
-. diger SIKISMA caseleri neler olabilir? onlari arastir
-
-. eger bir numaranin konulabilecegi 2 kare varsa ve karedeki diger numara da sadece o 2 kareye konulabiliyorsa, o zaman SIKISMA var ihtimali uzerinde duruyoruz
-ancak bu durumda sadece identical karelerde oluyormuþ gibi de gelmiyor.
-bu olayý anlamak için daha fazla case gerekiyor gibi ?!?!?!
-
 . first grade availability - only from its own group?
 and is there any second grade availability?
 
 ---
-about hints, add these cases;
-new hint
-removal of an existing square
-removal of an existing number
-
+[obsolete?]
 number changing and changed should have similar operation but reverse?
 and also double check the zero case?
-
-also hints should be a dynamic list?
 
 . Solving Methods?;
 . Square's last no
@@ -126,17 +117,9 @@ but then how to call ko.applybindings after content load ?!
 
 . try to have a new (initialized) sudoku on the page - try to decrease the first page load time
 
-. how about; public class Square + internal (or private) class Availability() + internal UpdateAvailability()
-
-. pass squares to group constructor - to make square property readonly and remove setsquare method
-not that easy, first it generates the groups and then squares.. ?!
+. move DTO classes to web class ?!
 
 . all javascript functions should be under an object ?!
-
-. do we need ko.throttle? for css calculation?
-
-. proper new/remove hint - is it possible to merge hint + square
-dynamic hints?
 
 . using content class + navigate function looks a good idea
 but then, if the content will be generated from cms - how the user's links will be using Navigate function.. ?!
@@ -160,52 +143,12 @@ check this (last item); http://stackoverflow.com/questions/9569270/custom-method
 
 . webgrease (bundle.config) + jslint
 
-. content manager can be better - with all external internal read file checkupdates etc. stuff
+. content manager could be improved - with all external - internal - read file - checkupdates etc. stuff
 but do it at the end. probably will not have external content ?!
-
-. square + availabilities?
 
 . check todoList.dataAccess.js - leuk programming
 
 ---
-square + hint merge;
-. init;
-.. first constructors (square + groups)
-.. second cross bind
-.. third event registrations!
-
-. number changing + number changed + set availiability parts look good
-. find hint + remove hint parts need to be updated ?!
-
-try to create good test cases!!!
-
----
-REMOVAL OF THE HINTS ?
-
-IF THERE IS AN EXISTING NUMBER - FIRST REMOVE THAT ONA AND RELATED HINTS..
-THEN ASSIGN THE NEW NUMBER!!!
-
-write this part from scracth!
-
-assign and removal of the squares and the hints..
-
-need 3 lists ?!
-real hints
-hints to be assigned
-hints to be removed
-
-in updatesquare, if the square has an existing number;
-assign 0 first?
-collect the hints to be removed
-
-before assigning the number, call remove hints method?
-
----
-first of all, we are calling some methods too much ?!?!?!
-
-source square + changed -> group-square + changed -> related squares + availability changed -> related squares groups 
-
-
 Stats:
 Group_Square_AvailabilityChangedCounter: 81
 Square_Group_SquareAvailabilityChangedCounter: 729
@@ -216,26 +159,15 @@ Square_Group_SquareAvailabilityChangedCounter: 729
 checkmethod2 runs on affectedgroups
 checkmethod1 runs on all squares? - make it on sudoku level?
 
-hint removal is gone!! - be careful
-
-do we need groupavailability? and squareavailability?
-
 affectedsquares from this operation ?!
 
 clearsquare() just to put zeronumber
 and use this, if there is an existing number on the square
-and then we dont need square_numberchanging probably..
-
-after these, continue with hints..
-
----
-CHECK METHOD 1I KISALLTIK, BIR KONTROL ET BAKALIM, 81 YERINE SADECE AVAILABILITYLERI DEGISMIS OLANLAR DURTULUYOR SIMDI ?!?!?!?!?
-
-AYNI SEYI GROUP AVAILABILITY OLARAK TERKAR ET VE UYGULAMAYA BAK.. AMA KONTROLLERI NASIL YAPACAN, ONA DIKKAT ET!
 
 ---
 groupavailability guzel oldu gibi..
 simdi kontrollerin tam olarak nerde olmasi gerektigine bak, misal direk bunun icinde olabilir mi - yoksa illa bu islem bittikten sonra mi olmasi lazim ? - burda olabiliyorsa zaten direk setavailability icine yerlestirsek te olur;
+
             // New way
             // Set availabilities of the related squares
             foreach (var group in SquareGroups)
@@ -251,10 +183,6 @@ simdi kontrollerin tam olarak nerde olmasi gerektigine bak, misal direk bunun ic
                 }
             }
 			
-uygulamayi temizle
-
-sonra da hintlerle devam et
-
 clear number() - clear availability() vs.
 
 ---
@@ -273,8 +201,6 @@ haliyle eger birinde hint bulunacak olursa, diger 2 tipte de ayni hinti buluyor 
 2. ya da bu similarity aslinda baska bir duruma mi isaret ediyor? (bu availabilityleri aslinda sudoku seviyesinde tutuluyor olmasi gibi?)
 
 ---
-hint removal
-
 square clear doesnt work
 
 group - check availability'yi simdilik set availability icinden cikaracagiz.
@@ -286,49 +212,70 @@ simdilik bununla ugrasmayi istemedigimizden dolayi simdilik check isini, setten 
 her ihtimalde hint removal isleminin temiz olmasi lazim ve sonraki asamalarda bununla ilgileniyor olacagiz.
 hallolursa tekrar check + set group availability birlestirilebilir (bu arada square set + checkte benzer bir sorun yok - umarim ilerde de neden buna gerek olmadigini kolaylikla gorebiliyor olurum).
 
-square hintlerini tutma ile ilgil - her square hint type 1 ve hint type 2 sekilde iki olasi hinti de tutuyor olmali gibi?
-eger hintlerden biri gitse bile, digeri duruyorsa (ki sadece iki mi olabilir yoksa daha fazla da olabilir mi, bakmak lazim) hala hint olarak sayilmasi lazim.
-
 ---
 clear availability ile devam ediyor olmamiz lazim..
 eskide numberchanging kullaniyorduk ama bunu da yine update square altindan digerlerine eriserek yapabiliriz..
 setavailability methodlarini mi kullanmali, yoksa clearavailability gibi farkli bir method mu yaratmali?
 
 ---
-clear availability kismi da tamam gibi - numberchanging eventi yerine yeni yolu (direk) kullaniyoruz.
-tek sorun, square set availability icinde check availability var ve hint ariyor.. oysa bu sefer hint remove deniyor olmasi gerekiyordu..
-ozetle hint removal ile devam et! su anda yuksek ihtimalle duzgun calismiyor
-
-ayrica sudoku classi uzerinde biraz daha temizlik yapiyor olabiliriz
-
 bunlar da henuz kullanilmiyor;
         public bool UseGroupSolvingMethod { get; set; }
         public bool UseSquareSolvingMethod { get; set; }
-
-bir de, groupnumberavailabilityleri web tarafindan gostermek icin;
-[squareId'ler] karelere sirali - kare sirasi hep 1-9 - is avail degilse ustu cizili gibi dene bakalim ?!?!?
 
 check test case 14 + 15;
 . these cases were wrong till we start holding hint on the square - after that change these cases were fixed.
 on the other hand, we dont hold the hint on the square at the moment
 
-CONTINUE WITH;
-hint remove!
-update square method optimization!
-draw groupnumberavailabilities on the client!
-
 usings;
 http://stackoverflow.com/questions/125319/should-usings-be-inside-or-outside-the-namespace
 
 ---
-group number availabilities i draw etmeye calisiyoruz ama cok yamuk gidiyor!!!
-groups yok hata mesaji var su anda..
+. build a js grid - static probably - with data source - no square groups, just items..
 
-genel olarak guzel bir grid templateimiz olsa, statik, guzel olabilirdi.. biz ona data source versek te o da ne geliyorsa ona doldursa vs. ?!
+. groupsnumbersgrid;
+it only uses square type groups
+since it doesnt show the numbers (but only available squareids) it looks bit weird!
+set selected square doesnt work (handle it with the new grid)
 
-groupsnumbergrid ile ilgili, sadece square type group number availabilityleri alacagiz.. ve onlari, numara sirasina gore, square id leri yazarak cizecegiz..
-
-diger taraftan.. set selected square calismayacak misal, cunku o square classi ile birlikte calisiyor, oysa burda number kullaniyoruz ana obje olarak - hatta bu number bile uygun degil, cunku uzerinde availabilities gibi bir array yok - sonradan ekleyecegiz gibi duruyor..
+. check updated group number availabilities
 
 ---
-group number availabilityleri generate ediyoruz ama find kisminda sorun var - oradan devam et!
+headache'in karmasikligini ortaya koy;
+su anda eldeki tek casete; 3 rakamin konulabilecegi 3 tane kalmis durumda.. bunun uzerinden bir formul cikabilir..
+ancak soyle caseler olabilir mi bakmak lazim;
+2 tane numaranin konabilecegi 2 tane kare kaldi
+1 numaranin konabilecegi 1 kare kaldi
+4 numaranin konuabilecegi 4 kare kaldi? vs. vs.
+
+ayrica
+1 numaranin konabilecegi 1 kare kaldi
++ 2 numaranin konabilecegi 2 kare kaldi
++ 3 numaranin konabilecegi 3 kare kaldi (ayni anda)?
+
+---
+hint remove!
+
+about hints, add these cases;
+new hint
+removal of an existing square
+removal of an existing number
+
+need 3 hint lists ?!
+real hints
+hints to be assigned
+hints to be removed
+
+in updatesquare, if the square has an existing number;
+assign 0 first?
+collect the hints to be removed
+
+square hintlerini tutma ile ilgili - her square hint type 1 ve hint type 2 sekilde iki olasi hinti de tutuyor olmali gibi?
+eger hintlerden biri gitse bile, digeri duruyorsa (ki sadece iki mi olabilir yoksa daha fazla da olabilir mi, bakmak lazim) hala hint olarak sayilmasi lazim.
+
+before assigning the number, call remove hints method?
+
+square hintlerini tutma ile ilgili - her square hint type 1 ve hint type 2 sekilde iki olasi hinti de tutuyor olmali gibi?
+eger hintlerden biri gitse bile, digeri duruyorsa (ki sadece iki mi olabilir yoksa daha fazla da olabilir mi, bakmak lazim) hala hint olarak sayilmasi lazim.
+
+---
+update square method optimization! - update availability + check availability cases!

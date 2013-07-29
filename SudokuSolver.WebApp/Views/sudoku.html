@@ -49,6 +49,7 @@
                         <!--/ko-->
                     </a><span>|
                     </span>
+                <br />
                 <span>Group number availabilities: </span>
                 <a data-bind="click: SelectedSudoku().ToggleDisplayGroupNumberAvailabilities">
                     <!--ko text: SelectedSudoku().DisplayGroupNumberAvailabilitiesFormatted-->
@@ -209,7 +210,7 @@
 <script id="availabilityGridTemplate" type="text/html">
     <!--ko foreach: Groups-->
     <div class="groupItem" data-bind="foreach: GroupNumbers, css: CssClass">
-        <div>
+        <div data-bind="css: CssClassComputed">
             <div data-bind="foreach: GroupNumberAvailabilities">
                 <span data-bind="text: SquareId, css: CssClassComputed" />
             </div>

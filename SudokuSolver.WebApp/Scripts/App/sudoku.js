@@ -308,7 +308,6 @@
                     for (var squareCounter = 1; squareCounter <= size; squareCounter++) {
 
                         // Create square
-                        var squareId = squareCounter + ((groupCounter - 1) * size);
                         var groupNumber = new GroupNumber(squareCounter, group, size);
 
                         // Availability loop
@@ -316,6 +315,8 @@
 
                             // Create availability item
                             var availability = new GroupNumberAvailability(squareId);
+                            var squareId = (availabilityCounter + 1) + ((groupCounter - 1) * size);
+                            availability.SquareId = squareId;
                             groupNumber.GroupNumberAvailabilities.push(availability);
                         }
 
@@ -567,18 +568,19 @@
         // d. Find group number by number value
         self.FindGroupNumberAvailability = function (groupId, numberValue, squareId) {
 
-            alert('ok 1');
+            // alert('ok 1');
             var matchedGroup = Enumerable.From(self.Groups).Single(function (group) {
                 return group.GroupId === groupId;
             });
 
-            alert('ok 2');
+            // alert('ok 2');
             var matchedGroupNumber = Enumerable.From(matchedGroup.GroupNumbers).Single(function (groupNumber) {
                 return groupNumber.NumberValue === numberValue;
             });
 
-            alert('ok 3');
+            // alert('ok 3');
             var matchedAvailability = Enumerable.From(matchedGroupNumber.GroupNumberAvailabilities).Single(function (availability) {
+                // console.log(availability.SquareId);
                 return availability.SquareId === squareId;
             });
 

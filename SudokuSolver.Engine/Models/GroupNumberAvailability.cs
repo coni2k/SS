@@ -25,7 +25,7 @@ namespace SudokuSolver.Engine
                     Availability = true;
                 }
 
-                internal void SetAvailability(bool isAvailable)
+                internal void UpdateAvailability(bool isAvailable)
                 {
                     Availability = isAvailable;
 

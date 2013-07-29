@@ -22,7 +22,7 @@ namespace SudokuSolver.Engine
                 Number = number;
             }
 
-            internal void SetAvailability(GroupTypes type, Square source)
+            internal void UpdateAvailability(GroupTypes type, Square source)
             {
                 switch (type)
                 {
