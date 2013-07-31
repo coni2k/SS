@@ -10,7 +10,8 @@ namespace SudokuSolver.Engine
         public class SquareAvailability
         {
             internal Square Square { get; private set; }
-            internal SudokuNumber Number { get; private set; }
+            // TODO Internal ?
+            public SudokuNumber Number { get; private set; }
             internal Square SquareTypeSource { get; private set; }
             internal Square HorizontalTypeSource { get; private set; }
             internal Square VerticalTypeSource { get; private set; }

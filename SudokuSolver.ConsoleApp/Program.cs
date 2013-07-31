@@ -214,7 +214,7 @@ namespace SudokuSolver.ConsoleApp
 
                 // Availability per number; "X" for available squares, "." for non-available ones
                 foreach (var number in CurrentSudoku.NumbersExceptZero)
-                    Console.Write(" | {0}", square.IsNumberAvailable(number) ? "X" : ".");
+                    Console.Write(" | {0}", square.Availabilities.Single(availability => availability.Number.Equals(number)).IsAvailable ? "X" : ".");
 
                 Console.WriteLine();
             }

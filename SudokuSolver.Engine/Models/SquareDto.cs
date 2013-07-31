@@ -19,8 +19,6 @@ namespace SudokuSolver.Engine
 
             public AssignTypes AssignType { get; private set; }
 
-            // TODO Availabilities?
-
             public SquareDto() { }
 
             public SquareDto(Square square)

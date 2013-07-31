@@ -14,20 +14,19 @@ namespace SudokuSolver.Engine
             {
                 public GroupNumber GroupNumber { get; private set; }
                 public Square Square { get; private set; }
-                internal bool Availability { get; private set; }
-                public bool IsAvailable { get { return Square.IsAvailable && Availability; } }
+                public bool IsAvailable { get; set; }
                 internal bool Updated { get; set; }
 
                 internal GroupNumberAvailability(GroupNumber groupNumber, Square square)
                 {
                     GroupNumber = groupNumber;
                     Square = square;
-                    Availability = true;
+                    IsAvailable = true;
                 }
 
                 internal void UpdateAvailability(bool isAvailable)
                 {
-                    Availability = isAvailable;
+                    IsAvailable = isAvailable;
 
                     Updated = true;
                 }

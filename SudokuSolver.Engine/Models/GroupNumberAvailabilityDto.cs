@@ -7,7 +7,7 @@
     {
         public int GroupId { get; private set; }
 
-        public string GroupUniqueId { get; private set; }
+        public GroupTypes GroupType { get; private set; }
 
         public int SudokuNumber { get; private set; }
 
@@ -18,7 +18,7 @@
         public GroupNumberAvailabilityDto(Group.GroupNumber.GroupNumberAvailability availability)
         {
             GroupId = availability.GroupNumber.Group.Id;
-            GroupUniqueId = availability.GroupNumber.Group.UniqueId;
+            GroupType = availability.GroupNumber.Group.GroupType;
             SudokuNumber = availability.GroupNumber.SudokuNumber.Value;
             SquareId = availability.Square.SquareId;
             IsAvailable = availability.IsAvailable;

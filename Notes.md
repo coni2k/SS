@@ -278,4 +278,15 @@ square hintlerini tutma ile ilgili - her square hint type 1 ve hint type 2 sekil
 eger hintlerden biri gitse bile, digeri duruyorsa (ki sadece iki mi olabilir yoksa daha fazla da olabilir mi, bakmak lazim) hala hint olarak sayilmasi lazim.
 
 ---
+hinti direk square ustunde tutmayi istiyoruz
+ancak ne zaman set etme islemini gerceklestirecegiz?
+hintleri toplayip, update islemi sonunda mi bakmak lazim? bu cok uzun bir yol gibi gorunuyor..
+yoksa direk checkavailability icinden mi set etmek lazim? ancak bu da su haldeyken mumkun degil, henuz setavailability islemleri bitmemis durumda. iki setavail. de bittikten sonra set etsek yeterli olur mu?
+
+bir de sunu kontrol et;
+hint foundlar squarelerin availabilityleri kontrol edilmeden raise ediliyor - hint olarak bulunan squarein uzerinde rakam bile olabilir gibi?
+nitekim group numberlar icin case 20!
+square levelda da ayni sey oluyor mu, bak bakalim!
+
+---
 update square method optimization! - update availability + check availability cases!

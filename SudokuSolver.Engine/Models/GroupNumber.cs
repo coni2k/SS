@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 
 namespace SudokuSolver.Engine
 {
@@ -15,11 +12,6 @@ namespace SudokuSolver.Engine
             public Group Group { get; private set; }
             public SudokuNumber SudokuNumber { get; private set; }
             public ICollection<GroupNumberAvailability> Availabilities { get { return availabilities; } }
-
-            public IEnumerable<GroupNumberAvailability> AvailableSquareAvailabilities
-            {
-                get { return Availabilities.Where(availability => availability.IsAvailable); }
-            }
 
             internal GroupNumber(Group group, SudokuNumber number)
             {

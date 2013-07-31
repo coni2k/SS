@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace SudokuSolver.Engine
 {
@@ -96,26 +96,28 @@ namespace SudokuSolver.Engine
                 .Single(groupNumber =>
                     groupNumber.SudokuNumber.Equals(number))
                 .Availabilities
-                .Single(squareAvailability =>
-                    squareAvailability.Square.Equals(square)).UpdateAvailability(isAvailable);
+                .Single(availability =>
+                    availability.Square.Equals(square)).UpdateAvailability(isAvailable);
 
             // CheckGroupNumberAvailabilities();
         }
 
         internal void CheckGroupNumberAvailabilities()
         {
-            if (GroupNumbers.Count(availability => availability.AvailableSquareAvailabilities.Count() == 1) == 1)
+            Sudoku.CheckGroupNumberAvailabilitiesCounter++;
+
+            if (GroupNumbers.Count(groupNumber => groupNumber.Availabilities.Count(availability => availability.IsAvailable) == 1) == 1)
             {
                 if (HintFound != null)
                 {
-                    // TODO Naming and how to find the availability ?!
-                    var lastGroupNumber = GroupNumbers.Single(groupNumber => groupNumber.AvailableSquareAvailabilities.Count() == 1);
-                    var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable);
-
-                    Console.WriteLine("P - Id: {0} - Value: {1} - Type: Group", lastAvailability.Square.SquareId, lastGroupNumber.SudokuNumber.Value);
+                    var lastAvailability = GroupNumbers.Single(groupNumber => groupNumber
+                        .Availabilities
+                        .Count(availability => availability.IsAvailable) == 1)
+                        .Availabilities
+                        .Single(availability => availability.IsAvailable);
 
                     if (HintFound != null)
-                        HintFound(new Hint(lastAvailability.Square, this, lastGroupNumber.SudokuNumber, HintTypes.Group));
+                        HintFound(new Hint(lastAvailability.Square, this, lastAvailability.GroupNumber.SudokuNumber, HintTypes.Group));
                 }
             }
         }

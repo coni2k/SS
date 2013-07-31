@@ -564,7 +564,31 @@ namespace SudokuSolver.Engine
             // sudoku.ToggleReady();
 
             // Square ID version
+            sudoku.UpdateSquare(1, 1);
+
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Group number method bug
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase20()
+        {
+            var sudoku = new Sudoku();
+
+            sudoku.SudokuId = 20;
+            sudoku.Title = " Test sudoku";
+
+            // sudoku.ToggleReady();
+
+            // Square ID version
+            sudoku.UpdateSquare(1, 1);
             sudoku.UpdateSquare(13, 1);
+            sudoku.UpdateSquare(25, 1);
+            sudoku.UpdateSquare(29, 1);
+            sudoku.UpdateSquare(57, 1);
+            sudoku.UpdateSquare(1, 0);
 
             return sudoku;
         }
@@ -584,14 +608,15 @@ namespace SudokuSolver.Engine
             //list.Add(GetCase9());
             //list.Add(GetCase10());
             //list.Add(GetCase11());
-            list.Add(GetCase12());
+            // list.Add(GetCase12());
             //list.Add(GetCase13());
             //list.Add(GetCase14());
             //list.Add(GetCase15());
             //// list.Add(GetCase16());
             //list.Add(GetCase17());
             //list.Add(GetCase18());
-            // list.Add(GetCase19());
+            //list.Add(GetCase19());
+            list.Add(GetCase20());
 
             return list;
         }

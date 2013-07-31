@@ -10,8 +10,8 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
-        public static int SquareAvailabilityChangedCounter;
-        public static int GroupAvailabilityChangedCounter;
+        public static int CheckSquareAvailabilitiesCounter;
+        public static int CheckGroupNumberAvailabilitiesCounter;
 
         private int size;
         private ICollection<SudokuNumber> numbers = new Collection<SudokuNumber>();
@@ -251,8 +251,8 @@ namespace SudokuSolver.Engine
             }
         }
 
-        public bool UseGroupSolvingMethod { get; set; }
-        public bool UseSquareSolvingMethod { get; set; }
+        public bool UseSquareLevelMethod { get; set; }
+        public bool UseGroupNumberLevelMethod { get; set; }
 
         #endregion
 
@@ -280,9 +280,8 @@ namespace SudokuSolver.Engine
             Size = size;
 
             // Solve methods
-            // TODO Not in use yet
-            UseGroupSolvingMethod = true;
-            UseSquareSolvingMethod = false;
+            UseSquareLevelMethod = false;
+            UseGroupNumberLevelMethod = true;
 
             // Numbers (default 9 + zero value = 10)
             numbers.Add(ZeroNumber); // Zero value
@@ -382,8 +381,8 @@ namespace SudokuSolver.Engine
 
         void UpdateSquare(Square selectedSquare, SudokuNumber newNumber, AssignTypes type)
         {
-            SquareAvailabilityChangedCounter = 0;
-            GroupAvailabilityChangedCounter = 0;
+            CheckSquareAvailabilitiesCounter = 0;
+            CheckGroupNumberAvailabilitiesCounter = 0;
 
             // Validations;
             //a. Square
@@ -409,8 +408,8 @@ namespace SudokuSolver.Engine
             if (!newNumber.IsZero && selectedSquare.SquareGroups.Any(squareGroup => squareGroup.Squares.Any(square => square.SudokuNumber.Equals(newNumber))))
                 throw new InvalidOperationException("Not a valid assignment, the number is already in use in one of the related groups");
 
-            // Clear 'Updated' flag
-            ClearUpdated();
+            // Reset the 'Updated' flag
+            ResetUpdated();
 
             // Set the number and type
             selectedSquare.Update(newNumber, type);
@@ -423,14 +422,14 @@ namespace SudokuSolver.Engine
                 Solve();
             // Solve(AutoSolve ? AssignTypes.Solver : AssignTypes.Hint );
 
-            Console.WriteLine("Square_AvailabilityChangedCounter: {0}", Sudoku.SquareAvailabilityChangedCounter);
-            Console.WriteLine("Group_AvailabilityChangedCounter: {0}", Sudoku.GroupAvailabilityChangedCounter);
+            Console.WriteLine("CheckSquareAvailabilitiesCounter      : {0}", Sudoku.CheckSquareAvailabilitiesCounter);
+            Console.WriteLine("CheckGroupNumberAvailabilitiesCounter : {0}", Sudoku.CheckGroupNumberAvailabilitiesCounter);
         }
 
         /// <summary>
         /// Set Updated properties to false before the next UpdateSquare method call.
         /// </summary>
-        void ClearUpdated()
+        void ResetUpdated()
         {
             // Numbers, except Zero (it's always in Updated mode)
             foreach (var number in UpdatedNumbers.Where(number => number != ZeroNumber))
