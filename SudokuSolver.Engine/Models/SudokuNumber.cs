@@ -53,6 +53,5 @@ namespace SudokuSolver.Engine
         }
 
         #endregion
-
     }
 }

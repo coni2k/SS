@@ -11,7 +11,7 @@ namespace SudokuSolver.Engine
 
         private ICollection<Group> squareGroups;
         private ICollection<SquareAvailability> availabilities;
-
+        private ICollection<IHintNew> hintList;
         #endregion
 
         #region - Events -
@@ -87,6 +87,11 @@ namespace SudokuSolver.Engine
             get { return availabilities; }
         }
 
+        public IEnumerable<IHintNew> HintList
+        {
+            get { return hintList; }
+        }
+
         /// <summary>
         /// Determines whether the square value or it's availabilities were updated since the last UpdateSquare method call.
         /// </summary>
@@ -96,7 +101,7 @@ namespace SudokuSolver.Engine
 
         #region - Constructors -
 
-        internal Square(int id, Sudoku sudoku,  Group squareTypeGroup, Group horizantalTypeGroup, Group verticalTypeGroup)
+        internal Square(int id, Sudoku sudoku, Group squareTypeGroup, Group horizantalTypeGroup, Group verticalTypeGroup)
         {
             SquareId = id;
             Sudoku = sudoku;
@@ -120,85 +125,87 @@ namespace SudokuSolver.Engine
 
         internal void Update(SudokuNumber number, AssignTypes type)
         {
-            //// d. Is it available; Checks the related squares in the related groups
-            //if (!number.IsZero && SquareGroups.Any(squareGroup => squareGroup.Squares.Any(square => square.SudokuNumber.Equals(number))))
-            //    throw new InvalidOperationException("Not a valid assignment, the number is already in use in one of the related groups");
+            // Make the old number available again
+            UpdateAvailabilities(false);
 
-            // Before setting the new number up, make the old one available again
-            // Except if the old value is zero, then there is nothing to do.
-            // Zero value is not used in availabilities list (always available).
-            if (!SudokuNumber.IsZero)
-            {
-                // Set availabilities of the related squares
-                foreach (var group in SquareGroups)
-                {
-                    foreach (var square in group.Squares)
-                    {
-                        // TODO This also calls Check(), which is not necessary in this case?!
-                        if (Sudoku.UseSquareLevelMethod)
-                            square.UpdateAvailability(SudokuNumber, group.GroupType, null);
-
-                        if (Sudoku.UseGroupNumberLevelMethod)
-                            foreach (var squareGroup in square.SquareGroups)
-                                squareGroup.UpdateAvailability(SudokuNumber, square, true);
-                    }
-                }
-            }
-
-            // Get the groups that got affected from UpdateAvailability operation (for Method 2)
-            var relatedGroups = SquareGroups.SelectMany(group => group.Squares.SelectMany(square => square.SquareGroups)).Distinct();
-
-            // Assign the new number to this square & let the number know it (there is a cross reference)
+            // Assign the new number
             SudokuNumber = number;
 
             // Set the type
             AssignType = type;
 
-            // After setting the new number up, make it unavailable
-            if (!SudokuNumber.IsZero)
-            {
-                // Set availabilities of the related squares
-                foreach (var group in SquareGroups)
-                {
-                    foreach (var square in group.Squares)
-                    {
-                        if (Sudoku.UseSquareLevelMethod)
-                            square.UpdateAvailability(SudokuNumber, group.GroupType, this);
-
-                        if (Sudoku.UseGroupNumberLevelMethod)
-                            foreach (var squareGroup in square.SquareGroups)
-                            squareGroup.UpdateAvailability(SudokuNumber, square, false);
-                    }
-                }
-            }
-
-            // Method 2; Check whether there is any group that has only one square left for any number
-            foreach (var group in relatedGroups)
-                group.CheckGroupNumberAvailabilities();
+            // Make the new number unavailable in the related square / group numbers
+            UpdateAvailabilities(true);
 
             Updated = true;
+
+            // Search for hint
+            CheckSquareAvailabilities();
+
+            // Method 2; Check whether there is any group that has only one square left for any number
+
+            // Get the groups that got affected from UpdateAvailability operation (for Method 2)
+            var relatedGroups = SquareGroups.SelectMany(group => group.Squares.SelectMany(square => square.SquareGroups)).Distinct();
+
+            foreach (var group in relatedGroups)
+                group.CheckGroupNumberAvailabilities();
+        }
+
+        /// <summary>
+        /// Updates the availabilities in related squares and group numbers
+        /// </summary>
+        void UpdateAvailabilities(bool isNumberUpdated)
+        {
+            // Ignore zero number, it's not used in availability lists (always available)
+            if (SudokuNumber.IsZero)
+                return;
+
+            // isNumberUpdated is false: Make the old number available, if true: new number assigned to the square make it unavailable in the related object.
+            var sourceSquare = isNumberUpdated ? this : null;
+            var isGroupNumbersAvailable = !isNumberUpdated;
+
+            // Set availabilities of the related squares
+            foreach (var group in SquareGroups)
+            {
+                foreach (var square in group.Squares)
+                {
+                    if (Sudoku.UseSquareLevelMethod)
+                        square.UpdateAvailability(SudokuNumber, group.GroupType, sourceSquare);
+
+                    if (Sudoku.UseGroupNumberLevelMethod)
+                        foreach (var squareGroup in square.SquareGroups)
+                            squareGroup.UpdateAvailability(SudokuNumber, square, isGroupNumbersAvailable);
+                }
+            }
         }
 
         /// <summary>
         /// Updates the availability of the square
-        /// The value of "source" parameter determines whether it's going to be available or not.
-        /// If it's null, the number will become available for that type or the other way around.
+        /// If there is "source", it means it's not available.
         /// </summary>
         /// <param name="number"></param>
         /// <param name="type"></param>
         /// <param name="source"></param>
         internal void UpdateAvailability(SudokuNumber number, GroupTypes type, Square source)
         {
-            // If the old value is zero, then there is nothing to do.
-            // Zero value is not used in availabilities list (always available).
-            //if (number.IsZero)
-            //    return;
-
-            // Set the availability
             Availabilities.Single(availability => availability.Number.Equals(number)).UpdateAvailability(type, source);
+        }
 
-            // Search for hint
-            CheckSquareAvailabilities();
+        internal void CheckSquareHint()
+        {
+            var squareHint = Availabilities.SingleIfLast(availability => availability.IsAvailable);
+
+            if (squareHint != null)
+                hintList.Add((IHintNew) squareHint);
+        }
+
+        void ClearSquareHint()
+        {
+            var count = Availabilities.Count(availability => availability.IsAvailable);
+
+            if (count > 1 && hintList.Any(hint => hint.GetType().IsAssignableFrom(typeof(SquareHint)) && ((SquareHint) hint).Equals(this)))
+                hintList.
+
         }
 
         internal void CheckSquareAvailabilities()

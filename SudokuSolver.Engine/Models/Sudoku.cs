@@ -280,7 +280,7 @@ namespace SudokuSolver.Engine
             Size = size;
 
             // Solve methods
-            UseSquareLevelMethod = false;
+            UseSquareLevelMethod = true;
             UseGroupNumberLevelMethod = true;
 
             // Numbers (default 9 + zero value = 10)

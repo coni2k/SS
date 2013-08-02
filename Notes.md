@@ -290,3 +290,9 @@ square levelda da ayni sey oluyor mu, bak bakalim!
 
 ---
 update square method optimization! - update availability + check availability cases!
+
+---
+square hint & group number hint
+there is hintnew abstract class and ihint interface
+to have public list of the hint, we can use ihint
+but internally to be able to search them, it can be better to have 2 seperate lists?
