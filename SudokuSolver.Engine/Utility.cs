@@ -4,13 +4,17 @@ using System.Linq;
 
 namespace SudokuSolver.Engine
 {
-    public static class LINQExtension
+    public static class Utility
     {
-        public static TSource SingleIfLast<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        #region - LINQ -
+
+        public static TSource SingleIfOnlyOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
             return source.Count(predicate) == 1
-                ? source.Single()
+                ? source.Single(predicate)
                 : default(TSource);
         }
+
+        #endregion
     }
 }

@@ -102,7 +102,7 @@ namespace SudokuSolver.Engine
             // CheckGroupNumberAvailabilities();
         }
 
-        internal void CheckGroupNumberAvailabilities()
+        internal void SearchGroupNumberHint()
         {
             Sudoku.CheckGroupNumberAvailabilitiesCounter++;
 
@@ -115,6 +115,8 @@ namespace SudokuSolver.Engine
                         .Count(availability => availability.IsAvailable) == 1)
                         .Availabilities
                         .Single(availability => availability.IsAvailable);
+
+                    // TODO lastAvailability . Square . IsAvailable
 
                     if (HintFound != null)
                         HintFound(new Hint(lastAvailability.Square, this, lastAvailability.GroupNumber.SudokuNumber, HintTypes.Group));

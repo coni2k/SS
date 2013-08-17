@@ -251,7 +251,7 @@ namespace SudokuSolver.ConsoleApp
                 Console.WriteLine("There are no hints");
 
             foreach (var hintSquare in CurrentSudoku.Hints.OrderBy(hintSquare => hintSquare.Square.SquareId))
-                Console.WriteLine("P Id {0:D2}: {1}", hintSquare.Square.SquareId, hintSquare.Number.Value);
+                Console.WriteLine("P Id {0:D2}: {1}", hintSquare.Square.SquareId, hintSquare.SudokuNumber.Value);
         }
 
         static void ClearScreen()
@@ -290,7 +290,7 @@ namespace SudokuSolver.ConsoleApp
 
         static void Sudoku_HintFound(Hint hint)
         {
-            Console.WriteLine("P Id {0:D2}: {1} - {2} - {3}", hint.Square.SquareId, hint.Square.SudokuNumber.Value, hint.Number.Value, hint.Type);
+            Console.WriteLine("P Id {0:D2}: {1} - {2} - {3}", hint.Square.SquareId, hint.Square.SudokuNumber.Value, hint.SudokuNumber.Value, hint.Type);
         }
     }
 }

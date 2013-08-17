@@ -338,8 +338,8 @@ namespace SudokuSolver.Engine
                 // Generate the squares
                 var square = new Square(squareId, this, squareTypeGroup, horizontalTypeGroup, verticalTypeGroup);
 
-                // Register the event
-                square.HintFound += new Hint.FoundEventHandler(Hint_Found);
+                //// Register the event
+                //square.HintFound += new Hint.FoundEventHandler(Hint_Found);
 
                 // Add to the list
                 squares.Add(square);
@@ -499,13 +499,13 @@ namespace SudokuSolver.Engine
             {
                 if (hint.Type != HintTypes.None)
                 {
-                    UpdateSquare(hint.Square, hint.Number, AssignTypes.Solver);
+                    UpdateSquare(hint.Square, hint.SudokuNumber, AssignTypes.Solver);
+                    hint.Type = HintTypes.None;
                 }
-                hint.Type = HintTypes.None;
             }
 
             // Remove the processed ones
-            hintsCopy.RemoveAll(s => s.Type.Equals(HintTypes.None));
+            Hints.RemoveAll(s => s.Type.Equals(HintTypes.None));
 
             // Again; since it could spot more squares during this method, run it again
             // If there are no hint, it will quit anyway

@@ -296,3 +296,26 @@ square hint & group number hint
 there is hintnew abstract class and ihint interface
 to have public list of the hint, we can use ihint
 but internally to be able to search them, it can be better to have 2 seperate lists?
+
+---
+use distinct on search square hint method - it searches the same square 3 times
+this is okay, test it
+
+continue with this;
+SearchGroupNumberHint()
+
+remove groupnumber hint found and add the hint to sudoku.hints directly!
+maybe we can have a method for adding hint!
+
+check lastavailability.square.isavailable before adding it - compare it with square hint add
+
+remove hint found event handler!
+
+update tests, cover more states! - continue with 6 and compare it with 5 and before!
+remove unnecessary cases!
+
+2 important parts will be left;
+. use Square itself for holding the hint (it can have both of the hint types (square + group number))
+. hint removal!
+
+. and then check headache!

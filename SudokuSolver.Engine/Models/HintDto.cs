@@ -19,7 +19,7 @@
             public HintDto(Hint hint)
             {
                 SquareId = hint.Square.SquareId;
-                Value = hint.Number.Value;
+                Value = hint.SudokuNumber.Value;
                 Type = hint.Type;
             }
 

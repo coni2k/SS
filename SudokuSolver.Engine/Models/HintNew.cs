@@ -2,10 +2,10 @@
 
 namespace SudokuSolver.Engine
 {
-    public interface IHintNew
+    public interface IHintNew //<T> where T : class
     {
-        SudokuNumber SudokuNumber { get; set; }
-        object Source { get; set; }
+        SudokuNumber SudokuNumber { get; }
+        // T Source { get; set; }
     }
 
     public abstract partial class HintNew<T> : IHintNew
@@ -15,9 +15,9 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Hint value
         /// </summary>
-        public SudokuNumber Number { get; internal set; }
+        public SudokuNumber SudokuNumber { get; internal set; }
 
-        public abstract T Source { get; set; }
+        public T Source { get; internal set; }
 
         #endregion
 
@@ -26,13 +26,7 @@ namespace SudokuSolver.Engine
         #endregion
     }
 
-    public class SquareHint : HintNew<Square>
-    {
-        public override Square Source { get; set; }
-    }
+    public class SquareHint : HintNew<Square> { }
 
-    public class GroupNumberHint : HintNew<Group.GroupNumber>
-    {
-        public override Group.GroupNumber Source { get; set; }
-    }
+    public class GroupNumberHint : HintNew<Group.GroupNumber> { }    
 }

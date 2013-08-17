@@ -44,6 +44,11 @@ namespace SudokuSolver.Engine
                         && VerticalTypeSource == null;
                 }
             }
+
+            public override string ToString()
+            {
+                return string.Format("SquareId: {0} - Number: {1} - IsAvailable: {2}", Square.SquareId, Number.Value, IsAvailable);
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Hint value
         /// </summary>
-        public SudokuNumber Number { get; internal set; }
+        public SudokuNumber SudokuNumber { get; internal set; }
 
         /// <summary>
         /// The type of the hint
@@ -42,7 +42,7 @@ namespace SudokuSolver.Engine
         {
             Square = square;
             SquareGroup = group;
-            Number = number;
+            SudokuNumber = number;
             Type = type;
         }
 
