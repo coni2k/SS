@@ -298,24 +298,28 @@ to have public list of the hint, we can use ihint
 but internally to be able to search them, it can be better to have 2 seperate lists?
 
 ---
-use distinct on search square hint method - it searches the same square 3 times
-this is okay, test it
+remove groupnumber hint found and add the hint to sudoku.hints directly! - OK
 
-continue with this;
-SearchGroupNumberHint()
+maybe we can have a method for adding hints ?!
 
-remove groupnumber hint found and add the hint to sudoku.hints directly!
-maybe we can have a method for adding hint!
+check lastavailability.square.isavailable before adding it - compare it with square hint add - OK
 
-check lastavailability.square.isavailable before adding it - compare it with square hint add
-
-remove hint found event handler!
-
-update tests, cover more states! - continue with 6 and compare it with 5 and before!
-remove unnecessary cases!
+remove hint found event handler! - OK
 
 2 important parts will be left;
-. use Square itself for holding the hint (it can have both of the hint types (square + group number))
 . hint removal!
+. use Square itself for holding the hint (it can have both of the hint types (square + group number))
 
 . and then check headache!
+
+---
+currently case 6 clearly show that we can have multiple hint for one square
+but of course the number must be the same - it looks like that we can have 4 different hint for one square;
+. square type
+. square group type
+. horizontal group type
+. vertical group type
+
+---
+CHECK CASE 20; THERE IS A NICE INVALID HINT SITUATION! IS IT RELATED WITH HINT REMOVAL ?!
+and also WEB - NEW SUDOKU doesnt work right now?!

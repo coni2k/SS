@@ -9,14 +9,15 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
-        private ICollection<Group> squareGroups;
-        private ICollection<SquareAvailability> availabilities;
-        private ICollection<IHintNew> hintList;
+        ICollection<Group> groups;
+        ICollection<SquareAvailability> availabilities;
+        ICollection<IHintNew> hintList;
+
         #endregion
 
         #region - Events -
 
-        public delegate void SquareEventHandler(Square square);
+        // public delegate void SquareEventHandler(Square square);
 
         // TODO We will come back ye, mi friend!
         // internal event Hint.FoundEventHandler HintFound;
@@ -52,19 +53,19 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets the groups that this square assigned to
         /// </summary>
-        internal IEnumerable<Group> SquareGroups
+        internal IEnumerable<Group> Groups
         {
             get
             {
-                if (squareGroups == null)
+                if (groups == null)
                 {
-                    squareGroups = new Collection<Group>();
-                    squareGroups.Add(SquareTypeGroup);
-                    squareGroups.Add(HorizantalTypeGroup);
-                    squareGroups.Add(VerticalTypeGroup);
+                    groups = new Collection<Group>();
+                    groups.Add(SquareTypeGroup);
+                    groups.Add(HorizantalTypeGroup);
+                    groups.Add(VerticalTypeGroup);
                 }
 
-                return squareGroups;
+                return groups;
             }
         }
 
@@ -145,17 +146,13 @@ namespace SudokuSolver.Engine
             Updated = true;
 
             // d. Search hints
-            var relatedSquares = squareGroups.SelectMany(group => group.Squares).Distinct();
-
+            // Square level method
+            var relatedSquares = groups.SelectMany(group => group.Squares).Distinct();
             foreach (var square in relatedSquares)
                 square.SearchSquareHint();
-            // SearchSquareHintOld();
 
-            // Method 2; Check whether there is any group that has only one square left for any number
-
-            // Get the groups that got affected from UpdateAvailability operation (for Method 2)
-            var relatedGroups = SquareGroups.SelectMany(group => group.Squares.SelectMany(square => square.SquareGroups)).Distinct();
-
+            // Group level method
+            var relatedGroups = Groups.SelectMany(group => group.Squares.SelectMany(square => square.Groups)).Distinct();
             foreach (var group in relatedGroups)
                 group.SearchGroupNumberHint();
         }
@@ -175,7 +172,7 @@ namespace SudokuSolver.Engine
             var isGroupNumbersAvailable = !isNumberUpdated;
 
             // Set availabilities of the related squares
-            foreach (var group in SquareGroups)
+            foreach (var group in Groups)
             {
                 foreach (var square in group.Squares)
                 {
@@ -183,8 +180,10 @@ namespace SudokuSolver.Engine
                         square.UpdateAvailability(SudokuNumber, group.GroupType, sourceSquare);
 
                     if (Sudoku.UseGroupNumberLevelMethod)
-                        foreach (var squareGroup in square.SquareGroups)
+                    {
+                        foreach (var squareGroup in square.Groups)
                             squareGroup.UpdateAvailability(SudokuNumber, square, isGroupNumbersAvailable);
+                    }
                 }
             }
         }
@@ -203,7 +202,9 @@ namespace SudokuSolver.Engine
 
         internal void SearchSquareHint()
         {
-            var lastAvailability = Availabilities.SingleIfOnlyOrDefault(availability => availability.IsAvailable);
+            Sudoku.SearchSquareHintCounter++;
+
+            var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsAvailable);
 
             if (lastAvailability == null)
                 return;
@@ -211,7 +212,7 @@ namespace SudokuSolver.Engine
             if (!lastAvailability.Square.IsAvailable)
                 return;
             
-            if (Sudoku.Hints.Any(p => p.Square.Equals(lastAvailability.Square)))
+            if (Sudoku.Hints.Any(hint => hint.Square.Equals(lastAvailability.Square)))
                 return;
 
             // Old version

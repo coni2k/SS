@@ -12,21 +12,27 @@ namespace SudokuSolver.Engine
         {
             public class GroupNumberAvailability
             {
+                bool availability;
+
                 public GroupNumber GroupNumber { get; private set; }
                 public Square Square { get; private set; }
-                public bool IsAvailable { get; set; }
+                // public bool IsAvailable { get; set; }
+                // public bool IsAvailable { get { return availability; } }
+                public bool IsAvailable { get { return availability && Square.IsAvailable; } }
                 internal bool Updated { get; set; }
 
                 internal GroupNumberAvailability(GroupNumber groupNumber, Square square)
                 {
                     GroupNumber = groupNumber;
                     Square = square;
-                    IsAvailable = true;
+                    // IsAvailable = true;
+                    availability = true;
                 }
 
                 internal void UpdateAvailability(bool isAvailable)
                 {
-                    IsAvailable = isAvailable;
+                    // IsAvailable = isAvailable;
+                    availability = isAvailable;
 
                     Updated = true;
                 }

@@ -19,9 +19,8 @@ namespace SudokuSolver.Engine
 
         #region - Events -
 
-        internal delegate void GroupSquareEventHandler(Group group, Square square);
-
-        internal event Hint.FoundEventHandler HintFound;
+        // internal delegate void GroupSquareEventHandler(Group group, Square square);
+        // internal event Hint.FoundEventHandler HintFound;
 
         #endregion
 
@@ -92,36 +91,61 @@ namespace SudokuSolver.Engine
 
         internal void UpdateAvailability(SudokuNumber number, Square square, bool isAvailable)
         {
-            groupNumbers
+            GroupNumbers
                 .Single(groupNumber =>
                     groupNumber.SudokuNumber.Equals(number))
                 .Availabilities
                 .Single(availability =>
                     availability.Square.Equals(square)).UpdateAvailability(isAvailable);
 
-            // CheckGroupNumberAvailabilities();
+            // TODO Can this be better, elegant?
+            // Only updates the Updated property of the availabilities that uses the main square
+            var relatedAvailabilities = GroupNumbers
+                .Select(groupNumber => groupNumber.Availabilities.Single(availability => availability.Square.Equals(square)));
+
+            foreach (var availability in relatedAvailabilities)
+                availability.Updated = true;                    
         }
 
         internal void SearchGroupNumberHint()
         {
-            Sudoku.CheckGroupNumberAvailabilitiesCounter++;
+            Sudoku.SearchGroupNumberHintCounter++;
 
-            if (GroupNumbers.Count(groupNumber => groupNumber.Availabilities.Count(availability => availability.IsAvailable) == 1) == 1)
-            {
-                if (HintFound != null)
-                {
-                    var lastAvailability = GroupNumbers.Single(groupNumber => groupNumber
-                        .Availabilities
-                        .Count(availability => availability.IsAvailable) == 1)
-                        .Availabilities
-                        .Single(availability => availability.IsAvailable);
+            var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.IsAvailable) == 1);
 
-                    // TODO lastAvailability . Square . IsAvailable
+            if (lastGroupNumber == null)
+                return;
 
-                    if (HintFound != null)
-                        HintFound(new Hint(lastAvailability.Square, this, lastAvailability.GroupNumber.SudokuNumber, HintTypes.Group));
-                }
-            }
+            var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable);
+
+            // The square is available?
+            if (!lastAvailability.Square.IsAvailable)
+                return;
+
+            // Added earlier?
+            if (Sudoku.Hints.Any(hint => hint.Square.Equals(lastAvailability.Square) && hint.SquareGroup == lastAvailability.GroupNumber.Group && hint.Type == HintTypes.Group))
+                return;
+
+            // Old version
+            Sudoku.Hints.Add(new Hint(lastAvailability.Square, lastAvailability.GroupNumber.Group, lastAvailability.GroupNumber.SudokuNumber, HintTypes.Group));
+
+            // New version
+            // TODO!
+
+            //if (GroupNumbers.Count(groupNumber => groupNumber.Availabilities.Count(availability => availability.IsAvailable) == 1) == 1)
+            //{
+            //    if (HintFound != null)
+            //    {
+            //        var lastAvailability = GroupNumbers.Single(groupNumber => groupNumber
+            //            .Availabilities.Count(availability => availability.IsAvailable) == 1)
+            //            .Availabilities.Single(availability => availability.IsAvailable);
+
+            //        // TODO lastAvailability . Square . IsAvailable
+
+            //        if (HintFound != null)
+            //            HintFound(new Hint(lastAvailability.Square, this, lastAvailability.GroupNumber.SudokuNumber, HintTypes.Group));
+            //    }
+            //}
         }
 
         public override string ToString()

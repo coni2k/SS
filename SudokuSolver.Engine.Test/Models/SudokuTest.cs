@@ -16,16 +16,16 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase1()
+        public void SquareMethod_Horizontal_8()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase1();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.Hints.Count == 1);
+            Assert.IsTrue(sudoku.Hints.Count == 2);
 
             // Get the hint & square
-            var hint = sudoku.Hints.Single();
+            var hint = sudoku.Hints.First();
 
             // b. Hint square value
             Assert.IsTrue(hint.Square.SquareId == 21);
@@ -37,7 +37,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(sudoku.Hints.Count == 0);
+            Assert.IsTrue(sudoku.Hints.Count == 1);
 
             // e. Square assign type
             Assert.IsTrue(hint.Square.AssignType == AssignTypes.Solver);
@@ -47,16 +47,16 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase2()
+        public void SquareMethod_Verical_8()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase2();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.Hints.Count == 1);
+            Assert.IsTrue(sudoku.Hints.Count == 2);
 
             // Get the hint & square
-            var hint = sudoku.Hints.Single();
+            var hint = sudoku.Hints.First();
 
             // b. Hint square value
             Assert.IsTrue(hint.Square.SquareId == 61);
@@ -68,7 +68,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(sudoku.Hints.Count == 0);
+            Assert.IsTrue(sudoku.Hints.Count == 1);
 
             // e. Square assign type
             Assert.IsTrue(hint.Square.AssignType == AssignTypes.Solver);
@@ -78,16 +78,16 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase3()
+        public void SquareMethod_Square_8()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase3();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.Hints.Count == 1);
+            Assert.IsTrue(sudoku.Hints.Count == 2);
 
             // Get the hint & square
-            var hint = sudoku.Hints.Single();
+            var hint = sudoku.Hints.First();
 
             // b. Hint square value
             Assert.IsTrue(hint.Square.SquareId == 9);
@@ -99,7 +99,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(sudoku.Hints.Count == 0);
+            Assert.IsTrue(sudoku.Hints.Count == 1);
 
             // e. Square assign type
             Assert.IsTrue(hint.Square.AssignType == AssignTypes.Solver);
@@ -109,7 +109,7 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase4()
+        public void SquareMethod_Mixed_8()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase4();
@@ -140,16 +140,16 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase5()
+        public void GroupNumberMethod_Straight_1()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase5();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.Hints.Count == 1);
+            Assert.IsTrue(sudoku.Hints.Count == 3);
 
             // Get the hint & square
-            var hint = sudoku.Hints.Single();
+            var hint = sudoku.Hints.First();
 
             // b. Hint square value
             Assert.IsTrue(hint.Square.SquareId == 1);
@@ -161,7 +161,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(sudoku.Hints.Count == 0);
+            Assert.IsTrue(sudoku.Hints.Count == 2);
 
             // e. Square assign type
             Assert.IsTrue(hint.Square.AssignType == AssignTypes.Solver);
@@ -171,51 +171,70 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase6()
+        public void GroupNumberMethod_Mixed()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase6();
 
+            // a. Hint count
+            Assert.IsTrue(sudoku.Hints.Count == 2);
+
+            // Get the hint & square
+            var hint = sudoku.Hints.First();
+
+            // b. Hint square value
+            Assert.IsTrue(hint.Square.SquareId == 81);
+
+            // c. Hint number value
+            Assert.IsTrue(hint.SudokuNumber.Value == 1);
+
             // Solve
             sudoku.Solve();
 
-            // Get the control square
-            var controlSquare = sudoku.Squares.Single(square => square.SquareId == 81);
+            // d. Hint count
+            Assert.IsTrue(sudoku.Hints.Count == 1);
 
-            // Test
-            // a. Control square's value
-            Assert.IsTrue(controlSquare.SudokuNumber.Value == 1);
+            // e. Square assign type
+            Assert.IsTrue(hint.Square.AssignType == AssignTypes.Solver);
 
-            // b. Squares left
+            // f. Sudoku squares left
             Assert.IsTrue(sudoku.SquaresLeft == 76);
         }
 
         [TestMethod]
-        public void TestCase7()
+        public void Domino()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase7();
 
+            // a. Hint count
+            Assert.IsTrue(sudoku.Hints.Count == 4);
+
+            // b. Hint square value
+            Assert.IsTrue(sudoku.Hints.Any(hint => hint.Square.SquareId == 1));
+            Assert.IsTrue(sudoku.Hints.Any(hint => hint.Square.SquareId == 31));
+
+            // c. Hint number value
+            Assert.IsTrue(sudoku.Hints.First(hint => hint.Square.SquareId == 1).SudokuNumber.Value == 1);
+            Assert.IsTrue(sudoku.Hints.First(hint => hint.Square.SquareId == 31).SudokuNumber.Value == 2);
+
             // Solve
             sudoku.Solve();
 
-            // Get the control squares
-            var controlSquare1 = sudoku.Squares.Single(square => square.SquareId == 1);
-            var controlSquare2 = sudoku.Squares.Single(square => square.SquareId == 31);
-            var controlSquare3 = sudoku.Squares.Single(square => square.SquareId == 54);
+            // d. Hint count
+            Assert.IsTrue(sudoku.Hints.Count == 5);
 
-            // Test
-            // a. Control squares values
-            Assert.IsTrue(controlSquare1.SudokuNumber.Value == 1);
-            Assert.IsTrue(controlSquare2.SudokuNumber.Value == 2);
-            Assert.IsTrue(controlSquare3.SudokuNumber.Value == 2);
+            // e. Square assign type
+            Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 1).AssignType == AssignTypes.Solver);
+            Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 31).AssignType == AssignTypes.Solver);
+            Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 54).AssignType == AssignTypes.Solver);
 
             // b. Squares left
             Assert.IsTrue(sudoku.SquaresLeft == 64);
         }
 
         [TestMethod]
-        public void TestCase8()
+        public void Beauty()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase8();
@@ -241,7 +260,7 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase9()
+        public void MiniSize()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase9();
@@ -255,7 +274,7 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase10()
+        public void MaxiSize()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase10();
@@ -269,7 +288,7 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase11()
+        public void RealCase()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase11();
@@ -283,10 +302,10 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase12()
+        public void InvalidSudoku_Headache()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase12();
+            var sudoku = CaseManager.GetCase12_Headache();
             
             // Test
             // a. Assign an invalid value
@@ -302,10 +321,10 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase13()
+        public void InvalidSudoku_Headache2()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase13();
+            var sudoku = CaseManager.GetCase13_Headache();
 
             // Test
             // a. Assign an invalid value
@@ -321,7 +340,7 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase14()
+        public void Wrong()
         {
             // Test
             // a. Invalid sudoku
@@ -337,7 +356,7 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase15()
+        public void Wrong2()
         {
             // Test
             // a. Invalid sudoku
@@ -353,40 +372,61 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void TestCase16()
-        {
-            // New sudoku
-            var sudoku = CaseManager.GetCase16();
-
-            // Test
-            // a. ?
-            // TODO!
-
-            // Solved
-        }
-
-        [TestMethod]
-        public void TestCase17()
+        public void AvailabilityHintBug()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase17();
 
-            // Test
-            // a. ?
-            // TODO!
+            // a. Hint count
+            Assert.IsTrue(sudoku.Hints.Count == 2);
 
-            // Solved
+            // Get the hint & square
+            var hint = sudoku.Hints.First();
+
+            // b. Hint square value
+            Assert.IsTrue(hint.Square.SquareId == 21);
+
+            // c. Hint number value
+            // TODO Becase currently hint removal doesnt work properly, this fails - check it after fixing hint removal
+            Assert.IsTrue(hint.SudokuNumber.Value == 1);
+
+            // Solve
+            sudoku.Solve();
+
+            // d. Hint count
+            Assert.IsTrue(sudoku.Hints.Count == 1);
+
+            // e. Square assign type
+            Assert.IsTrue(hint.Square.AssignType == AssignTypes.Solver);
+
+            // f. Sudoku squares left
+            Assert.IsTrue(sudoku.SquaresLeft == 72);
         }
 
         [TestMethod]
-        public void TestCase18()
+        public void HintsAvailabilityBug()
         {
             // New sudoku
             var sudoku = CaseManager.GetCase18();
 
             // Test
-            // a. ?
-            // TODO!
+            // a. Assign an invalid value
+
+            // TODO This is an invalid sudoku
+            // Will be solved when we start keeping hints on the squares themselves
+
+            // Since square 9's value is known, this update should not be possible
+            // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
+
+            try
+            {
+                sudoku.UpdateSquare(27, 9);
+                Assert.Fail();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsNotInstanceOfType(ex, typeof(UnitTestAssertException));
+            }
         }
     }
 }
