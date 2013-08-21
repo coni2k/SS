@@ -89,14 +89,16 @@ namespace SudokuSolver.Engine
 
         #region - Methods -
 
-        internal void UpdateAvailability(SudokuNumber number, Square square, bool isAvailable)
+        //internal void UpdateAvailability(SudokuNumber number, Square square, bool isAvailable)
+        internal void UpdateAvailability(SudokuNumber number, Square square, GroupTypes groupType, Square source)
         {
             GroupNumbers
                 .Single(groupNumber =>
                     groupNumber.SudokuNumber.Equals(number))
                 .Availabilities
                 .Single(availability =>
-                    availability.Square.Equals(square)).UpdateAvailability(isAvailable);
+                    availability.Square.Equals(square)).UpdateAvailability(groupType, source);
+                    //availability.Square.Equals(square)).UpdateAvailability(isAvailable);
 
             // TODO Can this be better, elegant?
             // Only updates the Updated property of the availabilities that uses the main square

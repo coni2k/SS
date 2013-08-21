@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,12 +22,6 @@ namespace SudokuSolver.Engine
         private List<Group.GroupNumber.GroupNumberAvailability> groupNumberAvailabilities = new List<Group.GroupNumber.GroupNumberAvailability>();
         private bool ready;
         private bool autoSolve;
-
-        #endregion
-
-        #region - Events -
-
-        public event Hint.FoundEventHandler HintFound;
 
         #endregion
 

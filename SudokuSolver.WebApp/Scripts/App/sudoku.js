@@ -52,7 +52,7 @@
 
         self.Sudokus = ko.observableArray([]);
         self.NumberGroupsCache = [];
-        self.SquareGroupsCache = []
+        self.SquareGroupsCache = [];
         self.GroupsCache = [];
 
         // TODO History.js enabled check ?!

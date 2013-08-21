@@ -11,7 +11,7 @@ namespace SudokuSolver.Engine
 
         ICollection<Group> groups;
         ICollection<SquareAvailability> availabilities;
-        ICollection<IHintNew> hintList;
+        // ICollection<IHintNew> hintList;
 
         #endregion
 
@@ -88,10 +88,10 @@ namespace SudokuSolver.Engine
             get { return availabilities; }
         }
 
-        public IEnumerable<IHintNew> HintList
-        {
-            get { return hintList; }
-        }
+        //public IEnumerable<IHintNew> HintList
+        //{
+        //    get { return hintList; }
+        //}
 
         /// <summary>
         /// Determines whether the square value or it's availabilities were updated since the last UpdateSquare method call.
@@ -175,7 +175,7 @@ namespace SudokuSolver.Engine
             /* isNumberUpdated is false : Make the old number available
              *                 is true  : new number assigned to the square - make it unavailable in the related object. */
             var sourceSquare = isNumberUpdated ? this : null;
-            var isGroupNumbersAvailable = !isNumberUpdated;
+            //var isGroupNumbersAvailable = !isNumberUpdated;
 
             // Set availabilities of the related squares
             foreach (var group in Groups)
@@ -188,7 +188,10 @@ namespace SudokuSolver.Engine
                     if (Sudoku.UseGroupNumberLevelMethod)
                     {
                         foreach (var squareGroup in square.Groups)
-                            squareGroup.UpdateAvailability(SudokuNumber, square, isGroupNumbersAvailable);
+                        {
+                            //squareGroup.UpdateAvailability(SudokuNumber, square, isGroupNumbersAvailable);
+                            squareGroup.UpdateAvailability(SudokuNumber, square, group.GroupType, sourceSquare);
+                        }
                     }
                 }
             }
@@ -281,7 +284,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("SquareId: {0} - Number: {1}", SquareId, SudokuNumber.Value);
+            return string.Format("SquareId: {0} - Number: {1}", SquareId, SudokuNumber);
         }
 
         #endregion

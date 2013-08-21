@@ -15,6 +15,15 @@ namespace SudokuSolver.Engine
             internal Square SquareTypeSource { get; private set; }
             internal Square HorizontalTypeSource { get; private set; }
             internal Square VerticalTypeSource { get; private set; }
+            public bool IsAvailable
+            {
+                get
+                {
+                    return SquareTypeSource == null
+                        && HorizontalTypeSource == null
+                        && VerticalTypeSource == null;
+                }
+            }
             internal bool Updated { get; set; }
 
             internal SquareAvailability(Square square, SudokuNumber number)
@@ -33,16 +42,6 @@ namespace SudokuSolver.Engine
                 }
 
                 Updated = true;
-            }
-
-            public bool IsAvailable
-            {
-                get
-                {
-                    return SquareTypeSource == null
-                        && HorizontalTypeSource == null
-                        && VerticalTypeSource == null;
-                }
             }
 
             public override string ToString()

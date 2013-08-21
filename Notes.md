@@ -321,5 +321,8 @@ but of course the number must be the same - it looks like that we can have 4 dif
 . vertical group type
 
 ---
-CHECK CASE 20; THERE IS A NICE INVALID HINT SITUATION! IS IT RELATED WITH HINT REMOVAL ?!
+case 16 (group number availability bug) solved
+by using source square method (not bool isavailable)
+but it feels like keep more than we need. cant we have this result directly from the squares or somethin'?
 
++ Isavailable still need to use Square.IsAvailable. cant we have it without it?

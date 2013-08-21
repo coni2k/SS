@@ -12,13 +12,26 @@ namespace SudokuSolver.Engine
         {
             public class GroupNumberAvailability
             {
-                bool availability;
+                //bool availability;
 
                 public GroupNumber GroupNumber { get; private set; }
                 public Square Square { get; private set; }
+                internal Square SquareTypeSource { get; private set; }
+                internal Square HorizontalTypeSource { get; private set; }
+                internal Square VerticalTypeSource { get; private set; }
                 // public bool IsAvailable { get; set; }
                 // public bool IsAvailable { get { return availability; } }
-                public bool IsAvailable { get { return availability && Square.IsAvailable; } }
+                // public bool IsAvailable { get { return availability && Square.IsAvailable; } }
+                public bool IsAvailable
+                {
+                    get
+                    {
+                        return SquareTypeSource == null
+                            && HorizontalTypeSource == null
+                            && VerticalTypeSource == null
+                            && Square.IsAvailable;
+                    }
+                }
                 internal bool Updated { get; set; }
 
                 internal GroupNumberAvailability(GroupNumber groupNumber, Square square)
@@ -26,16 +39,28 @@ namespace SudokuSolver.Engine
                     GroupNumber = groupNumber;
                     Square = square;
                     // IsAvailable = true;
-                    availability = true;
+                    //availability = true;
                 }
 
-                internal void UpdateAvailability(bool isAvailable)
+                internal void UpdateAvailability(GroupTypes type, Square source)
                 {
-                    // IsAvailable = isAvailable;
-                    availability = isAvailable;
+                    switch (type)
+                    {
+                        case GroupTypes.Square: SquareTypeSource = source; break;
+                        case GroupTypes.Horizontal: HorizontalTypeSource = source; break;
+                        case GroupTypes.Vertical: VerticalTypeSource = source; break;
+                    }
 
                     Updated = true;
                 }
+
+                //internal void UpdateAvailability(bool isAvailable)
+                //{
+                //    // IsAvailable = isAvailable;
+                //    availability = isAvailable;
+
+                //    Updated = true;
+                //}
 
                 public override string ToString()
                 {

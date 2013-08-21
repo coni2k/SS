@@ -126,7 +126,6 @@ namespace SudokuSolver.ConsoleApp
             // ClearScreen();
 
             CurrentSudoku = sudoku;
-            CurrentSudoku.HintFound += new Hint.FoundEventHandler(Sudoku_HintFound);
 
             Console.WriteLine("New sudoku is loaded!");
         }
@@ -286,11 +285,6 @@ namespace SudokuSolver.ConsoleApp
         static string GetCaseIds()
         {
             return string.Join(", ", Cases.Select(s => s.SudokuId.ToString()));
-        }
-
-        static void Sudoku_HintFound(Hint hint)
-        {
-            Console.WriteLine("P Id {0:D2}: {1} - {2} - {3}", hint.Square.SquareId, hint.Square.SudokuNumber.Value, hint.SudokuNumber.Value, hint.Type);
         }
     }
 }
