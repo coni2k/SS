@@ -568,6 +568,27 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
+        /// Group number method bug
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase16()
+        {
+            var sudoku = new Sudoku();
+
+            sudoku.SudokuId = 16;
+            sudoku.Title = "Group number availability bug";
+
+            // sudoku.ToggleReady();
+
+            // Square ID version
+            sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(13, 1);
+            //sudoku.UpdateSquare(1, 0);
+
+            return sudoku;
+        }
+
+        /// <summary>
         /// Availability + hint bug
         /// </summary>
         /// <returns></returns>
@@ -634,53 +655,29 @@ namespace SudokuSolver.Engine
             return sudoku;
         }
 
-        /// <summary>
-        /// Group number method bug
-        /// </summary>
-        /// <returns></returns>
-        public Sudoku GetCase20()
-        {
-            var sudoku = new Sudoku();
-
-            sudoku.SudokuId = 20;
-            sudoku.Title = "Test sudoku";
-
-            // sudoku.ToggleReady();
-
-            // Square ID version
-            sudoku.UpdateSquare(1, 1);
-            sudoku.UpdateSquare(13, 1);
-            sudoku.UpdateSquare(25, 1);
-            sudoku.UpdateSquare(29, 1);
-            sudoku.UpdateSquare(57, 1);
-            sudoku.UpdateSquare(1, 0);
-
-            return sudoku;
-        }
-
         public IEnumerable<Sudoku> GetCases()
         {
             var list = new Collection<Sudoku>();
 
-            list.Add(GetCase1());
-            list.Add(GetCase2());
-            list.Add(GetCase3());
-            list.Add(GetCase4()); // Sample case for Method 1
-            list.Add(GetCase5()); // Sample case for Method 2
-            list.Add(GetCase6());
-            list.Add(GetCase7());
-            list.Add(GetCase8());
-            list.Add(GetCase9());
-            list.Add(GetCase10());
-            list.Add(GetCase11());
-            list.Add(GetCase12_Headache());
-            list.Add(GetCase13_Headache());
-            list.Add(GetCase14());
-            list.Add(GetCase15());
-            list.Add(GetCase17());
-            list.Add(GetCase18());
-            list.Add(GetCase19());
-            list.Add(GetCase20());
+            //list.Add(GetCase1());
+            //list.Add(GetCase2());
+            //list.Add(GetCase3());
+            //list.Add(GetCase4()); // Sample case for Method 1
+            //list.Add(GetCase5()); // Sample case for Method 2
+            //list.Add(GetCase6());
+            //list.Add(GetCase7());
+            //list.Add(GetCase8());
+            //list.Add(GetCase9());
+            //list.Add(GetCase10());
+            //list.Add(GetCase11());
+            //list.Add(GetCase12_Headache());
+            //list.Add(GetCase13_Headache());
+            //list.Add(GetCase14());
+            //list.Add(GetCase15());
+            list.Add(GetCase16());
+            //list.Add(GetCase17());
+            //list.Add(GetCase18());
+            //list.Add(GetCase19());
 
             return list;
         }

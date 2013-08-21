@@ -29,26 +29,27 @@ namespace SudokuSolver.WebApp.Controllers
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid sudoku"));
 
             // Id of the container
+            sudokuDto.SudokuId = 1;
+
             // TODO Thread safety?
-            int nextId = 1;
             lock (this)
             {
                 if (Cache.SudokuCases.Count > 0)
-                    nextId = (Cache.SudokuCases.Max(s => s.SudokuId) + 1);
+                    sudokuDto.SudokuId = Cache.SudokuCases.Max(s => s.SudokuId) + 1;
+
+                // Create and add a new sudoku
+                var sudoku = new Sudoku(sudokuDto.Size)
+                {
+                    SudokuId = sudokuDto.SudokuId,
+                    Title = sudokuDto.Title,
+                    Description = sudokuDto.Description
+                };
+                Cache.SudokuCases.Add(sudoku);
             }
 
-            // Create and add a new sudoku
-            var sudoku = new Sudoku(sudokuDto.Size)
-            {
-                SudokuId = nextId,
-                Title = sudokuDto.Title,
-                Description = sudokuDto.Description
-            };
-            Cache.SudokuCases.Add(sudoku);
-
             // Response
-            var response = Request.CreateResponse<Sudoku>(HttpStatusCode.Created, sudoku);
-            string uri = Url.Link(WebApiRouteConfig.SudokuRouteName, new { action = "GetSudoku", id = sudoku.SudokuId });
+            var response = Request.CreateResponse<Sudoku.SudokuDto>(HttpStatusCode.Created, sudokuDto);
+            var uri = Url.Link(WebApiRouteConfig.SudokuRouteName, new { action = "GetSudoku", sudokuId = sudokuDto.SudokuId });
             response.Headers.Location = new Uri(uri);
             return response;
         }

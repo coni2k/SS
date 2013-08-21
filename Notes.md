@@ -322,4 +322,4 @@ but of course the number must be the same - it looks like that we can have 4 dif
 
 ---
 CHECK CASE 20; THERE IS A NICE INVALID HINT SITUATION! IS IT RELATED WITH HINT REMOVAL ?!
-and also WEB - NEW SUDOKU doesnt work right now?!
+

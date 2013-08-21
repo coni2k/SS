@@ -62,7 +62,7 @@ namespace SudokuSolver.Engine
 
                 squares = value;
 
-                // Availabilities
+                // Availabilities; new GroupNumber will be using Squares property of it's group, that why do this here?
                 groupNumbers = new Collection<GroupNumber>();
                 foreach (var number in Sudoku.NumbersExceptZero)
                     groupNumbers.Add(new GroupNumber(this, number));

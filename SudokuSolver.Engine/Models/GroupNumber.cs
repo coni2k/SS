@@ -22,6 +22,11 @@ namespace SudokuSolver.Engine
                 foreach (var square in group.Squares)
                     availabilities.Add(new GroupNumberAvailability(this, square));
             }
+
+            public override string ToString()
+            {
+                return string.Format("Group: {0} - Number: {1}", Group, SudokuNumber);
+            }
         }
     }
 }

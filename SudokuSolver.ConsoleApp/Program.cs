@@ -23,7 +23,7 @@ namespace SudokuSolver.ConsoleApp
 
             NewSudoku();
 
-            LoadCase(5);
+            // LoadCase(20);
 
             ShowHints();
 

@@ -147,14 +147,20 @@ namespace SudokuSolver.Engine
 
             // d. Search hints
             // Square level method
-            var relatedSquares = groups.SelectMany(group => group.Squares).Distinct();
-            foreach (var square in relatedSquares)
-                square.SearchSquareHint();
+            if (Sudoku.UseSquareLevelMethod)
+            {
+                var relatedSquares = groups.SelectMany(group => group.Squares).Distinct();
+                foreach (var square in relatedSquares)
+                    square.SearchSquareHint();
+            }
 
             // Group level method
-            var relatedGroups = Groups.SelectMany(group => group.Squares.SelectMany(square => square.Groups)).Distinct();
-            foreach (var group in relatedGroups)
-                group.SearchGroupNumberHint();
+            if (Sudoku.UseGroupNumberLevelMethod)
+            {
+                var relatedGroups = Groups.SelectMany(group => group.Squares.SelectMany(square => square.Groups)).Distinct();
+                foreach (var group in relatedGroups)
+                    group.SearchGroupNumberHint();
+            }
         }
 
         /// <summary>
