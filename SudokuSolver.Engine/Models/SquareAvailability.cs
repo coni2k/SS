@@ -21,7 +21,8 @@ namespace SudokuSolver.Engine
                 {
                     return SquareTypeSource == null
                         && HorizontalTypeSource == null
-                        && VerticalTypeSource == null;
+                        && VerticalTypeSource == null
+                        && Square.IsAvailable;
                 }
             }
             internal bool Updated { get; set; }
@@ -46,7 +47,7 @@ namespace SudokuSolver.Engine
 
             public override string ToString()
             {
-                return string.Format("SquareId: {0} - Number: {1} - IsAvailable: {2}", Square.SquareId, Number.Value, IsAvailable);
+                return string.Format("Square: {0} - Number: {1} - IsAvailable: {2}", Square, Number, IsAvailable);
             }
         }
     }

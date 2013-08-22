@@ -109,6 +109,11 @@ namespace SudokuSolver.Engine
                 availability.Updated = true;                    
         }
 
+        //internal void RemoveGroupNumberHint()
+        //{
+        //    Sudoku.Hints.RemoveAll(hint => hint.Square == 
+        //}
+
         internal void SearchGroupNumberHint()
         {
             Sudoku.SearchGroupNumberHintCounter++;
@@ -119,10 +124,6 @@ namespace SudokuSolver.Engine
                 return;
 
             var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable);
-
-            // The square is available?
-            if (!lastAvailability.Square.IsAvailable)
-                return;
 
             // Added earlier?
             if (Sudoku.Hints.Any(hint => hint.Square.Equals(lastAvailability.Square) && hint.SquareGroup == lastAvailability.GroupNumber.Group && hint.Type == HintTypes.Group))
@@ -152,7 +153,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("Id: {0} - Type: {1}", Id, GroupType);
+            return string.Format("Id: {0} - Type: {1}", Id, GroupType.ToString()[0]);
         }
 
         #endregion

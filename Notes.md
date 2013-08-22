@@ -298,8 +298,6 @@ to have public list of the hint, we can use ihint
 but internally to be able to search them, it can be better to have 2 seperate lists?
 
 ---
-remove groupnumber hint found and add the hint to sudoku.hints directly! - OK
-
 maybe we can have a method for adding hints ?!
 
 check lastavailability.square.isavailable before adding it - compare it with square hint add - OK
@@ -326,3 +324,9 @@ by using source square method (not bool isavailable)
 but it feels like keep more than we need. cant we have this result directly from the squares or somethin'?
 
 + Isavailable still need to use Square.IsAvailable. cant we have it without it?
+
+---
+first "remove square hint" attempt failed
+hints also need "source"?
+try it with square hints first..
+case1 toggleready commented out btw

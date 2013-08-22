@@ -12,16 +12,11 @@ namespace SudokuSolver.Engine
         {
             public class GroupNumberAvailability
             {
-                //bool availability;
-
                 public GroupNumber GroupNumber { get; private set; }
                 public Square Square { get; private set; }
                 internal Square SquareTypeSource { get; private set; }
                 internal Square HorizontalTypeSource { get; private set; }
                 internal Square VerticalTypeSource { get; private set; }
-                // public bool IsAvailable { get; set; }
-                // public bool IsAvailable { get { return availability; } }
-                // public bool IsAvailable { get { return availability && Square.IsAvailable; } }
                 public bool IsAvailable
                 {
                     get
@@ -38,8 +33,6 @@ namespace SudokuSolver.Engine
                 {
                     GroupNumber = groupNumber;
                     Square = square;
-                    // IsAvailable = true;
-                    //availability = true;
                 }
 
                 internal void UpdateAvailability(GroupTypes type, Square source)
@@ -51,20 +44,15 @@ namespace SudokuSolver.Engine
                         case GroupTypes.Vertical: VerticalTypeSource = source; break;
                     }
 
+                    // TODO Remove
+                    //Console.WriteLine("{0} - {1} - {2}", this, type.ToString()[0], source);
+
                     Updated = true;
                 }
 
-                //internal void UpdateAvailability(bool isAvailable)
-                //{
-                //    // IsAvailable = isAvailable;
-                //    availability = isAvailable;
-
-                //    Updated = true;
-                //}
-
                 public override string ToString()
                 {
-                    return string.Format("Number: {0} - Square: {1} - IsAvailable: {2}", GroupNumber.SudokuNumber, Square, IsAvailable);
+                    return string.Format("GroupNumber: {0} - Square: {1} - IsAvailable: {2}", GroupNumber, Square, IsAvailable);
                 }
             }
         }

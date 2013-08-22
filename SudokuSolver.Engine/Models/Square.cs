@@ -128,10 +128,16 @@ namespace SudokuSolver.Engine
         {
             // a. Clear availabilities
             // Make the old number available again
-            UpdateAvailabilities(false);
+            UpdateAvailabilities(null);
 
             // b. Remove hints
-            // TODO!
+            // Square level
+            RemoveSquareHint();
+
+            // Group number level
+
+
+
 
             // Assign the new number
             SudokuNumber = number;
@@ -141,12 +147,12 @@ namespace SudokuSolver.Engine
 
             // c. Update availabilities
             // Make the new number unavailable in the related square / group numbers
-            UpdateAvailabilities(true);
+            UpdateAvailabilities(this);
 
             Updated = true;
 
             // d. Search hints
-            // Square level method
+            // Square level
             if (Sudoku.UseSquareLevelMethod)
             {
                 var relatedSquares = groups.SelectMany(group => group.Squares).Distinct();
@@ -154,7 +160,7 @@ namespace SudokuSolver.Engine
                     square.SearchSquareHint();
             }
 
-            // Group level method
+            // Group level
             if (Sudoku.UseGroupNumberLevelMethod)
             {
                 var relatedGroups = Groups.SelectMany(group => group.Squares.SelectMany(square => square.Groups)).Distinct();
@@ -166,16 +172,11 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Updates the availabilities in related squares and group numbers
         /// </summary>
-        void UpdateAvailabilities(bool isNumberUpdated)
+        void UpdateAvailabilities(Square source)
         {
             // Ignore zero number, it's not used in availability lists (always available)
             if (SudokuNumber.IsZero)
                 return;
-
-            /* isNumberUpdated is false : Make the old number available
-             *                 is true  : new number assigned to the square - make it unavailable in the related object. */
-            var sourceSquare = isNumberUpdated ? this : null;
-            //var isGroupNumbersAvailable = !isNumberUpdated;
 
             // Set availabilities of the related squares
             foreach (var group in Groups)
@@ -183,16 +184,11 @@ namespace SudokuSolver.Engine
                 foreach (var square in group.Squares)
                 {
                     if (Sudoku.UseSquareLevelMethod)
-                        square.UpdateAvailability(SudokuNumber, group.GroupType, sourceSquare);
+                        square.UpdateAvailability(SudokuNumber, group.GroupType, source);
 
                     if (Sudoku.UseGroupNumberLevelMethod)
-                    {
                         foreach (var squareGroup in square.Groups)
-                        {
-                            //squareGroup.UpdateAvailability(SudokuNumber, square, isGroupNumbersAvailable);
-                            squareGroup.UpdateAvailability(SudokuNumber, square, group.GroupType, sourceSquare);
-                        }
-                    }
+                            squareGroup.UpdateAvailability(SudokuNumber, square, group.GroupType, source);
                 }
             }
         }
@@ -209,6 +205,14 @@ namespace SudokuSolver.Engine
             Availabilities.Single(availability => availability.Number.Equals(number)).UpdateAvailability(type, source);
         }
 
+        internal void RemoveSquareHint()
+        {
+            if (SudokuNumber.IsZero)
+                return;
+
+            Sudoku.Hints.RemoveAll(hint => hint.Square == this && hint.SudokuNumber == SudokuNumber && hint.Type == HintTypes.Square);
+        }
+
         internal void SearchSquareHint()
         {
             Sudoku.SearchSquareHintCounter++;
@@ -218,9 +222,6 @@ namespace SudokuSolver.Engine
             if (lastAvailability == null)
                 return;
 
-            if (!lastAvailability.Square.IsAvailable)
-                return;
-            
             if (Sudoku.Hints.Any(hint => hint.Square.Equals(lastAvailability.Square)))
                 return;
 
@@ -284,7 +285,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("SquareId: {0} - Number: {1}", SquareId, SudokuNumber);
+            return string.Format("SquareId: {0:D2} - Number: {1}", SquareId, SudokuNumber);
         }
 
         #endregion
