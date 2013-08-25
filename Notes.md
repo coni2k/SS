@@ -319,14 +319,70 @@ but of course the number must be the same - it looks like that we can have 4 dif
 . vertical group type
 
 ---
-case 16 (group number availability bug) solved
-by using source square method (not bool isavailable)
+THESE SHOULD BE OKAY?
 but it feels like keep more than we need. cant we have this result directly from the squares or somethin'?
-
 + Isavailable still need to use Square.IsAvailable. cant we have it without it?
 
 ---
-first "remove square hint" attempt failed
-hints also need "source"?
-try it with square hints first..
-case1 toggleready commented out btw
+group - updateavailability;
+// TODO Can this be better, elegant?
+// Only updates the Updated property of the availabilities that uses the main square
+var relatedAvailabilities = GroupNumbers
+    .Select(groupNumber => groupNumber.Availabilities.Single(availability => availability.Square.Equals(square)));
+
+---
+after solve operation - if there ara multiple square that were solved, only the first one has Updated flag or something' ?!
+
+---
+after square value removal, some availabilities still stay on the page ?!?!?
+and the color ?!
+
+---
+square method hint looks good
+tests need to be updated
+if its totally okay, remove the old version and go on with group number method
+
+new method
+square.assigntype will be hint !
+
+---
+sudoku exception + check invalid sudoku cases - throw sudoku exp. and catch that in try catch block
+keep assert.fail() at the end - if you get assertfailedexception then its wrong?
+
+---
+try to do domino in reverse - remove the main inital value and then watch it removes all the other hints ?!
+
+---
+check these 2 exceptions ?!
+
+square - remove hints (!sqr.equals(this)))
+void RemoveHints()
+{
+    // Square level
+    if (Sudoku.UseSquareLevelMethod)
+        foreach (var square in RelatedSquares.Where(sqr => !sqr.Equals(this)))
+            square.RemoveSquareMethodHint()
+
+square - update();
+// b. Remove hints
+if (type != AssignTypes.Hint && !SudokuNumber.IsZero)
+    RemoveHints();
+
+---
+test it properly;
+hint update + hint availability bug seems good but TEST IT !!!!
+
+
+then continue with groupnumber square hint ?!?!?!?!?
+
+---
+web has some error probably because of hint updates!!
+
+---
+invalid sudoku doesnt work and it doesnt stop at the point that it used to stop ?!
+sudoku.UpdateSquare(21, 1);
+// sudoku.UpdateSquare(21, 1);
+
+invalid sudoku2 - raises an exception ?!
+
+real case timout!

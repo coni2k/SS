@@ -2,25 +2,18 @@
 
 namespace SudokuSolver.Engine
 {
-    public partial class Hint
+    public partial class Hint : IHintNew
     {
         #region - Events -
-
-        public delegate void FoundEventHandler(Hint hint);
 
         #endregion
 
         #region - Properties -
 
         /// <summary>
-        /// Source square
+        /// Source group number
         /// </summary>
-        public Square Square { get; internal set; }
-
-        /// <summary>
-        /// The group of the square
-        /// </summary>
-        internal Group SquareGroup { get; set; }
+        public Group.GroupNumber GroupNumber { get; private set; }
 
         /// <summary>
         /// Hint value
@@ -36,14 +29,17 @@ namespace SudokuSolver.Engine
 
         #region - Constructors -
 
-        public Hint() {}
-
-        internal Hint(Square square, Group group, SudokuNumber number,HintTypes type)
+        internal Hint(Group.GroupNumber groupNumber, SudokuNumber number)
         {
-            Square = square;
-            SquareGroup = group;
+            GroupNumber = groupNumber;
             SudokuNumber = number;
-            Type = type;
+            Type = HintTypes.GroupNumber;
+        }
+
+        internal Hint(SudokuNumber number)
+        {
+            SudokuNumber = number;
+            Type = HintTypes.Square;
         }
 
         #endregion

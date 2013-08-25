@@ -11,16 +11,12 @@ namespace SudokuSolver.Engine
 
         ICollection<Group> groups;
         ICollection<SquareAvailability> availabilities;
-        // ICollection<IHintNew> hintList;
+        IEnumerable<Square> relatedSquares;
+        IEnumerable<Group> relatedGroups;
 
         #endregion
 
         #region - Events -
-
-        // public delegate void SquareEventHandler(Square square);
-
-        // TODO We will come back ye, mi friend!
-        // internal event Hint.FoundEventHandler HintFound;
 
         #endregion
 
@@ -46,6 +42,7 @@ namespace SudokuSolver.Engine
         /// </summary>
         public AssignTypes AssignType { get; internal set; }
 
+        // Groups
         public Group SquareTypeGroup { get; private set; }
         public Group HorizantalTypeGroup { get; private set; }
         public Group VerticalTypeGroup { get; private set; }
@@ -85,18 +82,62 @@ namespace SudokuSolver.Engine
         /// </summary>
         public IEnumerable<SquareAvailability> Availabilities
         {
-            get { return availabilities; }
-        }
+            get
+            {
+                if (availabilities == null)
+                {
+                    // Available numbers; assign all numbers, except zero
+                    availabilities = new Collection<SquareAvailability>();
+                    foreach (var sudokuNumber in Sudoku.NumbersExceptZero)
+                        availabilities.Add(new SquareAvailability(this, sudokuNumber));                
+                }
 
-        //public IEnumerable<IHintNew> HintList
-        //{
-        //    get { return hintList; }
-        //}
+                return availabilities;            
+            }
+        }
 
         /// <summary>
         /// Determines whether the square value or it's availabilities were updated since the last UpdateSquare method call.
         /// </summary>
         internal bool Updated { get; set; }
+
+        /// <summary>
+        /// Gets the square list within the same groups
+        /// </summary>
+        public IEnumerable<Square> RelatedSquares
+        {
+            get { return relatedSquares ?? (relatedSquares = Groups.SelectMany(group => group.Squares).Distinct()); }
+        }
+
+        /// <summary>
+        /// Gets groups of the related squares
+        /// </summary>
+        public IEnumerable<Group> RelatedGroups
+        {
+            get { return relatedGroups ?? (relatedGroups = RelatedSquares.SelectMany(square => square.Groups).Distinct()); }
+        }
+
+        // TODO all this area
+
+        // TODO Use hint type instead of this ?!
+        public Group.GroupNumber GroupNumberHintSource { get; set; }
+
+        // public Hint SquareMethodHint { get; internal set; }
+        public Hint GroupNumberMethodHint { get; internal set; }
+
+        public IEnumerable<IHintNew> Hints 
+        {
+            get
+            {
+                yield return (IHintNew)new Hint(SudokuNumber);
+                yield return (IHintNew)GroupNumberMethodHint;
+            }
+        }
+
+        public bool HasSquareMethodHint
+        {
+            get { return AssignType == AssignTypes.Hint && GroupNumberHintSource == null; }
+        }
 
         #endregion
 
@@ -113,60 +154,45 @@ namespace SudokuSolver.Engine
             SquareTypeGroup = squareTypeGroup;
             HorizantalTypeGroup = horizantalTypeGroup;
             VerticalTypeGroup = verticalTypeGroup;
-
-            // Available numbers; assign all numbers, except zero
-            availabilities = new Collection<SquareAvailability>();
-            foreach (var sudokuNumber in Sudoku.NumbersExceptZero)
-                availabilities.Add(new SquareAvailability(this, sudokuNumber));
         }
 
         #endregion
 
         #region - Methods -
 
+        internal void Update(AssignTypes type)
+        {
+            AssignType = type;
+        }
+
         internal void Update(SudokuNumber number, AssignTypes type)
         {
-            // a. Clear availabilities
-            // Make the old number available again
+            Update(number, type, null);        
+        }
+
+        internal void Update(SudokuNumber number, AssignTypes type, Group.GroupNumber groupNumber)
+        {
+            // a. Clear availabilities; make the old number available again
             UpdateAvailabilities(null);
 
             // b. Remove hints
-            // Square level
-            RemoveSquareHint();
+            if (type != AssignTypes.Hint && !SudokuNumber.IsZero)
+                RemoveHints();
 
-            // Group number level
-
-
-
-
-            // Assign the new number
+            // c. Set the values
             SudokuNumber = number;
-
-            // Set the type
             AssignType = type;
-
-            // c. Update availabilities
-            // Make the new number unavailable in the related square / group numbers
-            UpdateAvailabilities(this);
-
             Updated = true;
 
-            // d. Search hints
-            // Square level
-            if (Sudoku.UseSquareLevelMethod)
-            {
-                var relatedSquares = groups.SelectMany(group => group.Squares).Distinct();
-                foreach (var square in relatedSquares)
-                    square.SearchSquareHint();
-            }
+            // TODO ?!
+            // c2. Is it group number hint?
+            GroupNumberHintSource = groupNumber;
 
-            // Group level
-            if (Sudoku.UseGroupNumberLevelMethod)
-            {
-                var relatedGroups = Groups.SelectMany(group => group.Squares.SelectMany(square => square.Groups)).Distinct();
-                foreach (var group in relatedGroups)
-                    group.SearchGroupNumberHint();
-            }
+            // d. Update availabilities; make the new number unavailable in the related square / group numbers
+            UpdateAvailabilities(this);
+
+            // e. Search hints
+            SearchHints();
         }
 
         /// <summary>
@@ -193,6 +219,32 @@ namespace SudokuSolver.Engine
             }
         }
 
+        void RemoveHints()
+        {
+            // Square level
+            if (Sudoku.UseSquareLevelMethod)
+                foreach (var square in RelatedSquares.Where(sqr => !sqr.Equals(this)))
+                    square.RemoveSquareMethodHint();
+
+            // Group number level
+            if (Sudoku.UseGroupNumberLevelMethod)
+                foreach (var group in RelatedGroups)
+                    group.RemoveGroupNumberHint();        
+        }
+
+        void SearchHints()
+        {
+            // Square level
+            if (Sudoku.UseSquareLevelMethod)
+                foreach (var square in RelatedSquares)
+                    square.SearchSquareHint();
+
+            // Group level
+            if (Sudoku.UseGroupNumberLevelMethod)
+                foreach (var group in RelatedGroups)
+                    group.SearchGroupNumberHint();        
+        }
+
         /// <summary>
         /// Updates the availability of the square
         /// If there is "source", it means it's not available.
@@ -205,12 +257,15 @@ namespace SudokuSolver.Engine
             Availabilities.Single(availability => availability.Number.Equals(number)).UpdateAvailability(type, source);
         }
 
-        internal void RemoveSquareHint()
+        internal void RemoveSquareMethodHint()
         {
-            if (SudokuNumber.IsZero)
-                return;
+            //if (SquareMethodHint != null)
+            //    SquareMethodHint = null;
 
-            Sudoku.Hints.RemoveAll(hint => hint.Square == this && hint.SudokuNumber == SudokuNumber && hint.Type == HintTypes.Square);
+            if (AssignType == AssignTypes.Hint && GroupNumberHintSource == null)
+            {
+                Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+            }
         }
 
         internal void SearchSquareHint()
@@ -222,66 +277,16 @@ namespace SudokuSolver.Engine
             if (lastAvailability == null)
                 return;
 
-            if (Sudoku.Hints.Any(hint => hint.Square.Equals(lastAvailability.Square)))
+            // Added earlier?
+            if (lastAvailability.Square.AssignType == AssignTypes.Hint && lastAvailability.Square.GroupNumberHintSource == null)
                 return;
+            //if (lastAvailability.Square.SquareMethodHint != null)
+            //    return;
 
-            // Old version
-            Sudoku.Hints.Add(new Hint(this, null, lastAvailability.Number, HintTypes.Square));
-
-            // New version
-            //hintList.Add((IHintNew)squareHint);            
+            // Add the hint
+            // SquareMethodHint = new Hint(lastAvailability.Number);
+            Update(lastAvailability.Number, AssignTypes.Hint);
         }
-
-        //void ClearSquareHint()
-        //{
-        //    var count = Availabilities.Count(availability => availability.IsAvailable);
-
-        //    if (count > 1 && hintList.Any(hint => hint.GetType().IsAssignableFrom(typeof(SquareHint)) && ((SquareHint) hint).Equals(this)))
-        //        hintList.
-
-        //}
-
-        //internal void SearchSquareHintOld()
-        //{
-        //    Sudoku.CheckSquareAvailabilitiesCounter++;
-
-        //    // If it's not available, nothing to check
-        //    if (!IsAvailable)
-        //        return;
-
-        //    // TODO !!!
-
-        //    if (Sudoku.Hints.Any(hint => hint.Square.Equals(this) && hint.Type == HintTypes.Square))
-        //    {
-        //        // Get the available numbers
-        //        var list = Availabilities.Where(availability => availability.IsAvailable);
-
-        //        // If there is only one number left in the list, then we found a new hint
-        //        if (list.Count() != 1)
-        //        {
-        //            System.Diagnostics.Debug.WriteLine("Square.Group_SquareAvailabilityChanged found a hint to be REMOVED - Id: {0} - Value: {1}", SquareId.ToString(), SudokuNumber.Value.ToString());
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // Get the available numbers
-        //        var availabilities = Availabilities.Where(availability => availability.IsAvailable);
-
-        //        // If there is only one number left in the list, then we found a new hint
-        //        if (availabilities.Count() == 1)
-        //        {
-        //            // TODO NEW HINT CODE HERE
-        //            // Update(item.Number., AssignTypes.Hint);
-        //            // Hint_SquareGroup = null;
-
-        //            // Get the item from the list
-        //            var availability = availabilities.Single();
-
-        //            if (HintFound != null)
-        //                HintFound(new Hint(this, null, availability.Number, HintTypes.Square));
-        //        }
-        //    }
-        //}
 
         public override string ToString()
         {

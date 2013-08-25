@@ -19,9 +19,6 @@ namespace SudokuSolver.Engine
 
         #region - Events -
 
-        // internal delegate void GroupSquareEventHandler(Group group, Square square);
-        // internal event Hint.FoundEventHandler HintFound;
-
         #endregion
 
         #region - Properties -
@@ -89,7 +86,6 @@ namespace SudokuSolver.Engine
 
         #region - Methods -
 
-        //internal void UpdateAvailability(SudokuNumber number, Square square, bool isAvailable)
         internal void UpdateAvailability(SudokuNumber number, Square square, GroupTypes groupType, Square source)
         {
             GroupNumbers
@@ -98,7 +94,6 @@ namespace SudokuSolver.Engine
                 .Availabilities
                 .Single(availability =>
                     availability.Square.Equals(square)).UpdateAvailability(groupType, source);
-                    //availability.Square.Equals(square)).UpdateAvailability(isAvailable);
 
             // TODO Can this be better, elegant?
             // Only updates the Updated property of the availabilities that uses the main square
@@ -109,10 +104,16 @@ namespace SudokuSolver.Engine
                 availability.Updated = true;                    
         }
 
-        //internal void RemoveGroupNumberHint()
-        //{
-        //    Sudoku.Hints.RemoveAll(hint => hint.Square == 
-        //}
+        internal void RemoveGroupNumberHint()
+        {
+            foreach (var groupNumber in GroupNumbers)
+            {
+                var hintSquare = Sudoku.SquaresWithGroupNumberMethodHint.SingleOrDefault(square => square.GroupNumberMethodHint.GroupNumber == groupNumber);
+                
+                if (hintSquare != null)
+                    hintSquare.GroupNumberMethodHint = null;
+            }
+        }
 
         internal void SearchGroupNumberHint()
         {
@@ -126,29 +127,11 @@ namespace SudokuSolver.Engine
             var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable);
 
             // Added earlier?
-            if (Sudoku.Hints.Any(hint => hint.Square.Equals(lastAvailability.Square) && hint.SquareGroup == lastAvailability.GroupNumber.Group && hint.Type == HintTypes.Group))
+            if (lastAvailability.Square.GroupNumberMethodHint != null)
                 return;
 
-            // Old version
-            Sudoku.Hints.Add(new Hint(lastAvailability.Square, lastAvailability.GroupNumber.Group, lastAvailability.GroupNumber.SudokuNumber, HintTypes.Group));
-
-            // New version
-            // TODO!
-
-            //if (GroupNumbers.Count(groupNumber => groupNumber.Availabilities.Count(availability => availability.IsAvailable) == 1) == 1)
-            //{
-            //    if (HintFound != null)
-            //    {
-            //        var lastAvailability = GroupNumbers.Single(groupNumber => groupNumber
-            //            .Availabilities.Count(availability => availability.IsAvailable) == 1)
-            //            .Availabilities.Single(availability => availability.IsAvailable);
-
-            //        // TODO lastAvailability . Square . IsAvailable
-
-            //        if (HintFound != null)
-            //            HintFound(new Hint(lastAvailability.Square, this, lastAvailability.GroupNumber.SudokuNumber, HintTypes.Group));
-            //    }
-            //}
+            // Add the hint
+            lastAvailability.Square.GroupNumberMethodHint = new Hint(lastAvailability.GroupNumber, lastAvailability.GroupNumber.SudokuNumber);
         }
 
         public override string ToString()

@@ -5,10 +5,18 @@ namespace SudokuSolver.Engine
     public interface IHintNew //<T> where T : class
     {
         SudokuNumber SudokuNumber { get; }
+        HintTypes Type { get; }
         // T Source { get; set; }
     }
 
-    public abstract partial class HintNew<T> : IHintNew
+
+    public interface IHintNew2 //<T> where T : class
+    {
+        SudokuNumber SudokuNumber { get; }
+        // T Source { get; set; }
+    }
+
+    public abstract partial class HintNew<T> : IHintNew2
     {
         #region - Properties -
 

@@ -32,7 +32,7 @@ namespace SudokuSolver.ConsoleApp
 
         static void LoadCases()
         {
-            Cases = new CaseManager().GetCases();
+            Cases = new SampleCaseManager().GetCases();
         }
 
         /// <summary>
@@ -246,11 +246,13 @@ namespace SudokuSolver.ConsoleApp
 
         static void ShowHints()
         {
-            if (CurrentSudoku.Hints.Count() == 0)
-                Console.WriteLine("There are no hints");
+            // TODO Update!
 
-            foreach (var hintSquare in CurrentSudoku.Hints.OrderBy(hintSquare => hintSquare.Square.SquareId))
-                Console.WriteLine("P Id {0:D2}: {1}", hintSquare.Square.SquareId, hintSquare.SudokuNumber.Value);
+            //if (CurrentSudoku.Hints.Count() == 0)
+            //    Console.WriteLine("There are no hints");
+
+            //foreach (var hintSquare in CurrentSudoku.Hints.OrderBy(hintSquare => hintSquare.Square.SquareId))
+            //    Console.WriteLine("P Id {0:D2}: {1}", hintSquare.Square.SquareId, hintSquare.SudokuNumber.Value);
         }
 
         static void ClearScreen()

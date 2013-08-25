@@ -56,12 +56,9 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CaseManager.cs" />
+    <Compile Include="SampleCaseManager.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Models\HintNew.cs" />
-    <Compile Include="Models\Copy of HintDto.cs">
-      <DependentUpon>HintNew.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\SudokuNumberDto.cs">
       <DependentUpon>SudokuNumber.cs</DependentUpon>
     </Compile>

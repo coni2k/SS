@@ -8,8 +8,8 @@
     public enum HintTypes
     {
         None,
-        Square, //Second grade ?
-        Group //First grade ?
+        Square,
+        GroupNumber
     }
 
     /// <summary>

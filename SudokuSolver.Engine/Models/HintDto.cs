@@ -16,11 +16,11 @@
 
             #region - Constructors -
 
-            public HintDto(Hint hint)
+            public HintDto(int squareId, int numberValue, HintTypes hintType)
             {
-                SquareId = hint.Square.SquareId;
-                Value = hint.SudokuNumber.Value;
-                Type = hint.Type;
+                SquareId = squareId;
+                Value = numberValue;
+                Type = hintType;
             }
 
             #endregion

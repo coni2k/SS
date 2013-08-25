@@ -6,19 +6,19 @@ using System.Text;
 
 namespace SudokuSolver.Engine
 {
-    public class CaseManager
+    public class SampleCaseManager
     {
         /// <summary>
-        /// 1. Type - Horizontal - 8
+        /// Gets sample case; Square method - Horizontal
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase1()
+        public Sudoku GetCase_SquareMethod_Horizontal()
         {
             // New sudoku
             var sudoku = new Sudoku()
             {
                 SudokuId = 1,
-                Title = "Square method - Horizontal - 8"
+                Title = "Square method - Horizontal"
             };
 
             // Update
@@ -32,24 +32,25 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(20, 8);
 
             // Toggle
-            //sudoku.ToggleReady();
+            sudoku.ToggleReady();
 
             // Return
             return sudoku;
         }
 
         /// <summary>
-        /// 1. Type - Vertical - 8
+        /// Gets sample case; Square method - Vertical
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase2()
+        public Sudoku GetCase_SquareMethod_Vertical()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 2,
+                Title = "Square method - Vertical"
+            };
 
-            sudoku.SudokuId = 2;
-            sudoku.Title = "Square method - Vertical - 8";
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(1, 1);
             sudoku.UpdateSquare(4, 2);
             sudoku.UpdateSquare(7, 3);
@@ -65,17 +66,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// 1. Type - Square - 8
+        /// Gets sample case; Square method - Square
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase3()
+        public Sudoku GetCase_SquareMethod_Square()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 3,
+                Title = "Square method - Square"
+            };
 
-            sudoku.SudokuId = 3;
-            sudoku.Title = "Square method - Square - 8";
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(1, 1);
             sudoku.UpdateSquare(2, 2);
             sudoku.UpdateSquare(3, 3);
@@ -91,17 +93,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// 1. Type - Mixed - 8
+        /// Gets sample case; Square method - Mixed
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase4()
+        public Sudoku GetCase_SquareMethod_Mixed()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 4,
+                Title = "Square method - Mixed"
+            };
 
-            sudoku.SudokuId = 4;
-            sudoku.Title = "Square method - Mixed - 8";
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(10, 1);
             sudoku.UpdateSquare(11, 2);
             sudoku.UpdateSquare(12, 3);
@@ -117,17 +120,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// 2. Type - Straight 1
+        /// Gets sample case; Group number method
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase5()
+        public Sudoku GetCase_GroupNumberMethod()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 5,
+                Title = "Group number method"
+            };
 
-            sudoku.SudokuId = 5;
-            sudoku.Title = "Group number method - Straight 1";
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(13, 1);
             sudoku.UpdateSquare(25, 1);
             sudoku.UpdateSquare(29, 1);
@@ -139,17 +143,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Mixed Types (triggers strange RelatedNumbers block)
+        /// Gets sample case; Group number method 2
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase6()
+        public Sudoku GetCase_GroupNumberMethod2()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 6,
+                Title = "Group number method"
+            };
 
-            sudoku.SudokuId = 6;
-            sudoku.Title = "Group number method - Mixed";
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(25, 1);
             sudoku.UpdateSquare(57, 1);
             sudoku.UpdateSquare(69, 1);
@@ -161,17 +166,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Domino
+        /// Gets sample case; Domino
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase7()
+        public Sudoku GetCase_Domino()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 7,
+                Title = "Domino"
+            };
 
-            sudoku.SudokuId = 7;
-            sudoku.Title = "Domino";
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(4, 3);
             sudoku.UpdateSquare(13, 1);
             sudoku.UpdateSquare(23, 2);
@@ -193,17 +199,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Beauty
+        /// Gets sample case; Beauty
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase8()
+        public Sudoku GetCase_Beauty()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 8,
+                Title = "Beauty"
+            };
 
-            sudoku.SudokuId = 8;
-            sudoku.Title = "Beauty";
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(2, 2);
             sudoku.UpdateSquare(4, 4);
             sudoku.UpdateSquare(5, 5);
@@ -224,15 +231,45 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Mini size
+        /// Gets sample case; Hint update
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase9()
+        public Sudoku GetCase_HintUpdate()
         {
-            var sudoku = new Sudoku(4);
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 9,
+                Title = "Hint update"
+            };
 
-            sudoku.SudokuId = 9;
-            sudoku.Title = "Mini size";
+            // Update
+            sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
+            sudoku.UpdateSquare(10, 4);
+            sudoku.UpdateSquare(11, 5);
+            sudoku.UpdateSquare(12, 6);
+            sudoku.UpdateSquare(19, 7);
+            sudoku.UpdateSquare(20, 8);
+
+            // At this state, Square Id 21 has Hint for Number 9
+            // Change the number of Square Id 1 to 9, which should lead to have a new hint with Number 1
+            sudoku.UpdateSquare(1, 9);
+
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Gets sample case; Mini size
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_MiniSize()
+        {
+            var sudoku = new Sudoku(4)
+            {
+                SudokuId = 10,
+                Title = "Mini size"
+            };
 
             sudoku.ToggleReady();
 
@@ -240,15 +277,16 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Mini size
+        /// Gets sample case; Maxi size
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase10()
+        public Sudoku GetCase_MaxiSize()
         {
-            var sudoku = new Sudoku(16);
-
-            sudoku.SudokuId = 10;
-            sudoku.Title = "Maxi size";
+            var sudoku = new Sudoku(16)
+            {
+                SudokuId = 11,
+                Title = "Maxi size"
+            };
 
             sudoku.ToggleReady();
 
@@ -256,17 +294,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Real case
+        /// Gets sample case; Real-world sudoku
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase11()
+        public Sudoku GetCase_RealSudoku()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 21,
+                Title = "Real-world sudoku"
+            };
 
-            sudoku.SudokuId = 11;
-            sudoku.Title = "Real case";
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(3, 8);
             sudoku.UpdateSquare(10, 3);
             sudoku.UpdateSquare(11, 4);
@@ -304,63 +343,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Headache (1-2-3)
+        /// Gets sample case; Invalid sudoku
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase12_Headache()
+        public Sudoku GetCase_InvalidSudoku()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 51,
+                Title = "Invalid sudoku"
+            };
 
-            sudoku.SudokuId = 12;
-            sudoku.Title = "Headache (1-2-3)";
-
-            // Square ID version
-            sudoku.UpdateSquare(1, 1);
-            sudoku.UpdateSquare(2, 2);
-            sudoku.UpdateSquare(3, 3);
-            sudoku.UpdateSquare(13, 1);
-            sudoku.UpdateSquare(14, 2);
-            sudoku.UpdateSquare(15, 3);
-
-            sudoku.ToggleReady();
-
-            return sudoku;
-        }
-
-        /// <summary>
-        /// Headache 2
-        /// </summary>
-        /// <returns></returns>
-        public Sudoku GetCase13_Headache()
-        {
-            var sudoku = new Sudoku();
-
-            sudoku.SudokuId = 13;
-            sudoku.Title = "Headache 2";
-
-            // Square ID version
-            sudoku.UpdateSquare(1, 1);
-            sudoku.UpdateSquare(13, 1);
-            sudoku.UpdateSquare(25, 2);
-            sudoku.UpdateSquare(26, 3);
-
-            sudoku.ToggleReady();
-
-            return sudoku;
-        }
-
-        /// <summary>
-        /// Wrong
-        /// </summary>
-        /// <returns></returns>
-        public Sudoku GetCase14()
-        {
-            var sudoku = new Sudoku();
-
-            sudoku.SudokuId = 14;
-            sudoku.Title = "Wrong";
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(1, 9);
             sudoku.UpdateSquare(2, 7);
             sudoku.UpdateSquare(3, 3);
@@ -369,10 +363,10 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(12, 8);
             sudoku.UpdateSquare(19, 4);
             sudoku.UpdateSquare(20, 5);
-            
+
             sudoku.UpdateSquare(21, 1);
             // sudoku.UpdateSquare(21, 1);
-            
+
             sudoku.UpdateSquare(4, 5);
             sudoku.UpdateSquare(5, 6);
             sudoku.UpdateSquare(6, 8);
@@ -381,28 +375,28 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(15, 3);
             sudoku.UpdateSquare(22, 7);
             sudoku.UpdateSquare(23, 9);
-            
+
             sudoku.UpdateSquare(24, 2);
             //sudoku.UpdateSquare(24, 2);
-            
+
             sudoku.UpdateSquare(7, 1);
             sudoku.UpdateSquare(8, 2);
-            
+
             sudoku.UpdateSquare(9, 4);
             // sudoku.UpdateSquare(9, 4);
-            
+
             sudoku.UpdateSquare(16, 5);
             sudoku.UpdateSquare(17, 9);
-            
+
             sudoku.UpdateSquare(18, 7);
             // sudoku.UpdateSquare(18, 7);
-            
+
             sudoku.UpdateSquare(25, 8);
             sudoku.UpdateSquare(26, 3);
-            
+
             sudoku.UpdateSquare(27, 6);
             // sudoku.UpdateSquare(27, 6);
-            
+
             sudoku.UpdateSquare(28, 8);
             sudoku.UpdateSquare(29, 1);
             sudoku.UpdateSquare(30, 5);
@@ -412,7 +406,7 @@ namespace SudokuSolver.Engine
 
             // sudoku.UpdateSquare(47, 4);
             sudoku.UpdateSquare(47, 4);
-            
+
             sudoku.UpdateSquare(48, 3);
             sudoku.UpdateSquare(31, 6);
             sudoku.UpdateSquare(32, 4);
@@ -425,12 +419,12 @@ namespace SudokuSolver.Engine
 
             // sudoku.UpdateSquare(49, 1);
             sudoku.UpdateSquare(49, 1);
-            
+
             sudoku.UpdateSquare(50, 7);
 
             // sudoku.UpdateSquare(51, 8);
             sudoku.UpdateSquare(51, 8);
-            
+
             sudoku.UpdateSquare(34, 2);
 
             // sudoku.UpdateSquare(35, 3);
@@ -438,7 +432,7 @@ namespace SudokuSolver.Engine
 
             // sudoku.UpdateSquare(36, 7);
             sudoku.UpdateSquare(36, 7);
-            
+
             sudoku.UpdateSquare(43, 1);
 
             // sudoku.UpdateSquare(44, 6);
@@ -446,12 +440,12 @@ namespace SudokuSolver.Engine
 
             // sudoku.UpdateSquare(45, 4);
             sudoku.UpdateSquare(45, 4);
-            
+
             sudoku.UpdateSquare(52, 9);
 
             // sudoku.UpdateSquare(54, 5);
             sudoku.UpdateSquare(54, 5);
-            
+
             sudoku.UpdateSquare(55, 4);
             sudoku.UpdateSquare(56, 5);
             sudoku.UpdateSquare(57, 2);
@@ -468,7 +462,7 @@ namespace SudokuSolver.Engine
 
             // sudoku.UpdateSquare(75, 9);
             sudoku.UpdateSquare(75, 9);
-            
+
             sudoku.UpdateSquare(58, 7);
 
             // sudoku.UpdateSquare(59, 8);
@@ -525,17 +519,18 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Wrong 2
+        /// Gets sample case; Invalid sudoku 2
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase15()
+        public Sudoku GetCase_InvalidSudoku2()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 52,
+                Title = "Invalid sudoku 2" // Try this after fixing CASE 1: ID 5
+            };
 
-            sudoku.SudokuId = 15;
-            sudoku.Title = "Wrong 2"; // Try this after fixing CASE 1: ID 5
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(1, 1);
             sudoku.UpdateSquare(2, 2);
             sudoku.UpdateSquare(3, 3);
@@ -547,7 +542,7 @@ namespace SudokuSolver.Engine
 
             // sudoku.UpdateSquare(21, 9);
             sudoku.UpdateSquare(21, 9);
-            
+
             sudoku.UpdateSquare(4, 4);
             sudoku.UpdateSquare(5, 5);
             sudoku.UpdateSquare(6, 6);
@@ -556,7 +551,7 @@ namespace SudokuSolver.Engine
 
             // sudoku.UpdateSquare(9, 9);
             sudoku.UpdateSquare(9, 9);
-            
+
             sudoku.UpdateSquare(13, 1);
 
             // sudoku.UpdateSquare(14, 2);
@@ -568,38 +563,72 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Group number method bug
+        /// Gets sample case; Headache (1-2-3)
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase16()
+        public Sudoku GetCase_Headache()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 53,
+                Title = "Headache (1-2-3)"
+            };
 
-            sudoku.SudokuId = 16;
-            sudoku.Title = "Group number availability bug";
-
-            // sudoku.ToggleReady();
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
             sudoku.UpdateSquare(13, 1);
-            //sudoku.UpdateSquare(1, 0);
+            sudoku.UpdateSquare(14, 2);
+            sudoku.UpdateSquare(15, 3);
+
+            // This is an invalid assigment - 25 can only have 1-2-3
+            sudoku.UpdateSquare(25, 4);
+
+            sudoku.ToggleReady();
 
             return sudoku;
         }
 
         /// <summary>
-        /// Availability + hint bug
+        /// Gets sample case; Headache 2
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase17()
+        public Sudoku GetCase_Headache2()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 54,
+                Title = "Headache 2"
+            };
 
-            sudoku.SudokuId = 17;
-            sudoku.Title = "Hint bug";
+            // Update
+            sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(13, 1);
+            sudoku.UpdateSquare(25, 2);
+            sudoku.UpdateSquare(26, 3);
 
-            // Square ID version
+            // This is an invalid assigment - should fail
+            sudoku.UpdateSquare(27, 4);
+
+            sudoku.ToggleReady();
+
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Gets sample case; Headache 3
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_Headache3()
+        {
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 55,
+                Title = "Headache 3"
+            };
+
+            // Update
             sudoku.UpdateSquare(1, 1);
             sudoku.UpdateSquare(2, 2);
             sudoku.UpdateSquare(3, 3);
@@ -608,19 +637,32 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(12, 6);
             sudoku.UpdateSquare(19, 7);
             sudoku.UpdateSquare(20, 8);
-            sudoku.UpdateSquare(1, 9);
+            sudoku.UpdateSquare(28, 4);
+            sudoku.UpdateSquare(31, 5);
+            sudoku.UpdateSquare(34, 6);
+
+            // This is an invalid assigment - should fail
+
+            sudoku.UpdateSquare(55, 7);
+            sudoku.UpdateSquare(58, 8);
 
             return sudoku;
         }
 
-        public Sudoku GetCase18()
+        /// <summary>
+        /// Gets sample case; Hint's availability bug
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_HintAvailabilityBug()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 56,
+                Title = "Hint's availability bug",
+                Description = "Because the availabilities of the hints are not counted (yet)"
+            };
 
-            sudoku.SudokuId = 18;
-            sudoku.Title = "Hint's availability bug";
-            sudoku.Description = "Because the availabilities of the hints are not counted (yet)";
-
+            // Update
             sudoku.UpdateSquare(1, 1);
             sudoku.UpdateSquare(2, 2);
             sudoku.UpdateSquare(3, 3);
@@ -630,27 +672,60 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(7, 7);
             sudoku.UpdateSquare(8, 8);
 
+            // Since the value of Square Id 9 value is known, this update should not be possible
+            // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
+            //sudoku.UpdateSquare(27, 9);
+
             return sudoku;
         }
 
         /// <summary>
-        /// Free-style
+        /// Gets sample case; Value remove - square availability buggy
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase19()
+        public Sudoku GetCase_ValueRemoveSquareAvailabilityBug()
         {
-            var sudoku = new Sudoku();
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 56,
+                Title = "Value remove - Square availability bug",
+                Description = "Because the availabilities of the hints are not counted (yet)"
+            };
 
-            sudoku.SudokuId = 19;
-            sudoku.Title = "Test sudoku";
-
-            // sudoku.ToggleReady();
-
-            // Square ID version
+            // Update
             sudoku.UpdateSquare(1, 1);
-            //sudoku.UpdateSquare(2, 2);
-            //sudoku.UpdateSquare(1, 0);
-            // sudoku.UpdateSquare(2, 0);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
+            sudoku.UpdateSquare(4, 4);
+            sudoku.UpdateSquare(5, 5);
+            sudoku.UpdateSquare(6, 6);
+            sudoku.UpdateSquare(7, 7);
+            sudoku.UpdateSquare(8, 8);
+
+            // Since the value of Square Id 9 value is known, this update should not be possible
+            // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
+            sudoku.UpdateSquare(27, 9);
+
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Gets sample case; Free-style - for general testing
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_FreeStyle()
+        {
+            var sudoku = new Sudoku(4)
+            {
+                SudokuId = 101,
+                Title = "Free-style"
+            };
+
+            // Update
+            sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(5, 3);
+            // sudoku.UpdateSquare(1, 1);
 
             return sudoku;
         }
@@ -659,25 +734,25 @@ namespace SudokuSolver.Engine
         {
             var list = new Collection<Sudoku>();
 
-            list.Add(GetCase1()); // Square level
-            list.Add(GetCase2()); // Square level
-            list.Add(GetCase3()); // Square level
-            list.Add(GetCase4()); // Square level
-            //list.Add(GetCase5()); // Group number level
-            //list.Add(GetCase6()); // Group number level
-            //list.Add(GetCase7());
-            //list.Add(GetCase8());
-            //list.Add(GetCase9());
-            //list.Add(GetCase10());
-            //list.Add(GetCase11());
-            //list.Add(GetCase12_Headache());
-            //list.Add(GetCase13_Headache());
-            //list.Add(GetCase14());
-            //list.Add(GetCase15());
-            //list.Add(GetCase16());
-            //list.Add(GetCase17());
-            //list.Add(GetCase18());
-            //list.Add(GetCase19());
+            list.Add(GetCase_SquareMethod_Horizontal());
+            list.Add(GetCase_SquareMethod_Vertical());
+            list.Add(GetCase_SquareMethod_Square());
+            list.Add(GetCase_SquareMethod_Mixed());
+            list.Add(GetCase_GroupNumberMethod());
+            list.Add(GetCase_GroupNumberMethod2());
+            list.Add(GetCase_Domino());
+            list.Add(GetCase_Beauty());
+            list.Add(GetCase_HintUpdate());
+            list.Add(GetCase_MiniSize());
+            list.Add(GetCase_MaxiSize());
+            //list.Add(GetCase_RealSudoku());
+            //list.Add(GetCase_InvalidSudoku());
+            //list.Add(GetCase_InvalidSudoku2());
+            list.Add(GetCase_Headache());
+            list.Add(GetCase_Headache2());
+            list.Add(GetCase_Headache3());
+            list.Add(GetCase_HintAvailabilityBug());
+            list.Add(GetCase_FreeStyle());
 
             return list;
         }
