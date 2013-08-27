@@ -364,7 +364,6 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(19, 4);
             sudoku.UpdateSquare(20, 5);
 
-            sudoku.UpdateSquare(21, 1);
             // sudoku.UpdateSquare(21, 1);
 
             sudoku.UpdateSquare(4, 5);
@@ -376,25 +375,21 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(22, 7);
             sudoku.UpdateSquare(23, 9);
 
-            sudoku.UpdateSquare(24, 2);
             //sudoku.UpdateSquare(24, 2);
 
             sudoku.UpdateSquare(7, 1);
             sudoku.UpdateSquare(8, 2);
 
-            sudoku.UpdateSquare(9, 4);
             // sudoku.UpdateSquare(9, 4);
 
             sudoku.UpdateSquare(16, 5);
             sudoku.UpdateSquare(17, 9);
 
-            sudoku.UpdateSquare(18, 7);
             // sudoku.UpdateSquare(18, 7);
 
             sudoku.UpdateSquare(25, 8);
             sudoku.UpdateSquare(26, 3);
 
-            sudoku.UpdateSquare(27, 6);
             // sudoku.UpdateSquare(27, 6);
 
             sudoku.UpdateSquare(28, 8);
@@ -407,7 +402,9 @@ namespace SudokuSolver.Engine
             // sudoku.UpdateSquare(47, 4);
             sudoku.UpdateSquare(47, 4);
 
-            sudoku.UpdateSquare(48, 3);
+            // ?
+            //sudoku.UpdateSquare(48, 3);
+
             sudoku.UpdateSquare(31, 6);
             sudoku.UpdateSquare(32, 4);
             sudoku.UpdateSquare(33, 9);
@@ -418,21 +415,18 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(42, 2);
 
             // sudoku.UpdateSquare(49, 1);
-            sudoku.UpdateSquare(49, 1);
 
             sudoku.UpdateSquare(50, 7);
 
             // sudoku.UpdateSquare(51, 8);
-            sudoku.UpdateSquare(51, 8);
 
-            sudoku.UpdateSquare(34, 2);
+            // sudoku.UpdateSquare(34, 2);
 
             // sudoku.UpdateSquare(35, 3);
-            sudoku.UpdateSquare(35, 3);
 
             // sudoku.UpdateSquare(36, 7);
-            sudoku.UpdateSquare(36, 7);
 
+            /* CONTINUE FROM HERE
             sudoku.UpdateSquare(43, 1);
 
             // sudoku.UpdateSquare(44, 6);
@@ -512,50 +506,8 @@ namespace SudokuSolver.Engine
 
             // sudoku.UpdateSquare(81, 7);
             sudoku.UpdateSquare(81, 7);
-
-            sudoku.ToggleReady();
-
-            return sudoku;
-        }
-
-        /// <summary>
-        /// Gets sample case; Invalid sudoku 2
-        /// </summary>
-        /// <returns></returns>
-        public Sudoku GetCase_InvalidSudoku2()
-        {
-            var sudoku = new Sudoku()
-            {
-                SudokuId = 52,
-                Title = "Invalid sudoku 2" // Try this after fixing CASE 1: ID 5
-            };
-
-            // Update
-            sudoku.UpdateSquare(1, 1);
-            sudoku.UpdateSquare(2, 2);
-            sudoku.UpdateSquare(3, 3);
-            sudoku.UpdateSquare(10, 4);
-            sudoku.UpdateSquare(11, 5);
-            sudoku.UpdateSquare(12, 6);
-            sudoku.UpdateSquare(19, 7);
-            sudoku.UpdateSquare(20, 8);
-
-            // sudoku.UpdateSquare(21, 9);
-            sudoku.UpdateSquare(21, 9);
-
-            sudoku.UpdateSquare(4, 4);
-            sudoku.UpdateSquare(5, 5);
-            sudoku.UpdateSquare(6, 6);
-            sudoku.UpdateSquare(7, 7);
-            sudoku.UpdateSquare(8, 8);
-
-            // sudoku.UpdateSquare(9, 9);
-            sudoku.UpdateSquare(9, 9);
-
-            sudoku.UpdateSquare(13, 1);
-
-            // sudoku.UpdateSquare(14, 2);
-            sudoku.UpdateSquare(14, 2);
+             * 
+             * */
 
             sudoku.ToggleReady();
 
@@ -650,6 +602,50 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
+        /// Gets sample case; Invalid sudoku 2
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_Headache4()
+        {
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 56,
+                Title = "Invalid sudoku 2" // Try this after fixing CASE 1: ID 5
+            };
+
+            // Update
+            sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
+            sudoku.UpdateSquare(10, 4);
+            sudoku.UpdateSquare(11, 5);
+            sudoku.UpdateSquare(12, 6);
+            sudoku.UpdateSquare(19, 7);
+            sudoku.UpdateSquare(20, 8);
+
+            // sudoku.UpdateSquare(21, 9);
+            sudoku.UpdateSquare(21, 9);
+
+            sudoku.UpdateSquare(4, 4);
+            sudoku.UpdateSquare(5, 5);
+            sudoku.UpdateSquare(6, 6);
+            sudoku.UpdateSquare(7, 7);
+            sudoku.UpdateSquare(8, 8);
+
+            // sudoku.UpdateSquare(9, 9);
+            sudoku.UpdateSquare(9, 9);
+
+            sudoku.UpdateSquare(13, 1);
+
+            // sudoku.UpdateSquare(14, 2);
+            sudoku.UpdateSquare(14, 2);
+
+            sudoku.ToggleReady();
+
+            return sudoku;
+        }
+
+        /// <summary>
         /// Gets sample case; Hint's availability bug
         /// </summary>
         /// <returns></returns>
@@ -657,7 +653,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku()
             {
-                SudokuId = 56,
+                SudokuId = 57,
                 Title = "Hint's availability bug",
                 Description = "Because the availabilities of the hints are not counted (yet)"
             };
@@ -674,7 +670,7 @@ namespace SudokuSolver.Engine
 
             // Since the value of Square Id 9 value is known, this update should not be possible
             // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
-            //sudoku.UpdateSquare(27, 9);
+            sudoku.UpdateSquare(27, 9);
 
             return sudoku;
         }
@@ -687,7 +683,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku()
             {
-                SudokuId = 56,
+                SudokuId = 58,
                 Title = "Value remove - Square availability bug",
                 Description = "Because the availabilities of the hints are not counted (yet)"
             };
@@ -734,25 +730,25 @@ namespace SudokuSolver.Engine
         {
             var list = new Collection<Sudoku>();
 
-            list.Add(GetCase_SquareMethod_Horizontal());
-            list.Add(GetCase_SquareMethod_Vertical());
-            list.Add(GetCase_SquareMethod_Square());
-            list.Add(GetCase_SquareMethod_Mixed());
-            list.Add(GetCase_GroupNumberMethod());
-            list.Add(GetCase_GroupNumberMethod2());
-            list.Add(GetCase_Domino());
-            list.Add(GetCase_Beauty());
-            list.Add(GetCase_HintUpdate());
-            list.Add(GetCase_MiniSize());
-            list.Add(GetCase_MaxiSize());
-            //list.Add(GetCase_RealSudoku());
-            //list.Add(GetCase_InvalidSudoku());
-            //list.Add(GetCase_InvalidSudoku2());
-            list.Add(GetCase_Headache());
-            list.Add(GetCase_Headache2());
-            list.Add(GetCase_Headache3());
-            list.Add(GetCase_HintAvailabilityBug());
-            list.Add(GetCase_FreeStyle());
+            //list.Add(GetCase_SquareMethod_Horizontal());
+            //list.Add(GetCase_SquareMethod_Vertical());
+            //list.Add(GetCase_SquareMethod_Square());
+            //list.Add(GetCase_SquareMethod_Mixed());
+            //list.Add(GetCase_GroupNumberMethod());
+            //list.Add(GetCase_GroupNumberMethod2());
+            //list.Add(GetCase_Domino());
+            //list.Add(GetCase_Beauty());
+            //list.Add(GetCase_HintUpdate());
+            //list.Add(GetCase_MiniSize());
+            //list.Add(GetCase_MaxiSize());
+            ////list.Add(GetCase_RealSudoku());
+            list.Add(GetCase_InvalidSudoku());
+            //list.Add(GetCase_Headache());
+            //list.Add(GetCase_Headache2());
+            //list.Add(GetCase_Headache3());
+            //list.Add(GetCase_Headache4());
+            //list.Add(GetCase_HintAvailabilityBug());
+            //list.Add(GetCase_FreeStyle());
 
             return list;
         }

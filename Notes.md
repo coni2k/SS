@@ -379,10 +379,9 @@ then continue with groupnumber square hint ?!?!?!?!?
 web has some error probably because of hint updates!!
 
 ---
-invalid sudoku doesnt work and it doesnt stop at the point that it used to stop ?!
-sudoku.UpdateSquare(21, 1);
-// sudoku.UpdateSquare(21, 1);
+continue with invalid sudoku - next line fails ?!?!?;
+sudoku.UpdateSquare(43, 1);
 
-invalid sudoku2 - raises an exception ?!
+this is again about headache case - there are 4 squares left in the group but one of the squares cant have any of the numbers?!
 
-real case timout!
++ real case timout!

@@ -199,7 +199,7 @@ namespace SudokuSolver.Engine
 
         public IEnumerable<Square> SquaresWithGroupNumberMethodHint
         {
-            get { return Squares.Where(square => square.GroupNumberMethodHint != null); }
+            get { return Squares.Where(square => square.HasGroupNumberMethodHint); }
         }
 
         public IEnumerable<Square> SquaresWithHints
@@ -409,7 +409,7 @@ namespace SudokuSolver.Engine
             // d. Is it available; Checks the related squares in the related groups
             if (!selectedNumber.IsZero
                 && selectedSquare.Groups.Any(squareGroup => squareGroup.Squares.Any(square => square.SudokuNumber.Equals(selectedNumber)
-                && !(!selectedSquare.IsAvailable && square.AssignType == AssignTypes.Hint))))
+                && !(!selectedSquare.IsAvailable && selectedSquare.AssignType != AssignTypes.Hint && square.AssignType == AssignTypes.Hint && !square.Equals(selectedSquare)))))
                 throw new InvalidOperationException("Not a valid assignment, the number is already in use in one of the related groups");
 
             // Reset the 'Updated' flag
@@ -483,8 +483,8 @@ namespace SudokuSolver.Engine
 
             foreach (var square in SquaresWithGroupNumberMethodHint)
             {
-                square.Update(square.GroupNumberMethodHint.SudokuNumber, AssignTypes.Solver);
-                square.GroupNumberMethodHint = null;
+                square.Update(square.SudokuNumber, AssignTypes.Solver);
+                square.GroupNumberHintSource = null;
             }
 
             // Again; since it could spot more squares during this method, run it again

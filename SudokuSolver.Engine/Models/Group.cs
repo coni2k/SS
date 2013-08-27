@@ -108,10 +108,10 @@ namespace SudokuSolver.Engine
         {
             foreach (var groupNumber in GroupNumbers)
             {
-                var hintSquare = Sudoku.SquaresWithGroupNumberMethodHint.SingleOrDefault(square => square.GroupNumberMethodHint.GroupNumber == groupNumber);
+                var hintSquare = Sudoku.SquaresWithGroupNumberMethodHint.SingleOrDefault(square => square.GroupNumberHintSource == groupNumber);
                 
                 if (hintSquare != null)
-                    hintSquare.GroupNumberMethodHint = null;
+                    hintSquare.GroupNumberHintSource = null;
             }
         }
 
@@ -127,11 +127,14 @@ namespace SudokuSolver.Engine
             var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable);
 
             // Added earlier?
-            if (lastAvailability.Square.GroupNumberMethodHint != null)
+            //if (lastAvailability.Square.GroupNumberMethodHint != null)
+            //    return;
+            if (lastAvailability.Square.HasGroupNumberMethodHint)
                 return;
 
             // Add the hint
-            lastAvailability.Square.GroupNumberMethodHint = new Hint(lastAvailability.GroupNumber, lastAvailability.GroupNumber.SudokuNumber);
+            lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, AssignTypes.Hint, lastAvailability.GroupNumber);
+            //lastAvailability.Square.GroupNumberMethodHint = new Hint(lastAvailability.GroupNumber, lastAvailability.GroupNumber.SudokuNumber);
         }
 
         public override string ToString()

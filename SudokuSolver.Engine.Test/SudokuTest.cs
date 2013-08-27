@@ -155,7 +155,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(square.SquareId == 1);
 
             // c. Hint number value
-            Assert.IsTrue(square.GroupNumberMethodHint.SudokuNumber.Value == 1);
+            Assert.IsTrue(square.SudokuNumber.Value == 1);
 
             // Solve
             sudoku.Solve();
@@ -186,7 +186,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(square.SquareId == 81);
 
             // c. Hint number value
-            Assert.IsTrue(square.GroupNumberMethodHint.SudokuNumber.Value == 1);
+            Assert.IsTrue(square.SudokuNumber.Value == 1);
 
             // Solve
             sudoku.Solve();
@@ -215,7 +215,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(sudoku.SquaresWithHints.Any(square => square.SquareId == 31));
 
             // c. Number value
-            Assert.IsTrue(sudoku.SquaresWithHints.First(square => square.SquareId == 1).GroupNumberMethodHint.SudokuNumber.Value == 1);
+            Assert.IsTrue(sudoku.SquaresWithHints.First(square => square.SquareId == 1).SudokuNumber.Value == 1);
             Assert.IsTrue(sudoku.SquaresWithHints.First(square => square.SquareId == 31).SudokuNumber.Value == 2);
 
             // Solve
@@ -337,22 +337,6 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void InvalidSudoku2()
-        {
-            // Test
-            // a. Invalid sudoku
-            try
-            {
-                var sudoku = CaseManager.GetCase_InvalidSudoku2();
-                Assert.Fail();
-            }
-            catch (Exception ex)
-            {
-                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
-            }
-        }
-
-        [TestMethod]
         public void Headache()
         {
             // Test
@@ -392,6 +376,22 @@ namespace SudokuSolver.Engine.Test
             try
             {
                 var sudoku = CaseManager.GetCase_Headache3();
+                Assert.Fail();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
+            }
+        }
+
+        [TestMethod]
+        public void Headache4()
+        {
+            // Test
+            // a. Invalid sudoku; 
+            try
+            {
+                var sudoku = CaseManager.GetCase_Headache4();
                 Assert.Fail();
             }
             catch (Exception ex)

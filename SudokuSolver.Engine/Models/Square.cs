@@ -123,20 +123,27 @@ namespace SudokuSolver.Engine
         public Group.GroupNumber GroupNumberHintSource { get; set; }
 
         // public Hint SquareMethodHint { get; internal set; }
-        public Hint GroupNumberMethodHint { get; internal set; }
+        // public Hint GroupNumberMethodHint { get; internal set; }
 
         public IEnumerable<IHintNew> Hints 
         {
             get
             {
-                yield return (IHintNew)new Hint(SudokuNumber);
-                yield return (IHintNew)GroupNumberMethodHint;
+                if (HasSquareMethodHint)
+                    yield return (IHintNew)new Hint(SudokuNumber);
+                if (HasGroupNumberMethodHint)
+                    yield return (IHintNew)new Hint(GroupNumberHintSource, SudokuNumber);
             }
         }
 
         public bool HasSquareMethodHint
         {
             get { return AssignType == AssignTypes.Hint && GroupNumberHintSource == null; }
+        }
+
+        public bool HasGroupNumberMethodHint
+        {
+            get { return AssignType == AssignTypes.Hint && GroupNumberHintSource != null; }
         }
 
         #endregion
@@ -262,7 +269,7 @@ namespace SudokuSolver.Engine
             //if (SquareMethodHint != null)
             //    SquareMethodHint = null;
 
-            if (AssignType == AssignTypes.Hint && GroupNumberHintSource == null)
+            if (HasSquareMethodHint)
             {
                 Update(Sudoku.ZeroNumber, AssignTypes.Initial);
             }
@@ -278,7 +285,7 @@ namespace SudokuSolver.Engine
                 return;
 
             // Added earlier?
-            if (lastAvailability.Square.AssignType == AssignTypes.Hint && lastAvailability.Square.GroupNumberHintSource == null)
+            if (lastAvailability.Square.HasSquareMethodHint)
                 return;
             //if (lastAvailability.Square.SquareMethodHint != null)
             //    return;
