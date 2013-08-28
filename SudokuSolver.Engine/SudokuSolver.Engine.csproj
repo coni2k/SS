@@ -58,28 +58,19 @@
   <ItemGroup>
     <Compile Include="SampleCaseManager.cs" />
     <Compile Include="Utility.cs" />
-    <Compile Include="Models\HintNew.cs" />
     <Compile Include="Models\SudokuNumberDto.cs">
       <DependentUpon>SudokuNumber.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\GroupNumberAvailability.cs">
-      <DependentUpon>GroupNumber.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Models\GroupNumberAvailability.cs" />
     <Compile Include="Models\GroupNumberAvailabilityDto.cs">
       <DependentUpon>GroupNumberAvailability.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\SquareAvailability.cs">
-      <DependentUpon>Square.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Models\SquareAvailability.cs" />
     <Compile Include="Models\SquareAvailabilityDto.cs">
       <DependentUpon>SquareAvailability.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\GroupNumber.cs">
-      <DependentUpon>Group.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\HintDto.cs">
-      <DependentUpon>Hint.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Models\GroupNumber.cs" />
+    <Compile Include="Models\HintDto.cs" />
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\SudokuDto.cs">
       <DependentUpon>Sudoku.cs</DependentUpon>
@@ -87,7 +78,6 @@
     <Compile Include="Models\SquareDto.cs">
       <DependentUpon>Square.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Hint.cs" />
     <Compile Include="Models\SudokuNumber.cs" />
     <Compile Include="Models\Square.cs" />
     <Compile Include="Models\Sudoku.cs" />

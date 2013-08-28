@@ -117,33 +117,19 @@ namespace SudokuSolver.Engine
             get { return relatedGroups ?? (relatedGroups = RelatedSquares.SelectMany(square => square.Groups).Distinct()); }
         }
 
-        // TODO all this area
-
-        // TODO Use hint type instead of this ?!
-        public Group.GroupNumber GroupNumberHintSource { get; set; }
-
-        // public Hint SquareMethodHint { get; internal set; }
-        // public Hint GroupNumberMethodHint { get; internal set; }
-
-        public IEnumerable<IHintNew> Hints 
+        public bool IsSquareMethodHint
         {
-            get
-            {
-                if (HasSquareMethodHint)
-                    yield return (IHintNew)new Hint(SudokuNumber);
-                if (HasGroupNumberMethodHint)
-                    yield return (IHintNew)new Hint(GroupNumberHintSource, SudokuNumber);
-            }
+            get { return AssignType == AssignTypes.SquareHint; }
         }
 
-        public bool HasSquareMethodHint
+        public bool IsGroupNumberMethodHint
         {
-            get { return AssignType == AssignTypes.Hint && GroupNumberHintSource == null; }
+            get { return AssignType == AssignTypes.GroupNumberHint; }
         }
 
-        public bool HasGroupNumberMethodHint
+        public bool IsHint
         {
-            get { return AssignType == AssignTypes.Hint && GroupNumberHintSource != null; }
+            get { return IsSquareMethodHint || IsGroupNumberMethodHint; }
         }
 
         #endregion
@@ -170,30 +156,23 @@ namespace SudokuSolver.Engine
         internal void Update(AssignTypes type)
         {
             AssignType = type;
+
+            Updated = true;
         }
 
         internal void Update(SudokuNumber number, AssignTypes type)
-        {
-            Update(number, type, null);        
-        }
-
-        internal void Update(SudokuNumber number, AssignTypes type, Group.GroupNumber groupNumber)
         {
             // a. Clear availabilities; make the old number available again
             UpdateAvailabilities(null);
 
             // b. Remove hints
-            if (type != AssignTypes.Hint && !SudokuNumber.IsZero)
+            if (!SudokuNumber.IsZero && !IsHint)
                 RemoveHints();
 
             // c. Set the values
             SudokuNumber = number;
             AssignType = type;
             Updated = true;
-
-            // TODO ?!
-            // c2. Is it group number hint?
-            GroupNumberHintSource = groupNumber;
 
             // d. Update availabilities; make the new number unavailable in the related square / group numbers
             UpdateAvailabilities(this);
@@ -266,13 +245,8 @@ namespace SudokuSolver.Engine
 
         internal void RemoveSquareMethodHint()
         {
-            //if (SquareMethodHint != null)
-            //    SquareMethodHint = null;
-
-            if (HasSquareMethodHint)
-            {
+            if (IsSquareMethodHint)
                 Update(Sudoku.ZeroNumber, AssignTypes.Initial);
-            }
         }
 
         internal void SearchSquareHint()
@@ -285,14 +259,11 @@ namespace SudokuSolver.Engine
                 return;
 
             // Added earlier?
-            if (lastAvailability.Square.HasSquareMethodHint)
+            if (lastAvailability.Square.IsSquareMethodHint)
                 return;
-            //if (lastAvailability.Square.SquareMethodHint != null)
-            //    return;
 
             // Add the hint
-            // SquareMethodHint = new Hint(lastAvailability.Number);
-            Update(lastAvailability.Number, AssignTypes.Hint);
+            Update(lastAvailability.Number, AssignTypes.SquareHint);
         }
 
         public override string ToString()

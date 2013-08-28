@@ -101,17 +101,17 @@ namespace SudokuSolver.Engine
                 .Select(groupNumber => groupNumber.Availabilities.Single(availability => availability.Square.Equals(square)));
 
             foreach (var availability in relatedAvailabilities)
-                availability.Updated = true;                    
+                availability.Updated = true;
         }
 
         internal void RemoveGroupNumberHint()
         {
             foreach (var groupNumber in GroupNumbers)
             {
-                var hintSquare = Sudoku.SquaresWithGroupNumberMethodHint.SingleOrDefault(square => square.GroupNumberHintSource == groupNumber);
-                
+                var hintSquare = Sudoku.HintSquares.SingleOrDefault(square => square.AssignType == AssignTypes.GroupNumberHint);
+
                 if (hintSquare != null)
-                    hintSquare.GroupNumberHintSource = null;
+                    hintSquare.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
             }
         }
 
@@ -127,14 +127,11 @@ namespace SudokuSolver.Engine
             var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable);
 
             // Added earlier?
-            //if (lastAvailability.Square.GroupNumberMethodHint != null)
-            //    return;
-            if (lastAvailability.Square.HasGroupNumberMethodHint)
+            if (lastAvailability.Square.IsGroupNumberMethodHint)
                 return;
 
             // Add the hint
-            lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, AssignTypes.Hint, lastAvailability.GroupNumber);
-            //lastAvailability.Square.GroupNumberMethodHint = new Hint(lastAvailability.GroupNumber, lastAvailability.GroupNumber.SudokuNumber);
+            lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, AssignTypes.GroupNumberHint);
         }
 
         public override string ToString()

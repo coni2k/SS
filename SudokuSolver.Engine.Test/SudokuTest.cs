@@ -22,10 +22,10 @@ namespace SudokuSolver.Engine.Test
             var sudoku = CaseManager.GetCase_SquareMethod_Horizontal();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.SquaresWithSquareMethodHint.Count() == 1);
+            Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
 
             // Get the square
-            var square = sudoku.SquaresWithSquareMethodHint.Single();
+            var square = sudoku.SquareMethodHintSquares.Single();
 
             // b. Square id
             Assert.IsTrue(square.SquareId == 21);
@@ -37,7 +37,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(!sudoku.SquaresWithSquareMethodHint.Any());
+            Assert.IsTrue(!sudoku.SquareMethodHintSquares.Any());
 
             // e. Square assign type
             Assert.IsTrue(square.AssignType == AssignTypes.Solver);
@@ -53,10 +53,10 @@ namespace SudokuSolver.Engine.Test
             var sudoku = CaseManager.GetCase_SquareMethod_Vertical();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.SquaresWithSquareMethodHint.Count() == 1);
+            Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
 
             // Get the square
-            var square = sudoku.SquaresWithSquareMethodHint.Single();
+            var square = sudoku.SquareMethodHintSquares.Single();
 
             // b. Square id
             Assert.IsTrue(square.SquareId == 61);
@@ -68,7 +68,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(!sudoku.SquaresWithSquareMethodHint.Any());
+            Assert.IsTrue(!sudoku.SquareMethodHintSquares.Any());
 
             // e. Square assign type
             Assert.IsTrue(square.AssignType == AssignTypes.Solver);
@@ -84,10 +84,10 @@ namespace SudokuSolver.Engine.Test
             var sudoku = CaseManager.GetCase_SquareMethod_Square();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.SquaresWithSquareMethodHint.Count() == 1);
+            Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
 
             // Get square
-            var square = sudoku.SquaresWithSquareMethodHint.Single();
+            var square = sudoku.SquareMethodHintSquares.Single();
 
             // b. Square id
             Assert.IsTrue(square.SquareId == 9);
@@ -99,7 +99,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(!sudoku.SquaresWithSquareMethodHint.Any());
+            Assert.IsTrue(!sudoku.SquareMethodHintSquares.Any());
 
             // e. Square assign type
             Assert.IsTrue(square.AssignType == AssignTypes.Solver);
@@ -115,10 +115,10 @@ namespace SudokuSolver.Engine.Test
             var sudoku = CaseManager.GetCase_SquareMethod_Mixed();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.SquaresWithSquareMethodHint.Count() == 1);
+            Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
 
             // Get the square
-            var square = sudoku.SquaresWithSquareMethodHint.Single();
+            var square = sudoku.SquareMethodHintSquares.Single();
 
             // b. Square id
             Assert.IsTrue(square.SquareId == 1);
@@ -130,7 +130,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(!sudoku.SquaresWithSquareMethodHint.Any());
+            Assert.IsTrue(!sudoku.SquareMethodHintSquares.Any());
 
             // e. Square assign type
             Assert.IsTrue(square.AssignType == AssignTypes.Solver);
@@ -146,10 +146,10 @@ namespace SudokuSolver.Engine.Test
             var sudoku = CaseManager.GetCase_GroupNumberMethod();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.SquaresWithGroupNumberMethodHint.Count() == 1);
+            Assert.IsTrue(sudoku.GroupNumberMethodHintSquares.Count() == 1);
 
             // Get the square
-            var square = sudoku.SquaresWithGroupNumberMethodHint.Single();
+            var square = sudoku.GroupNumberMethodHintSquares.Single();
 
             // b. Square id
             Assert.IsTrue(square.SquareId == 1);
@@ -161,7 +161,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(!sudoku.SquaresWithGroupNumberMethodHint.Any());
+            Assert.IsTrue(!sudoku.GroupNumberMethodHintSquares.Any());
 
             // e. Square assign type
             Assert.IsTrue(square.AssignType == AssignTypes.Solver);
@@ -177,10 +177,10 @@ namespace SudokuSolver.Engine.Test
             var sudoku = CaseManager.GetCase_GroupNumberMethod2();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.SquaresWithGroupNumberMethodHint.Count() == 1);
+            Assert.IsTrue(sudoku.GroupNumberMethodHintSquares.Count() == 1);
 
             // Get the square
-            var square = sudoku.SquaresWithGroupNumberMethodHint.Single();
+            var square = sudoku.GroupNumberMethodHintSquares.Single();
 
             // b. Square id
             Assert.IsTrue(square.SquareId == 81);
@@ -192,7 +192,7 @@ namespace SudokuSolver.Engine.Test
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(!sudoku.SquaresWithGroupNumberMethodHint.Any());
+            Assert.IsTrue(!sudoku.GroupNumberMethodHintSquares.Any());
 
             // e. Square assign type
             Assert.IsTrue(square.AssignType == AssignTypes.Solver);
@@ -208,21 +208,21 @@ namespace SudokuSolver.Engine.Test
             var sudoku = CaseManager.GetCase_Domino();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.SquaresWithHints.Count() == 3);
+            Assert.IsTrue(sudoku.HintSquares.Count() == 3);
 
             // b. Square id
-            Assert.IsTrue(sudoku.SquaresWithHints.Any(square => square.SquareId == 1));
-            Assert.IsTrue(sudoku.SquaresWithHints.Any(square => square.SquareId == 31));
+            Assert.IsTrue(sudoku.HintSquares.Any(square => square.SquareId == 1));
+            Assert.IsTrue(sudoku.HintSquares.Any(square => square.SquareId == 31));
 
             // c. Number value
-            Assert.IsTrue(sudoku.SquaresWithHints.First(square => square.SquareId == 1).SudokuNumber.Value == 1);
-            Assert.IsTrue(sudoku.SquaresWithHints.First(square => square.SquareId == 31).SudokuNumber.Value == 2);
+            Assert.IsTrue(sudoku.HintSquares.First(square => square.SquareId == 1).SudokuNumber.Value == 1);
+            Assert.IsTrue(sudoku.HintSquares.First(square => square.SquareId == 31).SudokuNumber.Value == 2);
 
             // Solve
             sudoku.Solve();
 
             // d. Hint count
-            Assert.IsTrue(!sudoku.SquaresWithHints.Any());
+            Assert.IsTrue(!sudoku.HintSquares.Any());
 
             // e. Square assign type
             Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 1).AssignType == AssignTypes.Solver);
@@ -266,10 +266,10 @@ namespace SudokuSolver.Engine.Test
             var sudoku = CaseManager.GetCase_HintUpdate();
 
             // a. Hint count
-            Assert.IsTrue(sudoku.SquaresWithSquareMethodHint.Count() == 1);
+            Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
 
             // Get the square
-            var square = sudoku.SquaresWithSquareMethodHint.First();
+            var square = sudoku.SquareMethodHintSquares.First();
 
             // b. Hint square value
             Assert.IsTrue(square.SquareId == 21);

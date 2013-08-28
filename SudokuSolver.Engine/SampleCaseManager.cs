@@ -325,7 +325,7 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(36, 2);
             sudoku.UpdateSquare(43, 8);
             sudoku.UpdateSquare(44, 5);
-            // sudoku.UpdateSquare(45, 1);
+            sudoku.UpdateSquare(45, 1);
             sudoku.UpdateSquare(52, 6);
             sudoku.UpdateSquare(55, 7);
             sudoku.UpdateSquare(75, 8);
@@ -364,7 +364,7 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(19, 4);
             sudoku.UpdateSquare(20, 5);
 
-            // sudoku.UpdateSquare(21, 1);
+            sudoku.UpdateSquare(21, 1);
 
             sudoku.UpdateSquare(4, 5);
             sudoku.UpdateSquare(5, 6);
@@ -375,35 +375,32 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(22, 7);
             sudoku.UpdateSquare(23, 9);
 
-            //sudoku.UpdateSquare(24, 2);
+            sudoku.UpdateSquare(24, 2);
 
             sudoku.UpdateSquare(7, 1);
             sudoku.UpdateSquare(8, 2);
 
-            // sudoku.UpdateSquare(9, 4);
+            sudoku.UpdateSquare(9, 4);
 
             sudoku.UpdateSquare(16, 5);
             sudoku.UpdateSquare(17, 9);
 
-            // sudoku.UpdateSquare(18, 7);
+            sudoku.UpdateSquare(18, 7);
 
             sudoku.UpdateSquare(25, 8);
             sudoku.UpdateSquare(26, 3);
 
-            // sudoku.UpdateSquare(27, 6);
+            sudoku.UpdateSquare(27, 6);
 
             sudoku.UpdateSquare(28, 8);
             sudoku.UpdateSquare(29, 1);
             sudoku.UpdateSquare(30, 5);
             sudoku.UpdateSquare(37, 7);
             sudoku.UpdateSquare(39, 9);
-            sudoku.UpdateSquare(46, 6);
 
-            // sudoku.UpdateSquare(47, 4);
             sudoku.UpdateSquare(47, 4);
 
-            // ?
-            //sudoku.UpdateSquare(48, 3);
+            sudoku.UpdateSquare(48, 3);
 
             sudoku.UpdateSquare(31, 6);
             sudoku.UpdateSquare(32, 4);
@@ -411,33 +408,28 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(40, 3);
             sudoku.UpdateSquare(41, 5);
 
-            // sudoku.UpdateSquare(42, 2);
             sudoku.UpdateSquare(42, 2);
 
-            // sudoku.UpdateSquare(49, 1);
+            sudoku.UpdateSquare(49, 1);
 
             sudoku.UpdateSquare(50, 7);
 
-            // sudoku.UpdateSquare(51, 8);
+            sudoku.UpdateSquare(51, 8);
 
-            // sudoku.UpdateSquare(34, 2);
+            sudoku.UpdateSquare(34, 2);
 
-            // sudoku.UpdateSquare(35, 3);
+            sudoku.UpdateSquare(35, 3);
 
-            // sudoku.UpdateSquare(36, 7);
+            sudoku.UpdateSquare(36, 7);
 
-            /* CONTINUE FROM HERE
             sudoku.UpdateSquare(43, 1);
 
             // sudoku.UpdateSquare(44, 6);
-            sudoku.UpdateSquare(44, 6);
 
-            // sudoku.UpdateSquare(45, 4);
             sudoku.UpdateSquare(45, 4);
 
             sudoku.UpdateSquare(52, 9);
 
-            // sudoku.UpdateSquare(54, 5);
             sudoku.UpdateSquare(54, 5);
 
             sudoku.UpdateSquare(55, 4);
@@ -445,69 +437,47 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(57, 2);
             sudoku.UpdateSquare(64, 8);
 
-            // sudoku.UpdateSquare(65, 7);
             sudoku.UpdateSquare(65, 7);
 
-            // sudoku.UpdateSquare(73, 3);
             sudoku.UpdateSquare(73, 3);
 
             // sudoku.UpdateSquare(74, 6);
-            sudoku.UpdateSquare(74, 6);
 
-            // sudoku.UpdateSquare(75, 9);
             sudoku.UpdateSquare(75, 9);
 
             sudoku.UpdateSquare(58, 7);
 
-            // sudoku.UpdateSquare(59, 8);
             sudoku.UpdateSquare(59, 8);
 
-            // sudoku.UpdateSquare(60, 6);
             sudoku.UpdateSquare(60, 6);
 
-            // sudoku.UpdateSquare(67, 9);
             sudoku.UpdateSquare(67, 9);
 
-            // sudoku.UpdateSquare(68, 3);
             sudoku.UpdateSquare(68, 3);
 
-            // sudoku.UpdateSquare(69, 1);
             sudoku.UpdateSquare(69, 1);
 
-            // sudoku.UpdateSquare(76, 5);
             sudoku.UpdateSquare(76, 5);
 
-            // sudoku.UpdateSquare(77, 2);
             sudoku.UpdateSquare(77, 2);
 
-            // sudoku.UpdateSquare(78, 4);
             sudoku.UpdateSquare(78, 4);
 
-            // sudoku.UpdateSquare(61, 3);
             sudoku.UpdateSquare(61, 3);
 
-            // sudoku.UpdateSquare(62, 9);
             sudoku.UpdateSquare(62, 9);
 
-            // sudoku.UpdateSquare(63, 1);
             sudoku.UpdateSquare(63, 1);
 
-            // sudoku.UpdateSquare(70, 2);
             sudoku.UpdateSquare(70, 2);
 
-            // sudoku.UpdateSquare(71, 4);
             sudoku.UpdateSquare(71, 4);
 
             // sudoku.UpdateSquare(72, 6);
-            sudoku.UpdateSquare(72, 6);
 
-            // sudoku.UpdateSquare(80, 8);
             sudoku.UpdateSquare(80, 8);
 
-            // sudoku.UpdateSquare(81, 7);
             sudoku.UpdateSquare(81, 7);
-             * 
-             * */
 
             sudoku.ToggleReady();
 
@@ -730,7 +700,7 @@ namespace SudokuSolver.Engine
         {
             var list = new Collection<Sudoku>();
 
-            //list.Add(GetCase_SquareMethod_Horizontal());
+            list.Add(GetCase_SquareMethod_Horizontal());
             //list.Add(GetCase_SquareMethod_Vertical());
             //list.Add(GetCase_SquareMethod_Square());
             //list.Add(GetCase_SquareMethod_Mixed());
@@ -741,8 +711,8 @@ namespace SudokuSolver.Engine
             //list.Add(GetCase_HintUpdate());
             //list.Add(GetCase_MiniSize());
             //list.Add(GetCase_MaxiSize());
-            ////list.Add(GetCase_RealSudoku());
-            list.Add(GetCase_InvalidSudoku());
+            //list.Add(GetCase_RealSudoku());
+            //list.Add(GetCase_InvalidSudoku());
             //list.Add(GetCase_Headache());
             //list.Add(GetCase_Headache2());
             //list.Add(GetCase_Headache3());

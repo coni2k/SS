@@ -385,3 +385,8 @@ sudoku.UpdateSquare(43, 1);
 this is again about headache case - there are 4 squares left in the group but one of the squares cant have any of the numbers?!
 
 + real case timout!
+
+---
+squarehint - groupnumberhint colors ?!
+
+also hint type ?!?!?

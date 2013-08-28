@@ -131,25 +131,11 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         // GET api/Sudoku/GetHints/1
-        public IEnumerable<Hint.HintDto> GetHints(int sudokuId)
+        public IEnumerable<HintDto> GetHints(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            // TODO !
-
-            List<Hint.HintDto> hintDtos = new List<Hint.HintDto>();
-
-            foreach (var square in sudoku.SquaresWithHints)
-            {
-                foreach (var hint in square.Hints)
-                {
-                    hintDtos.Add(new Hint.HintDto(square.SquareId, hint.SudokuNumber.Value, hint.Type));
-                }
-            }
-
-            return hintDtos;
-
-            // return sudoku.SquaresWithHints.Select(square => square.Hints.Select(hint => new Hint.HintDto(square.SquareId, hint.SudokuNumber.Value, hint.Type)));
+            return sudoku.HintSquares.Select(square => new HintDto(square));
         }
 
         // PUT api/Sudoku/UpdateSquare/1/1
