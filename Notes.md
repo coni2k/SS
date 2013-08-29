@@ -390,3 +390,14 @@ this is again about headache case - there are 4 squares left in the group but on
 squarehint - groupnumberhint colors ?!
 
 also hint type ?!?!?
+
+---
+check these 2 blocks;
+a. sudoku.updatesquare()
+if (!(!selectedSquare.IsAvailable
+    && !selectedSquare.IsHint
+    && square.IsHint))
+
+b. square.update()
+if (!SudokuNumber.IsZero && !IsHint)
+    RemoveHints();

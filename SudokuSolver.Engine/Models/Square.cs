@@ -153,6 +153,10 @@ namespace SudokuSolver.Engine
 
         #region - Methods -
 
+        /// <summary>
+        /// Only changes the assign type
+        /// </summary>
+        /// <param name="type"></param>
         internal void Update(AssignTypes type)
         {
             AssignType = type;
@@ -160,6 +164,11 @@ namespace SudokuSolver.Engine
             Updated = true;
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="type"></param>
         internal void Update(SudokuNumber number, AssignTypes type)
         {
             // a. Clear availabilities; make the old number available again
