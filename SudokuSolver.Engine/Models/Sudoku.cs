@@ -9,8 +9,8 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
-        public static int SearchSquareHintCounter;
-        public static int SearchGroupNumberHintCounter;
+        public int SearchSquareHintCounter;
+        public int SearchGroupNumberHintCounter;
 
         private int size;
         private ICollection<SudokuNumber> numbers = new Collection<SudokuNumber>();
@@ -372,66 +372,36 @@ namespace SudokuSolver.Engine
 
         void UpdateSquare(Square selectedSquare, SudokuNumber selectedNumber, AssignTypes type)
         {
-            SearchSquareHintCounter = 0;
-            SearchGroupNumberHintCounter = 0;
-
             // Validations;
-            //// First remove the 
-            //if (!selectedSquare.SudokuNumber.IsZero)
-            //    selectedSquare.Update(ZeroNumber, selectedSquare.AssignType);
-
-            // Set the number and type
-            // selectedSquare.Update(newNumber, type);
-
-            // c. Is it valid; The value cannot be changed if the sudoku is in Ready state and the square has a initial value
+            // a. Is it a valid assignment; The value cannot be changed if the sudoku is in Ready state and the square has a initial value
             if (Ready && selectedSquare.AssignType == AssignTypes.Initial && !selectedSquare.IsAvailable)
                 throw new InvalidOperationException("Not a valid assignment, initial values can not be changed in Ready state");
 
-            //// d. Is it available; Checks the related squares in the related groups
-            //if (!newNumber.IsZero && selectedSquare.Groups.Any(squareGroup => squareGroup.Squares.Any(square => square.SudokuNumber.Equals(newNumber))))
-            //    throw new InvalidOperationException("Not a valid assignment, the number is already in use in one of the related groups");
+            // b. Is the selected square a hint?
+            // TODO THINK ABOUT THE ERROR MESSAGE - THE END USER MAY NOT KNOW THAT THIS WAS A HINT ?!
+            if (selectedSquare.IsHint && !selectedNumber.Equals(selectedSquare.SudokuNumber))
+                throw new InvalidOperationException("Not a valid assignment, hint values cannot be changed");
 
-            // Works
-            //// d. Is it available; Checks the related squares in the related groups
-            //if (!selectedNumber.IsZero
-            //    && selectedSquare.Groups.Any(squareGroup => squareGroup.Squares.Any(square => square.SudokuNumber.Equals(selectedNumber)
-            //    && !(!selectedSquare.IsAvailable && selectedSquare.AssignType != AssignTypes.Hint && square.AssignType == AssignTypes.Hint && !square.Equals(selectedSquare)))))
-            //    throw new InvalidOperationException("Not a valid assignment, the number is already in use in one of the related groups");
-
-            if (selectedNumber.IsZero)
+            // b. Is it available; check the related squares with the same number
+            if (!selectedNumber.IsZero)
             {
-                // Ok
-            }
-            else
-            {
-                // Works
-                //if (selectedSquare.Groups.Any(squareGroup => squareGroup.Squares.Any(square => square.SudokuNumber.Equals(selectedNumber)
-                //    && !(!selectedSquare.IsAvailable && selectedSquare.AssignType != AssignTypes.Hint && square.AssignType == AssignTypes.Hint && !square.Equals(selectedSquare)))))
-                //{
-                //    throw new InvalidOperationException("Not a valid assignment, the number is already in use in one of the related groups");
-                //}
-                //else
-                //{
-                //    // Ok
-                //}
-
-                // TODO ?!?!?!?
-
                 var existingGroups = selectedSquare.Groups.Where(squareGroup => squareGroup.Squares.Any(square => square.SudokuNumber.Equals(selectedNumber)));
 
                 if (existingGroups.Any())
                 {
                     foreach (var group in existingGroups)
                     {
-                        var existingSquares = group.Squares.Where(square => square.SudokuNumber.Equals(selectedNumber) && !square.Equals(selectedSquare));
+                        var existingSquares = group.Squares.Where(square => !square.Equals(selectedSquare) && square.SudokuNumber.Equals(selectedNumber));
 
                         if (existingSquares.Any())
                         {
                             foreach (var square in existingSquares)
                             {
-                                if (!(!selectedSquare.IsAvailable
-                                    && !selectedSquare.IsHint
-                                    && square.IsHint))
+                                if (!selectedSquare.IsAvailable && square.IsHint)
+                                {
+                                    // Ok
+                                }
+                                else
                                 {
                                     throw new InvalidOperationException("Not a valid assignment, the number is already in use in one of the related groups");
                                 }
@@ -441,7 +411,7 @@ namespace SudokuSolver.Engine
                 }
             }
 
-            // Reset the 'Updated' flag
+            // Reset the 'Updated' flags
             ResetUpdated();
 
             // Set the number and type
@@ -456,9 +426,6 @@ namespace SudokuSolver.Engine
             // Solve?
             if (AutoSolve)
                 Solve();
-
-            Console.WriteLine("CheckSquareAvailabilitiesCounter      : {0}", Sudoku.SearchSquareHintCounter);
-            Console.WriteLine("CheckGroupNumberAvailabilitiesCounter : {0}", Sudoku.SearchGroupNumberHintCounter);
         }
 
         /// <summary>

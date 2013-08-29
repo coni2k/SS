@@ -171,12 +171,15 @@ namespace SudokuSolver.Engine
         /// <param name="type"></param>
         internal void Update(SudokuNumber number, AssignTypes type)
         {
+            // Reset the counters
+            Sudoku.SearchSquareHintCounter = 0;
+            Sudoku.SearchGroupNumberHintCounter = 0;
+
             // a. Clear availabilities; make the old number available again
             UpdateAvailabilities(null);
 
             // b. Remove hints
-            if (!SudokuNumber.IsZero && !IsHint)
-                RemoveHints();
+            RemoveHints();
 
             // c. Set the values
             SudokuNumber = number;
@@ -188,6 +191,9 @@ namespace SudokuSolver.Engine
 
             // e. Search hints
             SearchHints();
+
+            Console.WriteLine("CheckSquareAvailabilitiesCounter      : {0}", Sudoku.SearchSquareHintCounter);
+            Console.WriteLine("CheckGroupNumberAvailabilitiesCounter : {0}", Sudoku.SearchGroupNumberHintCounter);
         }
 
         /// <summary>
@@ -195,8 +201,8 @@ namespace SudokuSolver.Engine
         /// </summary>
         void UpdateAvailabilities(Square source)
         {
-            // Ignore zero number, it's not used in availability lists (always available)
-            if (SudokuNumber.IsZero)
+            // Ignore if it's available
+            if (IsAvailable)
                 return;
 
             // Set availabilities of the related squares
@@ -216,6 +222,10 @@ namespace SudokuSolver.Engine
 
         void RemoveHints()
         {
+            // Ignore if it's available; cannot produce hints
+            if (IsAvailable)
+                return;
+
             // Square level
             if (Sudoku.UseSquareLevelMethod)
                 foreach (var square in RelatedSquares.Where(sqr => !sqr.Equals(this)))
@@ -229,6 +239,10 @@ namespace SudokuSolver.Engine
 
         void SearchHints()
         {
+            // Ignore if it's available; cannot produce hints
+            if (IsAvailable)
+                return;
+
             // Square level
             if (Sudoku.UseSquareLevelMethod)
                 foreach (var square in RelatedSquares)

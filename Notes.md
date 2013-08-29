@@ -401,3 +401,7 @@ if (!(!selectedSquare.IsAvailable
 b. square.update()
 if (!SudokuNumber.IsZero && !IsHint)
     RemoveHints();
+
+---
+in general looks good now;
+continue with layout issues + check autosolve + solve methods etc. were acting bit weird?

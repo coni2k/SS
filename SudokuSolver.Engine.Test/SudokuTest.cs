@@ -337,6 +337,40 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
+        public void HintsAvailabilityBug()
+        {
+            // Test
+            // a. Invalid sudoku; should not be initialized
+
+            try
+            {
+                var sudoku = CaseManager.GetCase_ValueRemoveSquareAvailabilityBug();
+                Assert.Fail();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
+            }
+        }
+
+        [TestMethod]
+        public void HintValueUpdate()
+        {
+            // Test
+            // a. Invalid sudoku; should not be initialized
+
+            try
+            {
+                var sudoku = CaseManager.GetCase_HintValueUpdate();
+                Assert.Fail();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
+            }
+        }
+
+        [TestMethod]
         public void Headache()
         {
             // Test
@@ -359,7 +393,7 @@ namespace SudokuSolver.Engine.Test
             // a. Invalid sudoku
             try
             {
-                var sudoku = CaseManager.GetCase_Headache2();                
+                var sudoku = CaseManager.GetCase_Headache2();
                 Assert.Fail();
             }
             catch (Exception ex)
@@ -392,23 +426,6 @@ namespace SudokuSolver.Engine.Test
             try
             {
                 var sudoku = CaseManager.GetCase_Headache4();
-                Assert.Fail();
-            }
-            catch (Exception ex)
-            {
-                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
-            }
-        }
-
-        [TestMethod]
-        public void HintsAvailabilityBug()
-        {
-            // Test
-            // a. Invalid sudoku; should not be initialized
-
-            try
-            {
-                var sudoku = CaseManager.GetCase_ValueRemoveSquareAvailabilityBug();
                 Assert.Fail();
             }
             catch (Exception ex)

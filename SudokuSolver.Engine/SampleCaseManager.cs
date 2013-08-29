@@ -485,6 +485,90 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
+        /// Gets sample case; Hint's availability bug
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_HintAvailabilityBug()
+        {
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 52,
+                Title = "Hint's availability bug",
+                Description = "Because the availabilities of the hints are not counted (yet)"
+            };
+
+            // Update
+            sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
+            sudoku.UpdateSquare(4, 4);
+            sudoku.UpdateSquare(5, 5);
+            sudoku.UpdateSquare(6, 6);
+            sudoku.UpdateSquare(7, 7);
+            sudoku.UpdateSquare(8, 8);
+
+            // Since the value of Square Id 9 value is known, this update should not be possible
+            // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
+            sudoku.UpdateSquare(27, 9);
+
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Gets sample case; Value remove - square availability buggy
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_ValueRemoveSquareAvailabilityBug()
+        {
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 53,
+                Title = "Value remove - Square availability bug",
+                Description = "Because the availabilities of the hints are not counted (yet)"
+            };
+
+            // Update
+            sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
+            sudoku.UpdateSquare(4, 4);
+            sudoku.UpdateSquare(5, 5);
+            sudoku.UpdateSquare(6, 6);
+            sudoku.UpdateSquare(7, 7);
+            sudoku.UpdateSquare(8, 8);
+
+            // Since the value of Square Id 9 value is known, this update should not be possible
+            // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
+            sudoku.UpdateSquare(27, 9);
+
+            return sudoku;
+        }
+
+        public Sudoku GetCase_HintValueUpdate()
+        {
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 54,
+                Title = "Hint value update"
+            };
+
+            // Update
+            sudoku.UpdateSquare(1, 1);
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
+            sudoku.UpdateSquare(4, 4);
+            sudoku.UpdateSquare(5, 5);
+            sudoku.UpdateSquare(6, 6);
+            sudoku.UpdateSquare(7, 7);
+            sudoku.UpdateSquare(8, 8);
+            
+            // This is not a valid action; Square Id 9 is hint now and cannot be changed?
+            sudoku.UpdateSquare(9, 0);
+
+            return sudoku;
+        }
+
+        /// <summary>
         /// Gets sample case; Headache (1-2-3)
         /// </summary>
         /// <returns></returns>
@@ -492,7 +576,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku()
             {
-                SudokuId = 53,
+                SudokuId = 61,
                 Title = "Headache (1-2-3)"
             };
 
@@ -520,7 +604,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku()
             {
-                SudokuId = 54,
+                SudokuId = 62,
                 Title = "Headache 2"
             };
 
@@ -546,7 +630,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku()
             {
-                SudokuId = 55,
+                SudokuId = 63,
                 Title = "Headache 3"
             };
 
@@ -572,15 +656,15 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Gets sample case; Invalid sudoku 2
+        /// Gets sample case; Headache 4
         /// </summary>
         /// <returns></returns>
         public Sudoku GetCase_Headache4()
         {
             var sudoku = new Sudoku()
             {
-                SudokuId = 56,
-                Title = "Invalid sudoku 2" // Try this after fixing CASE 1: ID 5
+                SudokuId = 64,
+                Title = "Headache 4" // Try this after fixing CASE 1: ID 5
             };
 
             // Update
@@ -616,66 +700,6 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Gets sample case; Hint's availability bug
-        /// </summary>
-        /// <returns></returns>
-        public Sudoku GetCase_HintAvailabilityBug()
-        {
-            var sudoku = new Sudoku()
-            {
-                SudokuId = 57,
-                Title = "Hint's availability bug",
-                Description = "Because the availabilities of the hints are not counted (yet)"
-            };
-
-            // Update
-            sudoku.UpdateSquare(1, 1);
-            sudoku.UpdateSquare(2, 2);
-            sudoku.UpdateSquare(3, 3);
-            sudoku.UpdateSquare(4, 4);
-            sudoku.UpdateSquare(5, 5);
-            sudoku.UpdateSquare(6, 6);
-            sudoku.UpdateSquare(7, 7);
-            sudoku.UpdateSquare(8, 8);
-
-            // Since the value of Square Id 9 value is known, this update should not be possible
-            // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
-            sudoku.UpdateSquare(27, 9);
-
-            return sudoku;
-        }
-
-        /// <summary>
-        /// Gets sample case; Value remove - square availability buggy
-        /// </summary>
-        /// <returns></returns>
-        public Sudoku GetCase_ValueRemoveSquareAvailabilityBug()
-        {
-            var sudoku = new Sudoku()
-            {
-                SudokuId = 58,
-                Title = "Value remove - Square availability bug",
-                Description = "Because the availabilities of the hints are not counted (yet)"
-            };
-
-            // Update
-            sudoku.UpdateSquare(1, 1);
-            sudoku.UpdateSquare(2, 2);
-            sudoku.UpdateSquare(3, 3);
-            sudoku.UpdateSquare(4, 4);
-            sudoku.UpdateSquare(5, 5);
-            sudoku.UpdateSquare(6, 6);
-            sudoku.UpdateSquare(7, 7);
-            sudoku.UpdateSquare(8, 8);
-
-            // Since the value of Square Id 9 value is known, this update should not be possible
-            // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
-            sudoku.UpdateSquare(27, 9);
-
-            return sudoku;
-        }
-
-        /// <summary>
         /// Gets sample case; Free-style - for general testing
         /// </summary>
         /// <returns></returns>
@@ -700,7 +724,7 @@ namespace SudokuSolver.Engine
         {
             var list = new Collection<Sudoku>();
 
-            list.Add(GetCase_SquareMethod_Horizontal());
+            //list.Add(GetCase_SquareMethod_Horizontal());
             //list.Add(GetCase_SquareMethod_Vertical());
             //list.Add(GetCase_SquareMethod_Square());
             //list.Add(GetCase_SquareMethod_Mixed());
@@ -718,7 +742,7 @@ namespace SudokuSolver.Engine
             //list.Add(GetCase_Headache3());
             //list.Add(GetCase_Headache4());
             //list.Add(GetCase_HintAvailabilityBug());
-            //list.Add(GetCase_FreeStyle());
+            list.Add(GetCase_FreeStyle());
 
             return list;
         }
