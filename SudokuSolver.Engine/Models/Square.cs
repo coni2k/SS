@@ -89,10 +89,10 @@ namespace SudokuSolver.Engine
                     // Available numbers; assign all numbers, except zero
                     availabilities = new Collection<SquareAvailability>();
                     foreach (var sudokuNumber in Sudoku.NumbersExceptZero)
-                        availabilities.Add(new SquareAvailability(this, sudokuNumber));                
+                        availabilities.Add(new SquareAvailability(this, sudokuNumber));
                 }
 
-                return availabilities;            
+                return availabilities;
             }
         }
 
@@ -218,6 +218,11 @@ namespace SudokuSolver.Engine
                             squareGroup.UpdateAvailability(SudokuNumber, square, group.GroupType, source);
                 }
             }
+
+            // TODO Can this be better, elegant?
+            // Only updates the Updated property of the availabilities of the main square
+            foreach (var availability in Availabilities)
+                availability.Updated = true;
         }
 
         void RemoveHints()
@@ -226,32 +231,33 @@ namespace SudokuSolver.Engine
             if (IsAvailable)
                 return;
 
-            // Square level
-            if (Sudoku.UseSquareLevelMethod)
-                foreach (var square in RelatedSquares.Where(sqr => !sqr.Equals(this)))
-                    square.RemoveSquareMethodHint();
+            //// Square level
+            //// Current square must be excluded from this operation, because of it's already going to be updated.
+            //// Otherwise it can stuck in an infinite loop by trying to remove its own hint.
+            //var relatedSquaresExceptThis = RelatedSquares.Where(square => !square.Equals(this));
 
-            // Group number level
-            if (Sudoku.UseGroupNumberLevelMethod)
-                foreach (var group in RelatedGroups)
-                    group.RemoveGroupNumberHint();        
+            //foreach (var square in relatedSquaresExceptThis)
+            //    square.RemoveSquareMethodHint();
+
+            //// Group number level
+            //foreach (var group in RelatedGroups)
+            //    group.RemoveGroupNumberHint();
+
+            var relatedSquares = RelatedGroups.SelectMany(group => group.Squares.Where(square => !square.Equals(this) && square.IsHint));
+
+            foreach (var square in relatedSquares)
+                square.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
         }
 
         void SearchHints()
         {
-            // Ignore if it's available; cannot produce hints
-            if (IsAvailable)
-                return;
-
             // Square level
-            if (Sudoku.UseSquareLevelMethod)
-                foreach (var square in RelatedSquares)
-                    square.SearchSquareHint();
+            foreach (var square in RelatedSquares)
+                square.SearchSquareHint();
 
             // Group level
-            if (Sudoku.UseGroupNumberLevelMethod)
-                foreach (var group in RelatedGroups)
-                    group.SearchGroupNumberHint();        
+            foreach (var group in RelatedGroups)
+                group.SearchGroupNumberHint();
         }
 
         /// <summary>

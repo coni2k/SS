@@ -348,14 +348,17 @@ namespace SudokuSolver.Engine
 
         public void UpdateSquare(int squareId, int numberValue)
         {
-            // Assign type
-            var type = !Ready ? AssignTypes.Initial : AssignTypes.User;
-
             // Get the square
             var selectedSquare = Squares.SingleOrDefault(square => square.SquareId.Equals(squareId));
 
             // Get the number
             var selectedNumber = Numbers.SingleOrDefault(number => number.Value.Equals(numberValue));
+
+            // Assign type
+            var type = selectedNumber.IsZero
+                ? AssignTypes.Initial
+                : Ready ? AssignTypes.User
+                : AssignTypes.Initial;
 
             // Validations;
             //a. Square

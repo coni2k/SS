@@ -363,11 +363,6 @@ void RemoveHints()
         foreach (var square in RelatedSquares.Where(sqr => !sqr.Equals(this)))
             square.RemoveSquareMethodHint()
 
-square - update();
-// b. Remove hints
-if (type != AssignTypes.Hint && !SudokuNumber.IsZero)
-    RemoveHints();
-
 ---
 test it properly;
 hint update + hint availability bug seems good but TEST IT !!!!
@@ -387,21 +382,26 @@ this is again about headache case - there are 4 squares left in the group but on
 + real case timout!
 
 ---
-squarehint - groupnumberhint colors ?!
-
-also hint type ?!?!?
-
----
-check these 2 blocks;
+check this block;
 a. sudoku.updatesquare()
 if (!(!selectedSquare.IsAvailable
     && !selectedSquare.IsHint
     && square.IsHint))
 
-b. square.update()
-if (!SudokuNumber.IsZero && !IsHint)
-    RemoveHints();
+---
+have a better "hints" section in web
+squares have the hints - we dont have to retrieve them seperately anymore
 
 ---
-in general looks good now;
-continue with layout issues + check autosolve + solve methods etc. were acting bit weird?
+domino case - remove a value from a square doesnt work
+it cant remove the hints in reverse way
+think about the order of the actions;
+it could be;
+a. set the values (set the old number to a temp value)
+b. update availabilities (old number, new number)
+c. update hint (remove + search)
+?
+
+and it feels like hints need to be checked whether they are still have the conditions ?!
+probably this is not going to work;
+var relatedSquares = RelatedGroups.SelectMany(group => group.Squares.Where(square => !square.Equals(this) && square.IsHint));

@@ -38,7 +38,7 @@
         apiUrlReset = function (sudokuId) { return apiUrlSudokuRoot + 'Reset/' + sudokuId; },
 
         /* Enums */
-        AssignTypes = { 'Initial': 0, 'User': 1, 'Hint': 2, 'Solver': 3 },
+        AssignTypes = { 'Initial': 0, 'User': 1, 'SquareHint': 2, 'GroupNumberHint': 3, 'Solver': 4 },
         DataRequestTypes = { 'All': 0, 'Updated': 1 };
 
     // Bind knockout
@@ -724,7 +724,10 @@
                 return Enumerable.From(squareGroup.Squares).Any(function (square) {
                     if (self.Ready()) {
                         // If it's ready, check whether there are any squares that set by user, solver or hint
-                        return square.AssignType() === AssignTypes.User || square.AssignType() === AssignTypes.Hint || square.AssignType() === AssignTypes.Solver;
+                        return square.AssignType() === AssignTypes.User
+                            || square.AssignType() === AssignTypes.SquareHint
+                            || square.AssignType() === AssignTypes.GroupNumberHint
+                            || square.AssignType() === AssignTypes.Solver;
                     }
                     else {
                         // If it's not ready, check whether there are any squares that have a value
@@ -991,7 +994,8 @@
                     return ' initial';
                 case AssignTypes.User:
                     return ' user';
-                case AssignTypes.Hint:
+                case AssignTypes.SquareHint:
+                case AssignTypes.GroupNumberHint:
                     return ' hint';
                 case AssignTypes.Solver:
                     return ' solver';
@@ -999,13 +1003,17 @@
         });
 
         self.CssClassComputed = ko.computed(function () {
-            return 'squareItem '
+            var x = 'squareItem '
                 + 'size' + sudokuSize.toString(10)
                 + self.CssAssignType()
                 + (self.IsPassiveSelected() ? ' passiveSelected' : '')
                 + (self.IsActiveSelected() ? ' activeSelected' : '')
                 + (self.IsRelatedSelected() ? ' relatedSelected' : '')
                 + (self.Group.IsOdd ? ' odd' : '');
+
+            console.log(self.SquareId + ' - ' + self.SudokuNumber().Value + ' - ' + x);
+
+            return x;
         });
 
         // This is an alternative to CssClassComputed; in this way, this part is static and the rest is on html (to reduce the length of the calculated part)
@@ -1089,7 +1097,7 @@
 
             relatedSquare.SudokuNumber(newNumber);
 
-            relatedSquare.AssignType(event.type === 'mouseenter' ? AssignTypes.Hint : AssignTypes.Initial);
+            relatedSquare.AssignType(event.type === 'mouseenter' ? self.Hint === 0 ? AssignTypes.SquareHint : AssignTypes.GroupNumberHint : AssignTypes.Initial);
 
             relatedSquare.TogglePassiveSelect(relatedSquare, event);
         };

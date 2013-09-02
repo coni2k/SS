@@ -19,8 +19,8 @@
     /// </summary>
     public enum HintTypes
     {
-        Square,
-        GroupNumber
+        Square = 0,
+        GroupNumber = 1
     }
 
     public enum GroupTypes

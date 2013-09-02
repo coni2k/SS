@@ -703,6 +703,30 @@ namespace SudokuSolver.Engine
         /// Gets sample case; Free-style - for general testing
         /// </summary>
         /// <returns></returns>
+        public Sudoku GetCase_GroupNumberRemoveHintBug()
+        {
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 65,
+                Title = "Group number remove hint bug"
+            };
+
+            // Update
+            sudoku.UpdateSquare(13, 1);
+            sudoku.UpdateSquare(25, 1);
+            sudoku.UpdateSquare(29, 1);
+            sudoku.UpdateSquare(57, 1);
+
+            // When this set, all availabilities should be "available" but that's not the case
+            sudoku.UpdateSquare(57, 2);
+
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Gets sample case; Free-style - for general testing
+        /// </summary>
+        /// <returns></returns>
         public Sudoku GetCase_FreeStyle()
         {
             var sudoku = new Sudoku(4)
@@ -731,7 +755,7 @@ namespace SudokuSolver.Engine
             //list.Add(GetCase_GroupNumberMethod());
             //list.Add(GetCase_GroupNumberMethod2());
             //list.Add(GetCase_Domino());
-            //list.Add(GetCase_Beauty());
+            list.Add(GetCase_Beauty());
             //list.Add(GetCase_HintUpdate());
             //list.Add(GetCase_MiniSize());
             //list.Add(GetCase_MaxiSize());
@@ -742,7 +766,8 @@ namespace SudokuSolver.Engine
             //list.Add(GetCase_Headache3());
             //list.Add(GetCase_Headache4());
             //list.Add(GetCase_HintAvailabilityBug());
-            list.Add(GetCase_FreeStyle());
+            // list.Add(GetCase_GroupNumberRemoveHintBug());
+            // list.Add(GetCase_FreeStyle());
 
             return list;
         }

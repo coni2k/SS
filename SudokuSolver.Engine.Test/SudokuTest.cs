@@ -433,5 +433,21 @@ namespace SudokuSolver.Engine.Test
                 Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
             }
         }
+
+        [TestMethod]
+        public void GroupNumberRemoveHintBug()
+        {
+            // Test
+            // a. Bug hunt!
+            //try
+            //{
+            var sudoku = CaseManager.GetCase_GroupNumberRemoveHintBug();
+            //    Assert.Fail();
+            //}
+            //catch (Exception ex)
+            //{
+            //    Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
+            //}
+        }
     }
 }
