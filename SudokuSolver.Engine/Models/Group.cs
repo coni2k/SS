@@ -117,8 +117,6 @@ namespace SudokuSolver.Engine
 
         internal void SearchGroupNumberHint()
         {
-            Sudoku.SearchGroupNumberHintCounter++;
-
             var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.IsAvailable) == 1);
 
             if (lastGroupNumber == null)

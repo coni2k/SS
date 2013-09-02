@@ -9,6 +9,7 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
+        public int ActionCounter;
         public int SearchSquareHintCounter;
         public int SearchGroupNumberHintCounter;
 
@@ -416,6 +417,9 @@ namespace SudokuSolver.Engine
 
             // Reset the 'Updated' flags
             ResetUpdated();
+
+            // Reset the action counter
+            ActionCounter = 0;
 
             // Set the number and type
             if (selectedSquare.SudokuNumber == selectedNumber)

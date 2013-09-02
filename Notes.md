@@ -405,3 +405,9 @@ c. update hint (remove + search)
 and it feels like hints need to be checked whether they are still have the conditions ?!
 probably this is not going to work;
 var relatedSquares = RelatedGroups.SelectMany(group => group.Squares.Where(square => !square.Equals(this) && square.IsHint));
+
+---
+currently there is no "fail case"
+but still removehints method doesnt look good
+try to have better "reverse domino" cases
+can a square only remove one hint? cant it be responsible for more than one?

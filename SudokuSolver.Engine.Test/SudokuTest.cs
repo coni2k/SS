@@ -171,10 +171,10 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void GroupNumberMethod2()
+        public void GroupNumberMethodWithHelp()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_GroupNumberMethod2();
+            var sudoku = CaseManager.GetCase_GroupNumberMethodWithHelp();
 
             // a. Hint count
             Assert.IsTrue(sudoku.GroupNumberMethodHintSquares.Count() == 1);
@@ -257,6 +257,37 @@ namespace SudokuSolver.Engine.Test
 
             // b. Squares left
             Assert.IsTrue(sudoku.SquaresLeft == 64);
+        }
+
+        [TestMethod]
+        public void Beauty_Reverse()
+        {
+            // New sudoku
+            var sudoku = CaseManager.GetCase_Beauty();
+
+            sudoku.ToggleReady();
+
+            // Solve
+            // sudoku.Solve();
+
+            // Get the control squares
+            var controlSquare1 = sudoku.Squares.Single(square => square.SquareId == 1);
+            var controlSquare2 = sudoku.Squares.Single(square => square.SquareId == 3);
+            var controlSquare3 = sudoku.Squares.Single(square => square.SquareId == 7);
+            var controlSquare4 = sudoku.Squares.Single(square => square.SquareId == 9);
+
+            // Test
+            // a. Control squares values
+            Assert.IsTrue(controlSquare1.SudokuNumber.Value == 1);
+            Assert.IsTrue(controlSquare2.SudokuNumber.Value == 3);
+            Assert.IsTrue(controlSquare3.SudokuNumber.Value == 7);
+            Assert.IsTrue(controlSquare4.SudokuNumber.Value == 9);
+
+            // ..
+            sudoku.UpdateSquare(34, 0);
+
+            // b. Squares left
+            // Assert.IsTrue(sudoku.SquaresLeft == 64);
         }
 
         [TestMethod]

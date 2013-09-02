@@ -146,7 +146,7 @@ namespace SudokuSolver.Engine
         /// Gets sample case; Group number method 2
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase_GroupNumberMethod2()
+        public Sudoku GetCase_GroupNumberMethodWithHelp()
         {
             var sudoku = new Sudoku()
             {
