@@ -172,7 +172,7 @@ namespace SudokuSolver.Engine
         internal void Update(SudokuNumber number, AssignTypes type)
         {
             // Action counter
-            Console.WriteLine("ActionCounter                : {0}", Sudoku.ActionCounter++);
+            // Console.WriteLine("ActionCounter                : {0}", Sudoku.ActionCounter++);
             if (Sudoku.ActionCounter > 50)
                 throw new Exception("An infinite loop?");
 
@@ -181,6 +181,8 @@ namespace SudokuSolver.Engine
             Sudoku.SearchGroupNumberHintCounter = 0;
 
             var oldNumber = SudokuNumber;
+
+            Console.WriteLine("B - ID: {0:D2} - OLD: {1:D2} - NEW: {2:D2}", SquareId, oldNumber.Value, number.Value);
 
             // c. Set the values
             SudokuNumber = number;
@@ -199,9 +201,12 @@ namespace SudokuSolver.Engine
             // e. Search hints
             SearchHints();
 
+            Console.WriteLine("E - ID: {0:D2} - OLD: {1:D2} - NEW: {2:D2}", SquareId, oldNumber.Value, number.Value);
+            Console.WriteLine();
+
             // Counters
-            Console.WriteLine("SearchSquareHintCounter      : {0}", Sudoku.SearchSquareHintCounter);
-            Console.WriteLine("SearchGroupNumberHintCounter : {0}", Sudoku.SearchGroupNumberHintCounter);
+            //Console.WriteLine("SearchSquareHintCounter      : {0}", Sudoku.SearchSquareHintCounter);
+            //Console.WriteLine("SearchGroupNumberHintCounter : {0}", Sudoku.SearchGroupNumberHintCounter);
         }
 
         /// <summary>

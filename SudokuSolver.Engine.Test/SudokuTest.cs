@@ -468,6 +468,8 @@ namespace SudokuSolver.Engine.Test
         [TestMethod]
         public void GroupNumberRemoveHintBug()
         {
+            // TODO ?!
+
             // Test
             // a. Bug hunt!
             //try

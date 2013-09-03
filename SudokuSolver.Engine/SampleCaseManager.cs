@@ -193,7 +193,47 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(58, 8);
             sudoku.UpdateSquare(61, 9);
 
-            sudoku.ToggleReady();
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Gets sample case; Domino advanced
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_DominoAdvanced()
+        {
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 8,
+                Title = "Domino advanced"
+            };
+
+            // Update
+            sudoku.UpdateSquare(2, 2);
+            sudoku.UpdateSquare(3, 3);
+            sudoku.UpdateSquare(4, 4);
+            sudoku.UpdateSquare(5, 5);
+            sudoku.UpdateSquare(6, 6);
+            sudoku.UpdateSquare(7, 7);
+            sudoku.UpdateSquare(8, 8);
+
+            sudoku.UpdateSquare(10, 4);
+            sudoku.UpdateSquare(11, 5);
+            sudoku.UpdateSquare(12, 6);
+            sudoku.UpdateSquare(19, 7);
+            sudoku.UpdateSquare(20, 8);
+
+            sudoku.UpdateSquare(28, 2);
+            sudoku.UpdateSquare(31, 3);
+            sudoku.UpdateSquare(34, 5);
+            sudoku.UpdateSquare(55, 6);
+            sudoku.UpdateSquare(58, 8);
+
+            sudoku.UpdateSquare(13, 1);
+            sudoku.UpdateSquare(29, 1);
+            sudoku.UpdateSquare(50, 1);
+            sudoku.UpdateSquare(68, 1);
+            sudoku.UpdateSquare(73, 1);
 
             return sudoku;
         }
@@ -206,7 +246,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku()
             {
-                SudokuId = 8,
+                SudokuId = 9,
                 Title = "Beauty"
             };
 
@@ -238,7 +278,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku()
             {
-                SudokuId = 9,
+                SudokuId = 10,
                 Title = "Hint update"
             };
 
@@ -267,7 +307,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku(4)
             {
-                SudokuId = 10,
+                SudokuId = 11,
                 Title = "Mini size"
             };
 
@@ -284,7 +324,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku(16)
             {
-                SudokuId = 11,
+                SudokuId = 12,
                 Title = "Maxi size"
             };
 
@@ -754,8 +794,9 @@ namespace SudokuSolver.Engine
             //list.Add(GetCase_SquareMethod_Mixed());
             //list.Add(GetCase_GroupNumberMethod());
             //list.Add(GetCase_GroupNumberMethod2());
-            //list.Add(GetCase_Domino());
-            list.Add(GetCase_Beauty());
+            // list.Add(GetCase_Domino());
+            list.Add(GetCase_DominoAdvanced());
+            //list.Add(GetCase_Beauty());
             //list.Add(GetCase_HintUpdate());
             //list.Add(GetCase_MiniSize());
             //list.Add(GetCase_MaxiSize());

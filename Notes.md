@@ -411,3 +411,15 @@ currently there is no "fail case"
 but still removehints method doesnt look good
 try to have better "reverse domino" cases
 can a square only remove one hint? cant it be responsible for more than one?
+
+---
+YES, one square can be responsible for 4 hints!
+check domino advanced case
+when id 1 was removed it should remove 4 hints
+currently it looks good but actually hints remove each other and thats why end result looks okay
+but actually when the first hint removed, it should not find any other hint to remove - the other ones were unrelated to the first one
+it just make a wide search and then find a hint to remove - check try to have the same route as in search hints ?!
+make this thing BETTER!
+
+add domino advanced to tests!
+also update GroupNumberRemoveHintBug test method!
