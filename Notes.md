@@ -423,3 +423,8 @@ make this thing BETTER!
 
 add domino advanced to tests!
 also update GroupNumberRemoveHintBug test method!
+
+---
+also check the case that the hints holding each other
+should be "domino" case
+it can find the hints by chain reaction, but we cant remove them with the same way?!
