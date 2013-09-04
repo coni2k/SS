@@ -9,6 +9,7 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
+        AssignTypes assignType;
         ICollection<Group> groups;
         ICollection<SquareAvailability> availabilities;
         IEnumerable<Square> relatedSquares;
@@ -37,10 +38,26 @@ namespace SudokuSolver.Engine
         /// </summary>
         public SudokuNumber SudokuNumber { get; private set; }
 
-        /// <summary>
-        /// Get the assign type of the square
-        /// </summary>
         public AssignTypes AssignType { get; internal set; }
+
+        ///// <summary>
+        ///// Get the assign type of the square
+        ///// </summary>
+        //public AssignTypes AssignType
+        //{
+        //    get
+        //    {
+        //        if (assignType != null)
+        //            return assignType; // this can only be solver ?!
+
+        //        // TODO
+        //        // if (hints.any() return assigntype.hint;
+
+        //        return Sudoku.Ready
+        //            ? AssignTypes.User
+        //            : AssignTypes.Initial;
+        //    }
+        //}
 
         // Groups
         public Group SquareTypeGroup { get; private set; }
@@ -152,6 +169,11 @@ namespace SudokuSolver.Engine
         #endregion
 
         #region - Methods -
+
+        //internal void Clear()
+        //{
+        //    Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+        //}
 
         /// <summary>
         /// Only changes the assign type

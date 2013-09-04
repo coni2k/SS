@@ -219,6 +219,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(sudoku.HintSquares.First(square => square.SquareId == 31).SudokuNumber.Value == 2);
 
             // Solve
+            sudoku.ToggleReady();
             sudoku.Solve();
 
             // d. Hint count

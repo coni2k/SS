@@ -428,3 +428,17 @@ also update GroupNumberRemoveHintBug test method!
 also check the case that the hints holding each other
 should be "domino" case
 it can find the hints by chain reaction, but we cant remove them with the same way?!
+
+---
+b2 bomber - there is a clear problem with this one.
+update 1,1 + update 1,0 - it set squareId 45 to 0 and then finds it again. this is because it removes too much. make sure that this is not happening!
+
+bomber b2 - v2 = have hint with 4 diff. ways!
+add this to test cases!
+
+---
+start implementing Hints list in square - 4 different hints
+if there is 1 hint, square will be hint type
+remove square must follow the same router as search hint!
+square type, it should be easy
+think about group number type!
