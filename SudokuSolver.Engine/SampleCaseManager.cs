@@ -197,15 +197,15 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Gets sample case; Domino advanced
+        /// Gets sample case; Domino (B-2)
         /// </summary>
         /// <returns></returns>
-        public Sudoku GetCase_DominoAdvanced()
+        public Sudoku GetCase_Domino_B_2()
         {
             var sudoku = new Sudoku()
             {
                 SudokuId = 8,
-                Title = "Domino advanced"
+                Title = "Domino (B-2)"
             };
 
             // Update
@@ -795,7 +795,7 @@ namespace SudokuSolver.Engine
             //list.Add(GetCase_GroupNumberMethod());
             //list.Add(GetCase_GroupNumberMethod2());
             // list.Add(GetCase_Domino());
-            list.Add(GetCase_DominoAdvanced());
+            list.Add(GetCase_Domino_B_2());
             //list.Add(GetCase_Beauty());
             //list.Add(GetCase_HintUpdate());
             //list.Add(GetCase_MiniSize());
