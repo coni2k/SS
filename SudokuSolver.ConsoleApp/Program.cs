@@ -172,7 +172,7 @@ namespace SudokuSolver.ConsoleApp
                 // Prepare & give the output
                 var output = string.Join(" | ",
                     squareRootGroups.Select(squareRootGroup =>
-                        string.Join(" ", squareRootGroup.Select(square => square.IsHint ? "." : square.SudokuNumber.Value.ToString("#;;'.'")))));
+                        string.Join(" ", squareRootGroup.Select(square => square.AssignType == AssignTypes.Hint ? "." : square.SudokuNumber.Value.ToString("#;;'.'")))));
 
                 Console.WriteLine(output);
 

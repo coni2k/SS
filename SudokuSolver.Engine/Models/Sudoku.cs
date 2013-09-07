@@ -204,7 +204,7 @@ namespace SudokuSolver.Engine
 
         public IEnumerable<Square> HintSquares
         {
-            get { return Squares.Where(square => square.IsHint); }
+            get { return Squares.Where(square => square.AssignType == AssignTypes.Hint); }
         }
 
         /// <summary>
@@ -383,7 +383,7 @@ namespace SudokuSolver.Engine
 
             // b. Is the selected square a hint?
             // TODO THINK ABOUT THE ERROR MESSAGE - THE END USER MAY NOT KNOW THAT THIS WAS A HINT ?!
-            if (selectedSquare.IsHint && !selectedNumber.Equals(selectedSquare.SudokuNumber))
+            if (selectedSquare.AssignType == AssignTypes.Hint && !selectedNumber.Equals(selectedSquare.SudokuNumber))
                 throw new InvalidOperationException("Not a valid assignment, hint values cannot be changed");
 
             // b. Is it available; check the related squares with the same number
@@ -401,7 +401,7 @@ namespace SudokuSolver.Engine
                         {
                             foreach (var square in existingSquares)
                             {
-                                if (!selectedSquare.IsAvailable && square.IsHint)
+                                if (!selectedSquare.IsAvailable && square.AssignType == AssignTypes.Hint)
                                 {
                                     // Ok
                                 }

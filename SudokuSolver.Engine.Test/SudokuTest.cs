@@ -127,6 +127,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(square.SudokuNumber.Value == 9);
 
             // Solve
+            sudoku.ToggleReady();
             sudoku.Solve();
 
             // d. Hint count
@@ -311,6 +312,25 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
+        public void HintUpdate2()
+        {
+            // New sudoku
+            var sudoku = CaseManager.GetCase_HintUpdate2();
+
+            // a. Hint count
+            //Assert.IsTrue(sudoku.GroupNumberMethodHintSquares.Count() == 2);
+
+            // Get the square
+            //var square = sudoku.SquareMethodHintSquares.First();
+
+            // b. Hint square value
+            //Assert.IsTrue(square.SquareId == 21);
+
+            // c. Hint number value; check the number of the hint gets updated
+            //Assert.IsTrue(square.SudokuNumber.Value == 1);
+        }
+
+        [TestMethod]
         public void MiniSize()
         {
             // New sudoku
@@ -482,6 +502,40 @@ namespace SudokuSolver.Engine.Test
             //{
             //    Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
             //}
+        }
+
+        [TestMethod]
+        public void GroupNumberHintUpdate()
+        {
+            // New sudoku
+            var sudoku = CaseManager.GetCase_GroupNumberMethod();
+
+            // a. Hint count
+            Assert.IsTrue(sudoku.GroupNumberMethodHintSquares.Count() == 1);
+
+            // Get the square
+            var square = sudoku.GroupNumberMethodHintSquares.Single();
+
+            // b. Square id
+            Assert.IsTrue(square.SquareId == 1);
+
+            // c. Hint number value
+            Assert.IsTrue(square.SudokuNumber.Value == 1);
+
+            sudoku.UpdateSquare(13, 0);
+
+            // Solve
+            //sudoku.Solve();
+
+            //// d. Hint count
+            //Assert.IsTrue(!sudoku.GroupNumberMethodHintSquares.Any());
+
+            //// e. Square assign type
+            //Assert.IsTrue(square.AssignType == AssignTypes.Solver);
+
+            //// f. Sudoku squares left
+            //Assert.IsTrue(sudoku.SquaresLeft == 76);
+        
         }
     }
 }

@@ -23,6 +23,8 @@ namespace SudokuSolver.Engine
 
         #region - Properties -
 
+        public List<Hint> Hints { get; set; }
+        
         /// <summary>
         /// Gets the parent sudoku class
         /// </summary>
@@ -136,18 +138,18 @@ namespace SudokuSolver.Engine
 
         public bool IsSquareMethodHint
         {
-            get { return AssignType == AssignTypes.SquareHint; }
+            get { return AssignType == AssignTypes.Hint && Hints.Any(hint => hint.Type == HintTypes.Square); }
         }
 
         public bool IsGroupNumberMethodHint
         {
-            get { return AssignType == AssignTypes.GroupNumberHint; }
+            get { return AssignType == AssignTypes.Hint && Hints.Any(hint => hint.Type != HintTypes.Square); }
         }
 
-        public bool IsHint
-        {
-            get { return IsSquareMethodHint || IsGroupNumberMethodHint; }
-        }
+        //public bool IsHint
+        //{
+        //    get { return IsSquareMethodHint || IsGroupNumberMethodHint; }
+        //}
 
         #endregion
 
@@ -155,6 +157,8 @@ namespace SudokuSolver.Engine
 
         internal Square(int id, Sudoku sudoku, Group squareTypeGroup, Group horizantalTypeGroup, Group verticalTypeGroup)
         {
+            Hints = new List<Hint>();
+
             SquareId = id;
             Sudoku = sudoku;
             SudokuNumber = sudoku.ZeroNumber; // Zero as initial value
@@ -186,11 +190,24 @@ namespace SudokuSolver.Engine
             Updated = true;
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="number"></param>
-        /// <param name="type"></param>
+        internal void Update(SudokuNumber number, HintTypes hintType, Group.GroupNumber groupNumberSource)
+        {
+            if (!Hints.Any(hint => hint.Type == hintType))
+                Hints.Add(new Hint() { Type = hintType, GroupNumberSource = groupNumberSource });
+
+            if (AssignType != AssignTypes.Hint && Hints.Any())
+                Update(number, AssignTypes.Hint);
+        }
+
+        internal void Update(HintTypes hintType)
+        {
+            if (Hints.Any(hint => hint.Type == hintType))
+                Hints.RemoveAll(hint => hint.Type == hintType);
+
+            if (AssignType == AssignTypes.Hint && !Hints.Any())
+                Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+        }
+        
         internal void Update(SudokuNumber number, AssignTypes type)
         {
             // Action counter
@@ -266,6 +283,34 @@ namespace SudokuSolver.Engine
             if (number.IsZero)
                 return;
 
+            // Square level
+            foreach (var square in RelatedSquares.Where(sqr => !sqr.Equals(this) && sqr.IsSquareMethodHint))
+            {
+                if (square.Availabilities.Any(avail => avail.IsAvailable))
+                    square.Update(HintTypes.Square);
+            }
+
+            // Group level
+            var relatedGroupsSquaresWithHints = RelatedGroups.SelectMany(g => g.Squares.Where(s => s.IsGroupNumberMethodHint && !s.Equals(this))).Distinct();
+
+            foreach (var s in relatedGroupsSquaresWithHints)
+            {
+                foreach (var hint in s.Hints)
+                {
+                    var src = hint.GroupNumberSource;
+
+                    if (src.Availabilities.Any(avail => avail.IsAvailable))
+                        s.Update(hint.Type);
+                }
+            }
+        }
+
+        void RemoveHintsOld(SudokuNumber number)
+        {
+            // Ignore if it's available; cannot produce hints
+            if (number.IsZero)
+                return;
+
             //// Square level
             //// Current square must be excluded from this operation, because of it's already going to be updated.
             //// Otherwise it can stuck in an infinite loop by trying to remove its own hint.
@@ -278,7 +323,7 @@ namespace SudokuSolver.Engine
             //foreach (var group in RelatedGroups)
             //    group.RemoveGroupNumberHint();
 
-            var relatedSquares = RelatedGroups.SelectMany(group => group.Squares.Where(square => !square.Equals(this) && square.IsHint)).FirstOrDefault();
+            var relatedSquares = RelatedGroups.SelectMany(group => group.Squares.Where(square => !square.Equals(this) && square.AssignType == AssignTypes.Hint)).FirstOrDefault();
 
             if (relatedSquares != null)
                 relatedSquares.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
@@ -313,11 +358,11 @@ namespace SudokuSolver.Engine
             Availabilities.Single(availability => availability.Number.Equals(number)).UpdateAvailability(type, source);
         }
 
-        internal void RemoveSquareMethodHint()
-        {
-            if (IsSquareMethodHint)
-                Update(Sudoku.ZeroNumber, AssignTypes.Initial);
-        }
+        //internal void RemoveSquareMethodHint()
+        //{
+        //    if (IsSquareMethodHint)
+        //        Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+        //}
 
         internal void SearchSquareHint()
         {
@@ -328,12 +373,15 @@ namespace SudokuSolver.Engine
             if (lastAvailability == null)
                 return;
 
+            if (!lastAvailability.Square.IsAvailable)
+                return;
+
             // Added earlier?
             if (lastAvailability.Square.IsSquareMethodHint)
                 return;
 
             // Add the hint
-            Update(lastAvailability.Number, AssignTypes.SquareHint);
+            Update(lastAvailability.Number, HintTypes.Square, null);
         }
 
         public override string ToString()

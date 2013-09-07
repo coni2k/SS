@@ -23,8 +23,8 @@ namespace SudokuSolver.Engine
                     {
                         return SquareTypeSource == null
                             && HorizontalTypeSource == null
-                            && VerticalTypeSource == null
-                            && Square.IsAvailable;
+                            && VerticalTypeSource == null;
+                            // && Square.IsAvailable;
                     }
                 }
                 internal bool Updated { get; set; }

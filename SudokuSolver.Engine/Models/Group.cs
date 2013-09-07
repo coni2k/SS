@@ -12,8 +12,8 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
-        private IEnumerable<Square> squares = null;
-        private ICollection<GroupNumber> groupNumbers;
+        IEnumerable<Square> squares = null;
+        ICollection<GroupNumber> groupNumbers;
 
         #endregion
 
@@ -104,32 +104,56 @@ namespace SudokuSolver.Engine
                 availability.Updated = true;
         }
 
-        internal void RemoveGroupNumberHint()
-        {
-            foreach (var groupNumber in GroupNumbers)
-            {
-                var hintSquare = Sudoku.HintSquares.SingleOrDefault(square => square.AssignType == AssignTypes.GroupNumberHint);
+        //internal void RemoveGroupNumberHint()
+        //{
+        //    foreach (var groupNumber in GroupNumbers)
+        //    {
+        //        var hintSquare = Sudoku.HintSquares.SingleOrDefault(square => square.AssignType == AssignTypes.GroupNumberHint);
 
-                if (hintSquare != null)
-                    hintSquare.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
-            }
-        }
+        //        if (hintSquare != null)
+        //            hintSquare.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+        //    }
+        //}
 
         internal void SearchGroupNumberHint()
         {
-            var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.IsAvailable) == 1);
+            var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.IsAvailable && availability.Square.IsAvailable) == 1);
 
             if (lastGroupNumber == null)
                 return;
 
-            var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable);
+            var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable && availability.Square.IsAvailable);
+
+            //if (!lastAvailability.Square.IsAvailable)
+            //    return;
+
+            var groupType = lastAvailability.GroupNumber.Group.GroupType;
+
+            switch (groupType)
+            {
+                case GroupTypes.Square:
+                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintTypes.GroupNumberSquare))
+                        return;
+                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintTypes.GroupNumberSquare, lastAvailability.GroupNumber);
+                    break;
+                case GroupTypes.Horizontal:
+                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintTypes.GroupNumberHorizontal))
+                        return;
+                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintTypes.GroupNumberHorizontal, lastAvailability.GroupNumber);
+                    break;
+                case GroupTypes.Vertical:
+                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintTypes.GroupNumberVertical))
+                        return;
+                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintTypes.GroupNumberVertical, lastAvailability.GroupNumber);
+                    break;
+            }
 
             // Added earlier?
-            if (lastAvailability.Square.IsGroupNumberMethodHint)
-                return;
+            //if (lastAvailability.Square.IsGroupNumberMethodHint)
+            //    return;
 
             // Add the hint
-            lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, AssignTypes.GroupNumberHint);
+            //lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, AssignTypes.GroupNumberHint);
         }
 
         public override string ToString()

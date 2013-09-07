@@ -7,9 +7,8 @@
     {
         Initial = 0,
         User = 1,
-        SquareHint = 2,
-        GroupNumberHint = 3,
-        Solver = 4
+        Hint = 2,
+        Solver = 3
     }
 
     /// <summary>
@@ -19,8 +18,11 @@
     /// </summary>
     public enum HintTypes
     {
-        Square = 0,
-        GroupNumber = 1
+        // None = 0,
+        Square = 1,
+        GroupNumberSquare = 2,
+        GroupNumberHorizontal = 3,
+        GroupNumberVertical = 4
     }
 
     public enum GroupTypes

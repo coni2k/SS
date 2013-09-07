@@ -137,7 +137,7 @@ namespace SudokuSolver.Engine
             sudoku.UpdateSquare(29, 1);
             sudoku.UpdateSquare(57, 1);
 
-            sudoku.ToggleReady();
+            //sudoku.ToggleReady();
 
             return sudoku;
         }
@@ -347,6 +347,69 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
+        /// Gets sample case; Hint update
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_HintUpdate2()
+        {
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 12,
+                Title = "Hint update 2"
+            };
+
+            // Update
+            // Update
+            sudoku.UpdateSquare(13, 1);
+            
+            sudoku.UpdateSquare(25, 1);
+            sudoku.UpdateSquare(26, 2);
+
+            sudoku.UpdateSquare(29, 1);
+            sudoku.UpdateSquare(32, 2);
+
+            sudoku.UpdateSquare(57, 1);
+            sudoku.UpdateSquare(60, 2);
+
+            // At this state, Square Id 1 has Hint for Number 1
+            // Change the number of Square Id 13 to 2, which should lead to have a new hint with Number 2
+            sudoku.UpdateSquare(13, 2);
+
+            return sudoku;
+        }
+
+        /// <summary>
+        /// Gets sample case; Hint update
+        /// </summary>
+        /// <returns></returns>
+        public Sudoku GetCase_InvalidHintRemove()
+        {
+            var sudoku = new Sudoku()
+            {
+                SudokuId = 13,
+                Title = "Invalid hint remove"
+            };
+
+            // Update
+            // Update
+            sudoku.UpdateSquare(13, 1);
+
+            sudoku.UpdateSquare(22, 2);
+            sudoku.UpdateSquare(25, 1);
+
+            sudoku.UpdateSquare(29, 1);
+            sudoku.UpdateSquare(30, 2);
+
+            sudoku.UpdateSquare(56, 2);
+            sudoku.UpdateSquare(57, 1);
+
+            // Doesnt remove the hints ?!
+            sudoku.UpdateSquare(13, 0);
+
+            return sudoku;
+        }
+
+        /// <summary>
         /// Gets sample case; Mini size
         /// </summary>
         /// <returns></returns>
@@ -354,7 +417,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku(4)
             {
-                SudokuId = 12,
+                SudokuId = 15,
                 Title = "Mini size"
             };
 
@@ -371,7 +434,7 @@ namespace SudokuSolver.Engine
         {
             var sudoku = new Sudoku(16)
             {
-                SudokuId = 13,
+                SudokuId = 16,
                 Title = "Maxi size"
             };
 
@@ -839,13 +902,15 @@ namespace SudokuSolver.Engine
             //list.Add(GetCase_SquareMethod_Vertical());
             //list.Add(GetCase_SquareMethod_Square());
             //list.Add(GetCase_SquareMethod_Mixed());
-            //list.Add(GetCase_GroupNumberMethod());
+            list.Add(GetCase_GroupNumberMethod());
             //list.Add(GetCase_GroupNumberMethod2());
             // list.Add(GetCase_Domino());
             //list.Add(GetCase_Domino_B_2());
-            list.Add(GetCase_Domino_B_2_Reverse());
+            //list.Add(GetCase_Domino_B_2_Reverse());
             //list.Add(GetCase_Beauty());
             //list.Add(GetCase_HintUpdate());
+            //list.Add(GetCase_HintUpdate2());
+            //list.Add(GetCase_InvalidHintRemove());
             //list.Add(GetCase_MiniSize());
             //list.Add(GetCase_MaxiSize());
             //list.Add(GetCase_RealSudoku());

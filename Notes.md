@@ -442,3 +442,15 @@ if there is 1 hint, square will be hint type
 remove square must follow the same router as search hint!
 square type, it should be easy
 think about group number type!
+
+---
+square + group number . isavailable prop are changed - check related places
+
+---
+group number hint removal doesnt work - simply continue with Case 5
+remove one of the 1s and the hint stays
+the problem is that the hint itself sets the other squares availability for number1 and when we check whether there is any availability, it cant find any.
+in other words, it blocks itself ?! how to continue;
+. earlier we were removing it anyway - without checking any condition - should we try that again?
+. or we should ignore availability false situation in removehints case? but then can it lead to other problems?
+

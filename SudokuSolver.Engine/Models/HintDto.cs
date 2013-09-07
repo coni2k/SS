@@ -18,7 +18,7 @@
         {
             SquareId = hintSquare.SquareId;
             Value = hintSquare.SudokuNumber.Value;
-            Type = hintSquare.AssignType == AssignTypes.SquareHint ? HintTypes.Square : HintTypes.GroupNumber;
+            Type = hintSquare.AssignType == AssignTypes.Hint ? HintTypes.Square : HintTypes.GroupNumberHorizontal;
         }
 
         #endregion
