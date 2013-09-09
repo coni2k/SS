@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace SudokuSolver.Engine
@@ -31,6 +32,9 @@ namespace SudokuSolver.Engine
 
             public SudokuDto(Sudoku sudoku)
             {
+                if (sudoku == null)
+                    throw new ArgumentNullException("sudoku");
+
                 SudokuId = sudoku.SudokuId;
                 Title = sudoku.Title;
                 Description = sudoku.Description;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -35,13 +36,13 @@ namespace SudokuSolver.Engine
                     Square = square;
                 }
 
-                internal void UpdateAvailability(GroupTypes type, Square source)
+                internal void UpdateAvailability(GroupType type, Square source)
                 {
                     switch (type)
                     {
-                        case GroupTypes.Square: SquareTypeSource = source; break;
-                        case GroupTypes.Horizontal: HorizontalTypeSource = source; break;
-                        case GroupTypes.Vertical: VerticalTypeSource = source; break;
+                        case GroupType.Square: SquareTypeSource = source; break;
+                        case GroupType.Horizontal: HorizontalTypeSource = source; break;
+                        case GroupType.Vertical: VerticalTypeSource = source; break;
                     }
 
                     // TODO Remove
@@ -52,7 +53,7 @@ namespace SudokuSolver.Engine
 
                 public override string ToString()
                 {
-                    return string.Format("GroupNumber: {0} - Square: {1} - IsAvailable: {2}", GroupNumber, Square, IsAvailable);
+                    return string.Format(CultureInfo.InvariantCulture, "GroupNumber: {0} - Square: {1} - IsAvailable: {2}", GroupNumber, Square, IsAvailable);
                 }
             }
         }

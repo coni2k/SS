@@ -3,7 +3,7 @@
     /// <summary>
     /// Determine the state of the square
     /// </summary>
-    public enum AssignTypes
+    public enum AssignType
     {
         Initial = 0,
         User = 1,
@@ -16,7 +16,7 @@
     /// 1. In one group, if all the other squares have a value, the value of the last square becomes clear. This is square type hint.
     /// 2. In one group, if a number can be placed to only one square, because of the other squares is not available for this number, this is group type hint.
     /// </summary>
-    public enum HintTypes
+    public enum HintType
     {
         // None = 0,
         Square = 1,
@@ -25,7 +25,7 @@
         GroupNumberVertical = 4
     }
 
-    public enum GroupTypes
+    public enum GroupType
     {
         Square, // Default group
         Horizontal,

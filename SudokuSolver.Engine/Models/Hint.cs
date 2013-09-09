@@ -4,7 +4,7 @@
     {
         #region - Properties -
 
-        public HintTypes Type { get; set; }
+        public HintType Type { get; set; }
 
         public Group.GroupNumber GroupNumberSource;
 

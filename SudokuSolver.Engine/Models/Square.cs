@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 
 namespace SudokuSolver.Engine
@@ -9,7 +10,7 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
-        AssignTypes assignType;
+        AssignType assignType;
         ICollection<Group> groups;
         ICollection<SquareAvailability> availabilities;
         IEnumerable<Square> relatedSquares;
@@ -40,7 +41,7 @@ namespace SudokuSolver.Engine
         /// </summary>
         public SudokuNumber SudokuNumber { get; private set; }
 
-        public AssignTypes AssignType { get; internal set; }
+        public AssignType AssignType { get; internal set; }
 
         ///// <summary>
         ///// Get the assign type of the square
@@ -138,12 +139,12 @@ namespace SudokuSolver.Engine
 
         public bool IsSquareMethodHint
         {
-            get { return AssignType == AssignTypes.Hint && Hints.Any(hint => hint.Type == HintTypes.Square); }
+            get { return AssignType == AssignType.Hint && Hints.Any(hint => hint.Type == HintType.Square); }
         }
 
         public bool IsGroupNumberMethodHint
         {
-            get { return AssignType == AssignTypes.Hint && Hints.Any(hint => hint.Type != HintTypes.Square); }
+            get { return AssignType == AssignType.Hint && Hints.Any(hint => hint.Type != HintType.Square); }
         }
 
         //public bool IsHint
@@ -162,7 +163,7 @@ namespace SudokuSolver.Engine
             SquareId = id;
             Sudoku = sudoku;
             SudokuNumber = sudoku.ZeroNumber; // Zero as initial value
-            AssignType = AssignTypes.Initial;
+            AssignType = AssignType.Initial;
 
             // Groups
             SquareTypeGroup = squareTypeGroup;
@@ -183,32 +184,32 @@ namespace SudokuSolver.Engine
         /// Only changes the assign type
         /// </summary>
         /// <param name="type"></param>
-        internal void Update(AssignTypes type)
+        internal void Update(AssignType type)
         {
             AssignType = type;
 
             Updated = true;
         }
 
-        internal void Update(SudokuNumber number, HintTypes hintType, Group.GroupNumber groupNumberSource)
+        internal void Update(SudokuNumber number, HintType hintType, Group.GroupNumber groupNumberSource)
         {
             if (!Hints.Any(hint => hint.Type == hintType))
                 Hints.Add(new Hint() { Type = hintType, GroupNumberSource = groupNumberSource });
 
-            if (AssignType != AssignTypes.Hint && Hints.Any())
-                Update(number, AssignTypes.Hint);
+            if (AssignType != AssignType.Hint && Hints.Any())
+                Update(number, AssignType.Hint);
         }
 
-        internal void Update(HintTypes hintType)
+        internal void Update(HintType hintType)
         {
             if (Hints.Any(hint => hint.Type == hintType))
                 Hints.RemoveAll(hint => hint.Type == hintType);
 
-            if (AssignType == AssignTypes.Hint && !Hints.Any())
-                Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+            if (AssignType == AssignType.Hint && !Hints.Any())
+                Update(Sudoku.ZeroNumber, AssignType.Initial);
         }
         
-        internal void Update(SudokuNumber number, AssignTypes type)
+        internal void Update(SudokuNumber number, AssignType type)
         {
             // Action counter
             // Console.WriteLine("ActionCounter                : {0}", Sudoku.ActionCounter++);
@@ -287,7 +288,7 @@ namespace SudokuSolver.Engine
             foreach (var square in RelatedSquares.Where(sqr => !sqr.Equals(this) && sqr.IsSquareMethodHint))
             {
                 if (square.Availabilities.Any(avail => avail.IsAvailable))
-                    square.Update(HintTypes.Square);
+                    square.Update(HintType.Square);
             }
 
             // Group level
@@ -323,10 +324,10 @@ namespace SudokuSolver.Engine
             //foreach (var group in RelatedGroups)
             //    group.RemoveGroupNumberHint();
 
-            var relatedSquares = RelatedGroups.SelectMany(group => group.Squares.Where(square => !square.Equals(this) && square.AssignType == AssignTypes.Hint)).FirstOrDefault();
+            var relatedSquares = RelatedGroups.SelectMany(group => group.Squares.Where(square => !square.Equals(this) && square.AssignType == AssignType.Hint)).FirstOrDefault();
 
             if (relatedSquares != null)
-                relatedSquares.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+                relatedSquares.Update(Sudoku.ZeroNumber, AssignType.Initial);
 
             //foreach (var square in relatedSquares)
             //{
@@ -353,7 +354,7 @@ namespace SudokuSolver.Engine
         /// <param name="number"></param>
         /// <param name="type"></param>
         /// <param name="source"></param>
-        internal void UpdateAvailability(SudokuNumber number, GroupTypes type, Square source)
+        internal void UpdateAvailability(SudokuNumber number, GroupType type, Square source)
         {
             Availabilities.Single(availability => availability.Number.Equals(number)).UpdateAvailability(type, source);
         }
@@ -381,12 +382,12 @@ namespace SudokuSolver.Engine
                 return;
 
             // Add the hint
-            Update(lastAvailability.Number, HintTypes.Square, null);
+            Update(lastAvailability.Number, HintType.Square, null);
         }
 
         public override string ToString()
         {
-            return string.Format("SquareId: {0:D2} - Number: {1} - AssignType: {2}", SquareId, SudokuNumber, AssignType);
+            return string.Format(CultureInfo.InvariantCulture, "SquareId: {0:D2} - Number: {1} - AssignType: {2}", SquareId, SudokuNumber, AssignType);
         }
 
         #endregion

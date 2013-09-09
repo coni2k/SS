@@ -1,4 +1,5 @@
-﻿namespace SudokuSolver.Engine
+﻿using System;
+namespace SudokuSolver.Engine
 {
     public partial class SudokuNumber
     {
@@ -14,6 +15,9 @@
 
             public SudokuNumberDto(SudokuNumber sudokuNumber)
             {
+                if (sudokuNumber == null)
+                    throw new ArgumentNullException("sudokuNumber");
+
                 Value = sudokuNumber.Value;
                 Count = sudokuNumber.Count;
             }

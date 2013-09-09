@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 
 namespace SudokuSolver.Engine
@@ -141,7 +142,7 @@ namespace SudokuSolver.Engine
         /// </summary>
         public IEnumerable<Group> SquareTypeGroups
         {
-            get { return groups.Where(group => group.GroupType == GroupTypes.Square); }
+            get { return groups.Where(group => group.GroupType == GroupType.Square); }
         }
 
         /// <summary>
@@ -149,7 +150,7 @@ namespace SudokuSolver.Engine
         /// </summary>
         public IEnumerable<Group> HorizontalTypeGroups
         {
-            get { return groups.Where(group => group.GroupType == GroupTypes.Horizontal); }
+            get { return groups.Where(group => group.GroupType == GroupType.Horizontal); }
         }
 
         /// <summary>
@@ -157,7 +158,7 @@ namespace SudokuSolver.Engine
         /// </summary>
         public IEnumerable<Group> VerticalTypeGroups
         {
-            get { return groups.Where(group => group.GroupType == GroupTypes.Vertical); }
+            get { return groups.Where(group => group.GroupType == GroupType.Vertical); }
         }
 
         /// <summary>
@@ -204,7 +205,7 @@ namespace SudokuSolver.Engine
 
         public IEnumerable<Square> HintSquares
         {
-            get { return Squares.Where(square => square.AssignType == AssignTypes.Hint); }
+            get { return Squares.Where(square => square.AssignType == AssignType.Hint); }
         }
 
         /// <summary>
@@ -220,7 +221,7 @@ namespace SudokuSolver.Engine
                 //Validate: Cannot set to false, if there are any Square with User/Solver assign type
                 if (value == false)
                 {
-                    var hasInvalidAssignType = Squares.Any(square => (square.AssignType == AssignTypes.User || square.AssignType == AssignTypes.Solver) && !square.IsAvailable);
+                    var hasInvalidAssignType = Squares.Any(square => (square.AssignType == AssignType.User || square.AssignType == AssignType.Solver) && !square.IsAvailable);
                     if (hasInvalidAssignType)
                         throw new InvalidOperationException("Ready cannot set to false again if there are any squares with User or Solver Assign Type");
                 }
@@ -289,9 +290,9 @@ namespace SudokuSolver.Engine
             for (int i = 1; i <= Size; i++)
             {
                 // Generate the groups
-                var squareGroup = new Group(this, i, GroupTypes.Square);
-                var horizontalGroup = new Group(this, i, GroupTypes.Horizontal);
-                var verticalGroup = new Group(this, i, GroupTypes.Vertical);
+                var squareGroup = new Group(this, i, GroupType.Square);
+                var horizontalGroup = new Group(this, i, GroupType.Horizontal);
+                var verticalGroup = new Group(this, i, GroupType.Vertical);
 
                 // Add to the lists
                 groups.Add(squareGroup);
@@ -323,9 +324,9 @@ namespace SudokuSolver.Engine
                 var verticalGroupId = v1 + (v3 * SquareRootOfSize);
 
                 // Find the groups of the square
-                var squareTypeGroup = groups.Single(group => group.Id == squareGroupId && group.GroupType == GroupTypes.Square);
-                var horizontalTypeGroup = groups.Single(group => group.Id == horizontalGroupId && group.GroupType == GroupTypes.Horizontal);
-                var verticalTypeGroup = groups.Single(group => group.Id == verticalGroupId && group.GroupType == GroupTypes.Vertical);
+                var squareTypeGroup = groups.Single(group => group.Id == squareGroupId && group.GroupType == GroupType.Square);
+                var horizontalTypeGroup = groups.Single(group => group.Id == horizontalGroupId && group.GroupType == GroupType.Horizontal);
+                var verticalTypeGroup = groups.Single(group => group.Id == verticalGroupId && group.GroupType == GroupType.Vertical);
 
                 // Generate the squares
                 var square = new Square(squareId, this, squareTypeGroup, horizontalTypeGroup, verticalTypeGroup);
@@ -357,9 +358,9 @@ namespace SudokuSolver.Engine
 
             // Assign type
             var type = selectedNumber.IsZero
-                ? AssignTypes.Initial
-                : Ready ? AssignTypes.User
-                : AssignTypes.Initial;
+                ? AssignType.Initial
+                : Ready ? AssignType.User
+                : AssignType.Initial;
 
             // Validations;
             //a. Square
@@ -374,16 +375,16 @@ namespace SudokuSolver.Engine
             UpdateSquare(selectedSquare, selectedNumber, type);
         }
 
-        void UpdateSquare(Square selectedSquare, SudokuNumber selectedNumber, AssignTypes type)
+        void UpdateSquare(Square selectedSquare, SudokuNumber selectedNumber, AssignType type)
         {
             // Validations;
             // a. Is it a valid assignment; The value cannot be changed if the sudoku is in Ready state and the square has a initial value
-            if (Ready && selectedSquare.AssignType == AssignTypes.Initial && !selectedSquare.IsAvailable)
+            if (Ready && selectedSquare.AssignType == AssignType.Initial && !selectedSquare.IsAvailable)
                 throw new InvalidOperationException("Not a valid assignment, initial values can not be changed in Ready state");
 
             // b. Is the selected square a hint?
             // TODO THINK ABOUT THE ERROR MESSAGE - THE END USER MAY NOT KNOW THAT THIS WAS A HINT ?!
-            if (selectedSquare.AssignType == AssignTypes.Hint && !selectedNumber.Equals(selectedSquare.SudokuNumber))
+            if (selectedSquare.AssignType == AssignType.Hint && !selectedNumber.Equals(selectedSquare.SudokuNumber))
                 throw new InvalidOperationException("Not a valid assignment, hint values cannot be changed");
 
             // b. Is it available; check the related squares with the same number
@@ -401,7 +402,7 @@ namespace SudokuSolver.Engine
                         {
                             foreach (var square in existingSquares)
                             {
-                                if (!selectedSquare.IsAvailable && square.AssignType == AssignTypes.Hint)
+                                if (!selectedSquare.IsAvailable && square.AssignType == AssignType.Hint)
                                 {
                                     // Ok
                                 }
@@ -481,7 +482,7 @@ namespace SudokuSolver.Engine
                 return;
 
             foreach (var square in HintSquares)
-                square.Update(AssignTypes.Solver);
+                square.Update(AssignType.Solver);
 
             // Recursive; it can find new hints meanwhile.
             // If no hints left, it will quit anyway
@@ -492,18 +493,18 @@ namespace SudokuSolver.Engine
         {
             foreach (var square in squares)
             {
-                if (square.AssignType == AssignTypes.User
-                    || square.AssignType == AssignTypes.Solver
-                    || (square.AssignType == AssignTypes.Initial && !Ready))
+                if (square.AssignType == AssignType.User
+                    || square.AssignType == AssignType.Solver
+                    || (square.AssignType == AssignType.Initial && !Ready))
                 {
-                    UpdateSquare(square, ZeroNumber, AssignTypes.Initial);
+                    UpdateSquare(square, ZeroNumber, AssignType.Initial);
                 }
             }
         }
 
         public override string ToString()
         {
-            return string.Format("SudokuId: {0} - Title: {1}", SudokuId, Title);
+            return string.Format(CultureInfo.InvariantCulture, "SudokuId: {0} - Title: {1}", SudokuId, Title);
         }
 
         #endregion

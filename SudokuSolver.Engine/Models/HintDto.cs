@@ -1,4 +1,6 @@
-﻿namespace SudokuSolver.Engine
+﻿using System;
+
+namespace SudokuSolver.Engine
 {
     public class HintDto
     {
@@ -8,7 +10,7 @@
 
         public int Value { get; private set; }
 
-        public HintTypes Type { get; private set; }
+        public HintType Type { get; private set; }
 
         #endregion
 
@@ -16,9 +18,12 @@
 
         public HintDto(Square hintSquare)
         {
+            if (hintSquare == null)
+                throw new ArgumentNullException("hintSquare");
+
             SquareId = hintSquare.SquareId;
             Value = hintSquare.SudokuNumber.Value;
-            Type = hintSquare.AssignType == AssignTypes.Hint ? HintTypes.Square : HintTypes.GroupNumberHorizontal;
+            Type = hintSquare.AssignType == AssignType.Hint ? HintType.Square : HintType.GroupNumberHorizontal;
         }
 
         #endregion

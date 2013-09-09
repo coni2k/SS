@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace SudokuSolver.Engine
 {
@@ -17,12 +18,15 @@ namespace SudokuSolver.Engine
             [Required]
             public int Value { get; set; }
 
-            public AssignTypes AssignType { get; private set; }
+            public AssignType AssignType { get; private set; }
 
             public SquareDto() { }
 
             public SquareDto(Square square)
             {
+                if (square == null)
+                    throw new ArgumentNullException("square");
+
                 SquareId = square.SquareId;
                 Value = square.SudokuNumber.Value;
                 AssignType = square.AssignType;

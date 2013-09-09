@@ -1,4 +1,6 @@
-﻿namespace SudokuSolver.Engine
+﻿using System;
+
+namespace SudokuSolver.Engine
 {
     /// <summary>
     /// Data transfer object for square availability
@@ -13,6 +15,9 @@
 
         public SquareAvailabilityDto(Square.SquareAvailability availability)
         {
+            if (availability == null)
+                throw new ArgumentNullException("availability");
+
             SquareId = availability.Square.SquareId;
             Value = availability.Number.Value;
             IsAvailable = availability.IsAvailable;

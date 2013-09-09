@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 
 namespace SudokuSolver.Engine
@@ -36,11 +37,11 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Type of the group
         /// </summary>
-        public GroupTypes GroupType { get; private set; }
+        public GroupType GroupType { get; private set; }
 
         public string UniqueId
         {
-            get { return string.Format("{0}{1}", GroupType.ToString()[0], Id); }
+            get { return string.Format(CultureInfo.InvariantCulture, "{0}{1}", GroupType.ToString()[0], Id); }
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace SudokuSolver.Engine
 
         #region - Constructors -
 
-        internal Group(Sudoku sudoku, int id, GroupTypes type)
+        internal Group(Sudoku sudoku, int id, GroupType type)
         {
             Sudoku = sudoku;
             Id = id;
@@ -86,7 +87,7 @@ namespace SudokuSolver.Engine
 
         #region - Methods -
 
-        internal void UpdateAvailability(SudokuNumber number, Square square, GroupTypes groupType, Square source)
+        internal void UpdateAvailability(SudokuNumber number, Square square, GroupType groupType, Square source)
         {
             GroupNumbers
                 .Single(groupNumber =>
@@ -131,20 +132,20 @@ namespace SudokuSolver.Engine
 
             switch (groupType)
             {
-                case GroupTypes.Square:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintTypes.GroupNumberSquare))
+                case GroupType.Square:
+                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintType.GroupNumberSquare))
                         return;
-                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintTypes.GroupNumberSquare, lastAvailability.GroupNumber);
+                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberSquare, lastAvailability.GroupNumber);
                     break;
-                case GroupTypes.Horizontal:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintTypes.GroupNumberHorizontal))
+                case GroupType.Horizontal:
+                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintType.GroupNumberHorizontal))
                         return;
-                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintTypes.GroupNumberHorizontal, lastAvailability.GroupNumber);
+                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberHorizontal, lastAvailability.GroupNumber);
                     break;
-                case GroupTypes.Vertical:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintTypes.GroupNumberVertical))
+                case GroupType.Vertical:
+                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintType.GroupNumberVertical))
                         return;
-                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintTypes.GroupNumberVertical, lastAvailability.GroupNumber);
+                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberVertical, lastAvailability.GroupNumber);
                     break;
             }
 
@@ -158,7 +159,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("Id: {0} - Type: {1}", Id, GroupType.ToString()[0]);
+            return string.Format(CultureInfo.InvariantCulture, "Id: {0} - Type: {1}", Id, GroupType.ToString()[0]);
         }
 
         #endregion

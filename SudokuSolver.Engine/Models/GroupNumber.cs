@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace SudokuSolver.Engine
 {
@@ -25,7 +26,7 @@ namespace SudokuSolver.Engine
 
             public override string ToString()
             {
-                return string.Format("Group: {0} - Number: {1}", Group, SudokuNumber);
+                return string.Format(CultureInfo.InvariantCulture, "Group: {0} - Number: {1}", Group, SudokuNumber);
             }
         }
     }

@@ -40,7 +40,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(!sudoku.SquareMethodHintSquares.Any());
 
             // e. Square assign type
-            Assert.IsTrue(square.AssignType == AssignTypes.Solver);
+            Assert.IsTrue(square.AssignType == AssignType.Solver);
 
             // f. Sudoku squares left
             Assert.IsTrue(sudoku.SquaresLeft == 72);
@@ -71,7 +71,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(!sudoku.SquareMethodHintSquares.Any());
 
             // e. Square assign type
-            Assert.IsTrue(square.AssignType == AssignTypes.Solver);
+            Assert.IsTrue(square.AssignType == AssignType.Solver);
 
             // f. Sudoku squares left
             Assert.IsTrue(sudoku.SquaresLeft == 72);
@@ -102,7 +102,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(!sudoku.SquareMethodHintSquares.Any());
 
             // e. Square assign type
-            Assert.IsTrue(square.AssignType == AssignTypes.Solver);
+            Assert.IsTrue(square.AssignType == AssignType.Solver);
 
             // f. Sudoku squares left
             Assert.IsTrue(sudoku.SquaresLeft == 72);
@@ -134,7 +134,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(!sudoku.SquareMethodHintSquares.Any());
 
             // e. Square assign type
-            Assert.IsTrue(square.AssignType == AssignTypes.Solver);
+            Assert.IsTrue(square.AssignType == AssignType.Solver);
 
             // f. Sudoku squares left
             Assert.IsTrue(sudoku.SquaresLeft == 72);
@@ -165,7 +165,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(!sudoku.GroupNumberMethodHintSquares.Any());
 
             // e. Square assign type
-            Assert.IsTrue(square.AssignType == AssignTypes.Solver);
+            Assert.IsTrue(square.AssignType == AssignType.Solver);
 
             // f. Sudoku squares left
             Assert.IsTrue(sudoku.SquaresLeft == 76);
@@ -196,7 +196,7 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(!sudoku.GroupNumberMethodHintSquares.Any());
 
             // e. Square assign type
-            Assert.IsTrue(square.AssignType == AssignTypes.Solver);
+            Assert.IsTrue(square.AssignType == AssignType.Solver);
 
             // f. Sudoku squares left
             Assert.IsTrue(sudoku.SquaresLeft == 76);
@@ -227,9 +227,9 @@ namespace SudokuSolver.Engine.Test
             Assert.IsTrue(!sudoku.HintSquares.Any());
 
             // e. Square assign type
-            Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 1).AssignType == AssignTypes.Solver);
-            Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 31).AssignType == AssignTypes.Solver);
-            Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 54).AssignType == AssignTypes.Solver);
+            Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 1).AssignType == AssignType.Solver);
+            Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 31).AssignType == AssignType.Solver);
+            Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 54).AssignType == AssignType.Solver);
 
             // b. Squares left
             Assert.IsTrue(sudoku.SquaresLeft == 64);

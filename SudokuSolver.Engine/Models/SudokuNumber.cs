@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace SudokuSolver.Engine
 {
@@ -49,7 +50,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format("Value: {0:D2}", Value);
+            return string.Format(CultureInfo.InvariantCulture, "Value: {0:D2}", Value);
         }
 
         #endregion

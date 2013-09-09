@@ -1,4 +1,6 @@
-﻿namespace SudokuSolver.Engine
+﻿using System;
+
+namespace SudokuSolver.Engine
 {
     /// <summary>
     /// Data transfer object for group number availability
@@ -7,7 +9,7 @@
     {
         public int GroupId { get; private set; }
 
-        public GroupTypes GroupType { get; private set; }
+        public GroupType GroupType { get; private set; }
 
         public int SudokuNumber { get; private set; }
 
@@ -17,6 +19,9 @@
 
         public GroupNumberAvailabilityDto(Group.GroupNumber.GroupNumberAvailability availability)
         {
+            if (availability == null)
+                throw new ArgumentNullException("availability");
+
             GroupId = availability.GroupNumber.Group.Id;
             GroupType = availability.GroupNumber.Group.GroupType;
             SudokuNumber = availability.GroupNumber.SudokuNumber.Value;

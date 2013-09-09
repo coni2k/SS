@@ -116,7 +116,7 @@ namespace SudokuSolver.WebApp.Controllers
             var sudoku = GetSudokuItem(sudokuId);
 
             return sudoku.GroupNumberAvailabilities
-                .Where(a => a.GroupNumber.Group.GroupType == GroupTypes.Square)
+                .Where(a => a.GroupNumber.Group.GroupType == GroupType.Square)
                 .Select(availability => new GroupNumberAvailabilityDto(availability));
         }
 
@@ -126,7 +126,7 @@ namespace SudokuSolver.WebApp.Controllers
             var sudoku = GetSudokuItem(sudokuId);
 
             return sudoku.UpdatedGroupNumberAvailabilities
-                .Where(a => a.GroupNumber.Group.GroupType == GroupTypes.Square)
+                .Where(a => a.GroupNumber.Group.GroupType == GroupType.Square)
                 .Select(availability => new GroupNumberAvailabilityDto(availability));
         }
 
