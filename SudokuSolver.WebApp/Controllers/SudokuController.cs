@@ -1,4 +1,5 @@
 ﻿using SudokuSolver.Engine;
+using SudokuSolver.Engine.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,19 @@ namespace SudokuSolver.WebApp.Controllers
     public class SudokuController : BaseController
     {
         // GET api/Sudoku
-        public IEnumerable<Sudoku.SudokuDto> GetSudokuList()
+        public IEnumerable<SudokuDto> GetSudokuList()
         {
-            return Cache.SudokuCases.Select(sudoku => new Sudoku.SudokuDto(sudoku));
+            return Cache.SudokuCases.Select(sudoku => new SudokuDto(sudoku));
         }
 
         // GET api/Sudoku/1
-        public Sudoku.SudokuDto GetSudoku(int sudokuId)
+        public SudokuDto GetSudoku(int sudokuId)
         {
-            return new Sudoku.SudokuDto(GetSudokuItem(sudokuId));
+            return new SudokuDto(GetSudokuItem(sudokuId));
         }
 
         // POST api/Sudoku/PostSudoku
-        public HttpResponseMessage PostSudoku(Sudoku.SudokuDto sudokuDto)
+        public HttpResponseMessage PostSudoku(SudokuDto sudokuDto)
         {
             if (!ModelState.IsValid)
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid sudoku"));
@@ -48,7 +49,7 @@ namespace SudokuSolver.WebApp.Controllers
             }
 
             // Response
-            var response = Request.CreateResponse<Sudoku.SudokuDto>(HttpStatusCode.Created, sudokuDto);
+            var response = Request.CreateResponse<SudokuDto>(HttpStatusCode.Created, sudokuDto);
             var uri = Url.Link(WebApiRouteConfig.SudokuRouteName, new { action = "GetSudoku", sudokuId = sudokuDto.SudokuId });
             response.Headers.Location = new Uri(uri);
             return response;
@@ -63,35 +64,35 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         // GET api/Sudoku/GetNumbers/1
-        public IEnumerable<SudokuNumber.SudokuNumberDto> GetNumbers(int sudokuId)
+        public IEnumerable<SudokuNumberDto> GetNumbers(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.Numbers.Select(sudokuNumber => new SudokuNumber.SudokuNumberDto(sudokuNumber));
+            return sudoku.Numbers.Select(sudokuNumber => new SudokuNumberDto(sudokuNumber));
         }
 
         // GET api/Sudoku/GetUpdatedNumbers/1
-        public IEnumerable<SudokuNumber.SudokuNumberDto> GetUpdatedNumbers(int sudokuId)
+        public IEnumerable<SudokuNumberDto> GetUpdatedNumbers(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.UpdatedNumbers.Select(sudokuNumber => new SudokuNumber.SudokuNumberDto(sudokuNumber));
+            return sudoku.UpdatedNumbers.Select(sudokuNumber => new SudokuNumberDto(sudokuNumber));
         }
 
         // GET api/Sudoku/GetSquares/1
-        public IEnumerable<Square.SquareDto> GetSquares(int sudokuId)
+        public IEnumerable<SquareDto> GetSquares(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.Squares.Select(square => new Square.SquareDto(square));
+            return sudoku.Squares.Select(square => new SquareDto(square));
         }
 
         // GET api/Sudoku/GetUpdatedSquares/1
-        public IEnumerable<Square.SquareDto> GetUpdatedSquares(int sudokuId)
+        public IEnumerable<SquareDto> GetUpdatedSquares(int sudokuId)
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.UpdatedSquares.Select(square => new Square.SquareDto(square));
+            return sudoku.UpdatedSquares.Select(square => new SquareDto(square));
         }
 
         // GET api/Sudoku/GetSquareAvailabilities/1
@@ -139,7 +140,7 @@ namespace SudokuSolver.WebApp.Controllers
         }
 
         // PUT api/Sudoku/UpdateSquare/1/1
-        public void PutSquare(int sudokuId, int squareId, Square.SquareDto squareDto)
+        public void PutSquare(int sudokuId, int squareId, SquareDto squareDto)
         {
             if (!ModelState.IsValid)
                 throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid square"));

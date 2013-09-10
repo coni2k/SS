@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SudokuSolver.Engine
+namespace SudokuSolver.Engine.Dtos
 {
     /// <summary>
     /// Data transfer object for group number availability
@@ -17,7 +17,7 @@ namespace SudokuSolver.Engine
 
         public bool IsAvailable { get; private set; }
 
-        public GroupNumberAvailabilityDto(Group.GroupNumber.GroupNumberAvailability availability)
+        public GroupNumberAvailabilityDto(GroupNumberAvailability availability)
         {
             if (availability == null)
                 throw new ArgumentNullException("availability");

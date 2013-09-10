@@ -1,26 +1,23 @@
 ﻿using System;
-namespace SudokuSolver.Engine
+namespace SudokuSolver.Engine.Dtos
 {
-    public partial class SudokuNumber
+    public class SudokuNumberDto
     {
-        public class SudokuNumberDto
+        #region - Properties -
+
+        public int Value { get; private set; }
+
+        public int Count { get; private set; }
+
+        #endregion
+
+        public SudokuNumberDto(SudokuNumber sudokuNumber)
         {
-            #region - Properties -
+            if (sudokuNumber == null)
+                throw new ArgumentNullException("sudokuNumber");
 
-            public int Value { get; private set; }
-
-            public int Count { get; private set; }
-
-            #endregion
-
-            public SudokuNumberDto(SudokuNumber sudokuNumber)
-            {
-                if (sudokuNumber == null)
-                    throw new ArgumentNullException("sudokuNumber");
-
-                Value = sudokuNumber.Value;
-                Count = sudokuNumber.Count;
-            }
+            Value = sudokuNumber.Value;
+            Count = sudokuNumber.Count;
         }
     }
 }

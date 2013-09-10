@@ -32,7 +32,7 @@ namespace SudokuSolver.ConsoleApp
 
         static void LoadCases()
         {
-            Cases = new SampleCaseManager().GetCases();
+            Cases = SampleCaseManager.SampleCases;
         }
 
         /// <summary>

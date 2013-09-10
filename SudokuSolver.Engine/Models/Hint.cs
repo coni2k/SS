@@ -4,9 +4,9 @@
     {
         #region - Properties -
 
-        public HintType Type { get; set; }
+        public HintType HintType { get; set; }
 
-        public Group.GroupNumber GroupNumberSource;
+        public GroupNumber GroupNumberSource { get; set; }
 
         #endregion
 

@@ -9,7 +9,7 @@ namespace SudokuSolver.Engine
     /// <summary>
     /// Group of squares (for square, horizontal, vertical type)
     /// </summary>
-    public partial class Group
+    public class Group
     {
         #region - Members -
 
@@ -133,17 +133,17 @@ namespace SudokuSolver.Engine
             switch (groupType)
             {
                 case GroupType.Square:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintType.GroupNumberSquare))
+                    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberSquare))
                         return;
                     lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberSquare, lastAvailability.GroupNumber);
                     break;
                 case GroupType.Horizontal:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintType.GroupNumberHorizontal))
+                    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberHorizontal))
                         return;
                     lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberHorizontal, lastAvailability.GroupNumber);
                     break;
                 case GroupType.Vertical:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.Type == HintType.GroupNumberVertical))
+                    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberVertical))
                         return;
                     lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberVertical, lastAvailability.GroupNumber);
                     break;

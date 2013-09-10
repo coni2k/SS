@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SudokuSolver.Engine
+namespace SudokuSolver.Engine.Dtos
 {
     public class HintDto
     {
@@ -10,7 +10,7 @@ namespace SudokuSolver.Engine
 
         public int Value { get; private set; }
 
-        public HintType Type { get; private set; }
+        public HintType HintType { get; private set; }
 
         #endregion
 
@@ -23,7 +23,7 @@ namespace SudokuSolver.Engine
 
             SquareId = hintSquare.SquareId;
             Value = hintSquare.SudokuNumber.Value;
-            Type = hintSquare.AssignType == AssignType.Hint ? HintType.Square : HintType.GroupNumberHorizontal;
+            HintType = hintSquare.AssignType == AssignType.Hint ? HintType.Square : HintType.GroupNumberHorizontal;
         }
 
         #endregion

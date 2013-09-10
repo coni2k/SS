@@ -3,34 +3,31 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SudokuSolver.Engine
 {
-    public partial class Square
+    /// <summary>
+    /// Data transfer object for Square
+    /// </summary>
+    public class SquareDto
     {
-        /// <summary>
-        /// Data transfer object for Square
-        /// </summary>
-        public class SquareDto
+        // TODO More validation rules?
+
+        [Required]
+        public int SquareId { get; set; }
+
+        [Required]
+        public int Value { get; set; }
+
+        public AssignType AssignType { get; private set; }
+
+        public SquareDto() { }
+
+        public SquareDto(Square square)
         {
-            // TODO More validation rules?
+            if (square == null)
+                throw new ArgumentNullException("square");
 
-            [Required]
-            public int SquareId { get; set; }
-
-            [Required]
-            public int Value { get; set; }
-
-            public AssignType AssignType { get; private set; }
-
-            public SquareDto() { }
-
-            public SquareDto(Square square)
-            {
-                if (square == null)
-                    throw new ArgumentNullException("square");
-
-                SquareId = square.SquareId;
-                Value = square.SudokuNumber.Value;
-                AssignType = square.AssignType;
-            }
+            SquareId = square.SquareId;
+            Value = square.SudokuNumber.Value;
+            AssignType = square.AssignType;
         }
     }
 }

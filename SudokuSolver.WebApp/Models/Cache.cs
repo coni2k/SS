@@ -32,7 +32,7 @@ namespace SudokuSolver.WebApp.Models
 
         public void InitSudokuCases()
         {
-            SudokuCases = (ICollection<Sudoku>) new SampleCaseManager().GetCases();
+            SudokuCases = (ICollection<Sudoku>) SampleCaseManager.SampleCases;
         }
     }
 }

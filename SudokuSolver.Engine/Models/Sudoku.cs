@@ -6,21 +6,20 @@ using System.Linq;
 
 namespace SudokuSolver.Engine
 {
-    public partial class Sudoku
+    public class Sudoku
     {
         #region - Members -
 
-        public int ActionCounter;
-        public int SearchSquareHintCounter;
-        public int SearchGroupNumberHintCounter;
+        public int ActionCounter { get; private set; }
+        public int SearchSquareHintCounter { get; internal set; }
+        public int SearchGroupNumberHintCounter { get; internal set; }
 
-        private int size;
         private ICollection<SudokuNumber> numbers = new Collection<SudokuNumber>();
         private SudokuNumber zeroNumber;
         private ICollection<Square> squares = new Collection<Square>();
         private ICollection<Group> groups = new Collection<Group>();
-        private List<Square.SquareAvailability> squareAvailabilities = new List<Square.SquareAvailability>();
-        private List<Group.GroupNumber.GroupNumberAvailability> groupNumberAvailabilities = new List<Group.GroupNumber.GroupNumberAvailability>();
+        private List<SquareAvailability> squareAvailabilities = new List<SquareAvailability>();
+        private List<GroupNumberAvailability> groupNumberAvailabilities = new List<GroupNumberAvailability>();
         private bool ready;
         private bool autoSolve;
 
@@ -35,23 +34,7 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Size of the sudoku; number of squares in one row, column or group
         /// </summary>
-        public int Size
-        {
-            get
-            {
-                return size;
-            }
-            private set
-            {
-                // Validate; the square root of the size must be a round number
-                var squareRootOfValue = Math.Sqrt(value);
-
-                if (squareRootOfValue != Math.Round(squareRootOfValue))
-                    throw new ArgumentException("Please enter a valid sudoku size", "Size");
-
-                size = value;
-            }
-        }
+        public int Size { get; private set; }
 
         /// <summary>
         /// Square root of the sudoku size (for size 9, it's 3)
@@ -164,7 +147,7 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets availabilites of the squares
         /// </summary>
-        public IEnumerable<Square.SquareAvailability> SquareAvailabilities
+        public IEnumerable<SquareAvailability> SquareAvailabilities
         {
             get { return squareAvailabilities; }
         }
@@ -172,7 +155,7 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets all the 'updated' square availabilities
         /// </summary>
-        public IEnumerable<Square.SquareAvailability> UpdatedSquareAvailabilities
+        public IEnumerable<SquareAvailability> UpdatedSquareAvailabilities
         {
             get { return squareAvailabilities.Where(availability => availability.Updated); }
         }
@@ -180,7 +163,7 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets availabilities of the group numbers
         /// </summary>
-        public IEnumerable<Group.GroupNumber.GroupNumberAvailability> GroupNumberAvailabilities
+        public IEnumerable<GroupNumberAvailability> GroupNumberAvailabilities
         {
             get { return groupNumberAvailabilities; }
         }
@@ -188,7 +171,7 @@ namespace SudokuSolver.Engine
         /// <summary>
         /// Gets all the 'updated' availabilities of the group numbers
         /// </summary>
-        public IEnumerable<Group.GroupNumber.GroupNumberAvailability> UpdatedGroupNumberAvailabilities
+        public IEnumerable<GroupNumberAvailability> UpdatedGroupNumberAvailabilities
         {
             get { return groupNumberAvailabilities.Where(availability => availability.Updated); }
         }
@@ -275,6 +258,12 @@ namespace SudokuSolver.Engine
 
         void Init(int size)
         {
+            // Validate; the square root of the size must be a round number
+            var squareRootOfValue = Math.Sqrt(size);
+
+            if (squareRootOfValue != Math.Round(squareRootOfValue))
+                throw new ArgumentException("Please enter a valid sudoku size", "size");
+
             Size = size;
 
             // Solve methods
@@ -365,11 +354,11 @@ namespace SudokuSolver.Engine
             // Validations;
             //a. Square
             if (selectedSquare == null)
-                throw new ArgumentNullException("square", "Not a valid square id");
+                throw new ArgumentNullException("squareId", "Not a valid square id");
 
             // b. Number
             if (selectedNumber == null)
-                throw new ArgumentNullException("number", "Not a valid number");
+                throw new ArgumentNullException("numberValue", "Not a valid number");
 
             // Update
             UpdateSquare(selectedSquare, selectedNumber, type);

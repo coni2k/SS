@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace SudokuSolver.Engine
 {
-    public partial class Square
+    public class Square
     {
         #region - Members -
 
-        AssignType assignType;
+        //AssignType assignType;
         ICollection<Group> groups;
         ICollection<SquareAvailability> availabilities;
         IEnumerable<Square> relatedSquares;
@@ -24,7 +24,7 @@ namespace SudokuSolver.Engine
 
         #region - Properties -
 
-        public List<Hint> Hints { get; set; }
+        public List<Hint> Hints { get; private set; }
         
         /// <summary>
         /// Gets the parent sudoku class
@@ -64,7 +64,7 @@ namespace SudokuSolver.Engine
 
         // Groups
         public Group SquareTypeGroup { get; private set; }
-        public Group HorizantalTypeGroup { get; private set; }
+        public Group HorizontalTypeGroup { get; private set; }
         public Group VerticalTypeGroup { get; private set; }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace SudokuSolver.Engine
                 {
                     groups = new Collection<Group>();
                     groups.Add(SquareTypeGroup);
-                    groups.Add(HorizantalTypeGroup);
+                    groups.Add(HorizontalTypeGroup);
                     groups.Add(VerticalTypeGroup);
                 }
 
@@ -139,12 +139,12 @@ namespace SudokuSolver.Engine
 
         public bool IsSquareMethodHint
         {
-            get { return AssignType == AssignType.Hint && Hints.Any(hint => hint.Type == HintType.Square); }
+            get { return AssignType == AssignType.Hint && Hints.Any(hint => hint.HintType == HintType.Square); }
         }
 
         public bool IsGroupNumberMethodHint
         {
-            get { return AssignType == AssignType.Hint && Hints.Any(hint => hint.Type != HintType.Square); }
+            get { return AssignType == AssignType.Hint && Hints.Any(hint => hint.HintType != HintType.Square); }
         }
 
         //public bool IsHint
@@ -167,7 +167,7 @@ namespace SudokuSolver.Engine
 
             // Groups
             SquareTypeGroup = squareTypeGroup;
-            HorizantalTypeGroup = horizantalTypeGroup;
+            HorizontalTypeGroup = horizantalTypeGroup;
             VerticalTypeGroup = verticalTypeGroup;
         }
 
@@ -191,10 +191,10 @@ namespace SudokuSolver.Engine
             Updated = true;
         }
 
-        internal void Update(SudokuNumber number, HintType hintType, Group.GroupNumber groupNumberSource)
+        internal void Update(SudokuNumber number, HintType hintType, GroupNumber groupNumberSource)
         {
-            if (!Hints.Any(hint => hint.Type == hintType))
-                Hints.Add(new Hint() { Type = hintType, GroupNumberSource = groupNumberSource });
+            if (!Hints.Any(hint => hint.HintType == hintType))
+                Hints.Add(new Hint() { HintType = hintType, GroupNumberSource = groupNumberSource });
 
             if (AssignType != AssignType.Hint && Hints.Any())
                 Update(number, AssignType.Hint);
@@ -202,8 +202,8 @@ namespace SudokuSolver.Engine
 
         internal void Update(HintType hintType)
         {
-            if (Hints.Any(hint => hint.Type == hintType))
-                Hints.RemoveAll(hint => hint.Type == hintType);
+            if (Hints.Any(hint => hint.HintType == hintType))
+                Hints.RemoveAll(hint => hint.HintType == hintType);
 
             if (AssignType == AssignType.Hint && !Hints.Any())
                 Update(Sudoku.ZeroNumber, AssignType.Initial);
@@ -301,40 +301,40 @@ namespace SudokuSolver.Engine
                     var src = hint.GroupNumberSource;
 
                     if (src.Availabilities.Any(avail => avail.IsAvailable))
-                        s.Update(hint.Type);
+                        s.Update(hint.HintType);
                 }
             }
         }
 
-        void RemoveHintsOld(SudokuNumber number)
-        {
-            // Ignore if it's available; cannot produce hints
-            if (number.IsZero)
-                return;
+        //void RemoveHintsOld(SudokuNumber number)
+        //{
+        //    // Ignore if it's available; cannot produce hints
+        //    if (number.IsZero)
+        //        return;
 
-            //// Square level
-            //// Current square must be excluded from this operation, because of it's already going to be updated.
-            //// Otherwise it can stuck in an infinite loop by trying to remove its own hint.
-            //var relatedSquaresExceptThis = RelatedSquares.Where(square => !square.Equals(this));
+        //    //// Square level
+        //    //// Current square must be excluded from this operation, because of it's already going to be updated.
+        //    //// Otherwise it can stuck in an infinite loop by trying to remove its own hint.
+        //    //var relatedSquaresExceptThis = RelatedSquares.Where(square => !square.Equals(this));
 
-            //foreach (var square in relatedSquaresExceptThis)
-            //    square.RemoveSquareMethodHint();
+        //    //foreach (var square in relatedSquaresExceptThis)
+        //    //    square.RemoveSquareMethodHint();
 
-            //// Group number level
-            //foreach (var group in RelatedGroups)
-            //    group.RemoveGroupNumberHint();
+        //    //// Group number level
+        //    //foreach (var group in RelatedGroups)
+        //    //    group.RemoveGroupNumberHint();
 
-            var relatedSquares = RelatedGroups.SelectMany(group => group.Squares.Where(square => !square.Equals(this) && square.AssignType == AssignType.Hint)).FirstOrDefault();
+        //    var relatedSquares = RelatedGroups.SelectMany(group => group.Squares.Where(square => !square.Equals(this) && square.AssignType == AssignType.Hint)).FirstOrDefault();
 
-            if (relatedSquares != null)
-                relatedSquares.Update(Sudoku.ZeroNumber, AssignType.Initial);
+        //    if (relatedSquares != null)
+        //        relatedSquares.Update(Sudoku.ZeroNumber, AssignType.Initial);
 
-            //foreach (var square in relatedSquares)
-            //{
-            //    square.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
-            //    break;
-            //}
-        }
+        //    //foreach (var square in relatedSquares)
+        //    //{
+        //    //    square.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
+        //    //    break;
+        //    //}
+        //}
 
         void SearchHints()
         {

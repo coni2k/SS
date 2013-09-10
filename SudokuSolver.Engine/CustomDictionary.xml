@@ -1,0 +1,27 @@
+﻿<Dictionary>
+    <Words>
+        <Unrecognized>
+            <Word></Word>
+        </Unrecognized>
+        <Recognized>
+            <Word>Dto</Word>
+            <Word>Dtos</Word>
+            <Word>autosolve</Word>
+        </Recognized>
+        <Deprecated>
+            <Term PreferredAlternate=""></Term>
+        </Deprecated>
+        <Compound>
+            <Term CompoundAlternate=""></Term>
+        </Compound>
+        <DiscreteExceptions>
+            <Term>AutoSolve</Term>
+        </DiscreteExceptions>
+    </Words>
+    <Acronyms>
+        <CasingExceptions>
+            <!-- Data transfer object -->
+            <Acronym>Dto</Acronym>
+        </CasingExceptions>
+    </Acronyms>
+</Dictionary>

@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace SudokuSolver.Engine
 {
-    public partial class SudokuNumber
+    public class SudokuNumber
     {
         #region - Properties -
 

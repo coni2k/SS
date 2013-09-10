@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SudokuSolver.Engine
+namespace SudokuSolver.Engine.Dtos
 {
     /// <summary>
     /// Data transfer object for square availability
@@ -13,7 +13,7 @@ namespace SudokuSolver.Engine
         
         public bool IsAvailable { get; private set; }
 
-        public SquareAvailabilityDto(Square.SquareAvailability availability)
+        public SquareAvailabilityDto(SquareAvailability availability)
         {
             if (availability == null)
                 throw new ArgumentNullException("availability");

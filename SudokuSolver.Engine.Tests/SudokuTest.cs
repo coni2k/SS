@@ -3,23 +3,23 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SudokuSolver.Engine;
 
-namespace SudokuSolver.Engine.Test
+namespace SudokuSolver.Engine.Tests
 {
     [TestClass]
     public class SudokuTest
     {
-        SampleCaseManager caseManager;
+        //SampleCaseManager caseManager;
 
-        SampleCaseManager CaseManager
-        {
-            get { return caseManager ?? (caseManager = new SampleCaseManager()); }
-        }
+        //SampleCaseManager CaseManager
+        //{
+        //    get { return caseManager ?? (caseManager = new SampleCaseManager()); }
+        //}
 
         [TestMethod]
-        public void SquareMethod_Horizontal()
+        public void SquareMethodHorizontal()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_SquareMethod_Horizontal();
+            var sudoku = SampleCaseManager.SquareMethodHorizontal;
 
             // a. Hint count
             Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
@@ -47,10 +47,10 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void SquareMethod_Vertical()
+        public void SquareMethodVertical()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_SquareMethod_Vertical();
+            var sudoku = SampleCaseManager.SquareMethodVertical;
 
             // a. Hint count
             Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
@@ -78,10 +78,10 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void SquareMethod_Square()
+        public void SquareMethodSquare()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_SquareMethod_Square();
+            var sudoku = SampleCaseManager.SquareMethodSquare;
 
             // a. Hint count
             Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
@@ -109,10 +109,10 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void SquareMethod_Mixed()
+        public void SquareMethodMixed()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_SquareMethod_Mixed();
+            var sudoku = SampleCaseManager.SquareMethodMixed;
 
             // a. Hint count
             Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
@@ -144,7 +144,7 @@ namespace SudokuSolver.Engine.Test
         public void GroupNumberMethod()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_GroupNumberMethod();
+            var sudoku = SampleCaseManager.GroupNumberMethod;
 
             // a. Hint count
             Assert.IsTrue(sudoku.GroupNumberMethodHintSquares.Count() == 1);
@@ -175,7 +175,7 @@ namespace SudokuSolver.Engine.Test
         public void GroupNumberMethodWithHelp()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_GroupNumberMethodWithHelp();
+            var sudoku = SampleCaseManager.GroupNumberMethodWithHelp;
 
             // a. Hint count
             Assert.IsTrue(sudoku.GroupNumberMethodHintSquares.Count() == 1);
@@ -206,7 +206,7 @@ namespace SudokuSolver.Engine.Test
         public void Domino()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_Domino();
+            var sudoku = SampleCaseManager.Domino;
 
             // a. Hint count
             Assert.IsTrue(sudoku.HintSquares.Count() == 3);
@@ -239,7 +239,7 @@ namespace SudokuSolver.Engine.Test
         public void Beauty()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_Beauty();
+            var sudoku = SampleCaseManager.Beauty;
 
             // Solve
             sudoku.Solve();
@@ -262,10 +262,10 @@ namespace SudokuSolver.Engine.Test
         }
 
         [TestMethod]
-        public void Beauty_Reverse()
+        public void BeautyReverse()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_Beauty();
+            var sudoku = SampleCaseManager.Beauty;
 
             sudoku.ToggleReady();
 
@@ -296,7 +296,7 @@ namespace SudokuSolver.Engine.Test
         public void HintUpdate()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_HintUpdate();
+            var sudoku = SampleCaseManager.HintUpdate;
 
             // a. Hint count
             Assert.IsTrue(sudoku.SquareMethodHintSquares.Count() == 1);
@@ -315,7 +315,7 @@ namespace SudokuSolver.Engine.Test
         public void HintUpdate2()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_HintUpdate2();
+            var sudoku = SampleCaseManager.HintUpdate2;
 
             // a. Hint count
             //Assert.IsTrue(sudoku.GroupNumberMethodHintSquares.Count() == 2);
@@ -334,7 +334,7 @@ namespace SudokuSolver.Engine.Test
         public void MiniSize()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_MiniSize();
+            var sudoku = SampleCaseManager.MiniSize;
 
             // Test
             // a. Total size
@@ -348,7 +348,7 @@ namespace SudokuSolver.Engine.Test
         public void MaxiSize()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_MaxiSize();
+            var sudoku = SampleCaseManager.MaxiSize;
 
             // Test
             // a. Total size
@@ -362,7 +362,7 @@ namespace SudokuSolver.Engine.Test
         public void RealCase()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_RealSudoku();
+            var sudoku = SampleCaseManager.RealSudoku;
 
             // Solve
             sudoku.Solve();
@@ -379,13 +379,10 @@ namespace SudokuSolver.Engine.Test
             // a. Invalid sudoku
             try
             {
-                var sudoku = CaseManager.GetCase_InvalidSudoku();
+                SampleCaseManager.InvalidSudoku.Solve();
                 Assert.Fail();
             }
-            catch (Exception ex)
-            {
-                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
-            }
+            catch (InvalidOperationException) {}
         }
 
         [TestMethod]
@@ -396,13 +393,10 @@ namespace SudokuSolver.Engine.Test
 
             try
             {
-                var sudoku = CaseManager.GetCase_ValueRemoveSquareAvailabilityBug();
+                SampleCaseManager.ValueRemoveSquareAvailabilityBug.Solve();
                 Assert.Fail();
             }
-            catch (Exception ex)
-            {
-                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
-            }
+            catch (InvalidOperationException) { }
         }
 
         [TestMethod]
@@ -413,13 +407,10 @@ namespace SudokuSolver.Engine.Test
 
             try
             {
-                var sudoku = CaseManager.GetCase_HintValueUpdate();
+                SampleCaseManager.HintValueUpdate.Solve();
                 Assert.Fail();
             }
-            catch (Exception ex)
-            {
-                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
-            }
+            catch (InvalidOperationException) { }
         }
 
         [TestMethod]
@@ -429,13 +420,10 @@ namespace SudokuSolver.Engine.Test
             // a. Invalid sudoku
             try
             {
-                var sudoku = CaseManager.GetCase_Headache();
+                SampleCaseManager.Headache.Solve();
                 Assert.Fail();
             }
-            catch (Exception ex)
-            {
-                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
-            }
+            catch (InvalidOperationException) { }
         }
 
         [TestMethod]
@@ -445,13 +433,10 @@ namespace SudokuSolver.Engine.Test
             // a. Invalid sudoku
             try
             {
-                var sudoku = CaseManager.GetCase_Headache2();
+                SampleCaseManager.Headache2.Solve();
                 Assert.Fail();
             }
-            catch (Exception ex)
-            {
-                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
-            }
+            catch (InvalidOperationException) { }
         }
 
         [TestMethod]
@@ -461,13 +446,10 @@ namespace SudokuSolver.Engine.Test
             // a. Invalid sudoku
             try
             {
-                var sudoku = CaseManager.GetCase_Headache3();
+                SampleCaseManager.Headache3.Solve();
                 Assert.Fail();
             }
-            catch (Exception ex)
-            {
-                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
-            }
+            catch (InvalidOperationException) { }
         }
 
         [TestMethod]
@@ -477,13 +459,10 @@ namespace SudokuSolver.Engine.Test
             // a. Invalid sudoku; 
             try
             {
-                var sudoku = CaseManager.GetCase_Headache4();
+                SampleCaseManager.Headache4.Solve();
                 Assert.Fail();
             }
-            catch (Exception ex)
-            {
-                Assert.IsInstanceOfType(ex, typeof(InvalidOperationException));
-            }
+            catch (InvalidOperationException) { }
         }
 
         [TestMethod]
@@ -495,7 +474,7 @@ namespace SudokuSolver.Engine.Test
             // a. Bug hunt!
             //try
             //{
-            var sudoku = CaseManager.GetCase_GroupNumberRemoveHintBug();
+            var sudoku = SampleCaseManager.GroupNumberRemoveHintBug;
             //    Assert.Fail();
             //}
             //catch (Exception ex)
@@ -508,7 +487,7 @@ namespace SudokuSolver.Engine.Test
         public void GroupNumberHintUpdate()
         {
             // New sudoku
-            var sudoku = CaseManager.GetCase_GroupNumberMethod();
+            var sudoku = SampleCaseManager.GroupNumberMethod;
 
             // a. Hint count
             Assert.IsTrue(sudoku.GroupNumberMethodHintSquares.Count() == 1);
