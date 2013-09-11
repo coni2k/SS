@@ -127,7 +127,7 @@ namespace SudokuSolver.Engine.Tests
             Assert.IsTrue(square.SudokuNumber.Value == 9);
 
             // Solve
-            sudoku.ToggleReady();
+            //sudoku.ToggleReady();
             sudoku.Solve();
 
             // d. Hint count
@@ -159,6 +159,7 @@ namespace SudokuSolver.Engine.Tests
             Assert.IsTrue(square.SudokuNumber.Value == 1);
 
             // Solve
+            sudoku.ToggleReady();
             sudoku.Solve();
 
             // d. Hint count
@@ -190,6 +191,7 @@ namespace SudokuSolver.Engine.Tests
             Assert.IsTrue(square.SudokuNumber.Value == 1);
 
             // Solve
+            sudoku.ToggleReady();
             sudoku.Solve();
 
             // d. Hint count
@@ -242,6 +244,7 @@ namespace SudokuSolver.Engine.Tests
             var sudoku = SampleCaseManager.Beauty;
 
             // Solve
+            sudoku.ToggleReady();
             sudoku.Solve();
 
             // Get the control squares
@@ -267,11 +270,6 @@ namespace SudokuSolver.Engine.Tests
             // New sudoku
             var sudoku = SampleCaseManager.Beauty;
 
-            sudoku.ToggleReady();
-
-            // Solve
-            // sudoku.Solve();
-
             // Get the control squares
             var controlSquare1 = sudoku.Squares.Single(square => square.SquareId == 1);
             var controlSquare2 = sudoku.Squares.Single(square => square.SquareId == 3);
@@ -285,7 +283,7 @@ namespace SudokuSolver.Engine.Tests
             Assert.IsTrue(controlSquare3.SudokuNumber.Value == 7);
             Assert.IsTrue(controlSquare4.SudokuNumber.Value == 9);
 
-            // ..
+            // Try to return to an earlier state; hints should to be removed
             sudoku.UpdateSquare(34, 0);
 
             // b. Squares left

@@ -20,7 +20,7 @@ namespace SudokuSolver.Engine.Dtos
 
             SquareId = availability.Square.SquareId;
             Value = availability.Number.Value;
-            IsAvailable = availability.IsAvailable;
+            IsAvailable = availability.GetAvailability();
         }
     }
 }

@@ -14,15 +14,28 @@ namespace SudokuSolver.Engine
         internal Square SquareTypeSource { get; private set; }
         internal Square HorizontalTypeSource { get; private set; }
         internal Square VerticalTypeSource { get; private set; }
-        public bool IsAvailable
+        //public bool IsAvailable
+        //{
+        //    get
+        //    {
+        //        return SquareTypeSource == null
+        //            && HorizontalTypeSource == null
+        //            && VerticalTypeSource == null;
+        //        // && Square.IsAvailable;
+        //    }
+        //}
+        public bool GetAvailability()
         {
-            get
-            {
-                return SquareTypeSource == null
-                    && HorizontalTypeSource == null
-                    && VerticalTypeSource == null;
-                // && Square.IsAvailable;
-            }
+            return GetAvailability(null);
+        }
+        public bool GetAvailability(Square source)
+        {
+            return (SquareTypeSource == null
+                || SquareTypeSource.Equals(source))
+                && (HorizontalTypeSource == null
+                || HorizontalTypeSource.Equals(source))
+                && (VerticalTypeSource == null
+                || VerticalTypeSource.Equals(source));
         }
         internal bool Updated { get; set; }
 
@@ -49,7 +62,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "GroupNumber: {0} - Square: {1} - IsAvailable: {2}", GroupNumber, Square, IsAvailable);
+            return string.Format(CultureInfo.InvariantCulture, "GroupNumber: {0} - Square: {1} - IsAvailable: {2}", GroupNumber, Square, GetAvailability());
         }
     }
 }

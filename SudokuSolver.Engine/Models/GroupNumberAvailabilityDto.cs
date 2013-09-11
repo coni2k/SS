@@ -26,7 +26,7 @@ namespace SudokuSolver.Engine.Dtos
             GroupType = availability.GroupNumber.Group.GroupType;
             SudokuNumber = availability.GroupNumber.SudokuNumber.Value;
             SquareId = availability.Square.SquareId;
-            IsAvailable = availability.IsAvailable;
+            IsAvailable = availability.GetAvailability();
         }
     }
 }

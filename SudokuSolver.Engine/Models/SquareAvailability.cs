@@ -14,15 +14,47 @@ namespace SudokuSolver.Engine
         internal Square SquareTypeSource { get; private set; }
         internal Square HorizontalTypeSource { get; private set; }
         internal Square VerticalTypeSource { get; private set; }
-        public bool IsAvailable
+        //public bool IsAvailableToAddHint
+        //{
+        //    get
+        //    {
+        //        return SquareTypeSource == null
+        //            && HorizontalTypeSource == null
+        //            && VerticalTypeSource == null;
+        //        // && Square.IsAvailable;
+        //    }
+        //}
+        //public bool IsAvailableToRemoveHint
+        //{
+        //    get
+        //    {
+        //        return SquareTypeSource == null || SquareTypeSource
+        //            && HorizontalTypeSource == null
+        //            && VerticalTypeSource == null;
+        //        // && Square.IsAvailable;
+        //    }
+        //}
+        public bool GetAvailability()
         {
-            get
-            {
-                return SquareTypeSource == null
-                    && HorizontalTypeSource == null
-                    && VerticalTypeSource == null;
-                // && Square.IsAvailable;
-            }
+            return GetAvailability(null);
+        }
+        //public bool GetAvailability(Square source)
+        //{
+        //    return (SquareTypeSource == null
+        //        || SquareTypeSource.Equals(source))
+        //        && (HorizontalTypeSource == null
+        //        || HorizontalTypeSource.Equals(source))
+        //        && (VerticalTypeSource == null
+        //        || VerticalTypeSource.Equals(source));
+        //}
+        public bool GetAvailability(Square source)
+        {
+            return (SquareTypeSource == null
+                )
+                && (HorizontalTypeSource == null
+                )
+                && (VerticalTypeSource == null
+                );
         }
         internal bool Updated { get; set; }
 
@@ -46,7 +78,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Square: {0} - Number: {1} - IsAvailable: {2}", Square, Number, IsAvailable);
+            return string.Format(CultureInfo.InvariantCulture, "Square: {0} - Number: {1} - IsAvailable: {2}", Square, Number, GetAvailability());
         }
     }
 }

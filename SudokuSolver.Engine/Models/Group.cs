@@ -118,12 +118,12 @@ namespace SudokuSolver.Engine
 
         internal void SearchGroupNumberHint()
         {
-            var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.IsAvailable && availability.Square.IsAvailable) == 1);
+            var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability() && availability.Square.IsAvailable) == 1);
 
             if (lastGroupNumber == null)
                 return;
 
-            var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.IsAvailable && availability.Square.IsAvailable);
+            var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability() && availability.Square.IsAvailable);
 
             //if (!lastAvailability.Square.IsAvailable)
             //    return;

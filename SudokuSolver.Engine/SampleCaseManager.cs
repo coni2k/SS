@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 
 namespace SudokuSolver.Engine
 {
@@ -170,7 +167,7 @@ namespace SudokuSolver.Engine
                 var sudoku = new Sudoku()
                 {
                     SudokuId = 6,
-                    Title = "Group number method"
+                    Title = "Group number method with help"
                 };
 
                 // Update
@@ -179,7 +176,7 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(69, 1);
                 sudoku.UpdateSquare(80, 2);
 
-                sudoku.ToggleReady();
+                // sudoku.ToggleReady();
 
                 return sudoku;
             }
@@ -342,8 +339,6 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(30, 1);
                 sudoku.UpdateSquare(34, 9);
                 sudoku.UpdateSquare(36, 7);
-
-                sudoku.ToggleReady();
 
                 return sudoku;
             }
@@ -980,30 +975,30 @@ namespace SudokuSolver.Engine
             {
                 var list = new Collection<Sudoku>();
 
-                list.Add(SquareMethodHorizontal);
-                list.Add(SquareMethodVertical);
-                list.Add(SquareMethodSquare);
-                list.Add(SquareMethodMixed);
-                list.Add(GroupNumberMethod);
-                // list.Add(GroupNumberMethod2);
-                list.Add(Domino);
-                list.Add(DominoB2);
-                list.Add(DominoB2Reverse);
+                //list.Add(SquareMethodHorizontal);
+                //list.Add(SquareMethodVertical);
+                //list.Add(SquareMethodSquare);
+                //list.Add(SquareMethodMixed);
+                //list.Add(GroupNumberMethod);
+                //list.Add(GroupNumberMethodWithHelp);
+                //list.Add(Domino);
+                //list.Add(DominoB2);
+                //list.Add(DominoB2Reverse);
                 list.Add(Beauty);
-                list.Add(HintUpdate);
-                list.Add(HintUpdate2);
-                list.Add(InvalidHintRemove);
-                list.Add(MiniSize);
-                list.Add(MaxiSize);
-                list.Add(RealSudoku);
-                list.Add(InvalidSudoku);
-                list.Add(Headache);
-                list.Add(Headache2);
-                list.Add(Headache3);
-                list.Add(Headache4);
-                list.Add(HintAvailabilityBug);
-                list.Add(GroupNumberRemoveHintBug);
-                list.Add(Freestyle);
+                //list.Add(HintUpdate);
+                //list.Add(HintUpdate2);
+                //list.Add(InvalidHintRemove);
+                //list.Add(MiniSize);
+                //list.Add(MaxiSize);
+                //list.Add(RealSudoku);
+                //list.Add(InvalidSudoku);
+                ////list.Add(Headache);
+                ////list.Add(Headache2);
+                ////list.Add(Headache3);
+                ////list.Add(Headache4);
+                ////list.Add(HintAvailabilityBug);
+                //list.Add(GroupNumberRemoveHintBug);
+                //list.Add(Freestyle);
 
                 return list;
             }

@@ -21,11 +21,13 @@ namespace SudokuSolver.ConsoleApp
         {
             LoadCases();
 
-            NewSudoku();
+            // NewSudoku();
 
-            //LoadCase(20);
+            LoadCase(10);
 
-            ShowHints();
+            //CurrentSudoku.UpdateSquare(34, 0);
+
+            // ShowHints();
 
             ProcessCommand(args);
         }
@@ -213,7 +215,7 @@ namespace SudokuSolver.ConsoleApp
 
                 // Availability per number; "X" for available squares, "." for non-available ones
                 foreach (var number in CurrentSudoku.NumbersExceptZero)
-                    Console.Write(" | {0}", square.Availabilities.Single(availability => availability.Number.Equals(number)).IsAvailable ? "X" : ".");
+                    Console.Write(" | {0}", square.Availabilities.Single(availability => availability.Number.Equals(number)).GetAvailability() ? "X" : ".");
 
                 Console.WriteLine();
             }
@@ -235,7 +237,7 @@ namespace SudokuSolver.ConsoleApp
                             string.Format("{0:D2} - {1:D2} - {2}",
                             groupNumber.SudokuNumber.Value, // 0
                             squareAvailability.Square.SquareId, // 1
-                            squareAvailability.IsAvailable ? "X" : "."))); // 2
+                            squareAvailability.GetAvailability() ? "X" : "."))); // 2
 
                     Console.Write(availabilityOutput);
 

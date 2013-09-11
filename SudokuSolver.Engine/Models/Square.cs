@@ -243,6 +243,7 @@ namespace SudokuSolver.Engine
 
             Console.WriteLine("E - ID: {0:D2} - OLD: {1:D2} - NEW: {2:D2}", SquareId, oldNumber.Value, number.Value);
             Console.WriteLine();
+            //Console.ReadLine();
 
             // Counters
             //Console.WriteLine("SearchSquareHintCounter      : {0}", Sudoku.SearchSquareHintCounter);
@@ -287,7 +288,10 @@ namespace SudokuSolver.Engine
             // Square level
             foreach (var square in RelatedSquares.Where(sqr => !sqr.Equals(this) && sqr.IsSquareMethodHint))
             {
-                if (square.Availabilities.Any(avail => avail.IsAvailable))
+                //if (square.Availabilities.Any(avail => avail.IsAvailableToAddHint))
+                //    square.Update(HintType.Square);
+
+                if (square.Availabilities.Any(avail => avail.GetAvailability()))
                     square.Update(HintType.Square);
             }
 
@@ -296,11 +300,13 @@ namespace SudokuSolver.Engine
 
             foreach (var s in relatedGroupsSquaresWithHints)
             {
-                foreach (var hint in s.Hints)
+                var copyHints = s.Hints.ToList();
+
+                foreach (var hint in copyHints)
                 {
                     var src = hint.GroupNumberSource;
 
-                    if (src.Availabilities.Any(avail => avail.IsAvailable))
+                    if (src.Availabilities.Any(avail => avail.GetAvailability(s)))
                         s.Update(hint.HintType);
                 }
             }
@@ -369,7 +375,7 @@ namespace SudokuSolver.Engine
         {
             Sudoku.SearchSquareHintCounter++;
 
-            var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsAvailable);
+            var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.GetAvailability());
 
             if (lastAvailability == null)
                 return;

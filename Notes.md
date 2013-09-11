@@ -454,3 +454,6 @@ in other words, it blocks itself ?! how to continue;
 . earlier we were removing it anyway - without checking any condition - should we try that again?
 . or we should ignore availability false situation in removehints case? but then can it lead to other problems?
 
+---
+beauty reverse doesnt remove the hints properly
+when we try 34,0 it should remove 2 other hints but it doesnt - WHY  ?!?!?!?!?!?!
