@@ -222,7 +222,19 @@ namespace SudokuSolver.Engine
 
             var oldNumber = SudokuNumber;
 
-            Console.WriteLine("B - ID: {0:D2} - OLD: {1:D2} - NEW: {2:D2}", SquareId, oldNumber.Value, number.Value);
+            // Console.WriteLine("B - ID: {0:D2} - OLD: {1:D2} - NEW: {2:D2}", SquareId, oldNumber.Value, number.Value);
+            if (Sudoku.DisplaySquareDetails)
+                Console.WriteLine("B - Square: {0}", this);
+            if (Sudoku.DisplaySquareHints)
+            {
+                foreach (var hint in Hints)
+                    Console.WriteLine("B - Hint: {0}", hint);
+            }
+            if (Sudoku.DisplaySquareAvailabilities)
+            {
+                foreach (var availabilitiy in Availabilities)
+                    Console.WriteLine("B - Availability: {0}", availabilitiy);
+            }
 
             // c. Set the values
             SudokuNumber = number;
@@ -241,7 +253,19 @@ namespace SudokuSolver.Engine
             // e. Search hints
             SearchHints();
 
-            Console.WriteLine("E - ID: {0:D2} - OLD: {1:D2} - NEW: {2:D2}", SquareId, oldNumber.Value, number.Value);
+            //Console.WriteLine("E - ID: {0:D2} - OLD: {1:D2} - NEW: {2:D2}", SquareId, oldNumber.Value, number.Value);
+            if (Sudoku.DisplaySquareDetails) 
+                Console.WriteLine("E - Square: {0}", this);
+            if (Sudoku.DisplaySquareHints)
+            {
+                foreach (var hint in Hints)
+                    Console.WriteLine("E - Hint: {0}", hint);
+            }
+            if (Sudoku.DisplaySquareAvailabilities)
+            {
+                foreach (var availabilitiy in Availabilities)
+                    Console.WriteLine("E - Availability: {0}", availabilitiy);
+            }
             Console.WriteLine();
             //Console.ReadLine();
 

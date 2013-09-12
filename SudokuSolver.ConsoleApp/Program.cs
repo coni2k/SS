@@ -21,11 +21,26 @@ namespace SudokuSolver.ConsoleApp
         {
             LoadCases();
 
-            // NewSudoku();
+            NewSudoku();
 
-            LoadCase(10);
+            // LoadCase(10);
 
-            //CurrentSudoku.UpdateSquare(34, 0);
+            CurrentSudoku.UpdateSquare(2, 2);
+            CurrentSudoku.UpdateSquare(4, 4);
+            CurrentSudoku.UpdateSquare(5, 5);
+            CurrentSudoku.UpdateSquare(6, 6);
+            CurrentSudoku.UpdateSquare(8, 8);
+            CurrentSudoku.UpdateSquare(10, 9);
+            CurrentSudoku.UpdateSquare(12, 7);
+            CurrentSudoku.UpdateSquare(16, 3);
+            CurrentSudoku.UpdateSquare(18, 1);
+            CurrentSudoku.UpdateSquare(28, 3);
+            CurrentSudoku.UpdateSquare(30, 1);
+            // CurrentSudoku.UpdateSquare(34, 9);
+            // CurrentSudoku.UpdateSquare(36, 7);
+
+            // CurrentSudoku.UpdateSquare(36, 0);
+            // CurrentSudoku.UpdateSquare(34, 0);
 
             // ShowHints();
 

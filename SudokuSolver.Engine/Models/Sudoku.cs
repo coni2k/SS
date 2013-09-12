@@ -13,6 +13,10 @@ namespace SudokuSolver.Engine
         public int ActionCounter { get; private set; }
         public int SearchSquareHintCounter { get; internal set; }
         public int SearchGroupNumberHintCounter { get; internal set; }
+        public bool DisplaySquareDetails { get; private set; }
+        public bool DisplaySquareHints { get; private set; }
+        public bool DisplaySquareAvailabilities { get; private set; }
+        public bool DisplayGroupNumberAvailabilities { get; private set; }
 
         private ICollection<SudokuNumber> numbers = new Collection<SudokuNumber>();
         private SudokuNumber zeroNumber;
@@ -258,6 +262,12 @@ namespace SudokuSolver.Engine
 
         void Init(int size)
         {
+            // Settings
+            DisplaySquareDetails = true;
+            DisplaySquareHints = true;
+            DisplaySquareAvailabilities = true;
+            DisplayGroupNumberAvailabilities = false;
+
             // Validate; the square root of the size must be a round number
             var squareRootOfValue = Math.Sqrt(size);
 
