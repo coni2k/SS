@@ -1,4 +1,5 @@
-﻿namespace SudokuSolver.Engine
+﻿using System.Globalization;
+namespace SudokuSolver.Engine
 {
     public class Hint
     {
@@ -13,5 +14,10 @@
         #region - Constructors -
 
         #endregion
+
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "T: {0} - GNS: {1}", HintType.ToString()[0], GroupNumberSource);
+        }
     }
 }

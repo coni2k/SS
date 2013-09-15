@@ -19,30 +19,42 @@ namespace SudokuSolver.ConsoleApp
 
         static void Main(string[] args)
         {
-            LoadCases();
+            // LoadCases();
 
             NewSudoku();
 
-            // LoadCase(10);
+            CurrentSudoku.DisplaySquareDetails = true;
+            CurrentSudoku.DisplaySquareHints = true;
+            //CurrentSudoku.DisplaySquareAvailabilities = true;
+            //CurrentSudoku.DisplayGroupNumberAvailabilities = true;
 
-            CurrentSudoku.UpdateSquare(2, 2);
-            CurrentSudoku.UpdateSquare(4, 4);
-            CurrentSudoku.UpdateSquare(5, 5);
-            CurrentSudoku.UpdateSquare(6, 6);
-            CurrentSudoku.UpdateSquare(8, 8);
-            CurrentSudoku.UpdateSquare(10, 9);
-            CurrentSudoku.UpdateSquare(12, 7);
-            CurrentSudoku.UpdateSquare(16, 3);
-            CurrentSudoku.UpdateSquare(18, 1);
-            CurrentSudoku.UpdateSquare(28, 3);
-            CurrentSudoku.UpdateSquare(30, 1);
-            // CurrentSudoku.UpdateSquare(34, 9);
-            // CurrentSudoku.UpdateSquare(36, 7);
+            CurrentSudoku.UpdateSquare(13, 1);
 
-            // CurrentSudoku.UpdateSquare(36, 0);
-            // CurrentSudoku.UpdateSquare(34, 0);
+            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
 
-            // ShowHints();
+            CurrentSudoku.UpdateSquare(27, 1);
+
+            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+
+            CurrentSudoku.UpdateSquare(29, 1);
+
+            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+
+            CurrentSudoku.UpdateSquare(50, 1);
+
+            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+
+            CurrentSudoku.UpdateSquare(63, 1);
+
+            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+
+            CurrentSudoku.UpdateSquare(68, 1);
+
+            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+
+            CurrentSudoku.UpdateSquare(73, 1);
+
+            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
 
             ProcessCommand(args);
         }
@@ -230,7 +242,7 @@ namespace SudokuSolver.ConsoleApp
 
                 // Availability per number; "X" for available squares, "." for non-available ones
                 foreach (var number in CurrentSudoku.NumbersExceptZero)
-                    Console.Write(" | {0}", square.Availabilities.Single(availability => availability.Number.Equals(number)).GetAvailability() ? "X" : ".");
+                    Console.Write(" | {0}", square.Availabilities.Single(availability => availability.SudokuNumber.Equals(number)).GetAvailability() ? "X" : ".");
 
                 Console.WriteLine();
             }

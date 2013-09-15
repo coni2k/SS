@@ -25,7 +25,7 @@ namespace SudokuSolver.Engine
         #region - Properties -
 
         public List<Hint> Hints { get; private set; }
-        
+
         /// <summary>
         /// Gets the parent sudoku class
         /// </summary>
@@ -191,7 +191,7 @@ namespace SudokuSolver.Engine
             Updated = true;
         }
 
-        internal void Update(SudokuNumber number, HintType hintType, GroupNumber groupNumberSource)
+        internal void AddHint(SudokuNumber number, HintType hintType, GroupNumber groupNumberSource)
         {
             if (!Hints.Any(hint => hint.HintType == hintType))
                 Hints.Add(new Hint() { HintType = hintType, GroupNumberSource = groupNumberSource });
@@ -200,7 +200,7 @@ namespace SudokuSolver.Engine
                 Update(number, AssignType.Hint);
         }
 
-        internal void Update(HintType hintType)
+        internal void RemoveHint(HintType hintType)
         {
             if (Hints.Any(hint => hint.HintType == hintType))
                 Hints.RemoveAll(hint => hint.HintType == hintType);
@@ -208,7 +208,7 @@ namespace SudokuSolver.Engine
             if (AssignType == AssignType.Hint && !Hints.Any())
                 Update(Sudoku.ZeroNumber, AssignType.Initial);
         }
-        
+
         internal void Update(SudokuNumber number, AssignType type)
         {
             // Action counter
@@ -222,20 +222,16 @@ namespace SudokuSolver.Engine
 
             var oldNumber = SudokuNumber;
 
-            // Console.WriteLine("B - ID: {0:D2} - OLD: {1:D2} - NEW: {2:D2}", SquareId, oldNumber.Value, number.Value);
+            // Dump some additional info
             if (Sudoku.DisplaySquareDetails)
-                Console.WriteLine("B - Square: {0}", this);
+                DumpSquareDetails("B - ");
             if (Sudoku.DisplaySquareHints)
-            {
-                foreach (var hint in Hints)
-                    Console.WriteLine("B - Hint: {0}", hint);
-            }
+                DumpSquareHints("B - ");
             if (Sudoku.DisplaySquareAvailabilities)
-            {
-                foreach (var availabilitiy in Availabilities)
-                    Console.WriteLine("B - Availability: {0}", availabilitiy);
-            }
-
+                DumpSquareAvailabilities("B - ");
+            if (Sudoku.DisplayGroupNumberAvailabilities)
+                DumpGroupNumberAvailabilities("B - ");
+            
             // c. Set the values
             SudokuNumber = number;
             AssignType = type;
@@ -251,27 +247,99 @@ namespace SudokuSolver.Engine
             UpdateAvailabilities(this, number);
 
             // e. Search hints
-            SearchHints();
+            SearchHints(number);
 
-            //Console.WriteLine("E - ID: {0:D2} - OLD: {1:D2} - NEW: {2:D2}", SquareId, oldNumber.Value, number.Value);
-            if (Sudoku.DisplaySquareDetails) 
-                Console.WriteLine("E - Square: {0}", this);
+            // Dump some additional info
+            if (Sudoku.DisplaySquareDetails)
+                DumpSquareDetails("E - ");
             if (Sudoku.DisplaySquareHints)
-            {
-                foreach (var hint in Hints)
-                    Console.WriteLine("E - Hint: {0}", hint);
-            }
+                DumpSquareHints("E - ");
             if (Sudoku.DisplaySquareAvailabilities)
-            {
-                foreach (var availabilitiy in Availabilities)
-                    Console.WriteLine("E - Availability: {0}", availabilitiy);
-            }
-            Console.WriteLine();
+                DumpSquareAvailabilities("E - ");
+            if (Sudoku.DisplayGroupNumberAvailabilities)
+                DumpGroupNumberAvailabilities("E - ");
+
             //Console.ReadLine();
 
             // Counters
             //Console.WriteLine("SearchSquareHintCounter      : {0}", Sudoku.SearchSquareHintCounter);
             //Console.WriteLine("SearchGroupNumberHintCounter : {0}", Sudoku.SearchGroupNumberHintCounter);
+
+            if (Sudoku.DisplaySquareDetails || Sudoku.DisplaySquareHints || Sudoku.DisplaySquareAvailabilities || Sudoku.DisplayGroupNumberAvailabilities)
+            {
+                Console.WriteLine(" - - - - - - - - - - - - - ");
+                Console.WriteLine();
+            }
+        }
+
+        public void DumpSquareDetails()
+        {
+            DumpSquareDetails(string.Empty);
+        }
+
+        public void DumpSquareDetails(string prefix)
+        {
+            Console.WriteLine("{0}S: {1}", prefix, this);
+            Console.WriteLine();
+        }
+
+        public void DumpSquareHints()
+        {
+            DumpSquareHints(string.Empty);
+        }
+
+        public void DumpSquareHints(string prefix)
+        {
+            foreach (var hint in Hints)
+                Console.WriteLine("{0}H: {1}", prefix, hint);
+            Console.WriteLine();
+        }
+
+        public void DumpSquareAvailabilities()
+        {
+            DumpSquareAvailabilities(string.Empty);
+        }
+
+        public void DumpSquareAvailabilities(string prefix)
+        {
+            foreach (var availabilitiy in Availabilities)
+                Console.WriteLine("{0}A: {1}", prefix, availabilitiy);
+            Console.WriteLine();
+        }
+
+        public void DumpGroupNumberAvailabilities()
+        {
+            DumpGroupNumberAvailabilities(string.Empty);
+        }
+
+        public void DumpGroupNumberAvailabilities(string prefix)
+        {
+            DumpGroupNumberAvailabilities(prefix, null, null);
+        }
+
+        public void DumpGroupNumberAvailabilities(string prefix, int? squareId, int? numberValue)
+        {
+            var groups = squareId.HasValue
+                ? Groups.Where(g => g.Squares.Any(s => s.SquareId == squareId.Value))
+                : Groups;
+
+            foreach (var group in groups)
+            {
+                var groupNumbers = numberValue.HasValue
+                    ? group.GroupNumbers.Where(gn => gn.SudokuNumber.Value == numberValue.Value)
+                    : group.GroupNumbers;
+
+                foreach (var groupNumber in groupNumbers)
+                {
+                    var availabilities = squareId.HasValue
+                        ? groupNumber.Availabilities.Where(a => a.Square.SquareId == squareId.Value)
+                        : groupNumber.Availabilities;                        
+
+                    foreach (var availabilitiy in availabilities)
+                        Console.WriteLine("{0}A: {1}", prefix, availabilitiy);
+                }
+            }
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -315,8 +383,8 @@ namespace SudokuSolver.Engine
                 //if (square.Availabilities.Any(avail => avail.IsAvailableToAddHint))
                 //    square.Update(HintType.Square);
 
-                if (square.Availabilities.Any(avail => avail.GetAvailability()))
-                    square.Update(HintType.Square);
+                if (square.Availabilities.Single(a => a.SudokuNumber == number).GetAvailability())
+                    square.RemoveHint(HintType.Square);
             }
 
             // Group level
@@ -331,7 +399,7 @@ namespace SudokuSolver.Engine
                     var src = hint.GroupNumberSource;
 
                     if (src.Availabilities.Any(avail => avail.GetAvailability(s)))
-                        s.Update(hint.HintType);
+                        s.RemoveHint(hint.HintType);
                 }
             }
         }
@@ -366,11 +434,14 @@ namespace SudokuSolver.Engine
         //    //}
         //}
 
-        void SearchHints()
+        void SearchHints(SudokuNumber number)
         {
+            if (number.IsZero)
+                return;
+
             // Square level
             foreach (var square in RelatedSquares)
-                square.SearchSquareHint();
+                square.SearchSquareHint(number);
 
             // Group level
             foreach (var group in RelatedGroups)
@@ -386,7 +457,7 @@ namespace SudokuSolver.Engine
         /// <param name="source"></param>
         internal void UpdateAvailability(SudokuNumber number, GroupType type, Square source)
         {
-            Availabilities.Single(availability => availability.Number.Equals(number)).UpdateAvailability(type, source);
+            Availabilities.Single(availability => availability.SudokuNumber.Equals(number)).UpdateAvailability(type, source);
         }
 
         //internal void RemoveSquareMethodHint()
@@ -395,15 +466,22 @@ namespace SudokuSolver.Engine
         //        Update(Sudoku.ZeroNumber, AssignTypes.Initial);
         //}
 
-        internal void SearchSquareHint()
+        internal void SearchSquareHint(SudokuNumber number)
         {
             Sudoku.SearchSquareHintCounter++;
 
-            var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.GetAvailability());
+            //var lastAvailability = Availabilities.IfSingleOrDefault(availability => !availability.SudokuNumber.Equals(number) && availability.GetAvailability() && availability.Square.IsAvailable);
+            //var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.GetAvailability() && availability.Square.IsAvailable);
+
+            // Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0} - {1}", this, Availabilities.Where(availability => availability.GetAvailability() && IsAvailable).Count()));
+
+            var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.GetAvailability() && IsAvailable);
 
             if (lastAvailability == null)
                 return;
 
+            // if (!lastAvailability.Square.IsAvailable && lastAvailability.Square.AssignType != AssignType.Hint)
+                 //&& !availability.Square.IsAvailable
             if (!lastAvailability.Square.IsAvailable)
                 return;
 
@@ -412,12 +490,12 @@ namespace SudokuSolver.Engine
                 return;
 
             // Add the hint
-            Update(lastAvailability.Number, HintType.Square, null);
+            AddHint(lastAvailability.SudokuNumber, HintType.Square, null);
         }
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "SquareId: {0:D2} - Number: {1} - AssignType: {2}", SquareId, SudokuNumber, AssignType);
+            return string.Format(CultureInfo.InvariantCulture, "Id: {0:D2} - N: {1} - A: {2}", SquareId, SudokuNumber, AssignType.ToString()[0]);
         }
 
         #endregion

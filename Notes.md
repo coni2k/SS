@@ -455,5 +455,47 @@ in other words, it blocks itself ?! how to continue;
 . or we should ignore availability false situation in removehints case? but then can it lead to other problems?
 
 ---
-beauty reverse doesnt remove the hints properly
-when we try 34,0 it should remove 2 other hints but it doesnt - WHY  ?!?!?!?!?!?!
+in search hints - we dont have to search  for the new number - its already set and we cannot find any hint about it in related squares!
+searchhints(sudokunumber sourceNumber)
+THIS IS OKAY FOR SQUARE LEVEL BUT HOW ABOUT GROUP NUMBER LEVEL?!
+
+---
+sudoku id 7 - removing "id 61 + 9" triggers proper remove hint - create a test from this case 
+
+---
+b2 reverse;
+removing id 9 + 9 - removes id 45 + 1 ?! is it correct?
+
+---
+NEXT ITEM;
+update GroupNumberAvailability according to SquareAvailabilitiy
+but first we need a case to test it! find the case!
+its probably b2 skeleton !!!! continue with that!!!
+
+b2 skel - 1,1 has only 1 hint but should be 2 - 1 square + 1 vertical - but only vertical is there
+why?!
+
+just added this but didnt work - also realcase somehow got broke
+ || availability.Square.AssignType == AssignType.Hint)
+ 
+it should be able to add hints on top of it and remove them one by one
+find the correct groupnumber of check the result!
+
+also when it comes to groupnumber, maybe we should only check the number that was set (1 in skeleton case)
+
+---
+Just manage to save all 4 hint types
+Add and remove them properly and that can be it
+Maybe its not even necessary to check the hint for removal
+If there is a change it can remove all the related hints w/o checking
+
+Getavail of the hint - check hint tye square or group number type
+
+Square type - numbers except the cureent
+Gn type - number only current
+
+---
+try to seperate getavailability methods()
+is square available
+is squretypesource is available
+is hortypesource is available etc.

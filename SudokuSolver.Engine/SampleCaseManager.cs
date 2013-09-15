@@ -198,7 +198,6 @@ namespace SudokuSolver.Engine
 
                 // Update
                 sudoku.UpdateSquare(4, 3);
-                sudoku.UpdateSquare(13, 1);
                 sudoku.UpdateSquare(23, 2);
                 sudoku.UpdateSquare(7, 4);
                 sudoku.UpdateSquare(25, 1);
@@ -207,7 +206,6 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(37, 2);
                 sudoku.UpdateSquare(34, 6);
                 sudoku.UpdateSquare(55, 7);
-                sudoku.UpdateSquare(57, 1);
                 sudoku.UpdateSquare(73, 2);
                 sudoku.UpdateSquare(58, 8);
                 sudoku.UpdateSquare(61, 9);
@@ -217,17 +215,17 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Gets sample case; Domino (B-2)
+        /// Gets sample case; B-2
         /// </summary>
         /// <returns></returns>
-        public static Sudoku DominoB2
+        public static Sudoku B2
         {
             get
             {
                 var sudoku = new Sudoku()
                 {
                     SudokuId = 8,
-                    Title = "Domino (B-2)"
+                    Title = "B-2"
                 };
 
                 // Update
@@ -262,17 +260,17 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Gets sample case; Domino (B-2)
+        /// Gets sample case; B-2 reverse
         /// </summary>
         /// <returns></returns>
-        public static Sudoku DominoB2Reverse
+        public static Sudoku B2Reverse
         {
             get
             {
                 var sudoku = new Sudoku()
                 {
                     SudokuId = 9,
-                    Title = "Domino (B-2) Reverse"
+                    Title = "B-2 Reverse"
                 };
 
                 // Update
@@ -311,6 +309,39 @@ namespace SudokuSolver.Engine
             }
         }
 
+
+        /// <summary>
+        /// Gets sample case; B-2 - Skeleton
+        /// </summary>
+        /// <returns></returns>
+        public static Sudoku B2Skeleton
+        {
+            get
+            {
+                var sudoku = new Sudoku()
+                {
+                    SudokuId = 10,
+                    Title = "B-2 Skeleton"
+                };
+
+                // Update
+                sudoku.UpdateSquare(13, 1);
+                sudoku.UpdateSquare(27, 1);
+                sudoku.UpdateSquare(29, 1);
+                sudoku.UpdateSquare(45, 1);
+                sudoku.UpdateSquare(50, 1);
+                sudoku.UpdateSquare(63, 1);
+                sudoku.UpdateSquare(68, 1);
+                sudoku.UpdateSquare(73, 1);
+
+                // These updates remove 2 group number hint ?!?!?!?!
+                //sudoku.UpdateSquare(9, 9);
+                //sudoku.UpdateSquare(9, 0);
+
+                return sudoku;
+            }
+        }
+
         /// <summary>
         /// Gets sample case; Beauty
         /// </summary>
@@ -321,7 +352,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 10,
+                    SudokuId = 13,
                     Title = "Beauty"
                 };
 
@@ -354,7 +385,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 11,
+                    SudokuId = 14,
                     Title = "Hint update"
                 };
 
@@ -386,7 +417,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 12,
+                    SudokuId = 15,
                     Title = "Hint update 2"
                 };
 
@@ -421,7 +452,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 13,
+                    SudokuId = 16,
                     Title = "Invalid hint remove"
                 };
 
@@ -455,7 +486,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku(4)
                 {
-                    SudokuId = 15,
+                    SudokuId = 21,
                     Title = "Mini size"
                 };
 
@@ -475,7 +506,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku(16)
                 {
-                    SudokuId = 16,
+                    SudokuId = 22,
                     Title = "Maxi size"
                 };
 
@@ -495,7 +526,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 21,
+                    SudokuId = 31,
                     Title = "Real-world sudoku"
                 };
 
@@ -709,7 +740,7 @@ namespace SudokuSolver.Engine
 
                 // Since the value of Square Id 9 value is known, this update should not be possible
                 // Check this case after start treating hint's availabilities like any other square's availabilities..! - Equal rights to the squares!
-                sudoku.UpdateSquare(27, 9);
+                // sudoku.UpdateSquare(27, 9);
 
                 return sudoku;
             }
@@ -980,12 +1011,13 @@ namespace SudokuSolver.Engine
                 //list.Add(SquareMethodSquare);
                 //list.Add(SquareMethodMixed);
                 //list.Add(GroupNumberMethod);
-                //list.Add(GroupNumberMethodWithHelp);
+                // list.Add(GroupNumberMethodWithHelp);
                 //list.Add(Domino);
                 //list.Add(DominoB2);
-                //list.Add(DominoB2Reverse);
-                list.Add(Beauty);
-                //list.Add(HintUpdate);
+                //list.Add(B2Reverse);
+                //list.Add(B2Skeleton);
+                //list.Add(Beauty);
+                list.Add(HintUpdate);
                 //list.Add(HintUpdate2);
                 //list.Add(InvalidHintRemove);
                 //list.Add(MiniSize);
@@ -996,7 +1028,7 @@ namespace SudokuSolver.Engine
                 ////list.Add(Headache2);
                 ////list.Add(Headache3);
                 ////list.Add(Headache4);
-                ////list.Add(HintAvailabilityBug);
+                //list.Add(HintAvailabilityBug);
                 //list.Add(GroupNumberRemoveHintBug);
                 //list.Add(Freestyle);
 

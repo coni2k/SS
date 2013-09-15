@@ -50,7 +50,7 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Value: {0:D2}", Value);
+            return string.Format(CultureInfo.InvariantCulture, "{0:D2}", Value);
         }
 
         #endregion

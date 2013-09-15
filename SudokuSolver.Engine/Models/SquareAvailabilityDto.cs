@@ -19,7 +19,7 @@ namespace SudokuSolver.Engine.Dtos
                 throw new ArgumentNullException("availability");
 
             SquareId = availability.Square.SquareId;
-            Value = availability.Number.Value;
+            Value = availability.SudokuNumber.Value;
             IsAvailable = availability.GetAvailability();
         }
     }

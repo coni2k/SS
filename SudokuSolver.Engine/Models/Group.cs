@@ -118,12 +118,16 @@ namespace SudokuSolver.Engine
 
         internal void SearchGroupNumberHint()
         {
-            var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability() && availability.Square.IsAvailable) == 1);
+            //var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability() && (availability.Square.IsAvailable || availability.Square.AssignType == AssignType.Hint)) == 1);
+            //var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability() && availability.Square.IsAvailable) == 1);
+            var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability()) == 1);
 
             if (lastGroupNumber == null)
                 return;
 
-            var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability() && availability.Square.IsAvailable);
+            //var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability() && (availability.Square.IsAvailable || availability.Square.AssignType == AssignType.Hint));
+            //var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability() && availability.Square.IsAvailable);
+            var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability());
 
             //if (!lastAvailability.Square.IsAvailable)
             //    return;
@@ -135,17 +139,17 @@ namespace SudokuSolver.Engine
                 case GroupType.Square:
                     if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberSquare))
                         return;
-                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberSquare, lastAvailability.GroupNumber);
+                    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberSquare, lastAvailability.GroupNumber);
                     break;
                 case GroupType.Horizontal:
                     if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberHorizontal))
                         return;
-                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberHorizontal, lastAvailability.GroupNumber);
+                    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberHorizontal, lastAvailability.GroupNumber);
                     break;
                 case GroupType.Vertical:
                     if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberVertical))
                         return;
-                    lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberVertical, lastAvailability.GroupNumber);
+                    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberVertical, lastAvailability.GroupNumber);
                     break;
             }
 
