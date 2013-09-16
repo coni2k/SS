@@ -14,96 +14,10 @@ namespace SudokuSolver.Engine
         internal Square SquareTypeSource { get; private set; }
         internal Square HorizontalTypeSource { get; private set; }
         internal Square VerticalTypeSource { get; private set; }
-        //public bool IsAvailableToAddHint
-        //{
-        //    get
-        //    {
-        //        return SquareTypeSource == null
-        //            && HorizontalTypeSource == null
-        //            && VerticalTypeSource == null;
-        //        // && Square.IsAvailable;
-        //    }
-        //}
-        //public bool IsAvailableToRemoveHint
-        //{
-        //    get
-        //    {
-        //        return SquareTypeSource == null || SquareTypeSource
-        //            && HorizontalTypeSource == null
-        //            && VerticalTypeSource == null;
-        //        // && Square.IsAvailable;
-        //    }
-        //}
-
-        //public bool GetAvailability(Square source)
-        //{
-        //    return (SquareTypeSource == null
-        //        || SquareTypeSource.Equals(source))
-        //        && (HorizontalTypeSource == null
-        //        || HorizontalTypeSource.Equals(source))
-        //        && (VerticalTypeSource == null
-        //        || VerticalTypeSource.Equals(source));
-        //}
-
-        //public bool GetAvailability2()
-        //{
-        //    return GetAvailability2(null);
-        //}
-
-        //public bool GetAvailability2(Square source)
-        //{
-        //    return (SquareTypeSource == null
-        //        )
-        //        && (HorizontalTypeSource == null
-        //        )
-        //        && (VerticalTypeSource == null
-        //        );
-        //}
-
-        //public bool GetAvailabilityOld()
-        //{
-        //    return SquareTypeSource == null
-        //        && HorizontalTypeSource == null
-        //        && VerticalTypeSource == null;
-        //}
-
-        //public bool GetAvailabilityForRemoveHints2()
-        //{
-        //    return (SquareTypeSource == null
-        //        || SquareTypeSource.AssignType == AssignType.Hint)
-        //        && (HorizontalTypeSource == null
-        //        || HorizontalTypeSource.AssignType == AssignType.Hint)
-        //        && (VerticalTypeSource == null
-        //        || VerticalTypeSource.AssignType == AssignType.Hint);
-        //}
-
-        //public bool GetAvailabilityForRemoveHints3(Square source)
-        //{
-        //    return (SquareTypeSource == null
-        //        || (SquareTypeSource.AssignType == AssignType.Hint
-        //        && (SquareTypeSource != source
-        //        && (source.IsAvailable
-        //        || SquareTypeSource.Availabilities.Single(a => a.Number == source.SudokuNumber).GetAvailabilityForSource(source)))))
-        //        && (HorizontalTypeSource == null
-        //        || (HorizontalTypeSource.AssignType == AssignType.Hint
-        //        && (HorizontalTypeSource != source
-        //        && (source.IsAvailable
-        //        || HorizontalTypeSource.Availabilities.Single(a => a.Number == source.SudokuNumber).GetAvailabilityForSource(source)))))
-        //        && (VerticalTypeSource == null
-        //        || (VerticalTypeSource.AssignType == AssignType.Hint
-        //        && (VerticalTypeSource != source
-        //        && (source.IsAvailable
-        //        || VerticalTypeSource.Availabilities.Single(a => a.Number == source.SudokuNumber).GetAvailabilityForSource(source)))));
-        //}
-
-        // public bool GetAvailabilityForRemoveHints(Square source)
 
         // This is for both search and remove hints! be careful
         public bool GetAvailability()
         {
-            //if (!Square.IsAvailable)
-            //    return false;
-
             var squareTypeSourceCondition = SquareTypeSource == null
                 || (SquareTypeSource.IsSquareMethodHint
                 && ((!Square.IsAvailable
@@ -122,7 +36,6 @@ namespace SudokuSolver.Engine
                 && VerticalTypeSource.Availabilities.Single(a => a.SudokuNumber == Square.SudokuNumber).GetAvailabilityForSource(Square))
                 || VerticalTypeSource.Equals(Square)));
 
-            //return squareTypeSourceCondition && horizontalTypeSourceCondition && verticalTypeSourceCondition && Square.IsAvailable;
             return squareTypeSourceCondition && horizontalTypeSourceCondition && verticalTypeSourceCondition;
         }
 
@@ -155,7 +68,6 @@ namespace SudokuSolver.Engine
 
         public override string ToString()
         {
-            //return string.Format(CultureInfo.InvariantCulture, "Square: {0} - Number: {1} - IsAvailable: {2}", Square, Number, GetAvailability());
             return string.Format(CultureInfo.InvariantCulture, "S: {0} - N: {1} - S: {2,21} - H: {3,21} - V: {4,21}", Square, SudokuNumber, SquareTypeSource, HorizontalTypeSource, VerticalTypeSource);
         }
     }

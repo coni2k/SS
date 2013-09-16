@@ -32,9 +32,6 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(19, 7);
                 sudoku.UpdateSquare(20, 8);
 
-                // Toggle
-                sudoku.ToggleReady();
-
                 // Return
                 return sudoku;
             }
@@ -64,8 +61,6 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(55, 7);
                 sudoku.UpdateSquare(58, 8);
 
-                sudoku.ToggleReady();
-
                 return sudoku;
             }
         }
@@ -93,8 +88,6 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(6, 6);
                 sudoku.UpdateSquare(7, 7);
                 sudoku.UpdateSquare(8, 8);
-
-                sudoku.ToggleReady();
 
                 return sudoku;
             }
@@ -124,8 +117,6 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(2, 7);
                 sudoku.UpdateSquare(4, 8);
 
-                sudoku.ToggleReady();
-
                 return sudoku;
             }
         }
@@ -150,8 +141,6 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(29, 1);
                 sudoku.UpdateSquare(57, 1);
 
-                //sudoku.ToggleReady();
-
                 return sudoku;
             }
         }
@@ -175,8 +164,6 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(57, 1);
                 sudoku.UpdateSquare(69, 1);
                 sudoku.UpdateSquare(80, 2);
-
-                // sudoku.ToggleReady();
 
                 return sudoku;
             }
@@ -510,8 +497,6 @@ namespace SudokuSolver.Engine
                     Title = "Maxi size"
                 };
 
-                sudoku.ToggleReady();
-
                 return sudoku;
             }
         }
@@ -831,8 +816,6 @@ namespace SudokuSolver.Engine
                 // This is an invalid assigment - 25 can only have 1-2-3
                 sudoku.UpdateSquare(25, 4);
 
-                sudoku.ToggleReady();
-
                 return sudoku;
             }
         }
@@ -859,8 +842,6 @@ namespace SudokuSolver.Engine
 
                 // This is an invalid assigment - should fail
                 sudoku.UpdateSquare(27, 4);
-
-                sudoku.ToggleReady();
 
                 return sudoku;
             }
@@ -943,8 +924,6 @@ namespace SudokuSolver.Engine
                 // sudoku.UpdateSquare(14, 2);
                 sudoku.UpdateSquare(14, 2);
 
-                sudoku.ToggleReady();
-
                 return sudoku;
             }
         }
@@ -1006,31 +985,31 @@ namespace SudokuSolver.Engine
             {
                 var list = new Collection<Sudoku>();
 
-                //list.Add(SquareMethodHorizontal);
-                //list.Add(SquareMethodVertical);
-                //list.Add(SquareMethodSquare);
-                //list.Add(SquareMethodMixed);
-                //list.Add(GroupNumberMethod);
-                // list.Add(GroupNumberMethodWithHelp);
-                //list.Add(Domino);
-                //list.Add(DominoB2);
-                //list.Add(B2Reverse);
-                //list.Add(B2Skeleton);
-                //list.Add(Beauty);
+                list.Add(SquareMethodHorizontal);
+                list.Add(SquareMethodVertical);
+                list.Add(SquareMethodSquare);
+                list.Add(SquareMethodMixed);
+                list.Add(GroupNumberMethod);
+                list.Add(GroupNumberMethodWithHelp);
+                list.Add(Domino);
+                list.Add(B2);
+                list.Add(B2Reverse);
+                list.Add(B2Skeleton);
+                list.Add(Beauty);
                 list.Add(HintUpdate);
-                //list.Add(HintUpdate2);
-                //list.Add(InvalidHintRemove);
-                //list.Add(MiniSize);
-                //list.Add(MaxiSize);
-                //list.Add(RealSudoku);
-                //list.Add(InvalidSudoku);
-                ////list.Add(Headache);
-                ////list.Add(Headache2);
-                ////list.Add(Headache3);
-                ////list.Add(Headache4);
-                //list.Add(HintAvailabilityBug);
-                //list.Add(GroupNumberRemoveHintBug);
-                //list.Add(Freestyle);
+                list.Add(HintUpdate2);
+                list.Add(InvalidHintRemove);
+                list.Add(MiniSize);
+                list.Add(MaxiSize);
+                list.Add(RealSudoku);
+                list.Add(InvalidSudoku);
+                //list.Add(Headache);
+                //list.Add(Headache2);
+                //list.Add(Headache3);
+                //list.Add(Headache4);
+                list.Add(HintAvailabilityBug);
+                list.Add(GroupNumberRemoveHintBug);
+                list.Add(Freestyle);
 
                 return list;
             }

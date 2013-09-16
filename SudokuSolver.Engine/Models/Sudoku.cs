@@ -343,7 +343,8 @@ namespace SudokuSolver.Engine
                 group.Squares = Squares.Where(square => square.Groups.Any(squareGroup => squareGroup.Equals(group)));
 
                 // Copy group number availabilities to sudoku level
-                groupNumberAvailabilities.AddRange(group.GroupNumbers.SelectMany(groupNumber => groupNumber.Availabilities));
+                if (group.GroupType == GroupType.Square)
+                    groupNumberAvailabilities.AddRange(group.GroupNumbers.SelectMany(groupNumber => groupNumber.Availabilities));
             }
         }
 

@@ -60,10 +60,13 @@ namespace SudokuSolver.Engine
 
                 squares = value;
 
-                // Availabilities; new GroupNumber will be using Squares property of it's group, that why do this here?
-                groupNumbers = new Collection<GroupNumber>();
-                foreach (var number in Sudoku.NumbersExceptZero)
-                    groupNumbers.Add(new GroupNumber(this, number));
+                // Availabilities; bit strange place but new GroupNumber will be using Squares property of it's group?
+                if (this.GroupType == Engine.GroupType.Square)
+                {
+                    groupNumbers = new Collection<GroupNumber>();
+                    foreach (var number in Sudoku.NumbersExceptZero)
+                        groupNumbers.Add(new GroupNumber(this, number));
+                }
             }
         }
 
@@ -105,32 +108,14 @@ namespace SudokuSolver.Engine
                 availability.Updated = true;
         }
 
-        //internal void RemoveGroupNumberHint()
-        //{
-        //    foreach (var groupNumber in GroupNumbers)
-        //    {
-        //        var hintSquare = Sudoku.HintSquares.SingleOrDefault(square => square.AssignType == AssignTypes.GroupNumberHint);
-
-        //        if (hintSquare != null)
-        //            hintSquare.Update(Sudoku.ZeroNumber, AssignTypes.Initial);
-        //    }
-        //}
-
         internal void SearchGroupNumberHint()
         {
-            //var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability() && (availability.Square.IsAvailable || availability.Square.AssignType == AssignType.Hint)) == 1);
-            //var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability() && availability.Square.IsAvailable) == 1);
             var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability()) == 1);
 
             if (lastGroupNumber == null)
                 return;
 
-            //var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability() && (availability.Square.IsAvailable || availability.Square.AssignType == AssignType.Hint));
-            //var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability() && availability.Square.IsAvailable);
             var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability());
-
-            //if (!lastAvailability.Square.IsAvailable)
-            //    return;
 
             var groupType = lastAvailability.GroupNumber.Group.GroupType;
 
@@ -152,13 +137,6 @@ namespace SudokuSolver.Engine
                     lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberVertical, lastAvailability.GroupNumber);
                     break;
             }
-
-            // Added earlier?
-            //if (lastAvailability.Square.IsGroupNumberMethodHint)
-            //    return;
-
-            // Add the hint
-            //lastAvailability.Square.Update(lastAvailability.GroupNumber.SudokuNumber, AssignTypes.GroupNumberHint);
         }
 
         public override string ToString()

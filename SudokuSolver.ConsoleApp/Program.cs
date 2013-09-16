@@ -253,7 +253,7 @@ namespace SudokuSolver.ConsoleApp
         /// </summary>
         static void ShowGroupNumberAvailabilities()
         {
-            foreach (var group in CurrentSudoku.Groups)
+            foreach (var group in CurrentSudoku.Groups.Where(g => g.GroupType == GroupType.Square))
             {
                 foreach (var groupNumber in group.GroupNumbers)
                 {

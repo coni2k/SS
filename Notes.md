@@ -499,3 +499,24 @@ try to seperate getavailability methods()
 is square available
 is squretypesource is available
 is hortypesource is available etc.
+
+---
+we should find the hints in any case - whether there is one already
+whether its solved, whether its initial
+it should just work as a fall back value
+in case; squaremethod horizontal - after solving it, in case we remove 2, hint 2 should be there, it should not even search it.
+and actually currently it doesnt work
+
+also a very important change; horizontal + vertical groups dont keep group numbers anymore !!!
+only square group is enough - to be able to have a hint for other 2, square must have it anyway..
+but test this and create proper test cases
+
+create test for all latest thingies!!!
+
+how many hints a square can hold ?
+
+according to latest changes, it really doesnt matter for a square whether its available or not
+it should keep adding possible hints to its list and remove them if the condition doesnt meet
+
+so actually we still can have 4 hints + square method square + hor + vert + group
+also keeping the 2. method on group may not be necessary! since its always the same group

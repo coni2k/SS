@@ -8,13 +8,6 @@ namespace SudokuSolver.Engine.Tests
     [TestClass]
     public class SudokuTest
     {
-        //SampleCaseManager caseManager;
-
-        //SampleCaseManager CaseManager
-        //{
-        //    get { return caseManager ?? (caseManager = new SampleCaseManager()); }
-        //}
-
         [TestMethod]
         public void SquareMethodHorizontal()
         {
@@ -34,6 +27,7 @@ namespace SudokuSolver.Engine.Tests
             Assert.IsTrue(square.SudokuNumber.Value == 9);
 
             // Solve
+            sudoku.ToggleReady();
             sudoku.Solve();
 
             // d. Hint count
@@ -65,6 +59,7 @@ namespace SudokuSolver.Engine.Tests
             Assert.IsTrue(square.SudokuNumber.Value == 9);
 
             // Solve
+            sudoku.ToggleReady();
             sudoku.Solve();
 
             // d. Hint count
@@ -96,6 +91,7 @@ namespace SudokuSolver.Engine.Tests
             Assert.IsTrue(square.SudokuNumber.Value == 9);
 
             // Solve
+            sudoku.ToggleReady();
             sudoku.Solve();
 
             // d. Hint count
@@ -127,7 +123,7 @@ namespace SudokuSolver.Engine.Tests
             Assert.IsTrue(square.SudokuNumber.Value == 9);
 
             // Solve
-            //sudoku.ToggleReady();
+            sudoku.ToggleReady();
             sudoku.Solve();
 
             // d. Hint count
