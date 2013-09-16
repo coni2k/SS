@@ -15,6 +15,21 @@ namespace SudokuSolver.Engine
         internal Square HorizontalTypeSource { get; private set; }
         internal Square VerticalTypeSource { get; private set; }
 
+        public bool IsSquareTypeAvailable
+        {
+            get { return SquareTypeSource == null; }
+        }
+
+        public bool IsHorizontalTypeAvailable
+        {
+            get { return HorizontalTypeSource == null; }
+        }
+
+        public bool IsVerticalTypeAvailable
+        {
+            get { return VerticalTypeSource == null; }
+        }
+
         // This is for both search and remove hints! be careful
         public bool GetAvailability()
         {

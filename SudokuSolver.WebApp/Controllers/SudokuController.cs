@@ -136,7 +136,9 @@ namespace SudokuSolver.WebApp.Controllers
         {
             var sudoku = GetSudokuItem(sudokuId);
 
-            return sudoku.HintSquares.Select(square => new HintDto(square));
+            var hints = sudoku.HintSquares.SelectMany(square => square.Hints);
+
+            return hints.Select(h => new HintDto(h));
         }
 
         // PUT api/Sudoku/UpdateSquare/1/1

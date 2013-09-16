@@ -19,42 +19,42 @@ namespace SudokuSolver.ConsoleApp
 
         static void Main(string[] args)
         {
-            // LoadCases();
+            LoadCases();
 
             NewSudoku();
 
-            CurrentSudoku.DisplaySquareDetails = true;
-            CurrentSudoku.DisplaySquareHints = true;
-            //CurrentSudoku.DisplaySquareAvailabilities = true;
-            //CurrentSudoku.DisplayGroupNumberAvailabilities = true;
+            //CurrentSudoku.DisplaySquareDetails = true;
+            //CurrentSudoku.DisplaySquareHints = true;
+            ////CurrentSudoku.DisplaySquareAvailabilities = true;
+            ////CurrentSudoku.DisplayGroupNumberAvailabilities = true;
 
-            CurrentSudoku.UpdateSquare(13, 1);
+            //CurrentSudoku.UpdateSquare(13, 1);
 
-            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+            //CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
 
-            CurrentSudoku.UpdateSquare(27, 1);
+            //CurrentSudoku.UpdateSquare(27, 1);
 
-            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+            //CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
 
-            CurrentSudoku.UpdateSquare(29, 1);
+            //CurrentSudoku.UpdateSquare(29, 1);
 
-            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+            //CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
 
-            CurrentSudoku.UpdateSquare(50, 1);
+            //CurrentSudoku.UpdateSquare(50, 1);
 
-            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+            //CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
 
-            CurrentSudoku.UpdateSquare(63, 1);
+            //CurrentSudoku.UpdateSquare(63, 1);
 
-            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+            //CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
 
-            CurrentSudoku.UpdateSquare(68, 1);
+            //CurrentSudoku.UpdateSquare(68, 1);
 
-            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+            //CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
 
-            CurrentSudoku.UpdateSquare(73, 1);
+            //CurrentSudoku.UpdateSquare(73, 1);
 
-            CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
+            //CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
 
             ProcessCommand(args);
         }
@@ -70,7 +70,7 @@ namespace SudokuSolver.ConsoleApp
         /// <param name="args"></param>
         static void ProcessCommand(string[] args)
         {
-            string commandLine = "", parameters = "";
+            string commandLine = string.Empty, parameters = string.Empty;
 
             do
             {

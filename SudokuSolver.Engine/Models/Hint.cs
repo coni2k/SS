@@ -5,6 +5,8 @@ namespace SudokuSolver.Engine
     {
         #region - Properties -
 
+        public Square Square { get; set; }
+
         public HintType HintType { get; set; }
 
         public GroupNumber GroupNumberSource { get; set; }
@@ -13,11 +15,18 @@ namespace SudokuSolver.Engine
 
         #region - Constructors -
 
+        public Hint(Square square, HintType type, GroupNumber groupNumbersource)
+        {
+            Square = square;
+            HintType = type;
+            GroupNumberSource = groupNumbersource;
+        }
+
         #endregion
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "T: {0} - GNS: {1}", HintType.ToString()[0], GroupNumberSource);
+            return string.Format(CultureInfo.InvariantCulture, "S: {0} - T: {1} - GNS: {2}", Square, HintType.ToString()[0], GroupNumberSource);
         }
     }
 }

@@ -16,14 +16,14 @@ namespace SudokuSolver.Engine.Dtos
 
         #region - Constructors -
 
-        public HintDto(Square hintSquare)
+        public HintDto(Hint hint)
         {
-            if (hintSquare == null)
-                throw new ArgumentNullException("hintSquare");
+            if (hint == null)
+                throw new ArgumentNullException("hint");
 
-            SquareId = hintSquare.SquareId;
-            Value = hintSquare.SudokuNumber.Value;
-            HintType = hintSquare.AssignType == AssignType.Hint ? HintType.Square : HintType.GroupNumberHorizontal;
+            SquareId = hint.Square.SquareId;
+            Value = hint.Square.SudokuNumber.Value;
+            HintType = hint.HintType;
         }
 
         #endregion

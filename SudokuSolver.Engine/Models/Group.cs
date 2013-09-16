@@ -122,20 +122,20 @@ namespace SudokuSolver.Engine
             switch (groupType)
             {
                 case GroupType.Square:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberSquare))
+                    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberMethod))
                         return;
-                    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberSquare, lastAvailability.GroupNumber);
+                    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberMethod, lastAvailability.GroupNumber);
                     break;
-                case GroupType.Horizontal:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberHorizontal))
-                        return;
-                    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberHorizontal, lastAvailability.GroupNumber);
-                    break;
-                case GroupType.Vertical:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberVertical))
-                        return;
-                    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberVertical, lastAvailability.GroupNumber);
-                    break;
+                //case GroupType.Horizontal:
+                //    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberHorizontal))
+                //        return;
+                //    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberHorizontal, lastAvailability.GroupNumber);
+                //    break;
+                //case GroupType.Vertical:
+                //    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberVertical))
+                //        return;
+                //    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberVertical, lastAvailability.GroupNumber);
+                //    break;
             }
         }
 

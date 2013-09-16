@@ -520,3 +520,17 @@ it should keep adding possible hints to its list and remove them if the conditio
 
 so actually we still can have 4 hints + square method square + hor + vert + group
 also keeping the 2. method on group may not be necessary! since its always the same group
+
+---
+1 to 8 will create a hint for every square
+if its square type - it will be square type hint etc. - then it will be just a matter of changing it solver or user type etc.
+when 8 removed, all of the hints will be removed..
+
+square group is special, can have its own group child class?
+
+there can be mapper between - group type and hint type ?!
+
+update the program - check add/remove hint block
+funny enough all the test cases look good, except "hint update"
+
+be careful boy, dont mess with the sudoku gods!

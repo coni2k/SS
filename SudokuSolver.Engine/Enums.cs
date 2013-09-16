@@ -18,10 +18,12 @@
     /// </summary>
     public enum HintType
     {
-        Square = 0,
-        GroupNumberSquare = 1,
-        GroupNumberHorizontal = 2,
-        GroupNumberVertical = 3
+        SquareMethodSquareType = 0,
+        SquareMethodHorizontalType = 1,
+        SquareMethodVerticalType = 2,
+        GroupNumberMethod = 3,
+        //GroupNumberHorizontal = 2,
+        //GroupNumberVertical = 3,
     }
 
     public enum GroupType
