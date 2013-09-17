@@ -534,3 +534,7 @@ update the program - check add/remove hint block
 funny enough all the test cases look good, except "hint update"
 
 be careful boy, dont mess with the sudoku gods!
+
+---
+search hint looks good but removal has a problem
+the code is getting very messy! beeeeeeeeeeeeeeeeee carefulllllllllllll !

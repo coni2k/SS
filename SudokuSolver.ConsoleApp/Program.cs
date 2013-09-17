@@ -19,9 +19,23 @@ namespace SudokuSolver.ConsoleApp
 
         static void Main(string[] args)
         {
-            LoadCases();
+            //LoadCases();
+
+            //LoadCase(1);
+
+            //ShowSudoku();
 
             NewSudoku();
+
+            CurrentSudoku.UpdateSquare(1, 1);
+            CurrentSudoku.UpdateSquare(2, 2);
+            CurrentSudoku.UpdateSquare(3, 3);
+            CurrentSudoku.UpdateSquare(10, 4);
+            CurrentSudoku.UpdateSquare(11, 5);
+            CurrentSudoku.UpdateSquare(12, 6);
+            CurrentSudoku.UpdateSquare(19, 7);
+            CurrentSudoku.UpdateSquare(20, 8);
+
 
             //CurrentSudoku.DisplaySquareDetails = true;
             //CurrentSudoku.DisplaySquareHints = true;

@@ -180,6 +180,11 @@ namespace SudokuSolver.Engine
             get { return groupNumberAvailabilities.Where(availability => availability.Updated); }
         }
 
+        public IEnumerable<Square> SquareWithHints
+        {
+            get { return Squares.Where(square => square.HasHints); }
+        }
+
         public IEnumerable<Square> SquareMethodHintSquares
         {
             get { return Squares.Where(square => square.IsSquareMethodHint); }

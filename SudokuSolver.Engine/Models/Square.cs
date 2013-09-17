@@ -10,6 +10,7 @@ namespace SudokuSolver.Engine
     {
         #region - Members -
 
+        AssignType assignType;
         ICollection<Group> groups;
         ICollection<SquareAvailability> availabilities;
         IEnumerable<Square> relatedSquares;
@@ -40,7 +41,19 @@ namespace SudokuSolver.Engine
         /// </summary>
         public SudokuNumber SudokuNumber { get; private set; }
 
-        public AssignType AssignType { get; internal set; }
+        public AssignType AssignType
+        {
+            get
+            {
+                //if (SudokuNumber.IsZero && Hints.Any())
+                //    return AssignType.Hint;
+                return assignType;
+            }
+            set
+            {
+                assignType = value;
+            }
+        }
 
         // Groups
         public Group SquareTypeGroup { get; private set; }
@@ -117,6 +130,11 @@ namespace SudokuSolver.Engine
             get { return relatedGroups ?? (relatedGroups = RelatedSquares.SelectMany(square => square.Groups.Where(g => g.GroupType == GroupType.Square)).Distinct()); }
         }
 
+        public bool HasHints
+        {
+            get { return Hints.Any(); }
+        }
+
         public bool IsSquareMethodHint
         {
             get { return AssignType == AssignType.Hint && Hints.Any(hint => hint.HintType != HintType.GroupNumberMethod); }
@@ -159,26 +177,6 @@ namespace SudokuSolver.Engine
             AssignType = type;
 
             Updated = true;
-        }
-
-        internal void AddHint(SudokuNumber number, HintType hintType, GroupNumber groupNumberSource)
-        {
-            if (!Hints.Any(hint => hint.HintType == hintType))
-                Hints.Add(new Hint(this, hintType, groupNumberSource));
-
-            if (AssignType != AssignType.Hint && Hints.Any())
-                Update(number, AssignType.Hint);
-        }
-
-        internal void RemoveHint(Hint hint)
-        {
-            if (Hints.Contains(hint))
-                Hints.Remove(hint);
-            //if (Hints.Any(hint => hint.HintType == hintType))
-            //    Hints.RemoveAll(hint => hint.HintType == hintType);
-
-            if (AssignType == AssignType.Hint && !Hints.Any())
-                Update(Sudoku.ZeroNumber, AssignType.Initial);
         }
 
         internal void Update(SudokuNumber number, AssignType type)
@@ -290,19 +288,34 @@ namespace SudokuSolver.Engine
                     {
                         if (hint.HintType == HintType.SquareMethodSquareType)
                         {
-                            if (square.Availabilities.Single(a => a.SudokuNumber == number).IsSquareTypeAvailable)
+                            if (square.Availabilities.Any(a => a.IsSquareTypeAvailable))
                                 square.RemoveHint(hint);
+
+                            if (square.Availabilities.Any(a => a.SquareTypeSource.Hints.Any(h => h.HintType== HintType.SquareMethodSquareType)
+                                && a.SquareTypeSource.Availabilities.Single(av => av.SudokuNumber == a.SudokuNumber).SquareTypeSource.Equals(square)))
+                            {
+                                square.RemoveHint(hint);
+                            }
+                            //var avail = square.Availabilities.Single(a => a.SudokuNumber == SudokuNumber);
+                            //if (avail.SquareTypeSource != null &&  avail.SquareTypeSource.Availabilities
                         }
 
                         if (hint.HintType == HintType.SquareMethodHorizontalType)
                         {
-                            if (square.Availabilities.Single(a => a.SudokuNumber == number).IsHorizontalTypeAvailable)
+                            if (square.Availabilities.Any(a => a.IsHorizontalTypeAvailable))
                                 square.RemoveHint(hint);
+
+                            if (square.Availabilities.Any(a => a.HorizontalTypeSource.Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType)
+                                && a.HorizontalTypeSource.Availabilities.Single(av => av.SudokuNumber == a.SudokuNumber).HorizontalTypeSource.Equals(square)))
+                            {
+                                square.RemoveHint(hint);
+                            }
+
                         }
 
                         if (hint.HintType == HintType.SquareMethodVerticalType)
                         {
-                            if (square.Availabilities.Single(a => a.SudokuNumber == number).IsVerticalTypeAvailable)
+                            if (square.Availabilities.Any(a => a.IsVerticalTypeAvailable))
                                 square.RemoveHint(hint);
                         }
                     }
@@ -367,22 +380,110 @@ namespace SudokuSolver.Engine
         {
             Sudoku.SearchSquareHintCounter++;
 
-            // If the square already has a value or already a square method hint, skip
-            if (!IsAvailable || IsSquareMethodHint)
-                return;
+            switch (type)
+            {
+                case GroupType.Square:
+                    {
+                        var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsSquareTypeAvailable);
 
-            var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.GetAvailability());
+                        if (lastAvailability != null)
+                        {
+                            if (SudokuNumber.IsZero)
+                                AddHint(lastAvailability.SudokuNumber, HintType.SquareMethodSquareType, null);
 
-            if (lastAvailability == null)
-                return;
+                            return;
+                        }
 
-            // Add the hint
-            AddHint(lastAvailability.SudokuNumber, type == GroupType.Square
-                ? HintType.SquareMethodSquareType
-                : type == GroupType.Horizontal
-                ? HintType.SquareMethodHorizontalType
-                : HintType.SquareMethodVerticalType
-                , null);
+                        break;
+                    }
+                case GroupType.Horizontal:
+                    {
+                        var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsHorizontalTypeAvailable);
+
+                        if (lastAvailability != null)
+                        {
+                            if (SudokuNumber.IsZero)
+                                AddHint(lastAvailability.SudokuNumber, HintType.SquareMethodHorizontalType, null);
+
+                            return;
+                        }
+
+                        break;
+                    }
+                case GroupType.Vertical:
+                    {
+                        var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsVerticalTypeAvailable);
+
+                        if (lastAvailability != null)
+                        {
+                            if (SudokuNumber.IsZero)
+                                AddHint(lastAvailability.SudokuNumber, HintType.SquareMethodVerticalType, null);
+
+                            return;
+                        }
+
+                        break;
+                    }
+            }
+
+            if (!SudokuNumber.IsZero)
+            {
+                switch (type)
+                {
+                    case GroupType.Square:
+                        {
+                            //if (!Availabilities.Any(a => a.IsAvailable)
+                            //    && !Availabilities.Single(a => a.SudokuNumber == SudokuNumber).IsSquareTypeAvailable
+                            if (!Availabilities.Any(a => a.IsSquareTypeAvailable)                                
+                                && !Hints.Any(h => h.HintType == HintType.SquareMethodSquareType))
+                                AddHint(SudokuNumber, HintType.SquareMethodSquareType, null);
+                            break;
+                        }
+                    case GroupType.Horizontal:
+                        {
+                            //if (!Availabilities.Any(a => a.IsAvailable)
+                            //    && !Availabilities.Single(a => a.SudokuNumber == SudokuNumber).IsHorizontalTypeAvailable
+                            if (!Availabilities.Any(a => a.IsHorizontalTypeAvailable)
+                                && !Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType))
+                                AddHint(SudokuNumber, HintType.SquareMethodHorizontalType, null);
+                            break;
+                        }
+                    case GroupType.Vertical:
+                        {
+                            //if (!Availabilities.Any(a => a.IsAvailable)
+                            //    && !Availabilities.Single(a => a.SudokuNumber == SudokuNumber).IsVerticalTypeAvailable
+                            if (!Availabilities.Any(a => a.IsVerticalTypeAvailable)
+                                && !Hints.Any(h => h.HintType == HintType.SquareMethodVerticalType))
+                                AddHint(SudokuNumber, HintType.SquareMethodVerticalType, null);
+                            break;
+                        }
+                }
+            }
+        }
+
+        internal void AddHint(SudokuNumber number, HintType hintType, GroupNumber groupNumberSource)
+        {
+            // var currentType = AssignType;
+
+            if (!Hints.Any(hint => hint.HintType == hintType))
+                Hints.Add(new Hint(this, hintType, groupNumberSource));
+
+            if (SudokuNumber.IsZero && AssignType == AssignType.Initial && Hints.Any())
+                Update(number, AssignType.Hint);
+        }
+
+        internal void RemoveHint(Hint hint)
+        {
+            // var currentType = AssignType;
+
+            if (Hints.Contains(hint))
+                Hints.Remove(hint);
+
+            //if (Hints.Any(hint => hint.HintType == hintType))
+            //    Hints.RemoveAll(hint => hint.HintType == hintType);
+
+            if (!SudokuNumber.IsZero && AssignType == AssignType.Initial && !Hints.Any())
+                Update(Sudoku.ZeroNumber, AssignType.Initial);
         }
 
         public override string ToString()

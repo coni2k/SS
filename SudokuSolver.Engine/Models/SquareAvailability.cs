@@ -30,6 +30,16 @@ namespace SudokuSolver.Engine
             get { return VerticalTypeSource == null; }
         }
 
+        public bool IsAvailable
+        {
+            get
+            {
+                return SquareTypeSource == null
+                    && HorizontalTypeSource == null
+                    && VerticalTypeSource == null;
+            }
+        }
+
         // This is for both search and remove hints! be careful
         public bool GetAvailability()
         {

@@ -195,7 +195,7 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(55, 7);
                 sudoku.UpdateSquare(73, 2);
                 sudoku.UpdateSquare(58, 8);
-                sudoku.UpdateSquare(61, 9);
+                //sudoku.UpdateSquare(61, 9);
 
                 return sudoku;
             }
@@ -986,30 +986,30 @@ namespace SudokuSolver.Engine
                 var list = new Collection<Sudoku>();
 
                 list.Add(SquareMethodHorizontal);
-                list.Add(SquareMethodVertical);
-                list.Add(SquareMethodSquare);
-                list.Add(SquareMethodMixed);
-                list.Add(GroupNumberMethod);
-                list.Add(GroupNumberMethodWithHelp);
-                list.Add(Domino);
-                list.Add(B2);
-                list.Add(B2Reverse);
-                list.Add(B2Skeleton);
-                list.Add(Beauty);
-                list.Add(HintUpdate);
-                list.Add(HintUpdate2);
-                list.Add(InvalidHintRemove);
-                list.Add(MiniSize);
-                list.Add(MaxiSize);
-                list.Add(RealSudoku);
-                list.Add(InvalidSudoku);
-                //list.Add(Headache);
-                //list.Add(Headache2);
-                //list.Add(Headache3);
-                //list.Add(Headache4);
-                list.Add(HintAvailabilityBug);
-                list.Add(GroupNumberRemoveHintBug);
-                list.Add(Freestyle);
+                //list.Add(SquareMethodVertical);
+                //list.Add(SquareMethodSquare);
+                //list.Add(SquareMethodMixed);
+                //list.Add(GroupNumberMethod);
+                //list.Add(GroupNumberMethodWithHelp);
+                //list.Add(Domino);
+                //list.Add(B2);
+                //list.Add(B2Reverse);
+                //list.Add(B2Skeleton);
+                //list.Add(Beauty);
+                //list.Add(HintUpdate);
+                //list.Add(HintUpdate2);
+                //list.Add(InvalidHintRemove);
+                //list.Add(MiniSize);
+                //list.Add(MaxiSize);
+                //list.Add(RealSudoku);
+                //list.Add(InvalidSudoku);
+                ////list.Add(Headache);
+                ////list.Add(Headache2);
+                ////list.Add(Headache3);
+                ////list.Add(Headache4);
+                //list.Add(HintAvailabilityBug);
+                //list.Add(GroupNumberRemoveHintBug);
+                //list.Add(Freestyle);
 
                 return list;
             }
