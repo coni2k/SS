@@ -36,6 +36,15 @@ namespace SudokuSolver.ConsoleApp
             CurrentSudoku.UpdateSquare(19, 7);
             CurrentSudoku.UpdateSquare(20, 8);
 
+            Console.WriteLine(CurrentSudoku.Squares.Count(s => s.HasHints));
+            Console.WriteLine(CurrentSudoku.HintSquares.Count());
+
+            // CurrentSudoku.UpdateSquare(20, 0);
+            CurrentSudoku.UpdateSquare(21, 9);
+            CurrentSudoku.UpdateSquare(21, 0);
+
+            Console.WriteLine(CurrentSudoku.Squares.Count(s => s.HasHints));
+            Console.WriteLine(CurrentSudoku.HintSquares.Count());
 
             //CurrentSudoku.DisplaySquareDetails = true;
             //CurrentSudoku.DisplaySquareHints = true;

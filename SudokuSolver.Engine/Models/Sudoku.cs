@@ -432,11 +432,25 @@ namespace SudokuSolver.Engine
                 selectedSquare.Update(type);
             else
             {
+                var x = false;
+
                 if (selectedNumber.IsZero && selectedSquare.Hints.Count > 0)
                 {
-                    selectedSquare.Update(AssignType.Hint);
+                    if (selectedSquare.Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType))
+                    {
+                        // if (!selectedSquare.Availabilities.Any(a => a.IsHorizontalTypeAvailable) && !selectedSquare.HorizontalTypeGroup.Squares.Any(s => !s.Equals(selectedSquare) && s.Hints.Any(hs => hs.HintType == HintType.SquareMethodHorizontalType)))
+                        if (!selectedSquare.HorizontalTypeGroup.Squares.Any(s => !s.Equals(selectedSquare) && s.AssignType == AssignType.Hint && s.Hints.Any(hs => hs.HintType == HintType.SquareMethodHorizontalType)))
+                        {
+                            //if (!selectedSquare.Availabilities.Any(a => !a.HorizontalTypeSource.Equals(selectedSquare) && a.HorizontalTypeSource.Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType) && a.HorizontalTypeSource.Availabilities.Single(av => av.SudokuNumber == a.SudokuNumber).HorizontalTypeSource == selectedSquare))
+                            //{
+                                selectedSquare.Update(AssignType.Hint);
+                                x = true;                           
+                            //}
+                        }
+                    }
                 }
-                else
+                
+                if (!x)
                 {
                     selectedSquare.Update(selectedNumber, type);
                 }

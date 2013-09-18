@@ -280,7 +280,7 @@ namespace SudokuSolver.Engine
             // Square level
             foreach (var group in Groups)
             {
-                foreach (var square in group.Squares.Where(s => s.Hints.Any() && s.SudokuNumber == number))
+                foreach (var square in group.Squares.Where(s => s.Hints.Any())) // && (s.SudokuNumber == number || s.Equals(this))))
                 {
                     var hints = square.Hints.ToList();
 
@@ -289,34 +289,71 @@ namespace SudokuSolver.Engine
                         if (hint.HintType == HintType.SquareMethodSquareType)
                         {
                             if (square.Availabilities.Any(a => a.IsSquareTypeAvailable))
+                            {
                                 square.RemoveHint(hint);
+                                continue;
+                            }
 
-                            if (square.Availabilities.Any(a => a.SquareTypeSource.Hints.Any(h => h.HintType== HintType.SquareMethodSquareType)
+                            if (square.Availabilities.Any(a => a.SquareTypeSource.Hints.Any(h => h.HintType == HintType.SquareMethodSquareType)
                                 && a.SquareTypeSource.Availabilities.Single(av => av.SudokuNumber == a.SudokuNumber).SquareTypeSource.Equals(square)))
                             {
                                 square.RemoveHint(hint);
                             }
-                            //var avail = square.Availabilities.Single(a => a.SudokuNumber == SudokuNumber);
-                            //if (avail.SquareTypeSource != null &&  avail.SquareTypeSource.Availabilities
                         }
 
                         if (hint.HintType == HintType.SquareMethodHorizontalType)
                         {
-                            if (square.Availabilities.Any(a => a.IsHorizontalTypeAvailable))
-                                square.RemoveHint(hint);
-
-                            if (square.Availabilities.Any(a => a.HorizontalTypeSource.Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType)
-                                && a.HorizontalTypeSource.Availabilities.Single(av => av.SudokuNumber == a.SudokuNumber).HorizontalTypeSource.Equals(square)))
+                            if (square.SudokuNumber.IsZero)
                             {
-                                square.RemoveHint(hint);
+                                var horizontalHint = hint;
+                                square.RemoveHint(horizontalHint);
+
+                                continue;
                             }
+                            else
+                            {
+                                if (Availabilities.Count(a => a.IsHorizontalTypeAvailable) > 1)
+                                {
+                                    var horz = hint;
+                                    square.RemoveHint(horz);
+                                    continue;
+                                }
+                                else if (Availabilities.Count(a => a.IsHorizontalTypeAvailable) >= 1)
+                                {
+                                    var horz = hint;
+                                    square.RemoveHint(horz);
+                                    continue;
+                                
+                                }
+                            }
+
+                            //if (square.Availabilities.Any(a => a.IsHorizontalTypeAvailable))
+                            //{
+                            //    square.RemoveHint(hint);
+                            //    continue;
+                            //}
+
+                            //if (square.Availabilities.Any(a => a.HorizontalTypeSource.Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType)
+                            //    && a.HorizontalTypeSource.Availabilities.Single(av => av.SudokuNumber == a.SudokuNumber).HorizontalTypeSource.Equals(square)))
+                            //{
+                            //    square.RemoveHint(hint);
+                            //}
 
                         }
 
                         if (hint.HintType == HintType.SquareMethodVerticalType)
                         {
                             if (square.Availabilities.Any(a => a.IsVerticalTypeAvailable))
+                            {
                                 square.RemoveHint(hint);
+                                continue;
+                            }
+
+                            if (square.Availabilities.Any(a => a.VerticalTypeSource.Hints.Any(h => h.HintType == HintType.SquareMethodVerticalType)
+                                && a.VerticalTypeSource.Availabilities.Single(av => av.SudokuNumber == a.SudokuNumber).VerticalTypeSource.Equals(square)))
+                            {
+                                square.RemoveHint(hint);
+                            }
                         }
                     }
                 }
@@ -384,87 +421,95 @@ namespace SudokuSolver.Engine
             {
                 case GroupType.Square:
                     {
-                        var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsSquareTypeAvailable);
-
-                        if (lastAvailability != null)
+                        if (SudokuNumber.IsZero)
                         {
-                            if (SudokuNumber.IsZero)
-                                AddHint(lastAvailability.SudokuNumber, HintType.SquareMethodSquareType, null);
+                            var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsSquareTypeAvailable);
 
-                            return;
+                            if (lastAvailability != null)
+                                AddHint(lastAvailability.SudokuNumber, HintType.SquareMethodSquareType, null);
+                        }
+                        else
+                        {
+                            if (!Availabilities.Any(availability => availability.IsSquareTypeAvailable))
+                                AddHint(SudokuNumber, HintType.SquareMethodSquareType, null);
                         }
 
                         break;
                     }
                 case GroupType.Horizontal:
                     {
-                        var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsHorizontalTypeAvailable);
-
-                        if (lastAvailability != null)
+                        if (SudokuNumber.IsZero)
                         {
-                            if (SudokuNumber.IsZero)
-                                AddHint(lastAvailability.SudokuNumber, HintType.SquareMethodHorizontalType, null);
+                            var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsHorizontalTypeAvailable);
 
-                            return;
+                            if (lastAvailability != null)
+                                AddHint(lastAvailability.SudokuNumber, HintType.SquareMethodHorizontalType, null);
+                        }
+                        else
+                        {
+                            if (!Availabilities.Any(a => a.IsHorizontalTypeAvailable))
+                                AddHint(SudokuNumber, HintType.SquareMethodHorizontalType, null);
                         }
 
                         break;
                     }
                 case GroupType.Vertical:
                     {
-                        var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsVerticalTypeAvailable);
-
-                        if (lastAvailability != null)
+                        if (SudokuNumber.IsZero)
                         {
-                            if (SudokuNumber.IsZero)
-                                AddHint(lastAvailability.SudokuNumber, HintType.SquareMethodVerticalType, null);
+                            var lastAvailability = Availabilities.IfSingleOrDefault(availability => availability.IsVerticalTypeAvailable);
 
-                            return;
+                            if (lastAvailability != null)
+                                AddHint(lastAvailability.SudokuNumber, HintType.SquareMethodVerticalType, null);
+                        }
+                        else
+                        {
+                            if (!Availabilities.Any(a => a.IsVerticalTypeAvailable))
+                                AddHint(SudokuNumber, HintType.SquareMethodVerticalType, null);                        
                         }
 
                         break;
                     }
             }
 
-            if (!SudokuNumber.IsZero)
-            {
-                switch (type)
-                {
-                    case GroupType.Square:
-                        {
-                            //if (!Availabilities.Any(a => a.IsAvailable)
-                            //    && !Availabilities.Single(a => a.SudokuNumber == SudokuNumber).IsSquareTypeAvailable
-                            if (!Availabilities.Any(a => a.IsSquareTypeAvailable)                                
-                                && !Hints.Any(h => h.HintType == HintType.SquareMethodSquareType))
-                                AddHint(SudokuNumber, HintType.SquareMethodSquareType, null);
-                            break;
-                        }
-                    case GroupType.Horizontal:
-                        {
-                            //if (!Availabilities.Any(a => a.IsAvailable)
-                            //    && !Availabilities.Single(a => a.SudokuNumber == SudokuNumber).IsHorizontalTypeAvailable
-                            if (!Availabilities.Any(a => a.IsHorizontalTypeAvailable)
-                                && !Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType))
-                                AddHint(SudokuNumber, HintType.SquareMethodHorizontalType, null);
-                            break;
-                        }
-                    case GroupType.Vertical:
-                        {
-                            //if (!Availabilities.Any(a => a.IsAvailable)
-                            //    && !Availabilities.Single(a => a.SudokuNumber == SudokuNumber).IsVerticalTypeAvailable
-                            if (!Availabilities.Any(a => a.IsVerticalTypeAvailable)
-                                && !Hints.Any(h => h.HintType == HintType.SquareMethodVerticalType))
-                                AddHint(SudokuNumber, HintType.SquareMethodVerticalType, null);
-                            break;
-                        }
-                }
-            }
+            //if (!SudokuNumber.IsZero)
+            //{
+            //    switch (type)
+            //    {
+            //        case GroupType.Square:
+            //            {
+            //                if (!Availabilities.Any(availability => availability.IsSquareTypeAvailable)
+            //                    && !Hints.Any(h => h.HintType == HintType.SquareMethodSquareType))
+            //                    AddHint(SudokuNumber, HintType.SquareMethodSquareType, null);
+
+            //                break;
+            //            }
+            //        case GroupType.Horizontal:
+            //            {
+            //                //if (!Availabilities.Any(a => a.IsAvailable)
+            //                //    && !Availabilities.Single(a => a.SudokuNumber == SudokuNumber).IsHorizontalTypeAvailable
+            //                if (!Availabilities.Any(a => a.IsHorizontalTypeAvailable)
+            //                    && !Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType))
+            //                    AddHint(SudokuNumber, HintType.SquareMethodHorizontalType, null);
+
+            //                break;
+            //            }
+            //        case GroupType.Vertical:
+            //            {
+            //                //if (!Availabilities.Any(a => a.IsAvailable)
+            //                //    && !Availabilities.Single(a => a.SudokuNumber == SudokuNumber).IsVerticalTypeAvailable
+            //                if (!Availabilities.Any(a => a.IsVerticalTypeAvailable)
+            //                    && !Hints.Any(h => h.HintType == HintType.SquareMethodVerticalType))
+            //                    AddHint(SudokuNumber, HintType.SquareMethodVerticalType, null);
+
+            //                break;
+            //            }
+            //    }
+            //}
         }
 
         internal void AddHint(SudokuNumber number, HintType hintType, GroupNumber groupNumberSource)
         {
-            // var currentType = AssignType;
-
             if (!Hints.Any(hint => hint.HintType == hintType))
                 Hints.Add(new Hint(this, hintType, groupNumberSource));
 
@@ -474,15 +519,10 @@ namespace SudokuSolver.Engine
 
         internal void RemoveHint(Hint hint)
         {
-            // var currentType = AssignType;
-
             if (Hints.Contains(hint))
                 Hints.Remove(hint);
 
-            //if (Hints.Any(hint => hint.HintType == hintType))
-            //    Hints.RemoveAll(hint => hint.HintType == hintType);
-
-            if (!SudokuNumber.IsZero && AssignType == AssignType.Initial && !Hints.Any())
+            if (!SudokuNumber.IsZero && AssignType == AssignType.Hint && !Hints.Any())
                 Update(Sudoku.ZeroNumber, AssignType.Initial);
         }
 

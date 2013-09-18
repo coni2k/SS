@@ -538,3 +538,11 @@ be careful boy, dont mess with the sudoku gods!
 ---
 search hint looks good but removal has a problem
 the code is getting very messy! beeeeeeeeeeeeeeeeee carefulllllllllllll !
+
+---
+should we use Updating flag for squares ?!?!
+and then dont touch the squares if they are in this mode?
+
+---
+square methodda ayni groupta birden fazla hint olamazz!
+olay budur!!!!
