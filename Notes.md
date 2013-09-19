@@ -546,3 +546,19 @@ and then dont touch the squares if they are in this mode?
 ---
 square methodda ayni groupta birden fazla hint olamazz!
 olay budur!!!!
+
+---
+babayi budur! gene faka bastin!
+
+---
+group groupnumber groupnumber avail yerine - number - numberavail
+hatta number update vb. olabilir mi? square kendi isine baksin, number kendi isine?
+
+---
+what happens if solved square get updated (lost its hint state?)
+
+---
+square method goes fine ?!
+check with other cases
+
+and then continue with number method!

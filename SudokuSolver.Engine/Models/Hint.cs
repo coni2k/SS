@@ -7,7 +7,7 @@ namespace SudokuSolver.Engine
 
         public Square Square { get; set; }
 
-        public HintType HintType { get; set; }
+        public HintMethod HintType { get; set; }
 
         public GroupNumber GroupNumberSource { get; set; }
 
@@ -15,7 +15,7 @@ namespace SudokuSolver.Engine
 
         #region - Constructors -
 
-        public Hint(Square square, HintType type, GroupNumber groupNumbersource)
+        public Hint(Square square, HintMethod type, GroupNumber groupNumbersource)
         {
             Square = square;
             HintType = type;

@@ -36,14 +36,14 @@ namespace SudokuSolver.ConsoleApp
             CurrentSudoku.UpdateSquare(19, 7);
             CurrentSudoku.UpdateSquare(20, 8);
 
-            Console.WriteLine(CurrentSudoku.Squares.Count(s => s.HasHints));
+            Console.WriteLine(CurrentSudoku.Squares.Count(s => s.ContainsSquareMethodHint));
             Console.WriteLine(CurrentSudoku.HintSquares.Count());
 
             // CurrentSudoku.UpdateSquare(20, 0);
             CurrentSudoku.UpdateSquare(21, 9);
             CurrentSudoku.UpdateSquare(21, 0);
 
-            Console.WriteLine(CurrentSudoku.Squares.Count(s => s.HasHints));
+            Console.WriteLine(CurrentSudoku.Squares.Count(s => s.ContainsSquareMethodHint));
             Console.WriteLine(CurrentSudoku.HintSquares.Count());
 
             //CurrentSudoku.DisplaySquareDetails = true;
@@ -265,7 +265,7 @@ namespace SudokuSolver.ConsoleApp
 
                 // Availability per number; "X" for available squares, "." for non-available ones
                 foreach (var number in CurrentSudoku.NumbersExceptZero)
-                    Console.Write(" | {0}", square.Availabilities.Single(availability => availability.SudokuNumber.Equals(number)).GetAvailability() ? "X" : ".");
+                    Console.Write(" | {0}", square.Availabilities.Single(availability => availability.SudokuNumber.Equals(number)).IsAvailable ? "X" : ".");
 
                 Console.WriteLine();
             }

@@ -16,20 +16,16 @@
     /// 1. In one group, if all the other squares have a value, the value of the last square becomes clear. This is square type hint.
     /// 2. In one group, if a number can be placed to only one square, because of the other squares is not available for this number, this is group type hint.
     /// </summary>
-    public enum HintType
+    public enum HintMethod
     {
-        SquareMethodSquareType = 0,
-        SquareMethodHorizontalType = 1,
-        SquareMethodVerticalType = 2,
-        GroupNumberMethod = 3,
-        //GroupNumberHorizontal = 2,
-        //GroupNumberVertical = 3,
+        SquareMethod = 0,
+        NumberMethod = 1
     }
 
     public enum GroupType
     {
-        Square, // Default group
-        Horizontal,
-        Vertical
+        Square = 0, // Default group
+        Horizontal = 1,
+        Vertical = 2
     }
 }

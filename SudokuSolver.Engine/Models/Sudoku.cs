@@ -12,7 +12,7 @@ namespace SudokuSolver.Engine
 
         public int ActionCounter { get; private set; }
         public int SearchSquareHintCounter { get; internal set; }
-        public int SearchGroupNumberHintCounter { get; internal set; }
+        public int SearchNumberHintCounter { get; internal set; }
         public bool DisplaySquareDetails { get; set; }
         public bool DisplaySquareHints { get; set; }
         public bool DisplaySquareAvailabilities { get; set; }
@@ -180,19 +180,19 @@ namespace SudokuSolver.Engine
             get { return groupNumberAvailabilities.Where(availability => availability.Updated); }
         }
 
-        public IEnumerable<Square> SquareWithHints
+        public IEnumerable<Square> SquareMethodHintContainers
         {
-            get { return Squares.Where(square => square.HasHints); }
+            get { return Squares.Where(square => square.ContainsSquareMethodHint); }
         }
 
-        public IEnumerable<Square> SquareMethodHintSquares
+        public IEnumerable<Square> SquareMethodHints
         {
             get { return Squares.Where(square => square.IsSquareMethodHint); }
         }
 
         public IEnumerable<Square> GroupNumberMethodHintSquares
         {
-            get { return Squares.Where(square => square.IsGroupNumberMethodHint); }
+            get { return Squares.Where(square => square.IsNumberMethodHint); }
         }
 
         public IEnumerable<Square> HintSquares
@@ -241,8 +241,8 @@ namespace SudokuSolver.Engine
         }
 
         // TODO !
-        public bool UseSquareLevelMethod { get; set; }
-        public bool UseGroupNumberLevelMethod { get; set; }
+        public bool UseSquareMethod { get; set; }
+        public bool UseNumberMethod { get; set; }
 
         #endregion
 
@@ -282,8 +282,8 @@ namespace SudokuSolver.Engine
             Size = size;
 
             // Solve methods
-            UseSquareLevelMethod = true;
-            UseGroupNumberLevelMethod = true;
+            UseSquareMethod = true;
+            UseNumberMethod = true;
 
             // Numbers (default 9 + zero value = 10)
             numbers.Add(ZeroNumber); // Zero value
@@ -393,6 +393,7 @@ namespace SudokuSolver.Engine
                 throw new InvalidOperationException("Not a valid assignment, hint values cannot be changed");
 
             // b. Is it available; check the related squares with the same number
+            // TODO Check this place
             if (!selectedNumber.IsZero)
             {
                 var existingGroups = selectedSquare.Groups.Where(squareGroup => squareGroup.Squares.Any(square => square.SudokuNumber.Equals(selectedNumber)));
@@ -432,25 +433,11 @@ namespace SudokuSolver.Engine
                 selectedSquare.Update(type);
             else
             {
-                var x = false;
-
-                if (selectedNumber.IsZero && selectedSquare.Hints.Count > 0)
+                if (selectedNumber.IsZero && selectedSquare.ContainsSquareMethodHint)
                 {
-                    if (selectedSquare.Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType))
-                    {
-                        // if (!selectedSquare.Availabilities.Any(a => a.IsHorizontalTypeAvailable) && !selectedSquare.HorizontalTypeGroup.Squares.Any(s => !s.Equals(selectedSquare) && s.Hints.Any(hs => hs.HintType == HintType.SquareMethodHorizontalType)))
-                        if (!selectedSquare.HorizontalTypeGroup.Squares.Any(s => !s.Equals(selectedSquare) && s.AssignType == AssignType.Hint && s.Hints.Any(hs => hs.HintType == HintType.SquareMethodHorizontalType)))
-                        {
-                            //if (!selectedSquare.Availabilities.Any(a => !a.HorizontalTypeSource.Equals(selectedSquare) && a.HorizontalTypeSource.Hints.Any(h => h.HintType == HintType.SquareMethodHorizontalType) && a.HorizontalTypeSource.Availabilities.Single(av => av.SudokuNumber == a.SudokuNumber).HorizontalTypeSource == selectedSquare))
-                            //{
-                                selectedSquare.Update(AssignType.Hint);
-                                x = true;                           
-                            //}
-                        }
-                    }
+                    selectedSquare.Update(AssignType.Hint);
                 }
-                
-                if (!x)
+                else
                 {
                     selectedSquare.Update(selectedNumber, type);
                 }

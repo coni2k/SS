@@ -8,114 +8,28 @@ namespace SudokuSolver.Engine
         SampleCaseManager() { }
 
         /// <summary>
-        /// Gets sample case; Square method - Horizontal
-        /// </summary>
-        /// <returns></returns>
-        public static Sudoku SquareMethodHorizontal
-        {
-            get
-            {
-                // New sudoku
-                var sudoku = new Sudoku()
-                {
-                    SudokuId = 1,
-                    Title = "Square method - Horizontal"
-                };
-
-                // Update
-                sudoku.UpdateSquare(1, 1);
-                sudoku.UpdateSquare(2, 2);
-                sudoku.UpdateSquare(3, 3);
-                sudoku.UpdateSquare(10, 4);
-                sudoku.UpdateSquare(11, 5);
-                sudoku.UpdateSquare(12, 6);
-                sudoku.UpdateSquare(19, 7);
-                sudoku.UpdateSquare(20, 8);
-
-                // Return
-                return sudoku;
-            }
-        }
-
-        /// <summary>
-        /// Gets sample case; Square method - Vertical
-        /// </summary>
-        /// <returns></returns>
-        public static Sudoku SquareMethodVertical
-        {
-            get
-            {
-                var sudoku = new Sudoku()
-                {
-                    SudokuId = 2,
-                    Title = "Square method - Vertical"
-                };
-
-                // Update
-                sudoku.UpdateSquare(1, 1);
-                sudoku.UpdateSquare(4, 2);
-                sudoku.UpdateSquare(7, 3);
-                sudoku.UpdateSquare(28, 4);
-                sudoku.UpdateSquare(31, 5);
-                sudoku.UpdateSquare(34, 6);
-                sudoku.UpdateSquare(55, 7);
-                sudoku.UpdateSquare(58, 8);
-
-                return sudoku;
-            }
-        }
-
-        /// <summary>
-        /// Gets sample case; Square method - Square
-        /// </summary>
-        /// <returns></returns>
-        public static Sudoku SquareMethodSquare
-        {
-            get
-            {
-                var sudoku = new Sudoku()
-                {
-                    SudokuId = 3,
-                    Title = "Square method - Square"
-                };
-
-                // Update
-                sudoku.UpdateSquare(1, 1);
-                sudoku.UpdateSquare(2, 2);
-                sudoku.UpdateSquare(3, 3);
-                sudoku.UpdateSquare(4, 4);
-                sudoku.UpdateSquare(5, 5);
-                sudoku.UpdateSquare(6, 6);
-                sudoku.UpdateSquare(7, 7);
-                sudoku.UpdateSquare(8, 8);
-
-                return sudoku;
-            }
-        }
-
-        /// <summary>
         /// Gets sample case; Square method - Mixed
         /// </summary>
         /// <returns></returns>
-        public static Sudoku SquareMethodMixed
+        public static Sudoku SquareMethod
         {
             get
             {
                 var sudoku = new Sudoku()
                 {
                     SudokuId = 4,
-                    Title = "Square method - Mixed"
+                    Title = "Square method"
                 };
 
                 // Update
-                sudoku.UpdateSquare(10, 1);
-                sudoku.UpdateSquare(11, 2);
-                sudoku.UpdateSquare(12, 3);
-                sudoku.UpdateSquare(28, 4);
-                sudoku.UpdateSquare(31, 5);
-                sudoku.UpdateSquare(34, 6);
-                sudoku.UpdateSquare(2, 7);
-                sudoku.UpdateSquare(4, 8);
+                sudoku.UpdateSquare(2, 2);
+                sudoku.UpdateSquare(4, 3);
+                sudoku.UpdateSquare(10, 4);
+                sudoku.UpdateSquare(11, 5);
+                sudoku.UpdateSquare(12, 6);
+                sudoku.UpdateSquare(28, 7);
+                sudoku.UpdateSquare(31, 8);
+                sudoku.UpdateSquare(34, 9);
 
                 return sudoku;
             }
@@ -985,10 +899,7 @@ namespace SudokuSolver.Engine
             {
                 var list = new Collection<Sudoku>();
 
-                list.Add(SquareMethodHorizontal);
-                //list.Add(SquareMethodVertical);
-                //list.Add(SquareMethodSquare);
-                //list.Add(SquareMethodMixed);
+                list.Add(SquareMethod);
                 //list.Add(GroupNumberMethod);
                 //list.Add(GroupNumberMethodWithHelp);
                 //list.Add(Domino);

@@ -108,36 +108,36 @@ namespace SudokuSolver.Engine
                 availability.Updated = true;
         }
 
-        internal void SearchGroupNumberHint()
-        {
-            var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability()) == 1);
+        //internal void SearchGroupNumberHint()
+        //{
+        //    var lastGroupNumber = GroupNumbers.IfSingleOrDefault(groupNumber => groupNumber.Availabilities.Count(availability => availability.GetAvailability()) == 1);
 
-            if (lastGroupNumber == null)
-                return;
+        //    if (lastGroupNumber == null)
+        //        return;
 
-            var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability());
+        //    var lastAvailability = lastGroupNumber.Availabilities.Single(availability => availability.GetAvailability());
 
-            var groupType = lastAvailability.GroupNumber.Group.GroupType;
+        //    var groupType = lastAvailability.GroupNumber.Group.GroupType;
 
-            switch (groupType)
-            {
-                case GroupType.Square:
-                    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberMethod))
-                        return;
-                    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberMethod, lastAvailability.GroupNumber);
-                    break;
-                //case GroupType.Horizontal:
-                //    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberHorizontal))
-                //        return;
-                //    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberHorizontal, lastAvailability.GroupNumber);
-                //    break;
-                //case GroupType.Vertical:
-                //    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberVertical))
-                //        return;
-                //    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberVertical, lastAvailability.GroupNumber);
-                //    break;
-            }
-        }
+        //    switch (groupType)
+        //    {
+        //        case DirectionType.Square:
+        //            if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintMethod.NumberMethod))
+        //                return;
+        //            lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintMethod.NumberMethod, lastAvailability.GroupNumber);
+        //            break;
+        //        //case GroupType.Horizontal:
+        //        //    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberHorizontal))
+        //        //        return;
+        //        //    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberHorizontal, lastAvailability.GroupNumber);
+        //        //    break;
+        //        //case GroupType.Vertical:
+        //        //    if (lastAvailability.Square.Hints.Any(hint => hint.HintType == HintType.GroupNumberVertical))
+        //        //        return;
+        //        //    lastAvailability.Square.AddHint(lastAvailability.GroupNumber.SudokuNumber, HintType.GroupNumberVertical, lastAvailability.GroupNumber);
+        //        //    break;
+        //    }
+        //}
 
         public override string ToString()
         {

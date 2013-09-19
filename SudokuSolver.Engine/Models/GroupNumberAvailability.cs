@@ -67,15 +67,15 @@ namespace SudokuSolver.Engine
                 return false;
 
             var squareTypeSourceCondition = (SquareTypeSource == null
-                || (SquareTypeSource.IsGroupNumberMethodHint
+                || (SquareTypeSource.IsNumberMethodHint
                 && SquareTypeSource.Equals(Square)));
 
             var horizontalTypeSourceCondition = (HorizontalTypeSource == null
-                || (HorizontalTypeSource.IsGroupNumberMethodHint
+                || (HorizontalTypeSource.IsNumberMethodHint
                 && HorizontalTypeSource.Equals(Square)));
 
             var verticalTypeSourceCondition = (VerticalTypeSource == null
-                || (VerticalTypeSource.IsGroupNumberMethodHint
+                || (VerticalTypeSource.IsNumberMethodHint
                 && VerticalTypeSource.Equals(Square)));
 
             return squareTypeSourceCondition && horizontalTypeSourceCondition && verticalTypeSourceCondition;

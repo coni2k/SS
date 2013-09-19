@@ -15,21 +15,6 @@ namespace SudokuSolver.Engine
         internal Square HorizontalTypeSource { get; private set; }
         internal Square VerticalTypeSource { get; private set; }
 
-        public bool IsSquareTypeAvailable
-        {
-            get { return SquareTypeSource == null; }
-        }
-
-        public bool IsHorizontalTypeAvailable
-        {
-            get { return HorizontalTypeSource == null; }
-        }
-
-        public bool IsVerticalTypeAvailable
-        {
-            get { return VerticalTypeSource == null; }
-        }
-
         public bool IsAvailable
         {
             get
@@ -40,36 +25,36 @@ namespace SudokuSolver.Engine
             }
         }
 
-        // This is for both search and remove hints! be careful
-        public bool GetAvailability()
-        {
-            var squareTypeSourceCondition = SquareTypeSource == null
-                || (SquareTypeSource.IsSquareMethodHint
-                && ((!Square.IsAvailable
-                && SquareTypeSource.Availabilities.Single(a => a.SudokuNumber == Square.SudokuNumber).GetAvailabilityForSource(Square))
-                || SquareTypeSource.Equals(Square)));
+        //// This is for both search and remove hints! be careful
+        //public bool GetAvailability()
+        //{
+        //    var squareTypeSourceCondition = SquareTypeSource == null
+        //        || (SquareTypeSource.IsSquareMethodHint
+        //        && ((!Square.IsAvailable
+        //        && SquareTypeSource.Availabilities.Single(a => a.SudokuNumber == Square.SudokuNumber).GetAvailabilityForSource(Square))
+        //        || SquareTypeSource.Equals(Square)));
 
-            var horizontalTypeSourceCondition = HorizontalTypeSource == null
-                || (HorizontalTypeSource.IsSquareMethodHint
-                && ((!Square.IsAvailable
-                && HorizontalTypeSource.Availabilities.Single(a => a.SudokuNumber == Square.SudokuNumber).GetAvailabilityForSource(Square))
-                || HorizontalTypeSource.Equals(Square)));
+        //    var horizontalTypeSourceCondition = HorizontalTypeSource == null
+        //        || (HorizontalTypeSource.IsSquareMethodHint
+        //        && ((!Square.IsAvailable
+        //        && HorizontalTypeSource.Availabilities.Single(a => a.SudokuNumber == Square.SudokuNumber).GetAvailabilityForSource(Square))
+        //        || HorizontalTypeSource.Equals(Square)));
 
-            var verticalTypeSourceCondition = VerticalTypeSource == null
-                || (VerticalTypeSource.IsSquareMethodHint
-                && ((!Square.IsAvailable
-                && VerticalTypeSource.Availabilities.Single(a => a.SudokuNumber == Square.SudokuNumber).GetAvailabilityForSource(Square))
-                || VerticalTypeSource.Equals(Square)));
+        //    var verticalTypeSourceCondition = VerticalTypeSource == null
+        //        || (VerticalTypeSource.IsSquareMethodHint
+        //        && ((!Square.IsAvailable
+        //        && VerticalTypeSource.Availabilities.Single(a => a.SudokuNumber == Square.SudokuNumber).GetAvailabilityForSource(Square))
+        //        || VerticalTypeSource.Equals(Square)));
 
-            return squareTypeSourceCondition && horizontalTypeSourceCondition && verticalTypeSourceCondition;
-        }
+        //    return squareTypeSourceCondition && horizontalTypeSourceCondition && verticalTypeSourceCondition;
+        //}
 
-        public bool GetAvailabilityForSource(Square source)
-        {
-            return (SquareTypeSource == null || SquareTypeSource == source)
-                && (HorizontalTypeSource == null || HorizontalTypeSource == source)
-                && (VerticalTypeSource == null || VerticalTypeSource == source);
-        }
+        //public bool GetAvailabilityForSource(Square source)
+        //{
+        //    return (SquareTypeSource == null || SquareTypeSource == source)
+        //        && (HorizontalTypeSource == null || HorizontalTypeSource == source)
+        //        && (VerticalTypeSource == null || VerticalTypeSource == source);
+        //}
 
         internal bool Updated { get; set; }
 

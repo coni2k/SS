@@ -10,7 +10,7 @@ namespace SudokuSolver.Engine.Dtos
 
         public int Value { get; private set; }
 
-        public HintType HintType { get; private set; }
+        public HintMethod HintType { get; private set; }
 
         #endregion
 
