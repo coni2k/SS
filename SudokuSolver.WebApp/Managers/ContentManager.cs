@@ -1,6 +1,5 @@
 ﻿using SudokuSolver.WebApp.Models;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Web;
 
@@ -24,7 +23,7 @@ namespace SudokuSolver.WebApp.Managers
 
             var sudokuContent = new Content("sudoku") { Title = "Sudoku" };
 
-            var contentList = new Collection<Content>();
+            var contentList = new HashSet<Content>();
             contentList.Add(contactContent);
             contentList.Add(faqContent);
             contentList.Add(licenseContent);

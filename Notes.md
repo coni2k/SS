@@ -562,3 +562,12 @@ square method goes fine ?!
 check with other cases
 
 and then continue with number method!
+
+---
+testmethods can be seperated by methods? check samplecasemanager
+
+---
+fifth five is the last one
+can continue with test case of it
+when id 33 was removed, it should only remove id 5 and id 9 but currently it removes all of them
+"isvaliting" was introduced but still not good. there is chain reaction - solution can be more extensive?

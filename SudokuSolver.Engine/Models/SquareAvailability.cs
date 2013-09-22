@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 
 namespace SudokuSolver.Engine
 {
@@ -14,6 +11,20 @@ namespace SudokuSolver.Engine
         internal Square SquareTypeSource { get; private set; }
         internal Square HorizontalTypeSource { get; private set; }
         internal Square VerticalTypeSource { get; private set; }
+
+        //internal ICollection<Square> Sources { get; private set; }
+        
+        internal ICollection<Square> Sources
+        {
+            get
+            {
+                var sources = new HashSet<Square>();
+                sources.Add(SquareTypeSource);
+                sources.Add(HorizontalTypeSource);
+                sources.Add(VerticalTypeSource);
+                return sources;
+            }
+        }
 
         public bool IsAvailable
         {
@@ -62,6 +73,12 @@ namespace SudokuSolver.Engine
         {
             Square = square;
             SudokuNumber = number;
+
+            // Sources
+            //Sources = new HashSet<Square>();
+            //Sources.Add(SquareTypeSource);
+            //Sources.Add(HorizontalTypeSource);
+            //Sources.Add(VerticalTypeSource);
         }
 
         internal void UpdateAvailability(GroupType type, Square source)

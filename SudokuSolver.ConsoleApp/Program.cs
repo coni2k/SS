@@ -1,10 +1,8 @@
+using SudokuSolver.Engine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SudokuSolver.Engine;
-using System.Collections.ObjectModel;
 
 namespace SudokuSolver.ConsoleApp
 {
@@ -37,14 +35,14 @@ namespace SudokuSolver.ConsoleApp
             CurrentSudoku.UpdateSquare(20, 8);
 
             Console.WriteLine(CurrentSudoku.Squares.Count(s => s.ContainsSquareMethodHint));
-            Console.WriteLine(CurrentSudoku.HintSquares.Count());
+            Console.WriteLine(CurrentSudoku.Hints.Count());
 
             // CurrentSudoku.UpdateSquare(20, 0);
             CurrentSudoku.UpdateSquare(21, 9);
             CurrentSudoku.UpdateSquare(21, 0);
 
             Console.WriteLine(CurrentSudoku.Squares.Count(s => s.ContainsSquareMethodHint));
-            Console.WriteLine(CurrentSudoku.HintSquares.Count());
+            Console.WriteLine(CurrentSudoku.Hints.Count());
 
             //CurrentSudoku.DisplaySquareDetails = true;
             //CurrentSudoku.DisplaySquareHints = true;
@@ -216,7 +214,7 @@ namespace SudokuSolver.ConsoleApp
             foreach (var group in CurrentSudoku.HorizontalTypeGroups)
             {
                 // Divide the groups into square root sized groups
-                var squareRootGroups = new Collection<IEnumerable<Square>>();
+                var squareRootGroups = new HashSet<IEnumerable<Square>>();
 
                 for (var i = 0; i < CurrentSudoku.SquareRootOfSize; i++)
                     squareRootGroups.Add(group.Squares.Skip(i * CurrentSudoku.SquareRootOfSize).Take(CurrentSudoku.SquareRootOfSize));

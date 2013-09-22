@@ -134,13 +134,12 @@ namespace SudokuSolver.WebApp.Controllers
         // GET api/Sudoku/GetHints/1
         public IEnumerable<HintDto> GetHints(int sudokuId)
         {
-            //var sudoku = GetSudokuItem(sudokuId);
+            var sudoku = GetSudokuItem(sudokuId);
 
             //var hints = sudoku.HintSquares.SelectMany(square => square.Hints);
 
-            //return hints.Select(h => new HintDto(h));
-
-            return null;
+            // TODO UPDATE !
+            return sudoku.Hints.Select(square => new HintDto(new Hint(square, HintMethod.SquareMethod, null)));
         }
 
         // PUT api/Sudoku/UpdateSquare/1/1

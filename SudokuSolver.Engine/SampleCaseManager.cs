@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace SudokuSolver.Engine
 {
@@ -8,44 +7,16 @@ namespace SudokuSolver.Engine
         SampleCaseManager() { }
 
         /// <summary>
-        /// Gets sample case; Square method - Mixed
-        /// </summary>
-        /// <returns></returns>
-        public static Sudoku SquareMethod
-        {
-            get
-            {
-                var sudoku = new Sudoku()
-                {
-                    SudokuId = 4,
-                    Title = "Square method"
-                };
-
-                // Update
-                sudoku.UpdateSquare(2, 2);
-                sudoku.UpdateSquare(4, 3);
-                sudoku.UpdateSquare(10, 4);
-                sudoku.UpdateSquare(11, 5);
-                sudoku.UpdateSquare(12, 6);
-                sudoku.UpdateSquare(28, 7);
-                sudoku.UpdateSquare(31, 8);
-                sudoku.UpdateSquare(34, 9);
-
-                return sudoku;
-            }
-        }
-
-        /// <summary>
         /// Gets sample case; Group number method
         /// </summary>
         /// <returns></returns>
-        public static Sudoku GroupNumberMethod
+        public static Sudoku NumberMethod
         {
             get
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 5,
+                    SudokuId = 11,
                     Title = "Group number method"
                 };
 
@@ -69,7 +40,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 6,
+                    SudokuId = 12,
                     Title = "Group number method with help"
                 };
 
@@ -84,17 +55,17 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Gets sample case; Domino
+        /// Gets sample case; Domino Mixed
         /// </summary>
         /// <returns></returns>
-        public static Sudoku Domino
+        public static Sudoku DominoMixed
         {
             get
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 7,
-                    Title = "Domino"
+                    SudokuId = 21,
+                    Title = "Domino Mixed"
                 };
 
                 // Update
@@ -125,7 +96,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 8,
+                    SudokuId = 22,
                     Title = "B-2"
                 };
 
@@ -170,7 +141,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 9,
+                    SudokuId = 23,
                     Title = "B-2 Reverse"
                 };
 
@@ -221,7 +192,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 10,
+                    SudokuId = 24,
                     Title = "B-2 Skeleton"
                 };
 
@@ -244,39 +215,6 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
-        /// Gets sample case; Beauty
-        /// </summary>
-        /// <returns></returns>
-        public static Sudoku Beauty
-        {
-            get
-            {
-                var sudoku = new Sudoku()
-                {
-                    SudokuId = 13,
-                    Title = "Beauty"
-                };
-
-                // Update
-                sudoku.UpdateSquare(2, 2);
-                sudoku.UpdateSquare(4, 4);
-                sudoku.UpdateSquare(5, 5);
-                sudoku.UpdateSquare(6, 6);
-                sudoku.UpdateSquare(8, 8);
-                sudoku.UpdateSquare(10, 9);
-                sudoku.UpdateSquare(12, 7);
-                sudoku.UpdateSquare(16, 3);
-                sudoku.UpdateSquare(18, 1);
-                sudoku.UpdateSquare(28, 3);
-                sudoku.UpdateSquare(30, 1);
-                sudoku.UpdateSquare(34, 9);
-                sudoku.UpdateSquare(36, 7);
-
-                return sudoku;
-            }
-        }
-
-        /// <summary>
         /// Gets sample case; Hint update
         /// </summary>
         /// <returns></returns>
@@ -286,7 +224,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 14,
+                    SudokuId = 31,
                     Title = "Hint update"
                 };
 
@@ -318,7 +256,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 15,
+                    SudokuId = 32,
                     Title = "Hint update 2"
                 };
 
@@ -353,7 +291,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 16,
+                    SudokuId = 33,
                     Title = "Invalid hint remove"
                 };
 
@@ -387,7 +325,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku(4)
                 {
-                    SudokuId = 21,
+                    SudokuId = 41,
                     Title = "Mini size"
                 };
 
@@ -407,7 +345,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku(16)
                 {
-                    SudokuId = 22,
+                    SudokuId = 42,
                     Title = "Maxi size"
                 };
 
@@ -425,7 +363,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 31,
+                    SudokuId = 51,
                     Title = "Real-world sudoku"
                 };
 
@@ -477,7 +415,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 51,
+                    SudokuId = 71,
                     Title = "Invalid sudoku"
                 };
 
@@ -622,7 +560,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 52,
+                    SudokuId = 72,
                     Title = "Hint's availability bug",
                     Description = "Because the availabilities of the hints are not counted (yet)"
                 };
@@ -655,7 +593,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 53,
+                    SudokuId = 73,
                     Title = "Value remove - Square availability bug",
                     Description = "Because the availabilities of the hints are not counted (yet)"
                 };
@@ -684,7 +622,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 54,
+                    SudokuId = 74,
                     Title = "Hint value update"
                 };
 
@@ -706,6 +644,33 @@ namespace SudokuSolver.Engine
         }
 
         /// <summary>
+        /// Gets sample case; Free-style - for general testing
+        /// </summary>
+        /// <returns></returns>
+        public static Sudoku GroupNumberRemoveHintBug
+        {
+            get
+            {
+                var sudoku = new Sudoku()
+                {
+                    SudokuId = 75,
+                    Title = "Group number remove hint bug"
+                };
+
+                // Update
+                sudoku.UpdateSquare(13, 1);
+                sudoku.UpdateSquare(25, 1);
+                sudoku.UpdateSquare(29, 1);
+                sudoku.UpdateSquare(57, 1);
+
+                // When this set, all availabilities should be "available" but that's not the case
+                sudoku.UpdateSquare(57, 2);
+
+                return sudoku;
+            }
+        }
+
+        /// <summary>
         /// Gets sample case; Headache (1-2-3)
         /// </summary>
         /// <returns></returns>
@@ -715,7 +680,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 61,
+                    SudokuId = 81,
                     Title = "Headache (1-2-3)"
                 };
 
@@ -744,7 +709,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 62,
+                    SudokuId = 82,
                     Title = "Headache 2"
                 };
 
@@ -771,7 +736,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 63,
+                    SudokuId = 83,
                     Title = "Headache 3"
                 };
 
@@ -807,7 +772,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    SudokuId = 64,
+                    SudokuId = 84,
                     Title = "Headache 4" // Try this after fixing CASE 1: ID 5
                 };
 
@@ -846,33 +811,6 @@ namespace SudokuSolver.Engine
         /// Gets sample case; Free-style - for general testing
         /// </summary>
         /// <returns></returns>
-        public static Sudoku GroupNumberRemoveHintBug
-        {
-            get
-            {
-                var sudoku = new Sudoku()
-                {
-                    SudokuId = 65,
-                    Title = "Group number remove hint bug"
-                };
-
-                // Update
-                sudoku.UpdateSquare(13, 1);
-                sudoku.UpdateSquare(25, 1);
-                sudoku.UpdateSquare(29, 1);
-                sudoku.UpdateSquare(57, 1);
-
-                // When this set, all availabilities should be "available" but that's not the case
-                sudoku.UpdateSquare(57, 2);
-
-                return sudoku;
-            }
-        }
-
-        /// <summary>
-        /// Gets sample case; Free-style - for general testing
-        /// </summary>
-        /// <returns></returns>
         public static Sudoku Freestyle
         {
             get
@@ -897,30 +835,43 @@ namespace SudokuSolver.Engine
         {
             get
             {
-                var list = new Collection<Sudoku>();
+                var list = new HashSet<Sudoku>();
 
-                list.Add(SquareMethod);
+                list.Add(SquareMethodCaseManager.Plain);
+                list.Add(SquareMethodCaseManager.FourBirds);
+                list.Add(SquareMethodCaseManager.FifthFive);
+
                 //list.Add(GroupNumberMethod);
                 //list.Add(GroupNumberMethodWithHelp);
-                //list.Add(Domino);
+                
+                //list.Add(DominoMixed);
                 //list.Add(B2);
                 //list.Add(B2Reverse);
                 //list.Add(B2Skeleton);
-                //list.Add(Beauty);
+                
                 //list.Add(HintUpdate);
                 //list.Add(HintUpdate2);
                 //list.Add(InvalidHintRemove);
+                
                 //list.Add(MiniSize);
                 //list.Add(MaxiSize);
+                
                 //list.Add(RealSudoku);
+                
                 //list.Add(InvalidSudoku);
+                
                 ////list.Add(Headache);
                 ////list.Add(Headache2);
                 ////list.Add(Headache3);
                 ////list.Add(Headache4);
                 //list.Add(HintAvailabilityBug);
                 //list.Add(GroupNumberRemoveHintBug);
+                
                 //list.Add(Freestyle);
+
+                var id = 1;
+                foreach (var sudoku in list)
+                    sudoku.SudokuId = id++;
 
                 return list;
             }

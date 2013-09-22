@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 
@@ -63,7 +62,7 @@ namespace SudokuSolver.Engine
                 // Availabilities; bit strange place but new GroupNumber will be using Squares property of it's group?
                 if (this.GroupType == Engine.GroupType.Square)
                 {
-                    groupNumbers = new Collection<GroupNumber>();
+                    groupNumbers = new HashSet<GroupNumber>();
                     foreach (var number in Sudoku.NumbersExceptZero)
                         groupNumbers.Add(new GroupNumber(this, number));
                 }

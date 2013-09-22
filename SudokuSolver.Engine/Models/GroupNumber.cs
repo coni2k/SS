@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace SudokuSolver.Engine
@@ -17,7 +16,7 @@ namespace SudokuSolver.Engine
             Group = group;
             SudokuNumber = number;
 
-            availabilities = new Collection<GroupNumberAvailability>();
+            availabilities = new HashSet<GroupNumberAvailability>();
             foreach (var square in group.Squares)
                 availabilities.Add(new GroupNumberAvailability(this, square));
         }

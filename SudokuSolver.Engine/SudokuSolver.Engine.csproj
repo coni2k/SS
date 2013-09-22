@@ -63,6 +63,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SquareMethoCaseManager.cs" />
     <Compile Include="Models\Hint.cs" />
     <Compile Include="SampleCaseManager.cs" />
     <Compile Include="Utility.cs" />

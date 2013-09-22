@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 
@@ -66,7 +65,7 @@ namespace SudokuSolver.Engine
             {
                 if (groups == null)
                 {
-                    groups = new Collection<Group>();
+                    groups = new HashSet<Group>();
                     groups.Add(SquareTypeGroup);
                     groups.Add(HorizontalTypeGroup);
                     groups.Add(VerticalTypeGroup);
@@ -97,7 +96,7 @@ namespace SudokuSolver.Engine
                 if (availabilities == null)
                 {
                     // Available numbers; assign all numbers, except zero
-                    availabilities = new Collection<SquareAvailability>();
+                    availabilities = new HashSet<SquareAvailability>();
                     foreach (var sudokuNumber in Sudoku.NumbersExceptZero)
                         availabilities.Add(new SquareAvailability(this, sudokuNumber));
                 }
@@ -119,7 +118,7 @@ namespace SudokuSolver.Engine
             get { return relatedSquares ?? (relatedSquares = Groups.SelectMany(group => group.Squares).Distinct()); }
         }
 
-        public IEnumerable<Square> RelatedHints
+        public IEnumerable<Square> RelatedSquareMethodHints
         {
             get { return RelatedSquares.Where(s => s.IsSquareMethodHint); }
         }
@@ -138,6 +137,49 @@ namespace SudokuSolver.Engine
         public bool IsNumberMethodHint { get; internal set; }
 
         //public bool HasHints { get { return (HasSquareMethodHint || IsNumberMethodHint) && AssignType == AssignType.Hint; } }
+
+        internal bool IsValidating { get; private set; }
+
+        public bool ValidateHintStatus
+        {
+            get
+            {
+                IsValidating = true;
+
+                var relatedSquareMethodHints = RelatedSquareMethodHints;
+
+                var relatedHintsAvailabilities = relatedSquareMethodHints.SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == SudokuNumber));
+
+                var allRelatedHintsAlsoBelongsToAnotherSquare = relatedHintsAvailabilities
+                    .All(a => a.Sources.Any(s => ValidateHintStatusHelper(s)));
+
+                var result = !relatedSquareMethodHints.Any() || allRelatedHintsAlsoBelongsToAnotherSquare;
+
+                IsValidating = false;
+
+                return result;
+            }
+        }
+
+        bool ValidateHintStatusHelper(Square s)
+        {
+            var c1 = s != null;
+
+            if (!c1)
+                return false;
+
+            var c2 = !s.Equals(this);
+
+            var c3 = s.AssignType != AssignType.Hint || (!s.IsValidating && s.ValidateHintStatus);
+
+            if (c2)
+                Console.WriteLine("c2");
+
+            if (c3)
+                Console.WriteLine("c3");
+
+            return c2 && c3;
+        }
 
         #endregion
 
@@ -267,10 +309,11 @@ namespace SudokuSolver.Engine
         {
             if (number.IsZero)
                 return;
-            
-            foreach (var hint in RelatedHints)
+
+            foreach (var hint in RelatedSquareMethodHints)
             {
-                if (hint.Availabilities.Count(a => a.IsAvailable) > 0 )
+                //if (hint.Availabilities.Count(a => a.IsAvailable) > 0)
+                if (hint.Availabilities.Count(a => a.IsAvailable) > 0 || !hint.ValidateHintStatus)
                 {
                     hint.ContainsSquareMethodHint = false;
 
@@ -331,7 +374,7 @@ namespace SudokuSolver.Engine
         //                            var horz = hint;
         //                            square.RemoveHint(horz);
         //                            continue;
-                                
+
         //                        }
         //                    }
 

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 
@@ -18,10 +17,10 @@ namespace SudokuSolver.Engine
         public bool DisplaySquareAvailabilities { get; set; }
         public bool DisplayGroupNumberAvailabilities { get; set; }
 
-        private ICollection<SudokuNumber> numbers = new Collection<SudokuNumber>();
+        private ICollection<SudokuNumber> numbers = new HashSet<SudokuNumber>();
         private SudokuNumber zeroNumber;
-        private ICollection<Square> squares = new Collection<Square>();
-        private ICollection<Group> groups = new Collection<Group>();
+        private ICollection<Square> squares = new HashSet<Square>();
+        private ICollection<Group> groups = new HashSet<Group>();
         private List<SquareAvailability> squareAvailabilities = new List<SquareAvailability>();
         private List<GroupNumberAvailability> groupNumberAvailabilities = new List<GroupNumberAvailability>();
         private bool ready;
@@ -190,14 +189,14 @@ namespace SudokuSolver.Engine
             get { return Squares.Where(square => square.IsSquareMethodHint); }
         }
 
-        public IEnumerable<Square> GroupNumberMethodHintSquares
+        public IEnumerable<Square> NumberMethodHints
         {
             get { return Squares.Where(square => square.IsNumberMethodHint); }
         }
 
-        public IEnumerable<Square> HintSquares
+        public IEnumerable<Square> Hints
         {
-            get { return Squares.Where(square => square.AssignType == AssignType.Hint); }
+            get { return Squares.Where(square => square.IsSquareMethodHint || square.IsNumberMethodHint); }
         }
 
         /// <summary>
@@ -433,9 +432,22 @@ namespace SudokuSolver.Engine
                 selectedSquare.Update(type);
             else
             {
-                if (selectedNumber.IsZero && selectedSquare.ContainsSquareMethodHint)
+                if (selectedNumber.IsZero && selectedSquare.ContainsSquareMethodHint && selectedSquare.ValidateHintStatus)
                 {
+                    //var relatedHints = selectedSquare.RelatedSquareMethodHints;
+                    //var relatedHintsAvailabilities = relatedHints.SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == selectedSquare.SudokuNumber));
+                    //var allRelatedHintsAlsoBelongsToAnotherSquare = relatedHintsAvailabilities.All(a => a.Sources.Any(s => s != null && !s.Equals(selectedSquare)));
+
+                    //var shouldStayAsHint = !relatedHints.Any() || allRelatedHintsAlsoBelongsToAnotherSquare;
+
+                    //if (selectedSquare.ContainsSquareMethodHint && shouldStayAsHint)
+                    //{
                     selectedSquare.Update(AssignType.Hint);
+                    //}
+                    //else
+                    //{
+                    //    selectedSquare.Update(selectedNumber, type);
+                    //}
                 }
                 else
                 {
@@ -493,10 +505,10 @@ namespace SudokuSolver.Engine
             if (!Ready)
                 throw new InvalidOperationException("Sudoku cannot be Solved if it's not in Ready state");
 
-            if (!HintSquares.Any())
+            if (!Hints.Any())
                 return;
 
-            foreach (var square in HintSquares)
+            foreach (var square in Hints)
                 square.Update(AssignType.Solver);
 
             // Recursive; it can find new hints meanwhile.
