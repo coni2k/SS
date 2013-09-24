@@ -571,3 +571,8 @@ fifth five is the last one
 can continue with test case of it
 when id 33 was removed, it should only remove id 5 and id 9 but currently it removes all of them
 "isvaliting" was introduced but still not good. there is chain reaction - solution can be more extensive?
+
+---
+isvalidating removed.. but it still removes all of them
+it looks like in ValidateHintStatus method, it only checks other hints.. but actually id 1 and 3 has a connection to another initial square (id 11)
+continue from there..

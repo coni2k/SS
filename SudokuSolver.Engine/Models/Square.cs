@@ -138,24 +138,22 @@ namespace SudokuSolver.Engine
 
         //public bool HasHints { get { return (HasSquareMethodHint || IsNumberMethodHint) && AssignType == AssignType.Hint; } }
 
-        internal bool IsValidating { get; private set; }
+        // internal bool IsValidating { get; private set; }
 
         public bool ValidateHintStatus
         {
             get
             {
-                IsValidating = true;
+                // IsValidating = true;
 
-                var relatedSquareMethodHints = RelatedSquareMethodHints;
-
-                var relatedHintsAvailabilities = relatedSquareMethodHints.SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == SudokuNumber));
+                var relatedHintsAvailabilities = RelatedSquareMethodHints.SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == SudokuNumber));
 
                 var allRelatedHintsAlsoBelongsToAnotherSquare = relatedHintsAvailabilities
                     .All(a => a.Sources.Any(s => ValidateHintStatusHelper(s)));
 
-                var result = !relatedSquareMethodHints.Any() || allRelatedHintsAlsoBelongsToAnotherSquare;
+                var result = !RelatedSquareMethodHints.Any() || allRelatedHintsAlsoBelongsToAnotherSquare;
 
-                IsValidating = false;
+                // IsValidating = false;
 
                 return result;
             }
@@ -170,10 +168,11 @@ namespace SudokuSolver.Engine
 
             var c2 = !s.Equals(this);
 
-            var c3 = s.AssignType != AssignType.Hint || (!s.IsValidating && s.ValidateHintStatus);
+            if (!c2)
+                return false;
 
-            if (c2)
-                Console.WriteLine("c2");
+            // var c3 = s.AssignType != AssignType.Hint || (!s.IsValidating && s.ValidateHintStatus);
+            var c3 = s.AssignType != AssignType.Hint || s.ValidateHintStatus;
 
             if (c3)
                 Console.WriteLine("c3");

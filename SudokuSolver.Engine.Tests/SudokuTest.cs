@@ -133,8 +133,7 @@ namespace SudokuSolver.Engine.Tests
             Assert.IsTrue(sudoku.SquareMethodHints.Count() == 5);
 
             // Is it going to remove the chained hints?
-            sudoku.UpdateSquare(17, 0);
-            sudoku.UpdateSquare(33, 0);
+            sudoku.UpdateSquare(26, 0);
 
             // Assert: Id 5 should be zero
             Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 5).SudokuNumber.Value == 0);

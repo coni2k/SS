@@ -96,10 +96,8 @@ namespace SudokuSolver.Engine
                 sudoku.UpdateSquare(34, 9);
                 sudoku.UpdateSquare(36, 7);
 
-                sudoku.UpdateSquare(17, 5);
-                sudoku.UpdateSquare(20, 5);
-                sudoku.UpdateSquare(33, 5);
-                sudoku.UpdateSquare(58, 5);
+                sudoku.UpdateSquare(11, 5);
+                sudoku.UpdateSquare(26, 5);
 
                 return sudoku;
             }
