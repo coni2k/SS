@@ -140,18 +140,33 @@ namespace SudokuSolver.Engine
 
         // internal bool IsValidating { get; private set; }
 
-        public bool ValidateHintStatus
+        public bool IsValidHintStatus
         {
             get
             {
                 // IsValidating = true;
 
-                var relatedHintsAvailabilities = RelatedSquareMethodHints.SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == SudokuNumber));
+                var relatedSquareMethodHintsExceptThis = RelatedSquareMethodHints
+                    .Where(h => !h.Equals(this));
+
+                // If there is no hint that can be removed, then it's valid
+                if (!relatedSquareMethodHintsExceptThis.Any())
+                    return true;
+
+                // var myAvailabilities = Availabilities.Where(a => relatedHintsAvailabilities.Select(rha => rha.Square.SudokuNumber).Contains(a.SudokuNumber));
+                var myAvailabilities = Availabilities.Where(a => relatedSquareMethodHintsExceptThis.Select(rh => rh.SudokuNumber).Contains(a.SudokuNumber));
+
+                myAvailabilities = myAvailabilities.Where(a => a.Sources.All(s => s == null || s.Equals(relatedSquareMethodHintsExceptThis.Single(rh => rh.SudokuNumber == a.SudokuNumber))));
+
+                if (!myAvailabilities.Any())
+                    return true;
+
+                var relatedHintsAvailabilities = relatedSquareMethodHintsExceptThis.SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == SudokuNumber));
 
                 var allRelatedHintsAlsoBelongsToAnotherSquare = relatedHintsAvailabilities
                     .All(a => a.Sources.Any(s => ValidateHintStatusHelper(s)));
 
-                var result = !RelatedSquareMethodHints.Any() || allRelatedHintsAlsoBelongsToAnotherSquare;
+                var result = !relatedSquareMethodHintsExceptThis.Any() || allRelatedHintsAlsoBelongsToAnotherSquare;
 
                 // IsValidating = false;
 
@@ -172,12 +187,12 @@ namespace SudokuSolver.Engine
                 return false;
 
             // var c3 = s.AssignType != AssignType.Hint || (!s.IsValidating && s.ValidateHintStatus);
-            var c3 = s.AssignType != AssignType.Hint || s.ValidateHintStatus;
+            var c3 = s.AssignType != AssignType.Hint || s.IsValidHintStatus;
 
             if (c3)
                 Console.WriteLine("c3");
 
-            return c2 && c3;
+            return c3;
         }
 
         #endregion
@@ -312,7 +327,7 @@ namespace SudokuSolver.Engine
             foreach (var hint in RelatedSquareMethodHints)
             {
                 //if (hint.Availabilities.Count(a => a.IsAvailable) > 0)
-                if (hint.Availabilities.Count(a => a.IsAvailable) > 0 || !hint.ValidateHintStatus)
+                if (hint.Availabilities.Count(a => a.IsAvailable) > 0 || !hint.IsValidHintStatus)
                 {
                     hint.ContainsSquareMethodHint = false;
 

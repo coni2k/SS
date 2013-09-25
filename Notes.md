@@ -576,3 +576,9 @@ when id 33 was removed, it should only remove id 5 and id 9 but currently it rem
 isvalidating removed.. but it still removes all of them
 it looks like in ValidateHintStatus method, it only checks other hints.. but actually id 1 and 3 has a connection to another initial square (id 11)
 continue from there..
+
+---
+the last problem is gone - it only removes the necessary (correct) ones, id 1 and 3 stays.
+but we still have this isvalidhintstatus recursive code - either it's not needed or it will creata a problem in a deeper case
+but without having a proper break mechanism in it, it should fail somewhere, somehow..
+anyway, continue from here and try to extend the case - test, test, test

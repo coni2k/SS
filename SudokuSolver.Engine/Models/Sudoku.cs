@@ -432,7 +432,7 @@ namespace SudokuSolver.Engine
                 selectedSquare.Update(type);
             else
             {
-                if (selectedNumber.IsZero && selectedSquare.ContainsSquareMethodHint && selectedSquare.ValidateHintStatus)
+                if (selectedNumber.IsZero && selectedSquare.ContainsSquareMethodHint && selectedSquare.IsValidHintStatus)
                 {
                     //var relatedHints = selectedSquare.RelatedSquareMethodHints;
                     //var relatedHintsAvailabilities = relatedHints.SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == selectedSquare.SudokuNumber));
