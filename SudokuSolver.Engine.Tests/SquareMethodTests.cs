@@ -8,7 +8,7 @@ namespace SudokuSolver.Engine.Tests
     public class SquareMethodTests
     {
         [TestMethod]
-        public void Plain()
+        public void Basics()
         {
             // New sudoku
             var sudoku = SquareMethodCaseManager.Plain;
@@ -91,6 +91,44 @@ namespace SudokuSolver.Engine.Tests
 
             // Assert: Sudoku squares left
             Assert.IsTrue(sudoku.SquaresLeft == 72);
+        }
+
+        [TestMethod]
+        public void HintUpdate()
+        {
+            // New sudoku
+            var sudoku = SquareMethodCaseManager.Plain;
+
+            // Assert: Hint count
+            Assert.IsTrue(sudoku.SquareMethodHints.Count() == 1);
+
+            // Get the control squares
+            var squareId1 = sudoku.Squares.Single(square => square.SquareId == 1);
+            var squareId2 = sudoku.Squares.Single(square => square.SquareId == 2);
+
+            // Assert: Number value + assign type
+            Assert.IsTrue(squareId1.SudokuNumber.Value == 1);
+            Assert.IsTrue(squareId1.AssignType == AssignType.Hint);
+            Assert.IsTrue(squareId2.SudokuNumber.Value == 2);
+            Assert.IsTrue(squareId2.AssignType == AssignType.Initial);
+
+            // Update the hint to initial
+            sudoku.UpdateSquare(2, 1);
+
+            // Assert: Number value + assign type
+            Assert.IsTrue(squareId1.SudokuNumber.Value == 2);
+            Assert.IsTrue(squareId1.AssignType == AssignType.Hint);
+            Assert.IsTrue(squareId2.SudokuNumber.Value == 1);
+            Assert.IsTrue(squareId2.AssignType == AssignType.Initial);
+
+            // Undo it and check
+            sudoku.UpdateSquare(2, 2);
+
+            // Assert: Number value + assign type
+            Assert.IsTrue(squareId1.SudokuNumber.Value == 1);
+            Assert.IsTrue(squareId1.AssignType == AssignType.Hint);
+            Assert.IsTrue(squareId2.SudokuNumber.Value == 2);
+            Assert.IsTrue(squareId2.AssignType == AssignType.Initial);
         }
 
         [TestMethod]

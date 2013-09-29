@@ -5,7 +5,7 @@ using System.Linq;
 namespace SudokuSolver.Engine.Tests
 {
     [TestClass]
-    public class SudokuTest
+    public class SudokuTests
     {
         [TestMethod]
         public void NumberMethod()
@@ -180,34 +180,6 @@ namespace SudokuSolver.Engine.Tests
 
             // c. Hint number value; check the number of the hint gets updated
             //Assert.IsTrue(square.SudokuNumber.Value == 1);
-        }
-
-        [TestMethod]
-        public void MiniSize()
-        {
-            // New sudoku
-            var sudoku = SampleCaseManager.MiniSize;
-
-            // Test
-            // a. Total size
-            Assert.IsTrue(sudoku.TotalSize == 16);
-
-            // b. Squares left
-            Assert.IsTrue(sudoku.SquaresLeft == 16);
-        }
-
-        [TestMethod]
-        public void MaxiSize()
-        {
-            // New sudoku
-            var sudoku = SampleCaseManager.MaxiSize;
-
-            // Test
-            // a. Total size
-            Assert.IsTrue(sudoku.TotalSize == 256);
-
-            // b. Squares left
-            Assert.IsTrue(sudoku.SquaresLeft == 256);
         }
 
         [TestMethod]

@@ -599,3 +599,11 @@ id 7 9da id 29 engel oluyor, niye ?
 extended 2;
 id 32 9 u siliyoruz hepsini ucuruyor
 aslinda hinte donusmesi lazim
+
+---
+continue with isnumberalreadyinuse case
+IsAlreadyAssigned() test should pass!
+also plain case;
+update 2,0
+update 5,2
+update 5,1 should work

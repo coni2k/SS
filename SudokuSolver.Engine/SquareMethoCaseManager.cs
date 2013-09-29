@@ -12,7 +12,7 @@ namespace SudokuSolver.Engine
             {
                 var sudoku = new Sudoku()
                 {
-                    Title = "Square method"
+                    Title = "Square Method - Plain"
                 };
 
                 // Update

@@ -60,6 +60,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="SudokuTests.cs" />
     <Compile Include="SquareMethodTests.cs" />
     <Compile Include="SudokuTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
