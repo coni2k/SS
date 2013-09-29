@@ -839,7 +839,12 @@ namespace SudokuSolver.Engine
 
                 list.Add(SquareMethodCaseManager.Plain);
                 list.Add(SquareMethodCaseManager.FourBirds);
-                list.Add(SquareMethodCaseManager.FifthFive);
+                list.Add(SquareMethodCaseManager.FourBirdsReverse);
+                list.Add(SquareMethodCaseManager.FourBirdsExtended);
+                list.Add(SquareMethodCaseManager.FourBirdsExtended2);
+                list.Add(SquareMethodCaseManager.FourBirdsFull);
+
+                list.Add(SquareMethodCaseManager.TieBreak);
 
                 //list.Add(GroupNumberMethod);
                 //list.Add(GroupNumberMethodWithHelp);

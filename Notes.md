@@ -230,6 +230,9 @@ usings;
 http://stackoverflow.com/questions/125319/should-usings-be-inside-or-outside-the-namespace
 
 ---
+ENTER BTN DOESNT SUBMIT IN NEW SUDOKU WINDOW!
+
+---
 . build a js grid - static probably - with data source - no square groups, just items..
 
 . groupsnumbersgrid;
@@ -582,3 +585,17 @@ the last problem is gone - it only removes the necessary (correct) ones, id 1 an
 but we still have this isvalidhintstatus recursive code - either it's not needed or it will creata a problem in a deeper case
 but without having a proper break mechanism in it, it should fail somewhere, somehow..
 anyway, continue from here and try to extend the case - test, test, test
+
+---
+later on, think about full circle case ?! is it possible
+
+---
+is hint removable; ?
+
+---
+id 7 9da id 29 engel oluyor, niye ?
+
+---
+extended 2;
+id 32 9 u siliyoruz hepsini ucuruyor
+aslinda hinte donusmesi lazim

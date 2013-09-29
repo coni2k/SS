@@ -138,61 +138,101 @@ namespace SudokuSolver.Engine
 
         //public bool HasHints { get { return (HasSquareMethodHint || IsNumberMethodHint) && AssignType == AssignType.Hint; } }
 
-        // internal bool IsValidating { get; private set; }
+        internal bool IsValidating { get; private set; }
 
         public bool IsValidHintStatus
         {
             get
             {
-                // IsValidating = true;
+                // if (AppDomain.CurrentDomain.FriendlyName.ToLower().Contains("consoleapp")) Console.ReadLine();
 
-                var relatedSquareMethodHintsExceptThis = RelatedSquareMethodHints
-                    .Where(h => !h.Equals(this));
+                Console.WriteLine("---");
+                Console.WriteLine("0   {0}", this);
+
+                IsValidating = true;
+
+                var relatedSquareMethodHintsExceptThisAndNotValidating = RelatedSquareMethodHints
+                    .Where(h => !h.Equals(this) && !h.IsValidating);
 
                 // If there is no hint that can be removed, then it's valid
-                if (!relatedSquareMethodHintsExceptThis.Any())
+                if (!relatedSquareMethodHintsExceptThisAndNotValidating.Any())
+                {
+                    Console.WriteLine("1   {0}", this);
+                    IsValidating = false;
                     return true;
+                }
 
-                // var myAvailabilities = Availabilities.Where(a => relatedHintsAvailabilities.Select(rha => rha.Square.SudokuNumber).Contains(a.SudokuNumber));
-                var myAvailabilities = Availabilities.Where(a => relatedSquareMethodHintsExceptThis.Select(rh => rh.SudokuNumber).Contains(a.SudokuNumber));
+                var myAvailabilities = Availabilities.Where(a => relatedSquareMethodHintsExceptThisAndNotValidating.Select(rh => rh.SudokuNumber).Contains(a.SudokuNumber));
 
-                myAvailabilities = myAvailabilities.Where(a => a.Sources.All(s => s == null || s.Equals(relatedSquareMethodHintsExceptThis.Single(rh => rh.SudokuNumber == a.SudokuNumber))));
+                myAvailabilities = myAvailabilities.Where(a => a.Sources.All(s => s == null
+                    || relatedSquareMethodHintsExceptThisAndNotValidating.Where(rh => rh.SudokuNumber == a.SudokuNumber).Contains(s)));
 
                 if (!myAvailabilities.Any())
+                {
+                    Console.WriteLine("2   {0}", this);
+                    IsValidating = false;
                     return true;
+                }
 
-                var relatedHintsAvailabilities = relatedSquareMethodHintsExceptThis.SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == SudokuNumber));
+                var relatedHintsAvailabilities = relatedSquareMethodHintsExceptThisAndNotValidating
+                    .Where(rh => myAvailabilities.Select(a => a.SudokuNumber).Contains(rh.SudokuNumber))
+                    .SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == SudokuNumber));
 
                 var allRelatedHintsAlsoBelongsToAnotherSquare = relatedHintsAvailabilities
-                    .All(a => a.Sources.Any(s => ValidateHintStatusHelper(s)));
+                    .All(a => a.Sources.Any(s => ValidateHintStatusHelper(a, s)));
 
-                var result = !relatedSquareMethodHintsExceptThis.Any() || allRelatedHintsAlsoBelongsToAnotherSquare;
+                Console.WriteLine("3   {0} {1}", this, allRelatedHintsAlsoBelongsToAnotherSquare);
 
-                // IsValidating = false;
+                IsValidating = false;
 
-                return result;
+                return allRelatedHintsAlsoBelongsToAnotherSquare;
             }
         }
 
-        bool ValidateHintStatusHelper(Square s)
+        bool ValidateHintStatusHelper(SquareAvailability a, Square s)
         {
-            var c1 = s != null;
+            Console.WriteLine("3 a {0}", a);
 
-            if (!c1)
+            // 1. Should not be null
+            var c1 = s == null;
+
+            if (c1)
+            {
+                Console.WriteLine("3.1 {0}", a);
                 return false;
+            }
 
-            var c2 = !s.Equals(this);
+            // 2. Should not be equal to "this"
+            var c2 = s.Equals(this);
 
-            if (!c2)
+            if (c2)
+            {
+                Console.WriteLine("3.2 {0}", s);
                 return false;
+            }
 
-            // var c3 = s.AssignType != AssignType.Hint || (!s.IsValidating && s.ValidateHintStatus);
-            var c3 = s.AssignType != AssignType.Hint || s.IsValidHintStatus;
+            // 3. If it's not hint and not initial source, then it's valid
+            var c3 = s.AssignType != AssignType.Hint;
 
             if (c3)
-                Console.WriteLine("c3");
+            {
+                Console.WriteLine("3.3 {0}", s);
+                return !s.Equals(Sudoku.InitialSource);
+            }
 
-            return c3;
+            // Should not be validating or it should be initial source
+            if (s.IsValidating)
+            {
+                Console.WriteLine("3.4 {0}", s);
+
+                return false;
+            }
+
+            var c5 = s.IsValidHintStatus;
+
+            Console.WriteLine("3.5 {0} {1}", s, c5);
+
+            return c5;
         }
 
         #endregion

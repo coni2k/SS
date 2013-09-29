@@ -17,6 +17,8 @@ namespace SudokuSolver.Engine
         public bool DisplaySquareAvailabilities { get; set; }
         public bool DisplayGroupNumberAvailabilities { get; set; }
 
+        public Square InitialSource { get; private set; }
+
         private ICollection<SudokuNumber> numbers = new HashSet<SudokuNumber>();
         private SudokuNumber zeroNumber;
         private ICollection<Square> squares = new HashSet<Square>();
@@ -432,6 +434,8 @@ namespace SudokuSolver.Engine
                 selectedSquare.Update(type);
             else
             {
+                InitialSource = selectedSquare;
+             
                 if (selectedNumber.IsZero && selectedSquare.ContainsSquareMethodHint && selectedSquare.IsValidHintStatus)
                 {
                     //var relatedHints = selectedSquare.RelatedSquareMethodHints;
@@ -453,6 +457,8 @@ namespace SudokuSolver.Engine
                 {
                     selectedSquare.Update(selectedNumber, type);
                 }
+
+                InitialSource = null;
             }
 
             // Update the number's Updated

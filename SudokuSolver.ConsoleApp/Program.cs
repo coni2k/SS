@@ -17,33 +17,17 @@ namespace SudokuSolver.ConsoleApp
 
         static void Main(string[] args)
         {
-            //LoadCases();
+            LoadCases();
 
-            //LoadCase(1);
-
-            //ShowSudoku();
-
-            NewSudoku();
+            LoadCase(7);
 
             CurrentSudoku.UpdateSquare(1, 1);
-            CurrentSudoku.UpdateSquare(2, 2);
-            CurrentSudoku.UpdateSquare(3, 3);
-            CurrentSudoku.UpdateSquare(10, 4);
-            CurrentSudoku.UpdateSquare(11, 5);
-            CurrentSudoku.UpdateSquare(12, 6);
-            CurrentSudoku.UpdateSquare(19, 7);
-            CurrentSudoku.UpdateSquare(20, 8);
 
-            Console.WriteLine(CurrentSudoku.Squares.Count(s => s.ContainsSquareMethodHint));
-            Console.WriteLine(CurrentSudoku.Hints.Count());
+            ProcessCommand(args);
+        }
 
-            // CurrentSudoku.UpdateSquare(20, 0);
-            CurrentSudoku.UpdateSquare(21, 9);
-            CurrentSudoku.UpdateSquare(21, 0);
-
-            Console.WriteLine(CurrentSudoku.Squares.Count(s => s.ContainsSquareMethodHint));
-            Console.WriteLine(CurrentSudoku.Hints.Count());
-
+        static void CHECKTHISBLOCKLATER()
+        {
             //CurrentSudoku.DisplaySquareDetails = true;
             //CurrentSudoku.DisplaySquareHints = true;
             ////CurrentSudoku.DisplaySquareAvailabilities = true;
@@ -76,8 +60,7 @@ namespace SudokuSolver.ConsoleApp
             //CurrentSudoku.UpdateSquare(73, 1);
 
             //CurrentSudoku.Squares.Single(s => s.SquareId == 1).DumpGroupNumberAvailabilities(string.Empty, 1, 1);
-
-            ProcessCommand(args);
+        
         }
 
         static void LoadCases()
