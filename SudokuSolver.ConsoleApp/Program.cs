@@ -19,9 +19,17 @@ namespace SudokuSolver.ConsoleApp
         {
             LoadCases();
 
-            LoadCase(7);
+            LoadCase(5);
 
-            CurrentSudoku.UpdateSquare(1, 1);
+            CurrentSudoku.UpdateSquare(26, 0);
+
+            Console.WriteLine("---");
+            Console.WriteLine("---");
+            Console.WriteLine("---");
+            Console.WriteLine("---");
+            Console.WriteLine("---");
+
+            CurrentSudoku.UpdateSquare(32, 0);
 
             ProcessCommand(args);
         }

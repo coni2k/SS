@@ -203,6 +203,37 @@ namespace SudokuSolver.Engine.Tests
         }
 
         [TestMethod]
+        public void FourBirdsExtended2_v2()
+        {
+            // New sudoku
+            var sudoku = SquareMethodCaseManager.FourBirdsExtended2;
+
+            // Assert: Hint count
+            Assert.IsTrue(sudoku.SquareMethodHints.Count() == 9);
+
+            // Update Id 32 with 0 for the chain update
+            sudoku.UpdateSquare(26, 0);
+            sudoku.UpdateSquare(32, 0);
+
+            // Assert: Hint count
+            Assert.IsTrue(sudoku.SquareMethodHints.Count() == 2);
+
+            // Assert: Control square values
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 1).SudokuNumber.Value == 1);
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 3).SudokuNumber.Value == 3);
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 5).SudokuNumber.Value == 5);
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 7).SudokuNumber.Value == 7);
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 9).SudokuNumber.Value == 9);
+
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 29).SudokuNumber.Value == 7);
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 32).SudokuNumber.Value == 9);
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 33).SudokuNumber.Value == 5);
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 35).SudokuNumber.Value == 4);
+
+            //Assert.IsTrue(sudoku.Squares.Single(square => square.SquareId == 43).SudokuNumber.Value == 5);
+        }
+
+        [TestMethod]
         public void TieBreak()
         {
             // New sudoku

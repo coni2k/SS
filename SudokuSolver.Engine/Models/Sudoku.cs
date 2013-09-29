@@ -435,8 +435,8 @@ namespace SudokuSolver.Engine
             else
             {
                 InitialSource = selectedSquare;
-             
-                if (selectedNumber.IsZero && selectedSquare.ContainsSquareMethodHint && selectedSquare.IsValidHintStatus)
+
+                if (selectedNumber.IsZero && selectedSquare.ContainsSquareMethodHint && selectedSquare.Availabilities.Count(a => a.IsAvailable) == 0 && selectedSquare.IsValidHintStatus)
                 {
                     //var relatedHints = selectedSquare.RelatedSquareMethodHints;
                     //var relatedHintsAvailabilities = relatedHints.SelectMany(h => h.Availabilities.Where(a => a.SudokuNumber == selectedSquare.SudokuNumber));
