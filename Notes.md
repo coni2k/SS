@@ -607,3 +607,11 @@ also plain case;
 update 2,0
 update 5,2
 update 5,1 should work
+
+---
+Notes from Outlook;
+Check the blocks that the current square excluded
+Exclude current square if its trying to update with the same number ?
+
+---
+vs 2013 git integration test
