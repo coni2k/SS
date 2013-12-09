@@ -842,6 +842,7 @@ namespace SudokuSolver.Engine
                 list.Add(SquareMethodCaseManager.FourBirdsReverse);
                 list.Add(SquareMethodCaseManager.FourBirdsExtended);
                 list.Add(SquareMethodCaseManager.FourBirdsExtended2);
+                list.Add(SquareMethodCaseManager.FourBirdsLesser);
                 list.Add(SquareMethodCaseManager.FourBirdsFull);
 
                 list.Add(SquareMethodCaseManager.TieBreak);

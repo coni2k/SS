@@ -184,6 +184,40 @@ namespace SudokuSolver.Engine
             }
         }
 
+        public static Sudoku FourBirdsLesser
+        {
+            get
+            {
+                var sudoku = new Sudoku()
+                {
+                    Title = "Four Birds Lesser",
+                    Description = "? Update Id 5 with Number 5 for the final touch"
+                };
+
+                // Update
+                sudoku.UpdateSquare(2, 2);
+                sudoku.UpdateSquare(4, 4);
+                sudoku.UpdateSquare(6, 6);
+                sudoku.UpdateSquare(8, 8);
+
+                //sudoku.UpdateSquare(10, 7);
+                sudoku.UpdateSquare(11, 5);
+                sudoku.UpdateSquare(16, 1);
+
+                sudoku.UpdateSquare(21, 9);
+                sudoku.UpdateSquare(26, 5);
+                //sudoku.UpdateSquare(27, 3);
+
+                sudoku.UpdateSquare(28, 3);
+                //sudoku.UpdateSquare(30, 1);
+
+                //sudoku.UpdateSquare(61, 9);
+                sudoku.UpdateSquare(63, 7);
+
+                return sudoku;
+            }
+        }
+
         public static Sudoku FourBirdsFull
         {
             get

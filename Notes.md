@@ -609,9 +609,10 @@ update 5,2
 update 5,1 should work
 
 ---
-Notes from Outlook;
+Notes from Outlook - probably obsolete;
 Check the blocks that the current square excluded
 Exclude current square if its trying to update with the same number ?
 
 ---
-vs 2013 git integration test
+think about a lighter version of sudoku
+no hint case, just solves if it sees one?

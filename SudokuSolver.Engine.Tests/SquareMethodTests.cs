@@ -272,6 +272,28 @@ namespace SudokuSolver.Engine.Tests
         }
 
         [TestMethod]
+        public void FourBirdsLesser()
+        {
+            // New sudoku
+            var sudoku = SquareMethodCaseManager.FourBirdsLesser;
+
+            // Assert: Hint count
+            Assert.IsTrue(sudoku.SquareMethodHints.Count() == 0);
+
+            // Update Id 10 with 3 for the chain update
+            sudoku.UpdateSquare(10, 3);
+
+            // Assert: Hint count
+            Assert.IsTrue(sudoku.SquareMethodHints.Count() == 5);
+
+            // Update Id 10 with 0 for the chain update
+            sudoku.UpdateSquare(10, 0);
+
+            // Assert: Hint count
+            Assert.IsTrue(sudoku.SquareMethodHints.Count() == 0);
+        }
+
+        [TestMethod]
         public void TieBreak()
         {
             // New sudoku
